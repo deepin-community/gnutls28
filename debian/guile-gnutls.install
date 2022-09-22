@@ -1,0 +1,3 @@
+/usr/lib/*/guile/*/extensions/guile-gnutls*.so*
+/usr/lib/*/guile/*/site-ccache
+/usr/share/guile/site

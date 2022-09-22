@@ -1,0 +1,6 @@
+usr/lib/${DEB_HOST_MULTIARCH}/guile/*/extensions/guile-gnutls-v-2.a
+usr/lib/${DEB_HOST_MULTIARCH}/guile/*/extensions/guile-gnutls-v-2.la
+usr/lib/*/libgnutls-dane.la
+usr/lib/*/libgnutls-openssl.la
+usr/lib/*/libgnutlsxx.la
+usr/lib/*/libgnutls.la
