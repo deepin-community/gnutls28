@@ -798,12 +798,6 @@ EXTRA_DIST += test-localename.c macros.h
 
 ## end   gnulib module localename-tests
 
-## begin gnulib module lock
-
-libtests_a_SOURCES += glthread/lock.h glthread/lock.c
-
-## end   gnulib module lock
-
 ## begin gnulib module lock-tests
 
 TESTS += test-rwlock1 test-lock test-once1 test-once2
@@ -1910,42 +1904,6 @@ check_PROGRAMS += test-wchar
 EXTRA_DIST += test-wchar.c
 
 ## end   gnulib module wchar-tests
-
-## begin gnulib module windows-mutex
-
-
-EXTRA_DIST += windows-initguard.h windows-mutex.c windows-mutex.h
-
-EXTRA_libtests_a_SOURCES += windows-mutex.c
-
-## end   gnulib module windows-mutex
-
-## begin gnulib module windows-once
-
-
-EXTRA_DIST += windows-once.c windows-once.h
-
-EXTRA_libtests_a_SOURCES += windows-once.c
-
-## end   gnulib module windows-once
-
-## begin gnulib module windows-recmutex
-
-
-EXTRA_DIST += windows-initguard.h windows-recmutex.c windows-recmutex.h
-
-EXTRA_libtests_a_SOURCES += windows-recmutex.c
-
-## end   gnulib module windows-recmutex
-
-## begin gnulib module windows-rwlock
-
-
-EXTRA_DIST += windows-initguard.h windows-rwlock.c windows-rwlock.h
-
-EXTRA_libtests_a_SOURCES += windows-rwlock.c
-
-## end   gnulib module windows-rwlock
 
 ## begin gnulib module windows-thread
 

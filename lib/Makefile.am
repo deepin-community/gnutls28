@@ -43,7 +43,9 @@ AM_CPPFLAGS = \
 	-I$(builddir)/includes			\
 	-I$(srcdir)/x509			\
 	$(LIBTASN1_CFLAGS)			\
-	$(P11_KIT_CFLAGS)
+	$(P11_KIT_CFLAGS)			\
+	$(TSS2_CFLAGS)
+	$(LIBZSTD_CFLAGS)
 
 if !HAVE_LIBUNISTRING
 SUBDIRS += unistring
@@ -81,10 +83,14 @@ COBJECTS = range.c record.c compress.c debug.c cipher.c gthreads.h handshake-tls
 	cert-session.c handshake-checks.c dtls-sw.c dh-primes.c openpgp_compat.c \
 	crypto-selftests.c crypto-selftests-pk.c secrets.c extv.c extv.h \
 	hello_ext_lib.c hello_ext_lib.h ocsp-api.c stek.c cert-cred-rawpk.c \
-	iov.c iov.h
+	iov.c iov.h system/ktls.c system/ktls.h
 
 if ENABLE_GOST
 COBJECTS += vko.c
+endif
+
+if ENABLE_TPM2
+COBJECTS += tpm2.c tpm2.h tpm2_esys.c
 endif
 
 if WINDOWS
@@ -116,7 +122,7 @@ if ENABLE_NETTLE
 SUBDIRS += nettle
 endif
 
-HFILES = abstract_int.h debug.h cipher.h	 \
+HFILES = abstract_int.h debug.h compress.h cipher.h	 \
 	buffers.h errors.h gnutls_int.h dtls.h	 \
 	handshake.h num.h algorithms.h		 \
 	dh.h kx.h hash_int.h cipher_int.h	 \
@@ -153,6 +159,14 @@ libgnutls_la_LIBADD = ../gl/libgnu.la x509/libgnutls_x509.la \
 thirdparty_libadd = $(LTLIBZ) $(LTLIBINTL) $(LIBSOCKET) $(LTLIBNSL) \
 	$(P11_KIT_LIBS) $(LIB_SELECT) $(GNUTLS_LIBS_PRIVATE)
 
+if HAVE_LIBBROTLI
+thirdparty_libadd += $(LIBBROTLIENC_LIBS) $(LIBBROTLIDEC_LIBS)
+endif
+
+if HAVE_LIBZSTD
+thirdparty_libadd += $(LIBZSTD_LIBS)
+endif
+
 if HAVE_LIBIDN2
 thirdparty_libadd += $(LIBIDN2_LIBS)
 endif
@@ -186,19 +200,19 @@ thirdparty_libadd += $(FIPS140_LIBS) $(LTLIBDL)
 
 noinst_PROGRAMS = fipshmac
 fipshmac_SOURCES = fipshmac.c
-fipshmac_LDADD = libgnutls.la
+fipshmac_LDADD = libgnutls.la ../gl/libgnu.la
 
-hmac_files = .libs/.$(gnutls_so).hmac
+hmac_files = .libs/.gnutls.hmac
 
 all-local: $(hmac_files)
 
-.libs/.$(gnutls_so).hmac: libgnutls.la fipshmac
-	$(AM_V_GEN) $(builddir)/fipshmac .libs/$(gnutls_so) > $@-t && mv $@-t $@
+.libs/.gnutls.hmac: libgnutls.la fipshmac
+	$(AM_V_GEN) $(builddir)/fipshmac > $@-t && mv $@-t $@
 
 CLEANFILES = $(hmac_files)
 endif
 
-if ENABLE_TROUSERS
+if NEED_LTLIBDL
 thirdparty_libadd += $(LTLIBDL)
 endif
 
@@ -254,12 +268,12 @@ libgnutlsxx_la_LIBADD = libgnutls.la
 endif
 
 pkix_asn1_tab.c: $(srcdir)/pkix.asn
-	-asn1Parser $(srcdir)/pkix.asn pkix_asn1_tab.c
+	$(AM_V_GEN)$(ASN1PARSER) $(srcdir)/pkix.asn pkix_asn1_tab.c
 
 gnutls_asn1_tab.c: $(srcdir)/gnutls.asn
-	-asn1Parser $(srcdir)/gnutls.asn gnutls_asn1_tab.c
+	$(AM_V_GEN)$(ASN1PARSER) $(srcdir)/gnutls.asn gnutls_asn1_tab.c
 
 priority_options.h: $(srcdir)/priority_options.gperf
-	-gperf --global-table -t $^ > $@-tmp \
+	$(V_GPERF)$(GPERF) --global-table -t $^ > $@-tmp \
 	&& sed 's/^const struct priority_options_st \*/static const struct priority_options_st \*/' <$@-tmp >$@ \
 	&& rm -f $@-tmp

@@ -55,7 +55,7 @@ override_dh_autoreconf:
 		fi
 
 override_dh_makeshlibs:
-	dh_makeshlibs $(BDIR) -p libgnutlsxx28 -V 'libgnutlsxx28 (>= 3.7.0)'
+	dh_makeshlibs $(BDIR) -p libgnutlsxx30 -V 'libgnutlsxx30 (>= 3.7.4)'
 	dh_makeshlibs $(BDIR) -p libgnutls30  \
 		-V 'libgnutls30 (>= 3.7.0-0)' -- -c4
 	dh_makeshlibs $(BDIR) -p libgnutls-dane0  \
@@ -78,8 +78,6 @@ override_dh_auto_clean:
 	# restore gnutls.pdf
 	if [ -e doc/gnutls.pdf.debbackup ] && [ ! -e doc/gnutls.pdf ] ; \
 		then mv -v doc/gnutls.pdf.debbackup doc/gnutls.pdf ; fi
-	rm -fv \
-		`grep -El 'has been AutoGen-ed |has been AutoGen-ed *$$' doc/manpages/*.?`
 
 override_dh_auto_build:
 	dh_auto_build $(BDIR) --verbose
@@ -93,9 +91,9 @@ endif
 override_dh_auto_install:
 	dh_auto_install $(BDIR) --verbose
 ifneq ($(filter --disable-doc,$(AMCONFBUILDINDEP)),)
-	$(MAKE) -C b4deb/doc/manpages DESTDIR=`pwd`/debian/tmp install
+	$(MAKE) -C b4deb/doc/manpages DESTDIR=$(CURDIR)/debian/tmp install
 else
-	$(MAKE) -C b4deb/doc/ DESTDIR=`pwd`/debian/tmp install-html
+	$(MAKE) -C b4deb/doc/ DESTDIR=$(CURDIR)/debian/tmp install-html
 	# we symlink these
 	rm -vf debian/tmp/usr/share/info/*.png
 endif
@@ -111,9 +109,9 @@ override_dh_installinfo:
 
 override_dh_installchangelogs:
 	dh_installchangelogs $(BDIR)
-	rm -vrf debian/libgnutlsxx28/usr/share/doc/libgnutlsxx28
-	dh_link $(BDIR) -plibgnutlsxx28 usr/share/doc/libgnutls30 \
-		usr/share/doc/libgnutlsxx28
+	rm -vrf debian/libgnutlsxx30/usr/share/doc/libgnutlsxx30
+	dh_link $(BDIR) -plibgnutlsxx30 usr/share/doc/libgnutls30 \
+		usr/share/doc/libgnutlsxx30
 
 override_dh_compress:
 	dh_compress $(BDIR) -X.pdf
@@ -126,7 +124,7 @@ override_dh_clean:
 
 # Fails with "dwz: Section overlap detected"
 override_dh_dwz:
-	dh_dwz -O--builddirectory=b4deb -Xextra.go -Xgnutls.go
+	dh_dwz $(BDIR) -Xextra.go -Xgnutls.go
 
 %:
 	dh $@ --builddirectory=b4deb

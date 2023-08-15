@@ -159,6 +159,7 @@ gnutls_privkey_get_type
 
 <SECTION>
 <FILE>abstract_int</FILE>
+gnutls_privkey_pk_params_func
 gnutls_privkey_st
 gnutls_pubkey_st
 privkey_sign_and_hash_data
@@ -187,6 +188,8 @@ AES_KEY_ALIGN_SIZE
 AES_MAXNR
 AES_KEY
 CHECK_AES_KEYSIZE
+AES_GCM_ENCRYPT_MAX_BYTES
+record_aes_gcm_encrypt_size
 aes_v8_set_encrypt_key
 aes_v8_set_decrypt_key
 aes_v8_cbc_encrypt
@@ -196,7 +199,7 @@ aes_v8_decrypt
 
 <SECTION>
 <FILE>aes-gcm-aead</FILE>
-gnutls_assert_val
+unlikely
 gnutls_memcmp
 </SECTION>
 
@@ -219,6 +222,8 @@ AES_KEY_ALIGN_SIZE
 AES_MAXNR
 AES_KEY
 CHECK_AES_KEYSIZE
+AES_GCM_ENCRYPT_MAX_BYTES
+record_aes_gcm_encrypt_size
 aesni_ecb_encrypt
 aesni_cbc_encrypt
 aesni_set_decrypt_key
@@ -267,9 +272,12 @@ cipher_name_to_entry
 encipher_type
 GNUTLS_SIGN_FLAG_TLS13_OK
 GNUTLS_SIGN_FLAG_CRT_VRFY_REVERSE
+GNUTLS_SIGN_FLAG_INSECURE_REVERTIBLE
+GNUTLS_SIGN_FLAG_ALLOW_INSECURE_REVERTIBLE
 gnutls_sign_entry_st
 gnutls_ecc_curve_entry_st
 MAX_ECC_CURVE_SIZE
+curve_is_modern_ecdh
 pk
 </SECTION>
 
@@ -850,10 +858,13 @@ SIG_RSA_SHA3_224_OID
 SIG_RSA_SHA3_256_OID
 SIG_RSA_SHA3_384_OID
 SIG_RSA_SHA3_512_OID
+ECDH_X25519_OID
+ECDH_X448_OID
 SIG_EDDSA_SHA512_OID
 SIG_ED448_OID
 XMPP_OID
 KRB5_PRINCIPAL_OID
+MSUSER_PRINCIPAL_NAME_OID
 PKIX1_RSA_PSS_MGF1_OID
 GOST28147_89_OID
 GOST28147_89_TC26Z_OID
@@ -922,6 +933,19 @@ MAX_HASH_VALUE
 </SECTION>
 
 <SECTION>
+<FILE>compress</FILE>
+
+</SECTION>
+
+<SECTION>
+<FILE>compress_certificate</FILE>
+MIN_COMPRESS_CERTIFICATE_METHODS
+MAX_COMPRESS_CERTIFICATE_METHODS
+compress_certificate_ext_st
+ext_mod_compress_certificate
+</SECTION>
+
+<SECTION>
 <FILE>constate</FILE>
 
 </SECTION>
@@ -944,11 +968,15 @@ gnutls_cipher_encrypt
 gnutls_cipher_decrypt
 gnutls_cipher_decrypt2
 gnutls_cipher_encrypt2
+gnutls_cipher_flags_t
+gnutls_cipher_encrypt3
+gnutls_cipher_decrypt3
 gnutls_cipher_set_iv
 gnutls_cipher_tag
 gnutls_cipher_add_auth
 gnutls_cipher_deinit
 gnutls_cipher_get_block_size
+gnutls_aead_cipher_set_key
 gnutls_aead_cipher_decrypt
 gnutls_aead_cipher_encrypt
 gnutls_aead_cipher_encryptv
@@ -1360,10 +1388,12 @@ FIPS140_RND_KEY_SIZE
 gnutls_lib_state_t
 HAVE_LIB_ERROR
 FAIL_IF_LIB_ERROR
+is_mac_algo_approved_in_fips
+is_cipher_algo_approved_in_fips
+mode
+is_mac_algo_allowed
+is_cipher_algo_allowed
 FIPS_RULE
-is_mac_algo_forbidden
-if
-is_cipher_algo_forbidden
 </SECTION>
 
 <SECTION>
@@ -1451,6 +1481,7 @@ gnutls_dh_params_t
 gnutls_rsa_params_t
 gnutls_priority_t
 gnutls_datum_t
+gnutls_library_config_st
 gnutls_params_st
 gnutls_init
 gnutls_deinit
@@ -1486,6 +1517,11 @@ gnutls_sign_algorithm_get_client
 gnutls_sign_algorithm_get_requested
 gnutls_cipher_get_name
 gnutls_oid_to_digest
+gnutls_ecc_curve_set_enabled
+gnutls_sign_set_secure
+gnutls_sign_set_secure_for_certs
+gnutls_digest_set_secure
+gnutls_protocol_set_enabled
 gnutls_error_is_fatal
 gnutls_perror
 gnutls_strerror
@@ -1508,6 +1544,7 @@ gnutls_range_split
 gnutls_record_send
 gnutls_record_send2
 gnutls_record_send_range
+gnutls_record_send_file
 gnutls_record_recv
 gnutls_packet_t
 gnutls_record_recv_packet
@@ -1564,6 +1601,8 @@ gnutls_srtp_get_profile_id
 gnutls_srtp_get_keys
 gnutls_srtp_set_mki
 gnutls_srtp_get_mki
+gnutls_compress_certificate_get_selected_method
+gnutls_compress_certificate_set_methods
 gnutls_alpn_flags_t
 GNUTLS_ALPN_MAND
 gnutls_alpn_get_selected_protocol
@@ -1701,6 +1740,7 @@ gnutls_certificate_set_rawpk_key_mem
 gnutls_certificate_set_rawpk_key_file
 gnutls_global_init
 gnutls_global_deinit
+gnutls_get_library_config
 gnutls_time_func
 mutex_init_func
 mutex_lock_func
@@ -1928,6 +1968,14 @@ GNUTLS_FIPS140_SET_MODE_THREAD
 gnutls_fips140_set_mode
 GNUTLS_FIPS140_SET_LAX_MODE
 GNUTLS_FIPS140_SET_STRICT_MODE
+gnutls_fips140_context_t
+gnutls_fips140_context_init
+gnutls_fips140_context_deinit
+gnutls_fips140_operation_state_t
+gnutls_fips140_get_operation_state
+gnutls_fips140_push_context
+gnutls_fips140_pop_context
+gnutls_fips140_run_self_tests
 GNUTLS_E_SUCCESS
 GNUTLS_E_UNKNOWN_COMPRESSION_ALGORITHM
 GNUTLS_E_UNKNOWN_CIPHER_TYPE
@@ -2191,6 +2239,7 @@ hs_stage_t
 record_send_state_t
 IS_SERVER
 IS_DTLS
+IS_KTLS_ENABLED
 DEFAULT_MAX_RECORD_SIZE
 DEFAULT_MAX_EARLY_DATA_SIZE
 TLS_RECORD_HEADER_SIZE
@@ -2263,11 +2312,14 @@ record_parameters_st
 GNUTLS_CIPHER_FLAG_ONLY_AEAD
 GNUTLS_CIPHER_FLAG_XOR_NONCE
 GNUTLS_CIPHER_FLAG_NO_REKEY
+GNUTLS_CIPHER_FLAG_TAG_PREFIXED
 cipher_entry_st
 gnutls_cipher_suite_entry_st
 gnutls_group_entry_st
 GNUTLS_MAC_FLAG_PREIMAGE_INSECURE
 GNUTLS_MAC_FLAG_CONTINUOUS_MAC
+GNUTLS_MAC_FLAG_PREIMAGE_INSECURE_REVERTIBLE
+GNUTLS_MAC_FLAG_ALLOW_INSECURE_REVERTIBLE
 mac_entry_st
 version_entry_st
 sign_algorithm_st
@@ -2618,6 +2670,11 @@ ext_mod_key_share
 </SECTION>
 
 <SECTION>
+<FILE>ktls</FILE>
+
+</SECTION>
+
+<SECTION>
 <FILE>kuznyechik</FILE>
 kuznyechik_set_key
 kuznyechik_set_param
@@ -2842,8 +2899,17 @@ gnutls_mutex_deinit
 gnutls_mutex_lock
 gnutls_mutex_unlock
 GNUTLS_STATIC_MUTEX
-GNUTLS_STATIC_MUTEX_LOCK
-GNUTLS_STATIC_MUTEX_UNLOCK
+gnutls_static_mutex_t
+gnutls_static_mutex_lock
+gnutls_static_mutex_unlock
+GNUTLS_RWLOCK
+gnutls_rwlock_t
+gnutls_rwlock_rdlock
+gnutls_rwlock_wrlock
+gnutls_rwlock_unlock
+GNUTLS_ONCE
+gnutls_once_t
+gnutls_once
 </SECTION>
 
 <SECTION>
@@ -3568,6 +3634,8 @@ gnutls_sign_algorithm_set_client
 
 <SECTION>
 <FILE>socket</FILE>
+gnutls_transport_ktls_enable_flags_t
+gnutls_transport_is_ktls_enabled
 gnutls_transport_set_fastopen
 </SECTION>
 
@@ -3929,6 +3997,21 @@ gnutls_tpm_key_list_get_url
 gnutls_tpm_get_registered
 gnutls_tpm_privkey_delete
 tpm_key_list_st
+</SECTION>
+
+<SECTION>
+<FILE>tpm2</FILE>
+tpm2_info_init
+tpm2_esys_deinit
+release_tpm2_ctx
+install_tpm2_key
+tpm2_deinit_fn
+tpm2_rsa_sign_hash_fn
+tpm2_ec_sign_hash_fn
+tpm2_key_curve
+tpm2_rsa_key_bits
+tpm2_convert_public
+tpm2_info_st
 </SECTION>
 
 <SECTION>
@@ -4630,6 +4713,7 @@ GNUTLS_X509EXT_OID_INHIBIT_ANYPOLICY
 GNUTLS_X509EXT_OID_AUTHORITY_INFO_ACCESS
 GNUTLS_X509EXT_OID_PROXY_CRT_INFO
 GNUTLS_X509EXT_OID_TLSFEATURES
+GNUTLS_X509EXT_OID_CT_SCT_V1
 GNUTLS_X509_OID_POLICY_ANY
 gnutls_certificate_import_flags
 gnutls_x509_crt_init
@@ -5070,6 +5154,13 @@ gnutls_x509_ext_export_policies
 gnutls_x509_ext_import_tlsfeatures
 gnutls_x509_ext_export_tlsfeatures
 gnutls_x509_tlsfeatures_add
+gnutls_x509_ct_scts_t
+gnutls_x509_ext_ct_scts_init
+gnutls_x509_ext_ct_scts_deinit
+gnutls_x509_ext_ct_import_scts
+gnutls_x509_ext_ct_export_scts
+gnutls_x509_ct_sct_get_version
+gnutls_x509_ct_sct_get
 </SECTION>
 
 <SECTION>

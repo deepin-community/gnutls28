@@ -70,8 +70,6 @@ inline static int _gnutls_global_init_skip(void)
 /* created by asn1c */
 extern const asn1_static_node gnutls_asn1_tab[];
 extern const asn1_static_node pkix_asn1_tab[];
-void *_gnutls_file_mutex;
-void *_gnutls_pkcs11_mutex;
 
 asn1_node _gnutls_pkix1_asn = NULL;
 asn1_node _gnutls_gnutls_asn = NULL;
@@ -232,7 +230,10 @@ static int _gnutls_global_init(unsigned constructor)
 	const char* e;
 
 	if (!constructor) {
-		GNUTLS_STATIC_MUTEX_LOCK(global_init_mutex);
+		ret = gnutls_static_mutex_lock(&global_init_mutex);
+		if (ret < 0) {
+			return gnutls_assert_val(ret);
+		}
 	}
 
 	_gnutls_init++;
@@ -309,18 +310,6 @@ static int _gnutls_global_init(unsigned constructor)
 		goto out;
 	}
 
-	ret = gnutls_mutex_init(&_gnutls_file_mutex);
-	if (ret < 0) {
-		gnutls_assert();
-		goto out;
-	}
-
-	ret = gnutls_mutex_init(&_gnutls_pkcs11_mutex);
-	if (ret < 0) {
-		gnutls_assert();
-		goto out;
-	}
-
 	ret = gnutls_system_global_init();
 	if (ret < 0) {
 		gnutls_assert();
@@ -347,9 +336,12 @@ static int _gnutls_global_init(unsigned constructor)
 
 		/* first round of self checks, these are done on the
 		 * nettle algorithms which are used internally */
+		_gnutls_switch_lib_state(LIB_STATE_SELFTEST);
 		ret = _gnutls_fips_perform_self_checks1();
-		if (res != 2) {
-			if (ret < 0) {
+		if (ret < 0) {
+			_gnutls_switch_lib_state(LIB_STATE_ERROR);
+			_gnutls_audit_log(NULL, "FIPS140-2 self testing part1 failed\n");
+			if (res != 2) {
 				gnutls_assert();
 				goto out;
 			}
@@ -366,9 +358,12 @@ static int _gnutls_global_init(unsigned constructor)
 	 * (e.g., AESNI overridden AES). They are after _gnutls_register_accel_crypto()
 	 * intentionally */
 	if (res != 0) {
+		_gnutls_switch_lib_state(LIB_STATE_SELFTEST);
 		ret = _gnutls_fips_perform_self_checks2();
-		if (res != 2) {
-			if (ret < 0) {
+		if (ret < 0) {
+			_gnutls_switch_lib_state(LIB_STATE_ERROR);
+			_gnutls_audit_log(NULL, "FIPS140-2 self testing part 2 failed\n");
+			if (res != 2) {
 				gnutls_assert();
 				goto out;
 			}
@@ -376,14 +371,14 @@ static int _gnutls_global_init(unsigned constructor)
 		_gnutls_fips_mode_reset_zombie();
 	}
 #endif
-	_gnutls_load_system_priorities();
+	_gnutls_prepare_to_load_system_priorities();
 	_gnutls_switch_lib_state(LIB_STATE_OPERATIONAL);
 	ret = 0;
 
       out:
 	_gnutls_init_ret = ret;
 	if (!constructor) {
-		GNUTLS_STATIC_MUTEX_UNLOCK(global_init_mutex);
+		(void)gnutls_static_mutex_unlock(&global_init_mutex);
 	}
 	return ret;
 }
@@ -391,7 +386,9 @@ static int _gnutls_global_init(unsigned constructor)
 static void _gnutls_global_deinit(unsigned destructor)
 {
 	if (!destructor) {
-		GNUTLS_STATIC_MUTEX_LOCK(global_init_mutex);
+		if (gnutls_static_mutex_lock(&global_init_mutex) < 0) {
+			return;
+		}
 	}
 
 	if (_gnutls_init == 1) {
@@ -429,11 +426,11 @@ static void _gnutls_global_deinit(unsigned destructor)
 #ifdef HAVE_TROUSERS
 		_gnutls_tpm_global_deinit();
 #endif
+#ifdef HAVE_TPM2
+		_gnutls_tpm2_deinit();
+#endif
 
 		_gnutls_nss_keylog_deinit();
-
-		gnutls_mutex_deinit(&_gnutls_file_mutex);
-		gnutls_mutex_deinit(&_gnutls_pkcs11_mutex);
 	} else {
 		if (_gnutls_init > 0)
 			_gnutls_init--;
@@ -441,7 +438,7 @@ static void _gnutls_global_deinit(unsigned destructor)
 
  fail:
 	if (!destructor) {
-		GNUTLS_STATIC_MUTEX_UNLOCK(global_init_mutex);
+		(void)gnutls_static_mutex_unlock(&global_init_mutex);
 	}
 }
 
@@ -539,4 +536,53 @@ static void _DESTRUCTOR lib_deinit(void)
 	}
 
 	_gnutls_global_deinit(1);
+}
+
+static const struct gnutls_library_config_st _gnutls_library_config[] = {
+#ifdef FIPS_MODULE_NAME
+	{ "fips-module-name", FIPS_MODULE_NAME },
+#endif
+#ifdef FIPS_MODULE_VERSION
+	{ "fips-module-version", FIPS_MODULE_VERSION },
+#endif
+	{ "libgnutls-soname", GNUTLS_LIBRARY_SONAME },
+	{ "libnettle-soname", NETTLE_LIBRARY_SONAME },
+	{ "libhogweed-soname", HOGWEED_LIBRARY_SONAME },
+	{ "libgmp-soname", GMP_LIBRARY_SONAME },
+	{ "hardware-features", HW_FEATURES },
+	{ "tls-features", TLS_FEATURES },
+	{ "default-system-config", SYSTEM_PRIORITY_FILE },
+	{ NULL, NULL }
+};
+
+/**
+ * gnutls_get_library_config:
+ *
+ * Returns the library configuration as key value pairs.
+ * Currently defined keys are:
+ *
+ *  - fips-module-name: the name of the FIPS140 module
+ *
+ *  - fips-module-version: the version of the FIPS140 module
+ *
+ *  - libgnutls-soname: the SONAME of the library itself
+ *
+ *  - libnettle-soname: the library SONAME of linked libnettle
+ *
+ *  - libhogweed-soname: the library SONAME of linked libhogweed
+ *
+ *  - libgmp-soname: the library SONAME of linked libgmp
+ *
+ *  - hardware-features: enabled hardware support features
+ *
+ *  - tls-features: enabled TLS protocol features
+ *
+ * Returns: a NUL-terminated %gnutls_library_config_st array
+ *
+ * Since: 3.7.3
+ */
+const gnutls_library_config_st *
+gnutls_get_library_config(void)
+{
+	return _gnutls_library_config;
 }

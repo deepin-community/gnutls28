@@ -192,20 +192,55 @@ static int
 version_is_valid_for_session(gnutls_session_t session,
 			     const version_entry_st *v)
 {
-	if (v->supported && v->transport == session->internals.transport) {
-		return 1;
-	}
-	return 0;
+	if (!v->supported && !(v->supported_revertible && _gnutls_allowlisting_mode()))
+		return 0;
+	if (v->transport != session->internals.transport)
+		return 0;
+	return 1;
 }
 
-int _gnutls_version_mark_disabled(const char *name)
+/* This is only called by cfg_apply in priority.c, in blocklisting mode. */
+int _gnutls_version_mark_disabled(gnutls_protocol_t version)
 {
 #ifndef DISABLE_SYSTEM_CONFIG
 	version_entry_st *p;
 
 	for (p = sup_versions; p->name != NULL; p++)
-		if (c_strcasecmp(p->name, name) == 0) {
-			p->supported = 0;
+		if (p->id == version) {
+			p->supported = false;
+			return 0;
+		}
+
+#endif
+	return GNUTLS_E_INVALID_REQUEST;
+}
+
+/* This is only called by cfg_apply in priority.c, in allowlisting mode. */
+void _gnutls_version_mark_disabled_all(void)
+{
+#ifndef DISABLE_SYSTEM_CONFIG
+	version_entry_st *p;
+
+	for (p = sup_versions; p->name != NULL; p++) {
+		p->supported = false;
+		p->supported_revertible = true;
+	}
+#endif
+}
+
+int
+_gnutls_protocol_set_enabled(gnutls_protocol_t version,
+			    unsigned int enabled)
+{
+#ifndef DISABLE_SYSTEM_CONFIG
+	version_entry_st *p;
+
+	for (p = sup_versions; p->name != NULL; p++)
+		if (p->id == version) {
+			if (!p->supported_revertible) {
+				return gnutls_assert_val(GNUTLS_E_INVALID_REQUEST);
+			}
+			p->supported = enabled;
 			return 0;
 		}
 
@@ -269,6 +304,11 @@ const version_entry_st *_gnutls_version_max(gnutls_session_t session)
 	gnutls_protocol_t cur_prot;
 	const version_entry_st *p, *max = NULL;
 
+	if (!session->internals.priorities) {
+		gnutls_assert();
+		return NULL;
+	}
+
 	for (i = 0; i < session->internals.priorities->protocol.num_priorities;
 	     i++) {
 		cur_prot =
@@ -280,7 +320,10 @@ const version_entry_st *_gnutls_version_max(gnutls_session_t session)
 				if (p->obsolete != 0)
 					break;
 #endif
-				if (!p->supported || p->transport != session->internals.transport)
+				if (!p->supported && !(p->supported_revertible && _gnutls_allowlisting_mode()))
+					break;
+
+				if (p->transport != session->internals.transport)
 					break;
 
 				if (p->tls13_sem && (session->internals.flags & INT_FLAG_NO_TLS13))
@@ -335,7 +378,10 @@ int _gnutls_write_supported_versions(gnutls_session_t session, uint8_t *buffer, 
 				if (p->obsolete != 0)
 					break;
 
-				if (!p->supported || p->transport != session->internals.transport)
+				if (!p->supported && !(p->supported_revertible && _gnutls_allowlisting_mode()))
+					break;
+
+				if (p->transport != session->internals.transport)
 					break;
 
 				if (p->only_extension)
@@ -469,6 +515,25 @@ const gnutls_protocol_t *gnutls_protocol_list(void)
 	return supported_protocols;
 }
 
+/* Return all versions, including non-supported ones.
+ */
+const gnutls_protocol_t *_gnutls_protocol_list(void)
+{
+	const version_entry_st *p;
+	static gnutls_protocol_t protocols[MAX_ALGOS] = { 0 };
+
+	if (protocols[0] == 0) {
+		int i = 0;
+
+		for (p = sup_versions; p->name != NULL; p++) {
+			protocols[i++] = p->id;
+		}
+		protocols[i++] = 0;
+	}
+
+	return protocols;
+}
+
 /* Returns a version number given the major and minor numbers.
  */
 gnutls_protocol_t _gnutls_version_get(uint8_t major, uint8_t minor)
@@ -499,7 +564,10 @@ _gnutls_nversion_is_supported(gnutls_session_t session,
 			if (p->tls13_sem && (session->internals.flags & INT_FLAG_NO_TLS13))
 				return 0;
 
-			if (!p->supported || p->transport != session->internals.transport)
+			if (!p->supported && !(p->supported_revertible && _gnutls_allowlisting_mode()))
+				return 0;
+
+			if (p->transport != session->internals.transport)
 				return 0;
 
 			version = p->id;

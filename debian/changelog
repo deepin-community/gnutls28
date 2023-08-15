@@ -1,3 +1,180 @@
+gnutls28 (3.7.9-2) unstable; urgency=medium
+
+  * CI: Do not try to run tests/ktls.sh, it uses a helper binary. (Plus gnutls
+    is not built with ktls support on Debian yet.) Closes: #1034350
+
+ -- Andreas Metzler <ametzler@debian.org>  Sat, 15 Apr 2023 13:45:57 +0200
+
+gnutls28 (3.7.9-1) unstable; urgency=medium
+
+  * Drop unused lintian override.
+  * New upstream version.
+    + Drop cherrypicked patches.
+
+ -- Andreas Metzler <ametzler@debian.org>  Sat, 18 Feb 2023 07:00:58 +0100
+
+gnutls28 (3.7.8-5) unstable; urgency=high
+
+  [ Debian Janitor ]
+  * Remove constraints unnecessary since buster (oldstable):
+    + Build-Depends: Drop versioned constraint on libp11-kit-dev,
+      libtasn1-6-dev, libunbound-dev and libunistring-dev.
+    + Build-Depends-Indep: Drop versioned constraint on texinfo.
+    + libgnutls28-dev: Drop versioned constraint on libp11-kit-dev in Depends.
+
+  [ Andreas Metzler ]
+  * 55_01-auth-rsa-side-step-potential-side-channel.patch
+    55_02-rsa-remove-dead-code.patch 55_03-document-the-CVE-fix.patch:
+    Effectively update to 3.7.9, fixing GNUTLS-SA-2020-07-14 / CVE-2023-0361
+
+ -- Andreas Metzler <ametzler@debian.org>  Fri, 10 Feb 2023 07:29:17 +0100
+
+gnutls28 (3.7.8-4) unstable; urgency=low
+
+  * Replace 50_Fix-removal-of-duplicate-certs-during-verification.patch with
+    version merged to upstream GIT master. Add
+    51_add-gnulib-linkedhash-list-module.diff since the new patch uses
+    gnulib's linkedhash-list module.
+  * Upload to unstable.
+
+ -- Andreas Metzler <ametzler@debian.org>  Mon, 31 Oct 2022 18:10:09 +0100
+
+gnutls28 (3.7.8-3) experimental; urgency=low
+
+  * 50_Fix-removal-of-duplicate-certs-during-verification.patch frpm
+    https://gitlab.com/gnutls/gnutls/-/merge_requests/1653 fixes chain
+    verification error on duplicate server cert in chain.
+    Closes: #1007138
+
+ -- Andreas Metzler <ametzler@debian.org>  Sat, 15 Oct 2022 13:51:15 +0200
+
+gnutls28 (3.7.8-2) unstable; urgency=low
+
+  * Upload to unstable.
+
+ -- Andreas Metzler <ametzler@debian.org>  Sun, 02 Oct 2022 13:28:06 +0200
+
+gnutls28 (3.7.8-1) experimental; urgency=low
+
+  * New upstream version.
+    + Drop 50_01-Avoid-redirection-bashism-in-testsuite.patch.
+
+ -- Andreas Metzler <ametzler@debian.org>  Sat, 01 Oct 2022 13:48:17 +0200
+
+gnutls28 (3.7.7-2) unstable; urgency=medium
+
+  * 50_01-Avoid-redirection-bashism-in-testsuite.patch: Fix CI error.
+
+ -- Andreas Metzler <ametzler@debian.org>  Sun, 31 Jul 2022 10:32:04 +0200
+
+gnutls28 (3.7.7-1) unstable; urgency=low
+
+  * New upstream bugfix release:  Fixes double free during verification of
+    pkcs7 signatures. [GNUTLS-SA-2022-07-07, CVSS: medium] [CVE-2022-2509]
+    + Update symbol file.
+  * Add lintian overrides for source-is-missing false positives.
+
+ -- Andreas Metzler <ametzler@debian.org>  Sat, 30 Jul 2022 14:09:32 +0200
+
+gnutls28 (3.7.6-2) unstable; urgency=low
+
+  * Upload to unstable.
+
+ -- Andreas Metzler <ametzler@debian.org>  Sat, 18 Jun 2022 10:23:16 +0200
+
+gnutls28 (3.7.6-1) experimental; urgency=low
+
+  * New upstream version.
+
+ -- Andreas Metzler <ametzler@debian.org>  Sat, 28 May 2022 14:31:39 +0200
+
+gnutls28 (3.7.5-1) experimental; urgency=low
+
+  * New upstream version.
+    + Update symbol file.
+
+ -- Andreas Metzler <ametzler@debian.org>  Sun, 22 May 2022 08:16:07 +0200
+
+gnutls28 (3.7.4-2) unstable; urgency=low
+
+  * 40_srptest_doubletimeout.diff: Increase timeout for tests/srp to fix
+    occasionasonal error on slow buildds (mipsel, hppa).
+  * Upload to unstable.
+
+ -- Andreas Metzler <ametzler@debian.org>  Thu, 14 Apr 2022 08:54:25 +0200
+
+gnutls28 (3.7.4-1) experimental; urgency=low
+
+  * Drop superfluous dependency on libopts25-dev.
+  * New upstream version.
+    + Drop superfluous patches. (40_bashism_in_test.diff
+      41_more_bashism_in_test.diff)
+    + Update symbol file.
+    + libgnutlsxx soname bumped due to ABI break in .1 (db_check_entry and
+      db_check_entry now have const parameters).
+
+ -- Andreas Metzler <ametzler@debian.org>  Sun, 03 Apr 2022 13:30:32 +0200
+
+gnutls28 (3.7.3-4) unstable; urgency=low
+
+  [ Helmut Grohne ]
+  * Fix FTCBFS: Annotate python3 dependency with :any. (Closes: #1004183)
+
+  [ Andreas Metzler ]
+  * CI: Sort test list.
+  * CI: Skip another test wrapping a binary test.
+  * CI: Fix missed &> redirection.
+
+ -- Andreas Metzler <ametzler@debian.org>  Sun, 23 Jan 2022 08:14:48 +0100
+
+gnutls28 (3.7.3-3) unstable; urgency=low
+
+  * Fix CI errors:
+    + Set PKCS12_ITER_COUNT=600000, avoid more tests requiring a special test
+      binary.
+    + 40_bashism_in_test.diff: Avoid &> redirection.
+
+ -- Andreas Metzler <ametzler@debian.org>  Sat, 22 Jan 2022 07:45:00 +0100
+
+gnutls28 (3.7.3-2) unstable; urgency=low
+
+  * B-d on python3 instead of python3-minimal, the json module is not part of
+    -minimal.
+  * Upload to unstable.
+
+ -- Andreas Metzler <ametzler@debian.org>  Thu, 20 Jan 2022 18:40:59 +0100
+
+gnutls28 (3.7.3-1) experimental; urgency=low
+
+  * New upstream version.
+   + Does not use GNU autogen anymore, update Build-Depends.
+   + Drop 40_fix-gtk-mkhtml.patch.
+   + Update symbol file.
+
+ -- Andreas Metzler <ametzler@debian.org>  Tue, 18 Jan 2022 18:58:41 +0100
+
+gnutls28 (3.7.2-5) unstable; urgency=medium
+
+  * 40_fix-gtk-mkhtml.patch by Dennis Filder fixes gtk-doc generation.
+    Closes: #1003075
+  * Cherrypick some improvements to debian/rules suggested by Dennis Filder.
+
+ -- Andreas Metzler <ametzler@debian.org>  Wed, 05 Jan 2022 18:46:29 +0100
+
+gnutls28 (3.7.2-4) unstable; urgency=low
+
+  * Run wrap-and-sort -ast, and drop depends/b-d on libgmp > 2:6 since even
+    oldstable uses this version.
+  * Upload to unstable
+
+ -- Andreas Metzler <ametzler@debian.org>  Sun, 19 Dec 2021 13:57:12 +0100
+
+gnutls28 (3.7.2-3) experimental; urgency=medium
+
+  * Another test build against guile-3.0. #964284
+
+ -- Andreas Metzler <ametzler@debian.org>  Sun, 29 Aug 2021 14:29:40 +0200
+
 gnutls28 (3.7.2-2) unstable; urgency=low
 
   * Invoke dh_autoreconf with GTKDOCIZE=echo for arch-only builds, fixing

@@ -28,6 +28,7 @@
 #include "gnutls_int.h"
 #include <constate.h>
 #include "errors.h"
+#include "fips.h"
 #include <kx.h>
 #include <algorithms.h>
 #include <num.h>
@@ -83,6 +84,8 @@ _gnutls_set_keys(gnutls_session_t session, record_parameters_st * params,
 	       session->security_parameters.client_random,
 	       GNUTLS_RANDOM_SIZE);
 
+	_gnutls_memory_mark_defined(session->security_parameters.master_secret,
+				    GNUTLS_MASTER_SIZE);
 #ifdef ENABLE_SSL3
 	if (get_num_version(session) == GNUTLS_SSL3) {	/* SSL 3 */
 		ret =
@@ -99,8 +102,11 @@ _gnutls_set_keys(gnutls_session_t session, record_parameters_st * params,
 				rnd, 2 * GNUTLS_RANDOM_SIZE, block_size,
 				key_block);
 
-	if (ret < 0)
+	if (ret < 0) {
+		_gnutls_memory_mark_undefined(session->security_parameters.master_secret,
+					      GNUTLS_MASTER_SIZE);
 		return gnutls_assert_val(ret);
+	}
 
 	_gnutls_hard_log("INT: KEY BLOCK[%d]: %s\n", block_size,
 			 _gnutls_bin2hex(key_block, block_size, buf,
@@ -571,8 +577,15 @@ _gnutls_init_record_state(record_parameters_st * params,
 				       (ver->id == GNUTLS_SSL3) ? 1 : 0,
 #endif
 				       1 - read /*1==encrypt */ );
-	if (ret < 0 && params->cipher->id != GNUTLS_CIPHER_NULL)
+	if (ret < 0 && params->cipher->id != GNUTLS_CIPHER_NULL) {
+		_gnutls_switch_fips_state(GNUTLS_FIPS140_OP_ERROR);
 		return gnutls_assert_val(ret);
+	}
+	
+	if (is_cipher_algo_allowed(params->cipher->id))
+		_gnutls_switch_fips_state(GNUTLS_FIPS140_OP_APPROVED);
+	else
+		_gnutls_switch_fips_state(GNUTLS_FIPS140_OP_NOT_APPROVED);
 
 	return 0;
 }
@@ -765,29 +778,6 @@ int _gnutls_epoch_set_keys(gnutls_session_t session, uint16_t epoch, hs_stage_t 
 	return 0;
 }
 
-/* This copies the session values which apply to subsequent/resumed
- * sessions. Under TLS 1.3, these values are items which are not
- * negotiated on the subsequent session. */
-#define CPY_COMMON(tls13_sem) \
-	if (!tls13_sem) { \
-		dst->cs = src->cs; \
-		memcpy(dst->master_secret, src->master_secret, GNUTLS_MASTER_SIZE); \
-		memcpy(dst->client_random, src->client_random, GNUTLS_RANDOM_SIZE); \
-		memcpy(dst->server_random, src->server_random, GNUTLS_RANDOM_SIZE); \
-		dst->ext_master_secret = src->ext_master_secret; \
-		dst->etm = src->etm; \
-		dst->prf = src->prf; \
-		dst->grp = src->grp; \
-		dst->pversion = src->pversion; \
-	} \
-	memcpy(dst->session_id, src->session_id, GNUTLS_MAX_SESSION_ID_SIZE); \
-	dst->session_id_size = src->session_id_size; \
-	dst->timestamp = src->timestamp; \
-	dst->client_ctype = src->client_ctype; \
-	dst->server_ctype = src->server_ctype; \
-	dst->client_auth_type = src->client_auth_type; \
-	dst->server_auth_type = src->server_auth_type
-
 void _gnutls_set_resumed_parameters(gnutls_session_t session)
 {
 	security_parameters_st *src =
@@ -795,7 +785,29 @@ void _gnutls_set_resumed_parameters(gnutls_session_t session)
 	security_parameters_st *dst = &session->security_parameters;
 	const version_entry_st *ver = get_version(session);
 
-	CPY_COMMON(ver->tls13_sem);
+	/* Under TLS 1.3, these values are items which are not
+	 * negotiated on the subsequent session. */
+	if (!ver->tls13_sem) {
+		dst->cs = src->cs;
+		_gnutls_memory_mark_defined(dst->master_secret, GNUTLS_MASTER_SIZE);
+		memcpy(dst->master_secret, src->master_secret, GNUTLS_MASTER_SIZE);
+		_gnutls_memory_mark_defined(dst->client_random, GNUTLS_RANDOM_SIZE);
+		memcpy(dst->client_random, src->client_random, GNUTLS_RANDOM_SIZE);
+		_gnutls_memory_mark_defined(dst->server_random, GNUTLS_RANDOM_SIZE);
+		memcpy(dst->server_random, src->server_random, GNUTLS_RANDOM_SIZE);
+		dst->ext_master_secret = src->ext_master_secret;
+		dst->etm = src->etm;
+		dst->prf = src->prf;
+		dst->grp = src->grp;
+		dst->pversion = src->pversion;
+	}
+	memcpy(dst->session_id, src->session_id, GNUTLS_MAX_SESSION_ID_SIZE);
+	dst->session_id_size = src->session_id_size;
+	dst->timestamp = src->timestamp;
+	dst->client_ctype = src->client_ctype;
+	dst->server_ctype = src->server_ctype;
+	dst->client_auth_type = src->client_auth_type;
+	dst->server_auth_type = src->server_auth_type;
 
 	if (!ver->tls13_sem &&
 	    !(session->internals.hsk_flags & HSK_RECORD_SIZE_LIMIT_NEGOTIATED)) {
@@ -1286,10 +1298,16 @@ _tls13_init_record_state(gnutls_cipher_algorithm_t algo, record_state_st *state)
 	key.data = state->key;
 	key.size = state->key_size;
 
-	ret = _gnutls_aead_cipher_init(&state->ctx.aead,
-				       algo, &key);
-	if (ret < 0)
+	ret = _gnutls_aead_cipher_init(&state->ctx.aead, algo, &key);
+	if (ret < 0) {
+		_gnutls_switch_fips_state(GNUTLS_FIPS140_OP_ERROR);
 		return gnutls_assert_val(ret);
+	}
+
+	if (is_cipher_algo_allowed(algo))
+		_gnutls_switch_fips_state(GNUTLS_FIPS140_OP_APPROVED);
+	else
+		_gnutls_switch_fips_state(GNUTLS_FIPS140_OP_NOT_APPROVED);
 
 	state->aead_tag_size = gnutls_cipher_get_tag_size(algo);
 	state->is_aead = 1;

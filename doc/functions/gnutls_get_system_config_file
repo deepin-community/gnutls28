@@ -5,10 +5,9 @@
 @deftypefun {const char *} {gnutls_get_system_config_file} ( @var{void})
 
 Returns the filename of the system wide configuration
-file loaded by the library. The returned pointer is valid
-until the library is unloaded.
+file to be loaded by the library.
 
-@strong{Returns:} a constant pointer to the config file loaded, or @code{NULL}  if none
+@strong{Returns:} a constant pointer to the config file path
 
 @strong{Since:} 3.6.9
 @end deftypefun

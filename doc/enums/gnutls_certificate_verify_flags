@@ -58,4 +58,8 @@ process, not to fail on unknown critical extensions.
 @item GNUTLS_@-VERIFY_@-ALLOW_@-SIGN_@-WITH_@-SHA1
 Allow certificates to be signed
 using the broken SHA1 hash algorithm.
+@item GNUTLS_@-VERIFY_@-RSA_@-PSS_@-FIXED_@-SALT_@-LENGTH
+Disallow RSA-PSS signatures made
+with mismatching salt length with digest length, as mandated in RFC 8446
+4.2.3.
 @end table

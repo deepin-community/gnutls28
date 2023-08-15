@@ -608,17 +608,20 @@ static int wrap_nettle_hash_exists(gnutls_digest_algorithm_t algo)
 	case GNUTLS_DIG_SHA256:
 	case GNUTLS_DIG_SHA384:
 	case GNUTLS_DIG_SHA512:
-		return 1;
+
+#ifdef NETTLE_SHA3_FIPS202
 	case GNUTLS_DIG_SHA3_224:
 	case GNUTLS_DIG_SHA3_256:
 	case GNUTLS_DIG_SHA3_384:
 	case GNUTLS_DIG_SHA3_512:
-#ifdef NETTLE_SHA3_FIPS202
-		return 1;
-#else
-		return 0;
 #endif
+
+	case GNUTLS_DIG_SHAKE_128:
+	case GNUTLS_DIG_SHAKE_256:
+
 	case GNUTLS_DIG_MD2:
+	case GNUTLS_DIG_RMD160:
+
 #if ENABLE_GOST
 	case GNUTLS_DIG_GOSTR_94:
 	case GNUTLS_DIG_STREEBOG_256:
@@ -785,8 +788,11 @@ static int wrap_nettle_hash_fast(gnutls_digest_algorithm_t algo,
 	if (ret < 0)
 		return gnutls_assert_val(ret);
 
-	ctx.update(&ctx, text_size, text);
+	if (text_size > 0) {
+		ctx.update(&ctx, text_size, text);
+	}
 	ctx.digest(&ctx, ctx.length, digest);
+	zeroize_temp_key(&ctx, sizeof(ctx));
 
 	return 0;
 }
@@ -867,6 +873,7 @@ wrap_nettle_hkdf_extract (gnutls_mac_algorithm_t mac,
 	hkdf_extract(&ctx.ctx, ctx.update, ctx.digest, ctx.length,
 		     keysize, key, output);
 
+	zeroize_temp_key(&ctx, sizeof(ctx));
 	return 0;
 }
 
@@ -883,9 +890,15 @@ wrap_nettle_hkdf_expand (gnutls_mac_algorithm_t mac,
 	if (ret < 0)
 		return gnutls_assert_val(ret);
 
+	/* RFC 5869 2.3: L must be <= 255 * HashLen */
+	if (length > ctx.length * 255) {
+		return gnutls_assert_val(GNUTLS_E_INVALID_REQUEST);
+	}
+
 	ctx.set_key(&ctx, keysize, key);
 	hkdf_expand(&ctx.ctx, ctx.update, ctx.digest, ctx.length,
 		    infosize, info, length, output);
+	zeroize_temp_key(&ctx, sizeof(ctx));
 
 	return 0;
 }
@@ -907,6 +920,7 @@ wrap_nettle_pbkdf2 (gnutls_mac_algorithm_t mac,
 	ctx.set_key(&ctx, keysize, key);
 	pbkdf2(&ctx.ctx, ctx.update, ctx.digest, ctx.length,
 	       iter_count, saltsize, salt, length, output);
+	zeroize_temp_key(&ctx, sizeof(ctx));
 
 	return 0;
 }

@@ -25,7 +25,7 @@ PACKAGE ?= gnutls
 
 .PHONY: config glimport
 
-INDENT_SOURCES = `find . -name \*.[ch] -o -name gnutls.h.in | grep -v -e ^./build-aux/ -e ^./lib/minitasn1/ -e ^./lib/build-aux/ -e ^./gl/ -e ^./src/libopts/ -e -args.[ch] -e asn1_tab.c -e ^./tests/suite/`
+INDENT_SOURCES = `find . -name \*.[ch] -o -name gnutls.h.in | grep -v -e ^./build-aux/ -e ^./lib/minitasn1/ -e ^./lib/build-aux/ -e ^./gl/ -e -args.[ch] -e asn1_tab.c -e ^./tests/suite/`
 
 ifeq ($(.DEFAULT_GOAL),abort-due-to-no-makefile)
 .DEFAULT_GOAL := bootstrap
@@ -42,7 +42,7 @@ local-checks-to-skip = sc_GPL_version sc_bindtextdomain			\
 	sc_unmarked_diagnostics sc_useless_cpp_parens			\
 	sc_two_space_separator_in_usage
 
-VC_LIST_ALWAYS_EXCLUDE_REGEX = ^maint.mk|gtk-doc.make|m4/pkg|doc/fdl-1.3.texi|src/.*\.bak|src/crywrap/|(devel/perlasm/|lib/accelerated/x86/|build-aux/|gl/|src/libopts/|tests/suite/ecore/|doc/protocol/).*$$
+VC_LIST_ALWAYS_EXCLUDE_REGEX = ^maint.mk|gtk-doc.make|m4/pkg|doc/fdl-1.3.texi|src/.*\.bak|src/crywrap/|(devel/perlasm/|lib/accelerated/x86/|build-aux/|gl/|tests/suite/ecore/|doc/protocol/).*$$
 
 # Explicit syntax-check exceptions.
 exclude_file_name_regexp--sc_copyright_check = ^./gnulib/.*$$
@@ -212,7 +212,7 @@ lib/accelerated/x86/elf/%.s: devel/perlasm/%.pl .submodule.stamp
 	cat $<.license $@.tmp > $@ && rm -f $@.tmp
 	echo "" >> $@
 	echo ".section .note.GNU-stack,\"\",%progbits" >> $@
-	sed -i 's/OPENSSL_ia32cap_P/_gnutls_x86_cpuid_s/g' $@
+	sed -i 's/OPENSSL_ia32cap_P/GNUTLS_x86_cpuid_s/g' $@
 
 lib/accelerated/x86/coff/%-x86.s: devel/perlasm/%-x86.pl .submodule.stamp 
 	CC=gcc perl $< coff \
@@ -220,7 +220,7 @@ lib/accelerated/x86/coff/%-x86.s: devel/perlasm/%-x86.pl .submodule.stamp
 		$@.tmp
 	cat $<.license $@.tmp > $@ && rm -f $@.tmp
 	echo "" >> $@
-	sed -i 's/OPENSSL_ia32cap_P/_gnutls_x86_cpuid_s/g' $@
+	sed -i 's/OPENSSL_ia32cap_P/GNUTLS_x86_cpuid_s/g' $@
 
 lib/accelerated/x86/coff/%-x86_64.s: devel/perlasm/%-x86_64.pl .submodule.stamp 
 	CC=gcc perl $< mingw64 \
@@ -228,7 +228,7 @@ lib/accelerated/x86/coff/%-x86_64.s: devel/perlasm/%-x86_64.pl .submodule.stamp
 		$@.tmp
 	cat $<.license $@.tmp > $@ && rm -f $@.tmp
 	echo "" >> $@
-	sed -i 's/OPENSSL_ia32cap_P/_gnutls_x86_cpuid_s/g' $@
+	sed -i 's/OPENSSL_ia32cap_P/GNUTLS_x86_cpuid_s/g' $@
 
 lib/accelerated/x86/macosx/%.s: devel/perlasm/%.pl .submodule.stamp 
 	CC=gcc perl $< macosx \
@@ -236,7 +236,7 @@ lib/accelerated/x86/macosx/%.s: devel/perlasm/%.pl .submodule.stamp
 		$@.tmp
 	cat $<.license $@.tmp > $@ && rm -f $@.tmp
 	echo "" >> $@
-	sed -i 's/OPENSSL_ia32cap_P/_gnutls_x86_cpuid_s/g' $@
+	sed -i 's/OPENSSL_ia32cap_P/GNUTLS_x86_cpuid_s/g' $@
 
 lib/accelerated/aarch64/elf/%.s: devel/perlasm/%.pl .submodule.stamp 
 	rm -f $@tmp

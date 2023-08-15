@@ -2111,6 +2111,78 @@ about the cipher suite in the output variables.  If  @code{idx} is out of
 bounds, @code{NULL}  is returned.
 @end deftypefun
 
+@subheading gnutls_ciphersuite_get
+@anchor{gnutls_ciphersuite_get}
+@deftypefun {const char *} {gnutls_ciphersuite_get} (gnutls_session_t @var{session})
+@var{session}: is a @code{gnutls_session_t}  type.
+
+Get the canonical name of negotiated TLS ciphersuite.  The names
+returned by this function match the IANA registry, with one
+exception:
+
+TLS_DHE_DSS_RC4_128_SHA @{ 0x00, 0x66 @}
+
+which is reserved for compatibility.
+
+To get a detailed description of the current ciphersuite, it is
+recommended to use @code{gnutls_session_get_desc()} .
+
+@strong{Returns:} a string that contains the canonical name of a TLS ciphersuite,
+or @code{NULL}  if the handshake is not completed.
+
+@strong{Since:} 3.7.4
+@end deftypefun
+
+@subheading gnutls_compress_certificate_get_selected_method
+@anchor{gnutls_compress_certificate_get_selected_method}
+@deftypefun {gnutls_compression_method_t} {gnutls_compress_certificate_get_selected_method} (gnutls_session_t @var{session})
+@var{session}: is a @code{gnutls_session_t}  type.
+
+This function returns the certificate compression method that has been
+selected to compress the certificate before sending it to the peer.
+The selection is done based on the local list of supported compression
+methods and the peer's requested compression methods.
+
+@strong{Returns:} selected certificate compression method.
+
+Since 3.7.4
+@end deftypefun
+
+@subheading gnutls_compress_certificate_set_methods
+@anchor{gnutls_compress_certificate_set_methods}
+@deftypefun {int} {gnutls_compress_certificate_set_methods} (gnutls_session_t @var{session}, const gnutls_compression_method_t * @var{methods}, size_t @var{methods_len})
+@var{session}: is a @code{gnutls_session_t}  type.
+
+@var{methods}: is a list of supported compression methods.
+
+@var{methods_len}: number of compression methods in  @code{methods} 
+
+This function sets the supported compression methods for certificate compression
+for the given session. The list of supported compression methods will be used
+for a) requesting the compression of peer's certificate and b) selecting the
+method to compress the local certificate before sending it to the peer.
+The order of compression methods inside the list does matter as the method
+that appears earlier in the list will be preffered before the later ones.
+Note that even if you set the list of supported compression methods, the
+compression might not be used if the peer does not support any of your chosen
+compression methods.
+
+The list of supported compression methods must meet the following criteria:
+Argument  @code{methods} must be an array of valid compression methods of type
+@code{gnutls_compression_method_t} . Argument  @code{methods_len} must contain the number of
+compression methods stored in the  @code{methods} array and must be within range <1, 127>.
+The length constraints are defined by @code{MIN_COMPRESS_CERTIFICATE_METHODS} 
+and @code{MAX_COMPRESS_CERTIFICATE_METHODS}  macros located in the header file
+compress_certificate.h.
+
+If either  @code{methods} or  @code{methods_len} is equal to 0, current list of supported
+compression methods will be unset.
+
+@strong{Returns:} @code{GNUTLS_E_SUCCESS}  on success, otherwise a negative error code.
+
+Since 3.7.4
+@end deftypefun
+
 @subheading gnutls_credentials_clear
 @anchor{gnutls_credentials_clear}
 @deftypefun {void} {gnutls_credentials_clear} (gnutls_session_t @var{session})
@@ -2706,6 +2778,21 @@ This function is not thread safe.
 integers indicating the available digests.
 @end deftypefun
 
+@subheading gnutls_digest_set_secure
+@anchor{gnutls_digest_set_secure}
+@deftypefun {int} {gnutls_digest_set_secure} (gnutls_digest_algorithm_t @var{dig}, unsigned int @var{secure})
+@var{dig}: is a digest algorithm
+
+@var{secure}: whether to mark the digest algorithm secure
+
+Modify the previous system wide setting that marked  @code{dig} as secure
+or insecure. This only has effect when the algorithm is enabled
+through the allowlisting mode in the configuration file, or when
+the setting is modified with a prior call to this function.
+
+@strong{Since:} 3.7.3
+@end deftypefun
+
 @subheading gnutls_early_cipher_get
 @anchor{gnutls_early_cipher_get}
 @deftypefun {gnutls_cipher_algorithm_t} {gnutls_early_cipher_get} (gnutls_session_t @var{session})
@@ -2818,6 +2905,32 @@ This function is not thread safe.
 
 @strong{Returns:} Return a (0)-terminated list of @code{gnutls_ecc_curve_t} 
 integers indicating the available curves.
+@end deftypefun
+
+@subheading gnutls_ecc_curve_set_enabled
+@anchor{gnutls_ecc_curve_set_enabled}
+@deftypefun {int} {gnutls_ecc_curve_set_enabled} (gnutls_ecc_curve_t @var{curve}, unsigned int @var{enabled})
+@var{curve}: is an ECC curve
+
+@var{enabled}: whether to enable the curve
+
+Modify the previous system wide setting that marked  @code{curve} as
+enabled or disabled.  Calling this fuction is allowed
+only if allowlisting mode is set in the configuration file,
+and only if the system-wide TLS priority string
+has not been initialized yet.
+The intended usage is to provide applications with a way
+to expressly deviate from the distribution or site defaults
+inherited from the configuration file.
+The modification is composable with further modifications
+performed through the priority string mechanism.
+
+This function is not thread-safe and is intended to be called
+in the main thread at the beginning of the process execution.
+
+@strong{Returns:} 0 on success or negative error code otherwise.
+
+@strong{Since:} 3.7.3
 @end deftypefun
 
 @subheading gnutls_error_is_fatal
@@ -3048,6 +3161,40 @@ function.
 an error code is returned.
 @end deftypefun
 
+@subheading gnutls_fips140_context_deinit
+@anchor{gnutls_fips140_context_deinit}
+@deftypefun {void} {gnutls_fips140_context_deinit} (gnutls_fips140_context_t @var{context})
+@var{context}: a @code{gnutls_fips140_context_t} 
+
+Uninitialize and release the FIPS context  @code{context} .
+
+@strong{Since:} 3.7.3
+@end deftypefun
+
+@subheading gnutls_fips140_context_init
+@anchor{gnutls_fips140_context_init}
+@deftypefun {int} {gnutls_fips140_context_init} (gnutls_fips140_context_t * @var{context})
+@var{context}: location to store  @code{gnutls_fips140_context_t} 
+
+Create and initialize the FIPS context object.
+
+@strong{Returns:} 0 upon success, a negative error code otherwise
+
+@strong{Since:} 3.7.3
+@end deftypefun
+
+@subheading gnutls_fips140_get_operation_state
+@anchor{gnutls_fips140_get_operation_state}
+@deftypefun {gnutls_fips140_operation_state_t} {gnutls_fips140_get_operation_state} (gnutls_fips140_context_t @var{context})
+@var{context}: a @code{gnutls_fips140_context_t} 
+
+Get the previous operation state of  @code{context} in terms of FIPS.
+
+@strong{Returns:} a @code{gnutls_fips140_operation_state_t} 
+
+@strong{Since:} 3.7.3
+@end deftypefun
+
 @subheading gnutls_fips140_mode_enabled
 @anchor{gnutls_fips140_mode_enabled}
 @deftypefun {unsigned} {gnutls_fips140_mode_enabled} ( @var{void})
@@ -3063,6 +3210,66 @@ the global value is returned.
 @strong{Returns:} return non-zero if true or zero if false.
 
 @strong{Since:} 3.3.0
+@end deftypefun
+
+@subheading gnutls_fips140_pop_context
+@anchor{gnutls_fips140_pop_context}
+@deftypefun {int} {gnutls_fips140_pop_context} ( @var{void})
+
+Dissociate the FIPS context currently
+active on the current thread, reverting to the previously active
+context. If a cryptographic operation is ongoing in the current
+thread, e.g., @code{gnutls_aead_cipher_init()}  is called but
+@code{gnutls_aead_cipher_deinit()}  is not yet called, it returns an error
+@code{GNUTLS_E_INVALID_REQUEST} .
+
+This function is no-op if FIPS140 is not compiled in nor enabled
+at run-time.
+
+@strong{Returns:} 0 upon success, a negative error code otherwise
+
+@strong{Since:} 3.7.3
+@end deftypefun
+
+@subheading gnutls_fips140_push_context
+@anchor{gnutls_fips140_push_context}
+@deftypefun {int} {gnutls_fips140_push_context} (gnutls_fips140_context_t @var{context})
+@var{context}: a @code{gnutls_fips140_context_t} 
+
+Associate the FIPS  @code{context} to the current thread, diverting the
+currently active context. If a cryptographic operation is ongoing
+in the current thread, e.g., @code{gnutls_aead_cipher_init()}  is called
+but @code{gnutls_aead_cipher_deinit()}  is not yet called, it returns an
+error @code{GNUTLS_E_INVALID_REQUEST} .
+
+The operation state of  @code{context} will be reset to
+@code{GNUTLS_FIPS140_OP_INITIAL} .
+
+This function is no-op if FIPS140 is not compiled in nor enabled
+at run-time.
+
+@strong{Returns:} 0 upon success, a negative error code otherwise
+
+@strong{Since:} 3.7.3
+@end deftypefun
+
+@subheading gnutls_fips140_run_self_tests
+@anchor{gnutls_fips140_run_self_tests}
+@deftypefun {int} {gnutls_fips140_run_self_tests} ( @var{void})
+
+Manually perform the second round of the FIPS140 self-tests,
+including:
+
+- Known answer tests (KAT) for the selected set of symmetric
+cipher, MAC, public key, KDF, and DRBG
+- Library integrity checks
+
+Upon failure with FIPS140 mode enabled, it makes the library
+unusable.  This function is not thread-safe.
+
+@strong{Returns:} 0 upon success, a negative error code otherwise
+
+@strong{Since:} 3.7.7
 @end deftypefun
 
 @subheading gnutls_fips140_set_mode
@@ -3090,15 +3297,42 @@ switches to @code{GNUTLS_FIPS140_STRICT}  mode.
 @strong{Since:} 3.6.2
 @end deftypefun
 
+@subheading gnutls_get_library_config
+@anchor{gnutls_get_library_config}
+@deftypefun {const gnutls_library_config_st *} {gnutls_get_library_config} ( @var{void})
+
+Returns the library configuration as key value pairs.
+Currently defined keys are:
+
+- fips-module-name: the name of the FIPS140 module
+
+- fips-module-version: the version of the FIPS140 module
+
+- libgnutls-soname: the SONAME of the library itself
+
+- libnettle-soname: the library SONAME of linked libnettle
+
+- libhogweed-soname: the library SONAME of linked libhogweed
+
+- libgmp-soname: the library SONAME of linked libgmp
+
+- hardware-features: enabled hardware support features
+
+- tls-features: enabled TLS protocol features
+
+@strong{Returns:} a NUL-terminated @code{gnutls_library_config_st}  array
+
+@strong{Since:} 3.7.3
+@end deftypefun
+
 @subheading gnutls_get_system_config_file
 @anchor{gnutls_get_system_config_file}
 @deftypefun {const char *} {gnutls_get_system_config_file} ( @var{void})
 
 Returns the filename of the system wide configuration
-file loaded by the library. The returned pointer is valid
-until the library is unloaded.
+file to be loaded by the library.
 
-@strong{Returns:} a constant pointer to the config file loaded, or @code{NULL}  if none
+@strong{Returns:} a constant pointer to the config file path
 
 @strong{Since:} 3.6.9
 @end deftypefun
@@ -3205,11 +3439,10 @@ Do not call this function from a library, or preferably from any application
 unless really needed to. GnuTLS will use the appropriate locks for the running
 system.
 
-Note that since the move to implicit initialization of GnuTLS on library
-load, calling this function will deinitialize the library, and re-initialize
-it after the new locking functions are set.
+This function must be called prior to any other GnuTLS function; otherwise
+the behavior is undefined.
 
-This function must be called prior to any other gnutls function.
+@strong{Deprecated:} This function is discouraged on GnuTLS 3.7.3 or later.
 
 @strong{Since:} 2.12.0
 @end deftypefun
@@ -5026,6 +5259,32 @@ This function is not thread safe.
 indicating the available protocols.
 @end deftypefun
 
+@subheading gnutls_protocol_set_enabled
+@anchor{gnutls_protocol_set_enabled}
+@deftypefun {int} {gnutls_protocol_set_enabled} (gnutls_protocol_t @var{version}, unsigned int @var{enabled})
+@var{version}: is a (gnutls) version number
+
+@var{enabled}: whether to enable the protocol
+
+Control the previous system-wide setting that marked  @code{version} as
+enabled or disabled.  Calling this fuction is allowed
+only if allowlisting mode is set in the configuration file,
+and only if the system-wide TLS priority string
+has not been initialized yet.
+The intended usage is to provide applications with a way
+to expressly deviate from the distribution or site defaults
+inherited from the configuration file.
+The modification is composable with further modifications
+performed through the priority string mechanism.
+
+This function is not thread-safe and is intended to be called
+in the main thread at the beginning of the process execution.
+
+@strong{Returns:} 0 on success or negative error code otherwise.
+
+@strong{Since:} 3.7.3
+@end deftypefun
+
 @subheading gnutls_psk_allocate_client_credentials
 @anchor{gnutls_psk_allocate_client_credentials}
 @deftypefun {int} {gnutls_psk_allocate_client_credentials} (gnutls_psk_client_credentials_t *            @var{sc})
@@ -5830,6 +6089,32 @@ number of bytes this function can send in a single call depends
 on the negotiated maximum record size.
 
 @strong{Since:} 3.6.5
+@end deftypefun
+
+@subheading gnutls_record_send_file
+@anchor{gnutls_record_send_file}
+@deftypefun {ssize_t} {gnutls_record_send_file} (gnutls_session_t @var{session}, int @var{fd}, off_t * @var{offset}, size_t @var{count})
+@var{session}: is a @code{gnutls_session_t}  type.
+
+@var{fd}: file descriptor from which to read data.
+
+@var{offset}: Is relative to file offset, denotes the starting location for
+reading.  after function returns, it point to position following
+last read byte.
+
+@var{count}: is the length of the data in bytes to be read from file and send.
+
+This function sends data from  @code{fd} . If KTLS (kernel TLS) is enabled, it will
+use the @code{sendfile()}  system call to avoid overhead of copying data between user
+space and the kernel. Otherwise, this functionality is merely emulated by
+calling @code{read()}  and @code{gnutls_record_send()} . If this implementation is
+suboptimal, check whether KTLS is enabled using
+@code{gnutls_transport_is_ktls_enabled()} .
+
+If  @code{offset} is NULL then file offset is incremented by number of bytes send,
+otherwise file offset remains unchanged.
+
+@strong{Returns:} The number of bytes sent, or a negative error code.
 @end deftypefun
 
 @subheading gnutls_record_send_range
@@ -7025,6 +7310,66 @@ This function is not thread safe.
 
 @strong{Returns:} a (0)-terminated list of @code{gnutls_sign_algorithm_t} 
 integers indicating the available ciphers.
+@end deftypefun
+
+@subheading gnutls_sign_set_secure
+@anchor{gnutls_sign_set_secure}
+@deftypefun {int} {gnutls_sign_set_secure} (gnutls_sign_algorithm_t @var{sign}, unsigned int @var{secure})
+@var{sign}: the sign algorithm
+
+@var{secure}: whether to mark the sign algorithm secure
+
+Modify the previous system wide setting that marked  @code{sign} as secure
+or insecure.  Calling this function is allowed
+only if allowlisting mode is set in the configuration file,
+and only if the system-wide TLS priority string
+has not been initialized yet.
+The intended usage is to provide applications with a way
+to expressly deviate from the distribution or site defaults
+inherited from the configuration file.
+The modification is composable with further modifications
+performed through the priority string mechanism.
+
+This function is not thread-safe and is intended to be called
+in the main thread at the beginning of the process execution.
+
+Even when  @code{secure} is true,  @code{sign} is not marked as secure for the
+use in certificates.  Use @code{gnutls_sign_set_secure_for_certs()}  to
+mark it secure as well for certificates.
+
+@strong{Returns:} 0 on success or negative error code otherwise.
+
+@strong{Since:} 3.7.3
+@end deftypefun
+
+@subheading gnutls_sign_set_secure_for_certs
+@anchor{gnutls_sign_set_secure_for_certs}
+@deftypefun {int} {gnutls_sign_set_secure_for_certs} (gnutls_sign_algorithm_t @var{sign}, unsigned int @var{secure})
+@var{sign}: the sign algorithm
+
+@var{secure}: whether to mark the sign algorithm secure for certificates
+
+Modify the previous system wide setting that marked  @code{sign} as secure
+or insecure for the use in certificates.  Calling this fuction is allowed
+only if allowlisting mode is set in the configuration file,
+and only if the system-wide TLS priority string
+has not been initialized yet.
+The intended usage is to provide applications with a way
+to expressly deviate from the distribution or site defaults
+inherited from the configuration file.
+The modification is composable with further modifications
+performed through the priority string mechanism.
+
+This function is not thread-safe and is intended to be called
+in the main thread at the beginning of the process execution.
+When  @code{secure} is true,  @code{sign} is marked as secure for any use unlike
+@code{gnutls_sign_set_secure()} .  Otherwise, it is marked as insecure only
+for the use in certificates.  Use @code{gnutls_sign_set_secure()}  to mark
+it insecure for any uses.
+
+@strong{Returns:} 0 on success or negative error code otherwise.
+
+@strong{Since:} 3.7.3
 @end deftypefun
 
 @subheading gnutls_sign_supports_pk_algorithm

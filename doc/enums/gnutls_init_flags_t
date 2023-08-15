@@ -74,4 +74,6 @@ Under TLS1.3 disable auto-sending of
 session tickets during the handshake.
 @item GNUTLS_@-NO_@-END_@-OF_@-EARLY_@-DATA
 Under TLS1.3 suppress sending EndOfEarlyData message. Since 3.7.2.
+@item GNUTLS_@-NO_@-TICKETS_@-TLS12
+Flag to indicate that the session should not use resumption with session tickets. This flag only has effect if TLS 1.2 is used.
 @end table

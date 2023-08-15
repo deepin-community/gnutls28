@@ -36,6 +36,8 @@ Certificate status (OCSP).
 Supplemental.
 @item GNUTLS_@-HANDSHAKE_@-KEY_@-UPDATE
 TLS1.3 key update message.
+@item GNUTLS_@-HANDSHAKE_@-COMPRESSED_@-CERTIFICATE_@-PKT
+Compressed certificate packet.
 @item GNUTLS_@-HANDSHAKE_@-CHANGE_@-CIPHER_@-SPEC
 Change Cipher Spec.
 @item GNUTLS_@-HANDSHAKE_@-CLIENT_@-HELLO_@-V2

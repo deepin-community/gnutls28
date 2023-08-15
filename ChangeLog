@@ -1,3 +1,3202 @@
+Author: Zoltan Fridrich <zfridric@redhat.com>
+Date:   Thu Feb 9 09:39:41 2023 +0100
+
+    Release 3.7.9
+    
+    Signed-off-by: Zoltan Fridrich <zfridric@redhat.com>
+
+Author: Zoltan Fridrich <zfridric@redhat.com>
+Date:   Tue Jan 3 09:06:01 2023 +0100
+
+    Update year of copyright notices in doc/gnutls.texi
+    
+    Signed-off-by: Zoltan Fridrich <zfridric@redhat.com>
+
+Author: Hubert Kario <hkario@redhat.com>
+Date:   Wed Feb 8 14:43:45 2023 +0100
+
+    document the CVE fix
+    
+    Signed-off-by: Hubert Kario <hkario@redhat.com>
+
+Author: Hubert Kario <hkario@redhat.com>
+Date:   Wed Feb 8 14:32:09 2023 +0100
+
+    rsa: remove dead code
+    
+    since the `ok` variable isn't used any more, we can remove all code
+    used to calculate it
+    
+    Signed-off-by: Hubert Kario <hkario@redhat.com>
+
+Author: Alexander Sosedkin <asosedkin@redhat.com>
+Date:   Tue Aug 9 16:05:53 2022 +0200
+
+    auth/rsa: side-step potential side-channel
+    
+    Remove branching that depends on secret data.
+    
+    Signed-off-by: Alexander Sosedkin <asosedkin@redhat.com>
+    Signed-off-by: Hubert Kario <hkario@redhat.com>
+    Tested-by: Hubert Kario <hkario@redhat.com>
+
+Author: Alexander Sosedkin <asosedkin@redhat.com>
+Date:   Wed Sep 21 14:56:49 2022 +0200
+
+    Release 3.7.8
+    
+    Not bumping LT_CURRENT / LT_AGE since abi-check reports no changes.
+    
+    Signed-off-by: Alexander Sosedkin <asosedkin@redhat.com>
+
+Author: Alexander Sosedkin <asosedkin@redhat.com>
+Date:   Wed Sep 21 14:26:55 2022 +0200
+
+    NEWS: add an entry for allowlisting-relaxing functions restriction
+    
+    Signed-off-by: Alexander Sosedkin <asosedkin@redhat.com>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Mon Sep 19 07:40:01 2022 +0900
+
+    accelerated: avoid symbol export mismatch with _gnutls_x86_cpuid_s
+    
+    If the LD doesn't have support for version scripts,
+    _gnutls_x86_cpuid_s is exported through libtool's
+    --export-symbols-regex and that causes link error with clang:
+    
+      libtool: link: nmedit -s .libs/libgnutls-symbols.expsym .libs/libgnutls.30.dylib
+      /Library/Developer/CommandLineTools/usr/bin/nmedit: error: symbols names listed in: .libs/libgnutls-symbols.expsym not in: /opt/local/var/macports/build/_Users_marius_Development_MacPorts_ports_devel_gnutls/gnutls-devel/work/gnutls-3.7.5/lib/.libs/libgnutls.30.dylib
+      __gnutls_x86_cpuid_s
+      make[4]: *** [libgnutls.la] Error 1
+    
+    This patch renames _gnutls_x86_cpuid_s to GNUTLS_x86_cpuid_s to avoid
+    the issue.
+    
+    Problem investigated and fix suggested by Clemens Lang in:
+    https://gitlab.com/gnutls/gnutls/-/issues/1370#note_967832583
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Sun Sep 18 17:38:46 2022 +0900
+
+    compress-cert: support compression of client certificates
+    
+    Previously the compress_certificate extension was sent by the server
+    as part of ServerHello, which violates RFC 8879.  This patch instead
+    send it as an extension of CertificateRequest.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Zoltan Fridrich <zfridric@redhat.com>
+Date:   Fri Sep 9 13:32:16 2022 +0200
+
+    Report system config file location via gnutls-cli
+    
+    Signed-off-by: Zoltan Fridrich <zfridric@redhat.com>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Sat Aug 20 11:06:07 2022 +0900
+
+    src: request tls-exporter only when unique master secrets are used
+    
+    This is to comply with RFC9266 4.2.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Mon Aug 29 06:41:46 2022 +0900
+
+    gnutls_session_channel_binding: perform check on "tls-exporter"
+    
+    According to RFC9622 4.2, the "tls-exporter" channel binding is only
+    usable when the handshake is bound to a unique master secret.  This
+    adds a check whether either TLS 1.3 or extended master secret
+    extension is negotiated.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Sat Aug 20 10:58:23 2022 +0900
+
+    doc: mention GNUTLS_CB_TLS_EXPORTER
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Doug Nazar <nazard@nazar.ca>
+Date:   Tue Aug 16 01:47:49 2022 -0400
+
+    cipher: Ensure correct alignment
+    
+    Unsigned math is required to calculate the current alignment.
+    
+    Signed-off-by: Doug Nazar <nazard@nazar.ca>
+
+Author: Tobias Heider <tobias.heider@canonical.com>
+Date:   Tue Aug 23 13:47:38 2022 +0200
+
+    Unload custom allocators in gnutls_crypto_deinit()
+    
+    Closes #1398
+    
+    Signed-off-by: Tobias Heider <tobias.heider@canonical.com>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Mon Aug 15 09:39:18 2022 +0900
+
+    accelerated: clear AVX bits if it cannot be queried through XSAVE
+    
+    The algorithm to detect AVX is described in 14.3 of "Intel® 64 and IA-32
+    Architectures Software Developer’s Manual".
+    
+    GnuTLS previously only followed that algorithm when registering the
+    crypto backend, while the CRYPTOGAMS derived SHA code assembly expects
+    that the extension bits are propagated to _gnutls_x86_cpuid_s.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Thu Aug 18 09:01:20 2022 +0900
+
+    srptool: resurrect default value for -i
+    
+    The default option value for -i (--index) was dropped during the
+    cligen conversion.  This adds it back for compatibility with the
+    existing command line usage.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Thu Aug 18 09:00:44 2022 +0900
+
+    cligen: update git submodule
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Alexander Sosedkin <asosedkin@redhat.com>
+Date:   Tue Aug 16 10:34:05 2022 +0200
+
+    tests: add fips-rsa-sizes
+    
+    Signed-off-by: Alexander Sosedkin <asosedkin@redhat.com>
+
+Author: Alexander Sosedkin <asosedkin@redhat.com>
+Date:   Wed Feb 16 14:36:48 2022 +0100
+
+    update documentation on allowlisting API
+    
+    (in a separate commit so that it's easier to compare)
+    
+    Signed-off-by: Alexander Sosedkin <asosedkin@redhat.com>
+
+Author: Alexander Sosedkin <asosedkin@redhat.com>
+Date:   Wed Feb 16 14:28:18 2022 +0100
+
+    plumb allowlisting API through the config, restrict usage to early times
+    
+    Signed-off-by: Alexander Sosedkin <asosedkin@redhat.com>
+
+Author: Martin Storsjo <martin@martin.st>
+Date:   Mon Aug 15 23:50:16 2022 +0300
+
+    windows: Avoid -Wint-conversion errors
+    
+    Clang 15 made "incompatible pointer to integer conversion" an error
+    instead of a plain warning. This fixes errors like these:
+    
+    system/keys-win.c:257:13: error: incompatible pointer to integer conversion initializing 'HCRYPTHASH' (aka 'unsigned long') with an expression of type 'void *' [-Wint-conversion]
+            HCRYPTHASH hHash = NULL;
+                       ^       ~~~~
+    
+    Signed-off-by: Martin Storsjo <martin@martin.st>
+
+Author: Alexander Sosedkin <asosedkin@redhat.com>
+Date:   Tue Feb 15 16:26:52 2022 +0100
+
+    lib/priority: extract parts of cfg_apply into cfg_*_set_array*
+    
+    Signed-off-by: Alexander Sosedkin <asosedkin@redhat.com>
+
+Author: Alexander Sosedkin <asosedkin@redhat.com>
+Date:   Mon Feb 14 18:00:25 2022 +0100
+
+    lib/priority: move sigalgs filtering to set_ciphersuite_list
+    
+    Signed-off-by: Alexander Sosedkin <asosedkin@redhat.com>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Wed Aug 3 16:39:47 2022 +0900
+
+    nettle: mark RSA SigVer operation approved for known modulus sizes
+    
+    SP800-131A rev2 suggests certain RSA modulus sizes under 2048
+    bits (1024, 1280, 1536, and 1792) may continue to be used for
+    signature verification but not for signature generation.  This loosen
+    the current service indicator report to approve them.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Tue Aug 9 12:55:04 2022 +0900
+
+    nettle: check RSA modulus size in bits rather than bytes
+    
+    Previously we checked RSA modulus size clamped to byte unit instead of
+    bits.  This makes the check stricter by explicitly calculating the
+    modulus size in bits.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Alexander Sosedkin <asosedkin@redhat.com>
+Date:   Tue Aug 9 12:08:24 2022 +0200
+
+    fips: disable GNUTLS_CIPHER_3DES_CBC self-test
+    
+    Signed-off-by: Alexander Sosedkin <asosedkin@redhat.com>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Mon Aug 8 13:54:13 2022 +0900
+
+    .gitlab-ci.yml: mark all CI jobs interruptible
+    
+    This allows previous pipelines to be cancelled if a new job is
+    submitted subsequently:
+    https://docs.gitlab.com/ee/ci/yaml/#interruptible
+    
+    Suggested-by: Zoltán Fridrich <zfridric@redhat.com>
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Stanislav Zidek <szidek@redhat.com>
+Date:   Mon Aug 8 23:07:21 2022 +0200
+
+    Moved TLS interoperability tests to submodule.
+    
+    Signed-off-by: Stanislav Zidek <szidek@redhat.com>
+
+Author: Andreas Metzler <ametzler@debian.org>
+Date:   Sun Jul 31 10:28:15 2022 +0200
+
+    Avoid &> redirection bashism in testsuite
+    
+    Broken by 7b700dbcd5907944a7dd2f74cd26ad8586cd4bac
+    
+    Signed-off-by: Andreas Metzler <ametzler@bebt.de>
+
+Author: Stanislav Zidek <szidek@redhat.com>
+Date:   Thu Feb 11 13:57:27 2021 +0100
+
+    interoperability testing with openssl
+    
+    GitLab CI extended to run 2way interoperability tests with openssl on
+    Fedora. Also prepared for adding further interoperability tests once
+    they are in better shape.
+    
+    Signed-off-by: Stanislav Zidek <szidek@redhat.com>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Thu Aug 4 16:37:51 2022 +0900
+
+    _gnutls_decrypt_pbes1_des_md5_data: use public crypto API
+    
+    This is a follow-up of e7f9267342bc2231149a640163c82b63c86f1dfd.  In
+    the decryption code path with PBES1, algorithm checks for FIPS was not
+    applied, because it used internal functions that bypass those checks.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Simon Josefsson <jas@josefsson.org>
+Date:   Sat Jul 30 21:06:42 2022 +0200
+
+    Update doc for GNUTLS_CB_TLS_EXPORTER towards RFC9266.
+    
+    Signed-off-by: Simon Josefsson <simon@josefsson.org>
+
+Author: František Krenželok <krenzelok.frantisek@gmail.com>
+Date:   Fri Jul 29 10:38:42 2022 +0200
+
+    KTLS: hotfix
+    
+    session->internals.pull_func is set to system_read during gnutls_init()
+    so check for user set pull/push function added in commit mentioned
+    bellow will never pass.
+    
+    source: 2d3cba6bb21acb40141180298f3924c73c7de8f8
+    
+    Signed-off-by: Frantisek Krenzelok <krenzelok.frantisek@gmail.com>
+
+Author: Zoltan Fridrich <zfridric@redhat.com>
+Date:   Thu Jul 28 12:49:59 2022 +0200
+
+    Release 3.7.7
+    
+    Signed-off-by: Zoltan Fridrich <zfridric@redhat.com>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Tue Jul 26 11:39:57 2022 +0900
+
+    socket: only set pull/push functions when --save-*-trace is used
+    
+    This allows gnutls-cli to use KTLS for the transport, unless either
+    --save-client-trace or --save-server-trace is used.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Tue Jul 26 11:38:41 2022 +0900
+
+    handshake: do not enable KTLS if custom pull/push functions are set
+    
+    If gnutls_transport_set_pull_function or
+    gnutls_transport_set_push_function is used, we can't assume the
+    underlying transport handle is an FD.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Zoltan Fridrich <zfridric@redhat.com>
+Date:   Fri Jul 22 12:00:11 2022 +0200
+
+    Fix double free during gnutls_pkcs7_verify
+    
+    Signed-off-by: Zoltan Fridrich <zfridric@redhat.com>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Wed Jul 27 20:23:26 2022 +0900
+
+    guile: revert gnutls/build/tests.scm to use use-modules
+    
+    This partially reverts e727eb7901a3f1754de970c8529925ae3d591b90.  For
+    some reason, the usage of #:use-module causes some behavioral
+    difference that affects reauth.scm test.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Zoltan Fridrich <zfridric@redhat.com>
+Date:   Mon Jul 25 16:07:54 2022 +0200
+
+    Fix memory leak in gnutls_pkcs7_import
+    
+    Signed-off-by: Zoltan Fridrich <zfridric@redhat.com>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Thu Jul 14 15:19:23 2022 +0900
+
+    crypto-api: add block cipher API with automatic padding
+    
+    This adds a couple of functions gnutls_cipher_encrypt3 and
+    gnutls_cipher_decrypt3, which add or remove padding as necessary if
+    the length of the plaintext is not a multiple of the block size.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Fri Jul 22 11:54:29 2022 +0900
+
+    tests: temporarily disable checking against unresolvable hosts
+    
+    *.dane.verisignlabs.com and fedoraproject.org are no longer
+    resolvable.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Wed Jul 20 15:00:10 2022 +0900
+
+    src: add __attribute__((malloc)) to safe_open_rw
+    
+    This silences -Wsuggest-attribute=malloc warning with GCC 12.  While
+    we could use ATTRIBUTE_DEALLOC(fclose, 1), it is currently not
+    possible to use it until Gnulib is updated.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Wed Jul 20 14:54:48 2022 +0900
+
+    src: add NULL check on return value of realloc used in tests
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Thu Jun 30 21:24:23 2022 +0900
+
+    tests: resume-with-previous-stek: initialize session data
+    
+    Spotted by gcc-analyzer 12.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Thu Jun 30 21:23:31 2022 +0900
+
+    tests: add __attribute__((__noreturn__)) to _fail and fail_ignore
+    
+    To suppress warnings with gcc-analyzer 12.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Thu Jun 30 21:13:53 2022 +0900
+
+    crypto-selftests: fix decryption check condition in test_cipher_aead
+    
+    Spotted by gcc-analyzer 12.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Thu Jun 30 20:57:30 2022 +0900
+
+    x509, tpm2: use asn1_node instead of deprecated ASN1_TYPE
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Ludovic Courtès <ludo@gnu.org>
+Date:   Sun Jul 10 23:41:26 2022 +0200
+
+    guile: Allow session record ports to have a 'close' procedure.
+    
+    This addition makes it easy to close the backing file descriptor or port
+    of a session when its record port is closed.
+    
+    * guile/src/core.c (SCM_GNUTLS_SESSION_RECORD_PORT_SESSION): Add SCM_CAR.
+    (SCM_GNUTLS_SESSION_RECORD_PORT_CLOSE_PROCEDURE)
+    (SCM_GNUTLS_SET_SESSION_RECORD_PORT_CLOSE)
+    (SCM_GNUTLS_SESSION_RECORD_PORT_P)
+    (SCM_VALIDATE_SESSION_RECORD_PORT): New macros.
+    (make_session_record_port): Change "stream" argument to a pair.
+    (close_session_record_port): New function.
+    (scm_gnutls_session_record_port): Add optional 'close' parameter and
+    honor it.
+    (scm_gnutls_set_session_record_port_close_x): New function.
+    (scm_init_gnutls_session_record_port_type): Add call to
+    'scm_set_port_close' and 'scm_set_port_needs_close_on_gc'.
+    * guile/tests/session-record-port.scm: Test it.
+    * NEWS: Update.
+    
+    Signed-off-by: Ludovic Courtès <ludo@gnu.org>
+
+Author: Ludovic Courtès <ludo@gnu.org>
+Date:   Sun Jul 10 17:03:03 2022 +0200
+
+    guile: Remove support for the 1.8.x series.
+    
+    The last Guile 1.8.x release dates back to 2010.
+    
+    * configure.ac: Remove 1.8 from 'GUILE_PKG'.
+    * doc/gnutls-guile.texi (Guile Preparations): Remove mention of Guile 1.8.
+    * guile/src/core.c (mark_session_record_port)
+    (free_session_record_port): Remove.
+    (scm_init_gnutls_session_record_port_type): Remove corresponding
+    'scm_set_port_mark' and 'scm_set_port_free' calls.
+    * guile/modules/gnutls.in: Remove top-level 'cond-expand' forms for
+    Guile 1.8.
+    * guile/modules/gnutls/build/tests.scm: Likewise.
+    * NEWS: Update.
+    
+    Signed-off-by: Ludovic Courtès <ludo@gnu.org>
+
+Author: Ludovic Courtès <ludo@gnu.org>
+Date:   Sun Jul 10 17:02:17 2022 +0200
+
+    maint: Update guile.m4.
+    
+    * m4/guile.m4: Update from Guile 3.0.7.
+    
+    Signed-off-by: Ludovic Courtès <ludo@gnu.org>
+
+Author: Brad Smith <brad@comstyle.com>
+Date:   Fri Jul 15 22:44:03 2022 -0400
+
+    accelerated: aarch64: add OpenBSD/aarch64 support
+    
+    Signed-off-by: Brad Smith <brad@comstyle.com>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Mon Jun 27 11:14:50 2022 +0900
+
+    cipher: limit plaintext length supplied to AES-GCM
+    
+    According to SP800-38D 5.2.1.1, input data length of AES-GCM
+    encryption function must be less than or equal to 2^39-256 bits.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Ludovic Courtès <ludo@gnu.org>
+Date:   Sun Jul 10 18:54:54 2022 +0200
+
+    guile: Session record port treats premature termination as EOF.
+    
+    * guile/src/core.c (do_fill_port) [USING_GUILE_BEFORE_2_2]: Treat
+    GNUTLS_E_PREMATURE_TERMINATION as EOF.
+    (read_from_session_record_port) [!USING_GUILE_BEFORE_2_2]: Likewise.
+    * guile/tests/premature-termination.scm: New file.
+    * guile/Makefile.am (TESTS): Add it.
+    * NEWS: Update.
+    
+    Signed-off-by: Ludovic Courtès <ludo@gnu.org>
+
+Author: Richard Costa <richard.costa@suse.com>
+Date:   Sat Jul 9 00:50:21 2022 +0000
+
+    Add self-test code inside a FIPS context
+    
+    Self-test code exercise lots of different FIPS-related code with
+    side-effects. So, in order to prevent it from losing information when
+    executing inside another context, we create an appropriated one.
+    
+    If the self-test fails, then the library is placed in error state, so it
+    doesn't matter for other contexts.
+    
+    Signed-off-by: Richard Maciel Costa <richard.costa@suse.com>
+
+Author: Zoltan Fridrich <zfridric@redhat.com>
+Date:   Tue May 10 15:20:45 2022 +0200
+
+    Increase the limit of TLS PSK usernames from 128 to 65535 characters
+    
+    Co-authored-by: Hannes Reinecke <hare@suse.de>
+    Signed-off-by: Zoltan Fridrich <zfridric@redhat.com>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Fri Apr 1 08:04:57 2022 +0200
+
+    fips: make service indicator logging louder
+    
+    Previously, the only way to monitor the FIPS context transtion was to
+    increase logging level to debug (2), which produces unrelated output.
+    
+    This changes the minimum logging level to audit (1) for when the
+    transition happens.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Mon Jun 27 09:29:13 2022 +0900
+
+    nettle: restrict output size of HKDF-Expand to 255 * HashLen
+    
+    RFC 5869 2.3 requires that requested output length of HKDF-Expand to
+    be equal to or less than 255 times hash output size.
+    
+    Inspired by the report by Guido Vranken in:
+    https://lists.gnupg.org/pipermail/gcrypt-devel/2022-June/005328.html
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Alexander Sosedkin <asosedkin@redhat.com>
+Date:   Tue Jun 28 17:22:36 2022 +0200
+
+    tests/fips-test: minor extension
+    
+    Signed-off-by: Alexander Sosedkin <asosedkin@redhat.com>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Tue Jun 28 13:46:44 2022 +0900
+
+    .gitlab-ci.yml: add fedora-ktls pipeline
+    
+    This is to ensure that the same testsuite succeeds even if we compile
+    the library with --enable-ktls and KTLS is enabled with a run-time
+    configuration.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Tue Jun 28 10:53:55 2022 +0900
+
+    ktls: _gnutls_ktls_enable: fix GNUTLS_KTLS_SEND calculation
+    
+    Previously, if the first setsockopt for GNUTLS_KTLS_RECV fails and the
+    same socket is used for both sending and receiving, GNUTLS_KTLS_SEND
+    was unconditionally set.  This fixes the conditions and also adds more
+    logging.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Tue Jun 28 10:23:33 2022 +0900
+
+    handshake: do not reset KTLS enablement in gnutls_handshake
+    
+    As gnutls_handshake can be repeatedly called upon non-blocking setup,
+    we shouldn't try to call setsockopt for KTLS upon every call.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Tue Jun 28 09:37:22 2022 +0900
+
+    tests: enable KTLS config while running gnutls_ktls test
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Gregor Jasny <gjasny@googlemail.com>
+Date:   Tue Jun 21 11:18:16 2022 +0200
+
+    README.md: explicitly install libtasn1-bin
+    
+    Signed-off-by: Gregor Jasny <gjasny@googlemail.com>
+
+Author: František Krenželok <krenzelok.frantisek@gmail.com>
+Date:   Tue Jun 14 16:16:11 2022 +0200
+
+    KTLS: disable by default enable by config
+    
+    KTLS will be disabled by default when build with `--enable-ktls` to
+    enable it, use config file option `ktls = true` in [global] section.
+    
+    Signed-off-by: Frantisek Krenzelok <krenzelok.frantisek@gmail.com>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Fri Jun 3 15:43:00 2022 +0900
+
+    fips: provide function to manually run FIPS self-tests
+    
+    FIPS140-3 IG 10.3.E Periodic Self-Testing says:
+    
+      At security levels 1 and 2, acceptable means for initiating the
+      periodic self-tests include a provided service, resetting, rebooting
+      or power cycling.
+    
+    Neither resetting, rebooting, nor power-cycling is suitable because
+    those involve operations outside of the module.  Therefore this patch
+    adds a new API to manually run the substance of FIPS140 self-tests.
+    
+    Suggeested by Richard Costa and Stephan Mueller in:
+    https://gitlab.com/gnutls/gnutls/-/issues/1364
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Alexander Sosedkin <asosedkin@redhat.com>
+Date:   Wed May 18 15:38:21 2022 +0200
+
+    tests/suite/tls-fuzzer: remove most of the -n limiters...
+    
+    ... since tlsfuzzer now sets reasonable (~<10s/script) limits
+    for most of the scripts by default
+    
+    Signed-off-by: Alexander Sosedkin <asosedkin@redhat.com>
+
+Author: Alexander Sosedkin <asosedkin@redhat.com>
+Date:   Wed May 18 13:41:18 2022 +0200
+
+    tests/suite/tls-fuzzer: pin current error messages with -X
+    
+    Signed-off-by: Alexander Sosedkin <asosedkin@redhat.com>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Sun May 29 10:54:48 2022 +0900
+
+    build: Revert "Disable test scripts on windows"
+    
+    This reverts commit d2b99e3b3429e9b9a6fbff46598fd4c6a0910f65.
+    
+    It turned out that the test failures under mingw were caused by a
+    regression in wine 7.5, possibly:
+    https://bugs.winehq.org/show_bug.cgi?id=52743
+    
+    Now that the latest wine package based on wine 7.9 has no issues with
+    running those test scripts, this enables them again in the build
+    process.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Zoltan Fridrich <zfridric@redhat.com>
+Date:   Fri May 27 09:17:55 2022 +0200
+
+    Release 3.7.6
+    
+    Signed-off-by: Zoltan Fridrich <zfridric@redhat.com>
+
+Author: Asad Mehmood <asad78611@googlemail.com>
+Date:   Mon May 23 14:35:46 2022 +0000
+
+    libdane: fix typo in Makefile.am
+    
+    Signed-off-by: Asad Mehmood <asad78611@googlemail.com>
+
+Author: Zoltan Fridrich <zfridric@redhat.com>
+Date:   Fri May 13 14:37:05 2022 +0200
+
+    Add release steps for windows builds
+    
+    Signed-off-by: Zoltan Fridrich <zfridric@redhat.com>
+
+Author: Zoltan Fridrich <zfridric@redhat.com>
+Date:   Wed May 18 11:43:26 2022 +0200
+
+    Fix out-of-bounds memcpy in gnutls_realloc_zero()
+    
+    Co-authored-by: Tobias Heider <tobias.heider@canonical.com>
+    Co-authored-by: Daiki Ueno <ueno@gnu.org>
+    Signed-off-by: Zoltan Fridrich <zfridric@redhat.com>
+
+Author: Zoltan Fridrich <zfridric@redhat.com>
+Date:   Thu May 19 10:27:51 2022 +0200
+
+    Disable test scripts on windows
+    
+    This is a temporary solution to avoid failures
+    of test scripts when ran on windows
+    
+    Signed-off-by: Zoltan Fridrich <zfridric@redhat.com>
+
+Author: Zoltan Fridrich <zfridric@redhat.com>
+Date:   Thu May 12 10:38:23 2022 +0200
+
+    Release 3.7.5
+    
+    Signed-off-by: Zoltan Fridrich <zfridric@redhat.com>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Tue May 10 09:52:26 2022 +0200
+
+    cligen: update git submodule
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Zoltan Fridrich <zfridric@redhat.com>
+Date:   Fri Apr 29 12:28:50 2022 +0200
+
+    Improve certificate sanity checks
+    
+    Signed-off-by: Zoltan Fridrich <zfridric@redhat.com>
+
+Author: Tim Kosse <tim.kosse@filezilla-project.org>
+Date:   Mon Mar 28 17:49:22 2022 +0200
+
+    Fix psk_ke_modes_recv_params() wrongly setting HSK_PSK_KE_MODE_INVALID
+    
+    If the preferred side (as per session->internals.priorities->server_precedence)
+    only supports one algorithm and if it is not the first in the other side's list
+    of algorithms, then psk_ke_modes_recv_params did wrongly set
+    session->internals.hsk_flags to HSK_PSK_KE_MODE_INVALID.
+    
+    Fixes #1303
+    
+    This issue was originally discovered while analyzing
+    https://forum.filezilla-project.org/viewtopic.php?t=54333
+    
+    Signed-off-by: Tim Kosse <tim.kosse@filezilla-project.org>
+    Co-authored-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Sat May 7 10:07:01 2022 +0200
+
+    tests/cmocka-common.h: include <stdarg.h> before <cmocka.h>
+    
+    As documented in <https://api.cmocka.org/group__cmocka.html#details>,
+    <stdarg.h> must be included before <cmocka.h>.
+    
+    Suggested by Brad Smith in:
+    https://gitlab.com/gnutls/gnutls/-/issues/1360
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Fri Apr 29 12:01:53 2022 +0200
+
+    configure.ac: check if compiler supports -Wa,-march=all
+    
+    Clang from LLVM 13.0.0 caused a segumentation fault if an unknown
+    architecture is supplied through -march.  While this has been fixed in
+    13.0.1, until it is widely deployed this adds a configure check as a
+    safeguard:
+    https://github.com/llvm/llvm-project/commit/d31f8cc6884ba3cc3e088fd57c4c533868e8a8b2
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Sat Jan 15 11:27:20 2022 +0100
+
+    gnutls_aead_cipher_set_key: new function
+    
+    This adds gnutls_aead_cipher_set_key, which enables to reuse the same
+    handle but reset the context and key, without releasing the memory.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Mon Jan 17 11:48:39 2022 +0100
+
+    crypto-api: support AES-SIV with scatter-gather API
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Mon Jan 17 11:17:46 2022 +0100
+
+    crypto-api: refactor iov_store_st operations
+    
+    This replaces copy_from_iov to more generic append_from_iov.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Mon Jan 17 10:36:44 2022 +0100
+
+    crypto-api: split scatter-gather AEAD implementation to helper funcs
+    
+    These _encryptv, _encryptv2, and _decryptv2 functions take orthogonal
+    code paths depending on whether the underlying AEAD implementation
+    supports message based API.  This patch split the implementation to
+    dedicated helper functions.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Mon Jan 17 10:07:02 2022 +0100
+
+    crypto-api: add integer overflow checks around copying IOV
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Zoltan Fridrich <zfridric@redhat.com>
+Date:   Thu May 5 12:10:46 2022 +0200
+
+    Extend fipshmac to take a path to libgnutls.so
+    
+    Signed-off-by: Zoltan Fridrich <zfridric@redhat.com>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Wed May 4 15:27:16 2022 +0200
+
+    .github/workflows/macos.yml: display tests/cert-tests/*.log
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Wed May 4 15:23:49 2022 +0200
+
+    lib/fips.c: suppress -Wdiscarded-qualifiers warning
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Wed May 4 15:22:16 2022 +0200
+
+    .gitignore: ignore tests/tls13/compress-cert*
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Wed May 4 15:19:17 2022 +0200
+
+    tests/cert-tests/pkcs12.sh: use portable sed invocations
+    
+    The BSD sed doesn't recognize '\|' as the alternative operator, and
+    the last '}' must be preceded with a newline.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Tue Sep 21 08:07:25 2021 +0200
+
+    tls: add flag to disable session ticket in TLS 1.2
+    
+    The existing GNUTLS_NO_TICKETS flag affects all versions of TLS, where
+    PFS is assured in TLS 1.3, while it is not in TLS 1.2.  This adds a
+    new flag GNUTLS_NO_TICKETS_TLS12 to allow applications to disable
+    session tickets only in TLS 1.2.
+    
+    As the only means of resumption in TLS 1.3 is using session tickets,
+    we could repurpose the GNUTLS_NO_TICKETS flag make it no-op in TLS
+    1.3.  However it would break backward compatibility, so we defer it to
+    the next major release.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Sun Nov 28 11:31:30 2021 +0100
+
+    session_ticket: avoid invalid free on error path
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Tue Sep 21 11:08:06 2021 +0200
+
+    _gnutls_version_max: return NULL if priorities are not populated
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Mon May 2 07:41:12 2022 +0200
+
+    m4: update from autoconf-archive
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Sun Apr 17 10:56:35 2022 +0200
+
+    .github/workflows/macos.yml: pull in gtk-doc
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Zoltan Fridrich <zfridric@redhat.com>
+Date:   Thu Apr 28 12:17:16 2022 +0200
+
+    gnutls-cli, gnutls-serv: print supported channel binding
+    
+    Signed-off-by: Zoltan Fridrich <zfridric@redhat.com>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Sat Sep 4 07:16:18 2021 +0200
+
+    .gitlab-ci.yml: replace valgrind checks with ASan
+    
+    Running the full test suite under valgrind wastes a lot of time and
+    may cause intermittent failures due to timeout.  We have them mainly
+    for VALGRIND_MAKE_MEM_UNDEFINED client request, though the ASan tests
+    now cover the equivalent after
+    f23c3a6cba43706a6ebb3f9b0018cd658dcc0a72.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Zoltan Fridrich <zfridric@redhat.com>
+Date:   Thu Apr 14 11:29:26 2022 +0200
+
+    Use packit to automate fedora upstream release
+    
+    Signed-off-by: Zoltan Fridrich <zfridric@redhat.com>
+
+Author: Tatsuhiro Tsujikawa <tatsuhiro.t@gmail.com>
+Date:   Sun Apr 24 17:03:18 2022 +0900
+
+    Preserve mbuffer type when linearized
+    
+    Signed-off-by: Tatsuhiro Tsujikawa <tatsuhiro.t@gmail.com>
+
+Author: Brian Wickman <bwickman97@outlook.com>
+Date:   Thu Apr 21 05:52:36 2022 +0000
+
+    Fix for #1132
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Mon Apr 11 14:00:16 2022 +0200
+
+    .gitignore: ignore files generated by asn1Parser
+    
+    These files are no longer maintained in the repository, after commit
+    16061937.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Fri Apr 8 10:23:51 2022 +0200
+
+    cligen: update git submodule
+    
+    This also reverts commit fd0e28a3 and changes how the cligen python
+    files are included in the distribution.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Zoltan Fridrich <zfridric@redhat.com>
+Date:   Tue Apr 12 16:34:52 2022 +0200
+
+    Small fips-test refactoring
+    
+    Signed-off-by: Zoltan Fridrich <zfridric@redhat.com>
+
+Author: Zoltan Fridrich <zfridric@redhat.com>
+Date:   Mon Apr 11 16:04:38 2022 +0200
+
+    Add zeroization of some critical security parameters
+    to comply with FIPS-140-3 requirements
+    
+    Signed-off-by: Zoltan Fridrich <zfridric@redhat.com>
+
+Author: Andreas Metzler <ametzler@debian.org>
+Date:   Sun Apr 10 13:22:22 2022 +0200
+
+    Document C++ soname bump in NEWS.
+    
+    Signed-off-by: Andreas Metzler <ametzler@bebt.de>
+
+Author: Andreas Metzler <ametzler@debian.org>
+Date:   Wed Mar 30 18:26:36 2022 +0200
+
+    Add missing gtk-doc for GNUTLS_COMP_BROTLI/ZSTD.
+    
+    Signed-off-by: Andreas Metzler <ametzler@bebt.de>
+
+Author: Andreas Metzler <ametzler@debian.org>
+Date:   Wed Mar 30 18:18:12 2022 +0200
+
+    Add missing copyright header
+    
+    Signed-off-by: Andreas Metzler <ametzler@bebt.de>
+
+Author: Zoltan Fridrich <zfridric@redhat.com>
+Date:   Tue Apr 5 16:28:41 2022 +0200
+
+    Add missing FIPS service indicator transitions
+    
+    Signed-off-by: Zoltan Fridrich <zfridric@redhat.com>
+
+Author: Zoltan Fridrich <zfridric@redhat.com>
+Date:   Wed Apr 6 15:33:32 2022 +0200
+
+    Remove 3DES from FIPS approved algorithms.
+    According to the section 2 of SP800-131A Rev.2, 3DES algorithm
+    will be disallowed for encryption after December 31, 2023:
+    https://csrc.nist.gov/publications/detail/sp/800-131a/rev-2/final
+    
+    Signed-off-by: Zoltan Fridrich <zfridric@redhat.com>
+
+Author: Zoltan Fridrich <zfridric@redhat.com>
+Date:   Fri Apr 1 12:34:12 2022 +0200
+
+    Mark HKDF and AES-GCM as approved when used in TLS
+    
+    Co-authored-by: Pedro Monreal <pmgdeb@gmail.com>
+    Signed-off-by: Zoltan Fridrich <zfridric@redhat.com>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Thu Mar 31 15:50:51 2022 +0200
+
+    bootstrap.conf: use install-sh to copy cligen files
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Sat Mar 19 10:01:09 2022 +0100
+
+    lib/{gnutls,pkix}_asn1_tab.c: remove autogenerated files
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Sat Mar 19 10:00:08 2022 +0100
+
+    devel/README-ci.freebsd.md: stop mentioning autogen
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Sat Mar 19 09:59:58 2022 +0100
+
+    .github/workflows/macos.yml: stop installing autogen
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Sat Mar 19 09:53:54 2022 +0100
+
+    configure.ac: always assume GTK_DOC_CHECK macro
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Thu Mar 31 14:28:32 2022 +0200
+
+    fips: simplify library integrity checking
+    
+    This removes code duplication by grouping the path and hmac fields in
+    hmac_file structure.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Zoltan Fridrich <zfridric@redhat.com>
+Date:   Thu Mar 31 10:13:06 2022 +0200
+
+    Increase length limit of PKCS#12 passwords
+    
+    Signed-off-by: Zoltan Fridrich <zfridric@redhat.com>
+
+Author: František Krenželok <krenzelok.frantisek@gmail.com>
+Date:   Fri Mar 25 11:31:05 2022 +0100
+
+    ktls config documentation
+    
+    Signed-off-by: Frantisek Krenzelok <krenzelok.frantisek@gmail.com>
+
+Author: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Date:   Thu Mar 31 08:57:07 2022 +1100
+
+    Fix off-by one exit condition in pkcs#11 priv keys lookup
+    
+    In function find_privkeys(), the list-> array is allocated to be of size
+    lists->key_ids_size. "current" is the index where the next found key will
+    be written (starts at 0).
+    
+    The current exit condition is thus incorrect:
+    
+                    if (current > list->key_ids_size)
+                            break;
+    
+    This will allow "current" to be equal to list->key_ids_size which will
+    potentially cause an overflow if more keys are returned by the loop than
+     was originally found when calculating that size.
+    
+    This is very unlikely, but incorrect nonetheless.
+    
+    Fix this by using the more classic construct of testing for the array bound
+    in the loop exit condition, as suggested by Daiki Ueno.
+    
+    Signed-off-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+
+Author: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Date:   Mon Mar 21 13:45:11 2022 +1100
+
+    Fix matching of last key of a pkcs#11 token
+    
+    Retrieving the cert for the last key of a token fails due to an
+    off-by-one bug in find_privkeys():
+    
+    In the loop that iterates the keys, "current" contains the index
+    of the "next" key slot, which is also the active "count" of populated
+    slots in the output struct find_pkey_list_st.
+    
+    The current statement:
+    
+            list->key_ids_size = current - 1;
+    
+    Means we return a "key_ids_size" of the current count minus one, ie 0
+    for 1 key etc... However, this isn't what the callers expect, for example:
+    
+    find_multi_objs_cb() does:
+    
+                    ret = find_privkeys(sinfo, tinfo, &plist);
+                    if (ret < 0) {
+                            gnutls_assert();
+                            return ret;
+                    }
+    
+                    if (plist.key_ids_size == 0) {
+                            gnutls_assert();
+                            return GNUTLS_E_REQUESTED_DATA_NOT_AVAILABLE;
+                    }
+    
+    So a slot with a single key will fail when trying to find a certificate
+    
+    Subsequent uses of "plist" in that function also show that it's expected
+    to contain the real slot count:
+    
+                    for (i = 0; i < plist.key_ids_size; i++) {
+    
+    Signed-off-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+
+Author: Zoltan Fridrich <zfridric@redhat.com>
+Date:   Wed Mar 23 16:55:51 2022 +0100
+
+    Consolidate FIPS .hmac files
+    
+    Signed-off-by: Zoltan Fridrich <zfridric@redhat.com>
+
+Author: František Krenželok <krenzelok.frantisek@gmail.com>
+Date:   Fri Mar 18 11:37:10 2022 +0100
+
+    system config disable KTLS
+    
+    Added option for system config `ktls = false` to disable ktls
+    system-wide
+    
+    Signed-off-by: Frantisek Krenzelok <krenzelok.frantisek@gmail.com>
+
+Author: Pedro Monreal <pmgdeb@gmail.com>
+Date:   Tue Mar 22 13:01:53 2022 +0100
+
+    lib/crypto-selftests.c: Add a selftest for PBKDF2 that complies with FIPS 140-3.
+    
+    Signed-off-by: Pedro Monreal <pmgdeb@gmail.com>
+
+Author: Tobias Heider <tobias.heider@canonical.com>
+Date:   Mon Mar 14 16:17:28 2022 +0100
+
+    Use custom allocators for GMP to make sure temporary secrets
+    from cryptographic operations in nettle are deleted safely.
+    
+    Signed-off-by: Tobias Heider <tobias.heider@canonical.com>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Fri Mar 18 08:10:12 2022 +0100
+
+    devel/release-steps.md: expand steps to generate tarball [ci-skip]
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Fri Mar 18 07:54:06 2022 +0100
+
+    NEWS: mention couple more changes in 3.7.4 release [ci-skip]
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Sam James <sam@gentoo.org>
+Date:   Fri Mar 18 05:51:29 2022 +0000
+
+    configure.ac: fix zstd detection
+    
+    Fixes typo in zstd detection.
+    
+    None of the used autoconf macros will define `has_zstd_h` so
+    configure will (AFAICT) always fail to find zstd, even if it succeeded
+    via pkg-config moments before.
+    
+    Drop it and rely solely on pkg-config as that's the only search
+    we're actually doing.
+    
+    Fixes: https://gitlab.com/gnutls/gnutls/-/issues/1343
+    Signed-off-by: Sam James <sam@gentoo.org>
+
+Author: Sam James <sam@gentoo.org>
+Date:   Fri Mar 18 05:40:28 2022 +0000
+
+    configure.ac: fix brotli/zstd configure argument name
+    
+    The old `./configure` arguments for brotli and zstd respectively
+    were inconsistent with the `./configure --help` output.
+    
+    Old: --without-libbrotli --without-libzstd (also --with-*)
+    New: --without-brotli --without-zstd (also --with-*)
+    
+    Fixes: https://gitlab.com/gnutls/gnutls/-/issues/1342
+    Signed-off-by: Sam James <sam@gentoo.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Wed Mar 16 11:19:29 2022 +0100
+
+    cligen: update git submodule
+    
+    To avoid emitting empty "list" substruct in header files, as well as
+    assuming the Python pwd module is always available.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Zoltan Fridrich <zfridric@redhat.com>
+Date:   Wed Mar 16 15:42:40 2022 +0100
+
+    Release 3.7.4
+    
+    Signed-off-by: Zoltan Fridrich <zfridric@redhat.com>
+
+Author: Zoltan Fridrich <zfridric@redhat.com>
+Date:   Tue Mar 8 18:01:37 2022 +0100
+
+    Make gnutls compliant to RFC5280
+    
+    Signed-off-by: Zoltan Fridrich <zfridric@redhat.com>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Mon Mar 14 16:03:07 2022 +0100
+
+    cli, serv: allow multiple --compress-cert options
+    
+    This eliminates the need of parsing the comma separated list manually.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Tobias Heider <tobias.heider@canonical.com>
+Date:   Sun Mar 13 23:58:42 2022 +0100
+
+    Handle all cases of calloc returning NULL.
+    
+    Signed-off-by: Tobias Heider <tobias.heider@canonical.com>
+
+Author: František Krenželok <krenzelok.frantisek@gmail.com>
+Date:   Fri Mar 11 18:22:18 2022 +0100
+
+    Fix global-ini-handler
+    
+    Signed-off-by: Frantisek Krenzelok <krenzelok.frantisek@gmail.com>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Thu Feb 10 15:58:08 2022 +0100
+
+    Make option specification type-safe
+    
+    This switches the CLI code and documentation generation to the
+    external cligen module, which provides more type-safe specification.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Tobias Heider <tobias.heider@canonical.com>
+Date:   Wed Mar 9 01:18:20 2022 +0100
+
+    fips: use GNUTLS_FIPS140_STRICT instead of magic number.
+    
+    Signed-off-by: Tobias Heider <tobias.heider@canonical.com>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Wed Mar 9 08:07:58 2022 +0100
+
+    locks: define lock functions as a macro
+    
+    When threads are not supported, glthread_* functions are defined as
+    no-op and thus dereferencing lock variables in inline functions will
+    cause compilation error.  This change fixes it by redefining our lock
+    functions as a macro so it will also be compiled out.
+    
+    Reported by Fabrice Fontaine in:
+    https://gitlab.com/gnutls/gnutls/-/issues/1330
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Wed Mar 9 07:25:01 2022 +0100
+
+    .gitlab-ci.yml: prolong timeout for slow CI jobs
+    
+    Suggested by Marvin Scholz in:
+    https://gitlab.com/gnutls/gnutls/-/merge_requests/1543#note_859825412
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Wed Feb 23 19:48:52 2022 +0100
+
+    tpm2: dynamically load tss2 libraries as needed
+    
+    libtss2-esys links to OpenSSL or mbed TLS for cryptography, which may
+    cause packaging issues.  This instead dlopen's tss2 libraries as
+    needed so non-TPM applications continue working without loading
+    multiple crypto libraries.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Zoltan Fridrich <zfridric@redhat.com>
+Date:   Wed Jan 12 14:57:42 2022 +0100
+
+    Add compress_certificate extension (RFC8879)
+    
+    Signed-off-by: Zoltan Fridrich <zfridric@redhat.com>
+
+Author: Craig Gallek <cgallek@gmail.com>
+Date:   Sun Feb 27 10:39:07 2022 -0500
+
+    x509: fix return error code for failed decryption without key
+    
+    Decrypting an encrypted private key previously returned
+    GNUTLS_E_DECRYPTION_FAILED when no password was supplied.  This changed when
+    decryption via pin callbacks was added in d31b89de.
+    
+    That change should have included a check for callback existence in order to
+    preserve the error path of the no-password case.
+    
+    This adds the check and a test for the previous behavior.
+    Resolves bug #1321
+    
+    Signed-off-by: Craig Gallek <cgallek@gmail.com>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Thu Feb 24 09:55:01 2022 +0100
+
+    gnutls_record_send_file: make it work with non-blocking I/O
+    
+    When either read() or gnutls_record_send() returns EAGAIN, just return
+    to the caller so it can call this function again, instead of retrying
+    internally.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Marvin Scholz <epirat07@gmail.com>
+Date:   Wed Feb 23 19:03:51 2022 +0100
+
+    configure.ac: add missing Libs.private for macOS
+    
+    On macOS the CoreFoundation and Security frameworks are used by
+    GnuTLS, however those were missing in the Libs.private in the .pc
+    resulting in link failures with static builds when relying on the
+    output of pkg-config --static.
+    
+    Signed-off-by: Marvin Scholz <epirat07@gmail.com>
+
+Author: František Krenželok <krenzelok.frantisek@gmail.com>
+Date:   Wed Feb 16 11:25:11 2022 +0100
+
+    non-KTLS sendfile test
+    
+    Signed-off-by: Frantisek Krenzelok <krenzelok.frantisek@gmail.com>
+
+Author: František Krenželok <krenzelok.frantisek@gmail.com>
+Date:   Wed Feb 16 11:23:36 2022 +0100
+
+    non-KTLS sendfile
+    
+    Added: sendfile API functionality for non KTLS enabled builds.
+    Signed-off-by: Frantisek Krenzelok <krenzelok.frantisek@gmail.com>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Tue Feb 22 17:09:46 2022 +0100
+
+    algorithms: ensure _list() exclude non-existing algorithms
+    
+    This aligns the behavior of _list() function for sign/pk to the one
+    for cipher/mac: the former previously returned all the algorithms
+    defined, while the latter returns only algorithms compiled in.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Tue Feb 22 17:25:26 2022 +0100
+
+    Revert "algorithms: compile out GOST algorithm IDs if they are disabled"
+    
+    This reverts commit aa94bcbdaa55899f4f4ae13dc3e9a8c559354676.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: František Krenželok <krenzelok.frantisek@gmail.com>
+Date:   Wed Feb 16 11:22:47 2022 +0100
+
+    auto-generated files update
+    
+    Signed-off-by: Frantisek Krenzelok <krenzelok.frantisek@gmail.com>
+
+Author: František Krenželok <krenzelok.frantisek@gmail.com>
+Date:   Tue Nov 16 12:05:53 2021 +0100
+
+    ktls: sendfile
+    
+    added API function: gnutls_record_send_file().
+    added: _gnutls_ktls_send_file() function which increases the performance
+    by offloading the file encryption to kernel, thus the data never goes
+    to userspace.
+    updated tests/gnutls_ktls to cover new API
+    
+    Signed-off-by: Frantisek Krenzelok <krenzelok.frantisek@gmail.com>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Mon Feb 21 16:36:32 2022 +0100
+
+    algorithms: compile out GOST algorithm IDs if they are disabled
+    
+    When compiled with --disable-gost, gnutls-cli --list still prints GOST
+    algorithms for public key systems and signatures.  This change adds
+    compile time checks to suppress them.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Alexander Sosedkin <asosedkin@redhat.com>
+Date:   Mon Feb 21 18:19:25 2022 +0100
+
+    lib/algorithms: add UB warnings on late allowlisting API invocations
+    
+    Signed-off-by: Alexander Sosedkin <asosedkin@redhat.com>
+
+Author: Alexander Sosedkin <asosedkin@redhat.com>
+Date:   Mon Feb 14 13:48:37 2022 +0100
+
+    lib/priority: defer setting system-wide priority string
+    
+    Signed-off-by: Alexander Sosedkin <asosedkin@redhat.com>
+
+Author: Alexander Sosedkin <asosedkin@redhat.com>
+Date:   Mon Feb 14 12:44:57 2022 +0100
+
+    lib/priority: split up update_system_wide_priority_string
+    
+    This is done in preparation for deferring priority string evaluation.
+    
+    Signed-off-by: Alexander Sosedkin <asosedkin@redhat.com>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Mon Feb 21 16:28:49 2022 +0100
+
+    priority: compile out GOST algorithms IDs if they are disabled
+    
+    When compiled with --disable-gost, gnutls-cli --priority NORMAL --list
+    still prints GOST algorithms for ciphers, MACs, and signatures.  This
+    change adds compile time checks to suppress them.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Alexander Sosedkin <asosedkin@redhat.com>
+Date:   Fri Feb 18 11:05:15 2022 +0100
+
+    bump GNUTLS_MAX_ALGORITHM_NUM / MAX_ALGOS
+    
+    Fedora 36 LEGACY crypto-policy uses allowlisting format
+    and is long enough to blow past the 64 priority string
+    elements mark, causing, effectively, priority string truncation.
+    
+    Signed-off-by: Alexander Sosedkin <asosedkin@redhat.com>
+
+Author: Dimitris Apostolou <dimitris.apostolou@icloud.com>
+Date:   Thu Feb 17 17:35:59 2022 +0200
+
+    Fix typos
+    
+    Signed-off-by: Dimitris Apostolou <dimitris.apostolou@icloud.com>
+
+Author: Zoltan Fridrich <zfridric@redhat.com>
+Date:   Thu Feb 17 11:46:29 2022 +0100
+
+    Disable some tests in fips mode
+    
+    Signed-off-by: Zoltan Fridrich <zfridric@redhat.com>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Thu Feb 10 17:35:13 2022 +0100
+
+    _gnutls_pkcs_raw_{decrypt,encrypt}_data: use public crypto API
+    
+    These functions previously used the internal crypto
+    API (_gnutls_cipher_*) which does not have algorithm checks for FIPS.
+    
+    This change switches the code to use the public crypto
+    API (gnutls_cipher_*) to trigger proper state transitions under FIPS
+    mode.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Thu Feb 10 16:43:08 2022 +0100
+
+    pkcs12: mark MAC generation and verification as FIPS non-approved
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Tue Feb 15 17:38:20 2022 +0100
+
+    gnutls_transport_is_ktls_enabled: fix return value of stub
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Wed Jan 12 10:37:53 2022 +0100
+
+    gnutls_ciphersuite_get: new function to get unique ciphersuite name
+    
+    The existing method to obtain the name of the currently negotiated TLS
+    ciphersuite is as follows:
+    
+    - call gnutls_cipher_get, gnutls_mac_get, gnutls_kx_get
+    - call gnutls_cipher_suite_get_name with the value from the above functions
+    
+    This process is cumbersome and only works with TLS 1.2 or earlier;
+    moreover the returned names are GnuTLS specific.
+    
+    This change adds a new function gnutls_ciphersuite_get to eliminate
+    those limitations.  It returns the "canonical" name of the
+    ciphersuite, which is mostly identical to the ones registered in IANA,
+    with an exception for compatibility.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Mon Dec 20 09:28:10 2021 +0100
+
+    tls-fuzzer: prolong timeout for FFDHE tests
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Fri Nov 26 20:03:15 2021 +0100
+
+    .gitlab-ci.yml: prolong timeout for fedora-nettle-minigmp/test
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Fri Nov 26 09:37:58 2021 +0100
+
+    .gitlab-ci.yml: fix nettle installation path
+    
+    .fedora-nettle/build clones the nettle into "nettle-git" and
+    temporarily change the working directory while buidling it.  After
+    moving back to the original working directory, the installation path
+    should be prefixed with "${PWD}/nettle-git/".
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Tue Feb 1 15:19:52 2022 +0100
+
+    certtool --generate-privkey: update warnings on RSA key sizes
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Thu Jan 27 18:17:43 2022 +0100
+
+    rsa_generate_fips186_4_keypair: accept a few more modulus sizes
+    
+    While _rsa_generate_fips186_4_keypair was modified to accept modulus
+    sizes other than 2048 and 3076, rsa_generate_fips186_4_keypair, which
+    calls that function, was not updated to accept such modulus sizes.
+    
+    Spotted by Alexander Sosedkin.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Fri Jan 7 11:24:36 2022 +0100
+
+    .gitlab-ci.yml: update Fedora images to Fedora 35
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Seppo Yli-Olli <seppo.yliolli@gmail.com>
+Date:   Mon Jan 31 18:32:28 2022 +0200
+
+    Bump libgnutlsxx soname due to ABI break
+    
+    db_check_entry and db_check_entry now have const parameters
+    
+    Signed-off-by: Seppo Yli-Olli <seppo.yliolli@gmail.com>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Fri Jan 28 07:49:42 2022 +0100
+
+    configure.ac: make --with-tpm and --with-tpm2 independent
+    
+    These features are not mutually exclusive, so it doesn't make sense to
+    disable the TPM 1.2 support with TPM 2.0 support.
+    
+    Reported by Jan Palus in:
+    https://gitlab.com/gnutls/gnutls/-/issues/1313
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Fri Jan 28 12:50:56 2022 +0100
+
+    gen-getopt.py: avoid struct member name clash with C keywords
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Fri Jan 28 07:55:25 2022 +0100
+
+    tests: tcp_connect: avoid resource leak on error path
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Fri Jan 28 08:48:47 2022 +0100
+
+    README.md: fix versions in build status and add 3.6.x
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Jan Palus <jpalus@fastmail.com>
+Date:   Fri Jan 28 11:07:02 2022 +0100
+
+    ktls: fix _gnutls_ktls_send_control_msg return value
+    
+    always returned 0 on success while contract mandates to return number of
+    bytes sent
+    
+    Fixes #1314
+    
+    Signed-off-by: Jan Palus <jpalus@fastmail.com>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Fri Jan 28 06:35:45 2022 +0100
+
+    release-steps: fix markup
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: František Krenželok <krenzelok.frantisek@gmail.com>
+Date:   Thu Jan 27 13:54:21 2022 +0100
+
+    KTLS: hotfix
+    
+    fixed: keys will be set only when both sockets were enabled for ktls
+    fixed: session->internals.ktls_enabled left uninitialized for non
+    ktls-enabled build
+    
+    Signed-off-by: Frantisek Krenzelok <krenzelok.frantisek@gmail.com>
+
+Author: Alexander Sosedkin <asosedkin@redhat.com>
+Date:   Wed Jan 26 16:25:01 2022 +0100
+
+    lib/accelerated: use unlikely on buffer length checks more consistently
+    
+    Signed-off-by: Alexander Sosedkin <asosedkin@redhat.com>
+
+Author: Alexander Sosedkin <asosedkin@redhat.com>
+Date:   Wed Jan 26 16:15:36 2022 +0100
+
+    lib/accelerated: rearranged several size checks to avoid overflow
+    
+    Signed-off-by: Alexander Sosedkin <asosedkin@redhat.com>
+
+Author: Alexander Sosedkin <asosedkin@redhat.com>
+Date:   Tue Jan 25 12:32:59 2022 +0100
+
+    tests/scripts/common: fix skipping over x86-specific tests
+    
+    Signed-off-by: Alexander Sosedkin <asosedkin@redhat.com>
+
+Author: Alexander Sosedkin <asosedkin@redhat.com>
+Date:   Tue Jan 25 13:37:55 2022 +0100
+
+    tests/slow/test-hash-large: output GNUTLS_CPUID_OVERRIDE hints
+    
+    Signed-off-by: Alexander Sosedkin <asosedkin@redhat.com>
+
+Author: Alexander Sosedkin <asosedkin@redhat.com>
+Date:   Tue Jan 25 13:46:46 2022 +0100
+
+    tests/slow/cipher-api-test: add happy paths, specific error checks etc
+    
+    Signed-off-by: Alexander Sosedkin <asosedkin@redhat.com>
+
+Author: Alexander Sosedkin <asosedkin@redhat.com>
+Date:   Tue Jan 25 13:36:19 2022 +0100
+
+    lib/accelerated: report GNUTLS_E_SHORT_MEMORY_BUFFER in many places
+    
+    Signed-off-by: Alexander Sosedkin <asosedkin@redhat.com>
+
+Author: Alexander Sosedkin <asosedkin@redhat.com>
+Date:   Mon Jan 24 17:37:24 2022 +0100
+
+    .gitlab-ci.yml: enable hardware acceleration in UB+ASAN jobs
+    
+    Signed-off-by: Alexander Sosedkin <asosedkin@redhat.com>
+
+Author: Alexander Sosedkin <asosedkin@redhat.com>
+Date:   Mon Jan 24 17:34:35 2022 +0100
+
+    tests/slow/cipher-api-test: actually test for short buffer...
+    
+    ... avoiding the case when different failures mask the intended one
+    
+    Signed-off-by: Alexander Sosedkin <asosedkin@redhat.com>
+
+Author: Alexander Sosedkin <asosedkin@redhat.com>
+Date:   Mon Jan 24 17:33:48 2022 +0100
+
+    lib/accelerated/x86/aes-gcm-x86-pclmul-avx: add short buffer checks
+    
+    Signed-off-by: Alexander Sosedkin <asosedkin@redhat.com>
+
+Author: Andreas Metzler <ametzler@debian.org>
+Date:   Sun Jan 23 13:40:17 2022 +0100
+
+    testsuite: Fix endless loop on /bin/sh without $RANDOM
+    
+    Closes #1315
+    Signed-off-by: Andreas Metzler <ametzler@bebt.de>
+
+Author: Andreas Metzler <ametzler@debian.org>
+Date:   Sun Jan 23 07:52:21 2022 +0100
+
+    testsuite: Fix missed instances of &> redirection
+    
+    Signed-off-by: Andreas Metzler <ametzler@bebt.de>
+
+Author: Andreas Metzler <ametzler@debian.org>
+Date:   Fri Jan 21 18:25:52 2022 +0100
+
+    Avoid &> redirection bashism in testsuite
+    
+    Signed-off-by: Andreas Metzler <ametzler@bebt.de>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Mon Jan 17 16:48:10 2022 +0100
+
+    Release 3.7.3
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Tue Jan 18 06:43:07 2022 +0100
+
+    tests: privkey-keygen: fix memory leak
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Sat Oct 30 08:56:07 2021 +0200
+
+    x509: fix thread-safety in gnutls_x509_trust_list_verify_crt2
+    
+    This function previously used gnutls_x509_trust_list_get_issuer
+    without GNUTLS_TL_GET_COPY flag, which is required when the function
+    is called from multi-threaded application and PKCS #11 trust store is
+    in use.
+    
+    Reported and the change suggested by Remi Gacogne in:
+    https://gitlab.com/gnutls/gnutls/-/issues/1277
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Sun Jan 16 07:57:02 2022 +0100
+
+    cli: add --list-config option
+    
+    With this option gnutls-cli prints the build-time configuration of the
+    library, retrieved through gnutls_get_library_config.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Tue Jan 11 07:36:27 2022 +0100
+
+    fips: add build option to embed FIPS module info in library config
+    
+    This adds a couple of configure options, --with-fips140-module-name
+    and --with-fips140-module-version, which packagers can use to embed
+    FIPS module information in the library.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Tue Jan 11 07:34:59 2022 +0100
+
+    global: add API to retrieve library configuration at run time
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Sun Jan 16 12:17:39 2022 +0100
+
+    configure.ac: emit feature summary as C macro
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Sun Jan 16 16:19:53 2022 +0100
+
+    tests: suppress GCC -fanalyzer warnings
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Sun Jan 16 16:00:10 2022 +0100
+
+    .gitignore: ignore more files
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Sun Jan 16 15:59:01 2022 +0100
+
+    src: avoid overriding noinst_PROGRAMS
+    
+    In src, we now have two helper programs: systemkey and dumpcfg.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Thu Jan 13 14:30:02 2022 +0100
+
+    build: hide maintainer tool invocation behind AM_V_GEN
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Alexander Sosedkin <asosedkin@redhat.com>
+Date:   Thu Jan 13 14:35:07 2022 +0100
+
+    tests: use more aliases in tests for better alias testing coverage
+    
+    Signed-off-by: Alexander Sosedkin <asosedkin@redhat.com>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Fri Jan 7 10:02:32 2022 +0100
+
+    .gitlab-ci.yml: run static analyzers on Python files
+    
+    This runs a couple of code analysis on the Python scripts added to
+    remove AutoGen dependency.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Fri Jan 7 09:58:11 2022 +0100
+
+    .gitlab-ci.yml: bump cache key for python3 detection
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Wed Jan 5 08:09:36 2022 +0100
+
+    README.md: mention Python as requirement instead of AutoGen
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Wed Jan 5 07:39:10 2022 +0100
+
+    src: remove AutoGen .def files
+    
+    As neither the tools nor documentation depends on AutoGen, we don't
+    need to include the AutoGen definition files.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Wed Jan 5 07:24:03 2022 +0100
+
+    doc: generate man-pages from JSON
+    
+    This replaces man-pages generation previously provided by the autogen
+    -Tagman.tpl command with a Python script (gen-cmd-man.py).
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Tue Jan 4 09:06:21 2022 +0100
+
+    doc: generate texinfo files from JSON
+    
+    This replaces texinfo generation previously provided by the autogen
+    -Tagtexi.tpl command with a Python script (gen-cmd-texi.py).
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Mon Jan 3 11:02:43 2022 +0100
+
+    src: remove included copy of libopts
+    
+    As no tools link with libopts anymore, we don't need to include it in
+    the distribution.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Mon Jan 3 10:30:34 2022 +0100
+
+    src: replace autoopts/libopts with minimal config parser
+    
+    This replaces configuration file parsing code previously provided by
+    <autoopts/options.h>, with a minimal compatible implementation.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Fri Dec 31 18:13:58 2021 +0100
+
+    src: generate option handling code from JSON
+    
+    This replaces AutoGen based command-line parser with a Python
+    script (gen-getopt.py), which takes JSON description as the input.
+    The included JSON files were converted one-off using the parse-autogen
+    program: https://gitlab.com/dueno/parse-autogen.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Tue Jan 4 15:18:26 2022 +0100
+
+    python: add library for handling JSON-based option description
+    
+    This adds the jsonopts Python module used by the command-line parser
+    generator and documentation generators in the following commits.  This
+    also bumps the required Python interpreter version to 3.6.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+    Co-authored-by: Alexander Sosedkin <asosedkin@redhat.com>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Thu Jan 13 09:36:52 2022 +0100
+
+    pkcs12: use the correct MAC algorithm for GOST key generation
+    
+    According to the latest TC-26 requirements, the MAC algorithm used for
+    PBKDF2 should always be HMAC_GOSTR3411_2012_512.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Wed Jan 12 08:15:24 2022 +0100
+
+    tests: simple: check if the digest algorithm is compiled in
+    
+    When the library is built with --disable-gost, gnutls_digest_get_id
+    returns GNUTLS_DIG_UNKNOWN for GOST algorithms.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Tue Jan 11 14:07:56 2022 +0100
+
+    x509: fix potential wrong usage of memcpy
+    
+    Spotted by GCC analyzer:
+    
+      common.c:552:17: warning: use of NULL 'out.data' where non-null expected [CWE-476] [-Wanalyzer-null-argument]
+        552 |                 memcpy(output_data, out.data, (size_t) out.size);
+            |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Sun Jan 9 08:34:52 2022 +0100
+
+    cert-auth: suppress false-positive warnings with GCC analyzer
+    
+    When compiled with gcc -fanalyzer, it reports:
+    
+      cert.c: In function '_gnutls_pcert_to_auth_info':
+      cert.c:85:17: error: dereference of NULL 'info' [CWE-476] [-Werror=analyzer-null-dereference]
+         85 |         if (info->raw_certificate_list != NULL) {
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Fri Jan 7 17:48:22 2022 +0100
+
+    gnutls_pkcs12_generate_mac: use SHA256 by default
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Mon Dec 20 16:16:23 2021 +0100
+
+    .gitlab-ci.yml: reduce PKCS#12 iteration count while testing
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Tue Dec 21 15:02:45 2021 +0100
+
+    tests: check algorithms for generating PKCS#12 file
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Sun Dec 26 17:40:42 2021 +0100
+
+    cipher-api-test: mention why it is written using fork
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Tue Nov 23 15:23:34 2021 +0100
+
+    fips: plumb service indicator to symmetric key crypto operations
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+    Co-authored-by: Pedro Monreal <pmonrealgonzalez@suse.de>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Tue Aug 31 13:29:45 2021 +0200
+
+    fips: plumb service indicator to public key crypto operations
+    
+    This installs service indicator state transitions in certain public
+    key operations in gnutls_crypto_pk_st, namely:
+    
+    * fallible operations
+      - encrypt
+      - sign
+      - generate_keys
+      - derive
+    
+    * infallible operations
+      - decrypt, decrypt2
+      - verify
+    
+    other operations, such as generate_params, are not considered as
+    crypto operation.  Note that fallible operations above mean that those
+    return value could indicate error, while infallible operations do not
+    have distinction between errors and failures: decrypt/verify failures
+    are treated as a successful completion of the operation.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+    Co-authored-by: Pedro Monreal <pmonrealgonzalez@suse.de>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Tue Dec 21 15:17:55 2021 +0100
+
+    _gnutls_pkcs_generate_key: use HMAC-SHA256 for PBKDF2
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Mon Dec 20 16:34:30 2021 +0100
+
+    pkcs12: determine iteration count for MAC at build time
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Mon Dec 20 16:13:06 2021 +0100
+
+    pkcs7: determine iteration count for PBKDF2 at build time
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Mon Dec 20 15:56:24 2021 +0100
+
+    certtool: --to-p12: use modern algorithms by default
+    
+    Currently certtool uses PKCS12-3DES-SHA1 for encrypting keys in
+    PKCS#12, while it is suggested to migrate to more modern algorithms,
+    namely AES-128-CBC with PBKDF2 and SHA-256:
+    https://bugzilla.redhat.com/show_bug.cgi?id=1759982
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Fri Jul 23 10:31:08 2021 +0200
+
+    fips: add functions to inspect thread-local FIPS operation state
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Andreas Metzler <ametzler@debian.org>
+Date:   Thu Jan 6 07:17:01 2022 +0100
+
+    Drop unquoted angle brackets in gtk-doc comment.
+    
+    Signed-off-by: Andreas Metzler <ametzler@bebt.de>
+
+Author: Andreas Metzler <ametzler@debian.org>
+Date:   Thu Jan 6 07:15:31 2022 +0100
+
+    Fix gtk-doc build, use http URI in sgml master.
+    
+    Signed-off-by: Andreas Metzler <ametzler@bebt.de>
+
+Author: Alon Bar-Lev <alon.barlev@gmail.com>
+Date:   Sat Jan 1 21:12:51 2022 +0200
+
+    p11tool: add --mark-always-authenticate option
+    
+    Signed-off-by: Alon Bar-Lev <alon.barlev@gmail.com>
+
+Author: Alon Bar-Lev <alon.barlev@gmail.com>
+Date:   Sun Jan 2 19:31:33 2022 +0200
+
+    doc: updated copyrights for 2022
+    
+    Signed-off-by: Alon Bar-Lev <alon.barlev@gmail.com>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Thu Nov 18 19:02:03 2021 +0100
+
+    accelerated: fix CPU feature detection for Intel CPUs
+    
+    This fixes read_cpuid_vals to correctly read the CPUID quadruple, as
+    well as to set the bit the ustream CRYPTOGAMS uses to identify Intel
+    CPUs.
+    
+    Suggested by Rafael Gieschke in:
+    https://gitlab.com/gnutls/gnutls/-/issues/1282
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Wed Dec 22 17:00:03 2021 +0100
+
+    padlock: reset _gnutls_x86_cpuid_s only after padlock check succeeds
+    
+    Otherwise it clears _gnutls_x86_cpuid_s which may already hold valid
+    CPUID detected for Intel and AMD CPUs.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Wed Dec 22 09:12:25 2021 +0100
+
+    wrap_nettle_hash_fast: avoid calling _update with zero-length input
+    
+    As Nettle's hash update functions internally call memcpy, providing
+    zero-length input may cause undefined behavior.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Wed Dec 22 08:22:04 2021 +0100
+
+    gnutls_{hash,hmac}_copy: mention the functions do not always work
+    
+    It is known that some built-in accelerated implementation, such as
+    AF_ALG, does not support copying hash/hmac contexts.  This expands the
+    documentation to suggest checking the return value of those functions.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Alexander Sosedkin <asosedkin@redhat.com>
+Date:   Mon Dec 20 17:47:36 2021 +0100
+
+    tests: extend system-override-curves-allowlist with key generation
+    
+    Signed-off-by: Alexander Sosedkin <asosedkin@redhat.com>
+
+Author: Alexander Sosedkin <asosedkin@redhat.com>
+Date:   Mon Dec 20 16:50:59 2021 +0100
+
+    tests: tweak system-override-curves-allowlist insignificantly
+    
+    Signed-off-by: Alexander Sosedkin <asosedkin@redhat.com>
+
+Author: Alexander Sosedkin <asosedkin@redhat.com>
+Date:   Fri Dec 17 18:49:27 2021 +0100
+
+    README: document tpm2-tss-engine test dependency
+    
+    Signed-off-by: Alexander Sosedkin <asosedkin@redhat.com>
+
+Author: Alexander Sosedkin <asosedkin@redhat.com>
+Date:   Thu Dec 16 12:46:38 2021 +0100
+
+    use sha384_digest in lib/accelerated/aarch64/sha-aarch64.c sha384
+    
+    Mirrors https://gitlab.com/gnutls/gnutls/-/merge_requests/1466
+    
+    Signed-off-by: Alexander Sosedkin <asosedkin@redhat.com>
+
+Author: František Krenželok <krenzelok.frantisek@gmail.com>
+Date:   Thu Dec 2 16:35:31 2021 +0100
+
+    ktls: flags
+    
+    ktls enum flags API
+    
+    Signed-off-by: Frantisek Krenzelok <krenzelok.frantisek@gmail.com>
+
+Author: František Krenželok <krenzelok.frantisek@gmail.com>
+Date:   Fri Oct 15 15:00:17 2021 +0200
+
+    KTLS: API
+    
+    ktls is enabled by default, we can check if inicialization was
+    succesfull with gnutls_transport_is_ktls_enabled
+    
+    Signed-off-by: Frantisek Krenzelok <krenzelok.frantisek@gmail.com>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Thu Dec 9 11:22:14 2021 +0100
+
+    .gitignore: ignore tests/x509cert-ct
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Thu Dec 9 11:03:50 2021 +0100
+
+    X509 CT: defer filling in the length field
+    
+    This eliminates the need of precalculating the payload size, to make
+    it easier to adapt to new format.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Alexander Sosedkin <asosedkin@redhat.com>
+Date:   Fri Dec 10 13:47:21 2021 +0100
+
+    tests: fix out of tree builds with ASAN
+    
+    Signed-off-by: Alexander Sosedkin <asosedkin@redhat.com>
+
+Author: Alexander Sosedkin <asosedkin@redhat.com>
+Date:   Thu Nov 11 14:05:40 2021 +0100
+
+    tests: add protocol-set-allowlist
+    
+    Signed-off-by: Alexander Sosedkin <asosedkin@redhat.com>
+
+Author: Alexander Sosedkin <asosedkin@redhat.com>
+Date:   Thu Nov 11 14:04:54 2021 +0100
+
+    tests: add tcp_connect to utils
+    
+    Signed-off-by: Alexander Sosedkin <asosedkin@redhat.com>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Thu Dec 9 10:48:58 2021 +0100
+
+    X509 CT: use size_t for array index instead of unsigned
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Ander Juaristi <a@juaristi.eus>
+Date:   Fri Nov 26 18:20:44 2021 +0100
+
+    Update symbols
+    
+    Signed-off-by: Ander Juaristi <a@juaristi.eus>
+
+Author: Ander Juaristi <a@juaristi.eus>
+Date:   Wed Nov 17 19:28:50 2021 +0100
+
+    devel: Suppress new API functions
+    
+    Signed-off-by: Ander Juaristi <a@juaristi.eus>
+
+Author: Ander Juaristi <a@juaristi.eus>
+Date:   Sat Nov 28 19:04:35 2020 +0100
+
+    x509 CT: Add tests
+    
+    Signed-off-by: Ander Juaristi <a@juaristi.eus>
+
+Author: Ander Juaristi <a@juaristi.eus>
+Date:   Mon Nov 15 20:03:12 2021 +0100
+
+    x509 CT: implement new public API
+    
+    This commit implements import and export functions for the X.509
+    Certificate Transparency Signed Certificate Timestamp (SCT) extension
+    (RFC 6962).
+    
+    A new constant GNUTLS_X509EXT_OID_CT_SCT is introduced
+    with the value "1.3.6.1.4.1.11129.2.4.2".
+    
+    The following new public API functions are introduced:
+    
+        - gnutls_x509_ext_ct_scts_init
+        - gnutls_x509_ext_ct_scts_deinit
+        - gnutls_x509_ext_ct_import_scts
+        - gnutls_x509_ext_ct_export_scts
+        - gnutls_x509_ct_sct_get_version
+        - gnutls_x509_ct_sct_get
+    
+    Signed-off-by: Ander Juaristi <a@juaristi.eus>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Tue Nov 30 14:33:33 2021 +0100
+
+    devel/libgnutls.abignore: ignore drbg_aes_* functions
+    
+    These functions are only defined when compiled with
+    --enable-fips140-mode.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Thu May 6 12:41:40 2021 +0200
+
+    priority: support allowlisting in configuration file
+    
+    This adds a new mode of interpreting the [overrides] section.  If
+    "override-mode" is set to "allowlisting" in the [global] section, all
+    the algorithms (hashes, signature algorithms, curves, and versions)
+    are initially marked as insecure/disabled.  Then the user can enable
+    them by specifying allowlisting keywords such as "secure-hash" in the
+    [overrides] section.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+    Co-authored-by: Alexander Sosedkin <asosedkin@redhat.com>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Sat Nov 27 16:48:51 2021 +0100
+
+    CONTRIBUTING.md: clarify how to introduce new API
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Sat Nov 27 16:39:41 2021 +0100
+
+    release-steps: "make abi-dump-latest" at release time
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Sat Nov 27 16:36:17 2021 +0100
+
+    build: stop running abi-dump-latest at "make files-update"
+    
+    The procedure of registering ABI updates has changed in
+    bd3c78b9d10937adb1855b85bca1864972a1c986.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Wed Nov 24 18:44:13 2021 +0100
+
+    build: update to use the latest valgrind-tests module from Gnulib
+    
+    This adjust the existing valgrind invocations in the test suite with:
+    https://www.gnu.org/software/gnulib/manual/html_node/Valgrind-options.html
+    
+    - make --suppressions option to per directory, using AM_VALGRINDFLAGS
+    - use LOG_VALGRIND for LOG_COMPILER
+    - quote '$(LOG_VALGRIND)' in TESTS_ENVIRONMENT
+    - move gl_VALGRIND_TESTS_DEFAULT_NO call before gl_INIT
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Evgeny Grin <k2k@narod.ru>
+Date:   Fri Nov 26 14:08:22 2021 +0300
+
+    sockets: fixed compiler warning on Windows x32
+    
+    Signed-off-by: Evgeny Grin <k2k@narod.ru>
+
+Author: Evgeny Grin <k2k@narod.ru>
+Date:   Fri Nov 26 13:50:52 2021 +0300
+
+    sockets: fixed building for Windows with compilers without VLA support
+    
+    Signed-off-by: Evgeny Grin <k2k@narod.ru>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Wed May 5 16:27:55 2021 +0200
+
+    priority: refactor config file parsing
+    
+    This adds the following refactoring:
+    
+    - avoid side-effects during parsing the config file, by separating
+      application phase; the parsed configuration can be applied globally
+      with cfg_apply, after validation
+    - make _gnutls_*_mark_{disabled,insecure} take an ID instead of the
+      name
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Tue Nov 16 18:46:41 2021 +0100
+
+    locks: deprecate gnutls_global_set_mutex
+    
+    As the library now uses static mutexes, rwlocks, and onces, it doesn't
+    make much sense to only replace dynamic mutex usage.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Sun Nov 14 14:57:15 2021 +0100
+
+    locks: use once execution for on-demand initialization of globals
+    
+    This makes sure that the global variables are initialized only once.
+    Most of those variables are initialized at ELF constructor, though a
+    couple of occasions they are initialized on-demand: the global keylog
+    file pointer and TPM2 TCTI context.  To properly protect the
+    initialization this patch uses gl_once provided by Gnulib.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Sun Nov 14 16:39:29 2021 +0100
+
+    locks: rework rwlock primitives
+    
+    Remove GNUTLS_STATIC_RWLOCK_*LOCK macros and respect return values of
+    rwlock primitives.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Tue Nov 16 18:20:24 2021 +0100
+
+    pkcs11: switch to using static mutex
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Tue Nov 16 18:00:12 2021 +0100
+
+    verify-tofu: switch to using static mutex for locking
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Sun Nov 14 14:04:59 2021 +0100
+
+    locks: replace custom mutex wrappers with "glthread/lock.h"
+    
+    As Gnulib provides portability wrappers of mutex implementations, we
+    don't need to provide similar wrappers by ourselves.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Nikos Mavrogiannopoulos <nmav@gnutls.org>
+Date:   Fri Mar 22 14:52:10 2019 +0100
+
+    Port openconnect TPM2 code
+    
+    This introduces transparent loading of TPM2 keys which are in PEM
+    form by gnutls_privkey_import_x509_raw() and higher level functions
+    which wrap it.
+    
+    Signed-off-by: Nikos Mavrogiannopoulos <nmav@redhat.com>
+    Co-authored-by: David Woodhouse <dwmw2@infradead.org>
+    Co-authored-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Alexander Sosedkin <asosedkin@redhat.com>
+Date:   Mon Nov 8 19:07:28 2021 +0100
+
+    tests: set $abs_top_builddir in more places
+    
+    `$abs_top_builddir` has been used all across tests' subdirectories
+    (through tests/scripts/common.sh)
+    but has only been defined for tests/suite/ ones.
+    Defining it in other Makefiles where `top_builddir` is being passed.
+    
+    Signed-off-by: Alexander Sosedkin <asosedkin@redhat.com>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Sat Oct 30 17:17:47 2021 +0200
+
+    priority: rework config reloading logic and locking
+    
+    The previous reloading logic relied on the existence of [priority]
+    section (in the initial loading) as an indicator whether the file is
+    loaded.  This didn't work well in the following cases:
+    - when the section didn't exist initially and then is added later
+    - when the section existed initially and then is removed later
+    To handle these cases, this change adds a new flag
+    system_priority_file_loaded which can be used together with the mtime
+    check.
+    
+    This also adds an rwlock to protect global configuration.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Mon Nov 1 16:46:50 2021 +0100
+
+    Revert "priority: fix potential race in reloading system-wide config"
+    
+    This reverts commit 890c6937a3cfb4a0704bc815324221ec4cb89840.
+    Considering the entire logic around reloading the config file, the fix
+    was suboptimal.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Thu Oct 28 18:55:26 2021 +0200
+
+    priority: fix potential race in reloading system-wide config
+    
+    _gnutls_update_system_priorities is called from gnutls_priority_set*
+    functions every time when the SYSTEM keyword is used and updates a
+    global variable system_wide_priority_strings if the configuration
+    changes.  Although the critical path is protected with mtime check, it
+    should also hold a lock to avoid occasional race condition in
+    multi-thread programs.  This also clears
+    system_wide_priority_strings_init upon unloading and before reloading
+    the config file (thanks to Alexander Sosedkin).
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Alexander Sosedkin <asosedkin@redhat.com>
+Date:   Thu Oct 21 12:46:56 2021 +0200
+
+    .gitlab-ci.yml: add caching to cppcheck
+    
+    Signed-off-by: Alexander Sosedkin <asosedkin@redhat.com>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Tue Oct 26 07:50:16 2021 +0200
+
+    devel: update release procedure taking into account of abi-dump
+    
+    As the *.abi files have been moved into a separate repository, we need
+    an extra step to update the repository for new release.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Alexander Sosedkin <asosedkin@redhat.com>
+Date:   Wed Oct 20 17:49:56 2021 +0200
+
+    NEWS: add a notice of insecure-hash filtering ciphersuites on PRF
+    
+    Signed-off-by: Alexander Sosedkin <asosedkin@redhat.com>
+
+Author: Alexander Sosedkin <asosedkin@redhat.com>
+Date:   Wed Oct 20 14:37:07 2021 +0200
+
+    tests: add system-override-hash-influences-prf
+    
+    Signed-off-by: Alexander Sosedkin <asosedkin@redhat.com>
+
+Author: Alexander Sosedkin <asosedkin@redhat.com>
+Date:   Wed Oct 20 14:36:44 2021 +0200
+
+    priority: filter out ciphersuites with prf blocked by insecure-hash
+    
+    Signed-off-by: Alexander Sosedkin <asosedkin@redhat.com>
+
+Author: Alexander Sosedkin <asosedkin@redhat.com>
+Date:   Wed Oct 20 14:34:58 2021 +0200
+
+    priority: refactor ciphersuite filtering
+    
+    Signed-off-by: Alexander Sosedkin <asosedkin@redhat.com>
+
+Author: František Krenželok <krenzelok.frantisek@gmail.com>
+Date:   Fri May 14 15:56:06 2021 +0200
+
+    ktls: basic implementation of SW mode
+    
+    ktls enables us to offload encryption/decryption to the kernel
+    
+    prerequisites:
+            - configured with `--enable-ktls`
+            - tls module `modprobe tls` check with 'lsmod | grep tls'
+            - per connection:
+                    gnutls_transport_set_int{2} must be set
+    
+    When prerequisities are met then ktls is used by default.
+    
+    If GnuTLS encounters a error during KTLS initialization, it will
+    not use ktls and fallback to userspace.
+    
+    Signed-off-by: Frantisek Krenzelok <krenzelok.frantisek@gmail.com>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Mon Oct 18 16:27:46 2021 +0200
+
+    devel: make use of abidw --drop-private-types
+    
+    This will produce more compact abixml output.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Mon Oct 18 11:49:46 2021 +0200
+
+    devel: move .abi files into a separate repository
+    
+    Changes to the .abi files are a bit too noisy to track in the main
+    repository.  This moves the files out of this repository and embed it
+    as a git submodule.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Steve Lhomme <robux4@ycbcr.xyz>
+Date:   Thu Sep 23 09:03:50 2021 +0200
+
+    fix mingw64 detection
+    
+    __MINGW64__ is only defined for 64 bits builds of mingw64 [1].
+    The intended test what to only use the CertEnumCRLsInStoreFunc via LoadLibrary
+    for some ancient mingw32 build and never for mingw64.
+    
+    __MINGW64_VERSION_MAJOR is a proper define to identify mingw64 against mingw32.
+    
+    [1] https://sourceforge.net/p/predef/wiki/Compilers/
+    
+    Co-authored-by: Johannes Kauffmann <johanneskauffmann@hotmail.com>
+    
+    Signed-off-by: Steve Lhomme <robux4@ycbcr.xyz>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Fri Sep 17 11:03:25 2021 +0200
+
+    wrap_nettle_hash_exists: add missing hash algorithms
+    
+    This adds SHAKE-128, SHAKE-256, and RIPEMD-160 to the supported
+    algorithms by nettle.  While SHAKEs are not a hash algorithm but an
+    XOF, it would be consistent to report they are implemented.
+    
+    The simple test is expanded to exercise the code
+    path (gnutls_digest_get_id → wrap_nettle_hash_exists).
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Sat Sep 18 07:18:59 2021 +0200
+
+    fuzz: explicitly supply LDFLAGS to clang++ command line
+    
+    This prevented fuzzer programs being linked in Ubuntu 20.03, used in
+    oss-fuzz.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daniel Kahn Gillmor <dkg@fifthhorseman.net>
+Date:   Fri Sep 17 16:37:24 2021 -0400
+
+    lib/x509: Avoid memcpy when string is empty
+    
+    This fixes an ASAN warning in fuzz/gnutls_private_key_parser_fuzzer
+    when run against the malformed private key
+    fuzz/gnutls_private_key_parser_fuzzer.in/10a5c92fa30ddb6cbb4286d7699b2b7a7e032b17
+    
+    Signed-off-by: Daniel Kahn Gillmor <dkg@fifthhorseman.net>
+
+Author: Daniel Kahn Gillmor <dkg@fifthhorseman.net>
+Date:   Wed Aug 11 17:31:40 2021 -0400
+
+    NEWS: added news about certtool handling x448 and x25519
+    
+    Signed-off-by: Daniel Kahn Gillmor <dkg@fifthhorseman.net>
+
+Author: Daniel Kahn Gillmor <dkg@fifthhorseman.net>
+Date:   Wed Aug 11 15:59:21 2021 -0400
+
+    tests: add test for generating x25519 and x448 certificates
+    
+    These certs should work just fine for the purposes of cryptographic
+    e-mail (S/MIME).
+    
+    These usage flags are also used in the end-entity certificates found
+    in https://datatracker.ietf.org/doc/draft-ietf-lamps-samples/
+    
+    Signed-off-by: Daniel Kahn Gillmor <dkg@fifthhorseman.net>
+
+Author: Daniel Kahn Gillmor <dkg@fifthhorseman.net>
+Date:   Fri May 14 17:14:41 2021 -0400
+
+    tests: update details about sample X25519 certificate
+    
+    Signed-off-by: Daniel Kahn Gillmor <dkg@fifthhorseman.net>
+
+Author: Daniel Kahn Gillmor <dkg@fifthhorseman.net>
+Date:   Fri May 7 20:14:53 2021 -0400
+
+    certtool: add x448 and x25519 for --key-type
+    
+    This is a simple extension of the certtool command-line interface.
+    
+    Signed-off-by: Daniel Kahn Gillmor <dkg@fifthhorseman.net>
+
+Author: Daniel Kahn Gillmor <dkg@fifthhorseman.net>
+Date:   Fri May 7 22:25:41 2021 -0400
+
+    certtool: when making X25519 or X448 certs, always use "key agreement"
+    
+    This is related to #1227 -- but in this case, it's enforcing a
+    requirement of RFC 8410 §5.
+    
+    Signed-off-by: Daniel Kahn Gillmor <dkg@fifthhorseman.net>
+
+Author: Daniel Kahn Gillmor <dkg@fifthhorseman.net>
+Date:   Fri May 7 21:53:47 2021 -0400
+
+    x509: handle X25519 and X448 in read_pubkey
+    
+    _gnutls_x509_read_ecdh_pubkey is basically a clone of
+    _gnutls_x509_read_eddsa_pubkey.  Another form of implementation
+    would be to collapse these two static functions into a common
+    function for all "CFRG" curves.
+    
+    Signed-off-by: Daniel Kahn Gillmor <dkg@fifthhorseman.net>
+
+Author: Daniel Kahn Gillmor <dkg@fifthhorseman.net>
+Date:   Fri May 7 21:30:53 2021 -0400
+
+    nettle: handle X25519 and X448 in pk_fixup
+    
+    Signed-off-by: Daniel Kahn Gillmor <dkg@fifthhorseman.net>
+
+Author: Daniel Kahn Gillmor <dkg@fifthhorseman.net>
+Date:   Fri May 7 20:23:41 2021 -0400
+
+    x509: enable importing secret keys for X448 and X25519.
+    
+    _decode_pkcs8_modern_ecdh_key is virtually the same as
+    _decode_pkcs8_eddsa_key.  Another implementation would be
+    to collapse these two functions into one, since their structure
+    is identical.
+    
+    Signed-off-by: Daniel Kahn Gillmor <dkg@fifthhorseman.net>
+
+Author: Daniel Kahn Gillmor <dkg@fifthhorseman.net>
+Date:   Fri May 7 19:53:28 2021 -0400
+
+    Enable X25519 and X448 everywhere that EdDSA is supported.
+    
+    These are just trivial extension points where the codepath is the same
+    for the ECDH scheme as it is for the EdDSA scheme.
+    
+    Signed-off-by: Daniel Kahn Gillmor <dkg@fifthhorseman.net>
+
+Author: Daniel Kahn Gillmor <dkg@fifthhorseman.net>
+Date:   Fri May 7 20:14:07 2021 -0400
+
+    x509: handle X448 and X25519 in write_pubkey
+    
+    This uses the same structure as _gnutls_x509_write_eddsa_pubkey.
+    
+    Another way to write this would be to combine those two functions,
+    despite X448 and X25519 not being EdDSA at all.
+    
+    Signed-off-by: Daniel Kahn Gillmor <dkg@fifthhorseman.net>
+
+Author: Daniel Kahn Gillmor <dkg@fifthhorseman.net>
+Date:   Fri May 7 20:12:15 2021 -0400
+
+    pubkey: handle X25519 and X448 in gnutls_pubkey_import_pkcs11
+    
+    I am not confident in the strings I chose to match on in
+    ASN1_ETYPE_PRINTABLE_STRING, in that I do not know what registry
+    I should look this up in.
+    
+    The *parse_ecc_ecdh_params and *import_ecc_ecdh functions are tweaked
+    analogs to the eddsa versions of those functions.
+    
+    Signed-off-by: Daniel Kahn Gillmor <dkg@fifthhorseman.net>
+
+Author: Daniel Kahn Gillmor <dkg@fifthhorseman.net>
+Date:   Fri May 7 19:48:10 2021 -0400
+
+    nettle: extend pk_verify_priv_params to handle X25519 and X448
+    
+    This is basically a copy of the EdDSA case in the switch statement.
+    
+    Another way to implement it would be to augment the EdDSA case (and
+    the functions it uses) to have that case also handle ECDH use of the
+    CFRG curves.
+    
+    Signed-off-by: Daniel Kahn Gillmor <dkg@fifthhorseman.net>
+
+Author: Daniel Kahn Gillmor <dkg@fifthhorseman.net>
+Date:   Fri May 7 19:36:14 2021 -0400
+
+    lib/pk: treat modern ECDH octet streams the same way as eddsa streams.
+    
+    Signed-off-by: Daniel Kahn Gillmor <dkg@fifthhorseman.net>
+
+Author: Daniel Kahn Gillmor <dkg@fifthhorseman.net>
+Date:   Fri May 7 19:34:59 2021 -0400
+
+    lib/algorithms: add modern ecdh functions comparable to curve_is_eddsa
+    
+    This is useful for the so-called CFRG curves used in ECDH, x25519 and x448.
+    
+    Signed-off-by: Daniel Kahn Gillmor <dkg@fifthhorseman.net>
+
+Author: Daniel Kahn Gillmor <dkg@fifthhorseman.net>
+Date:   Thu May 6 14:10:46 2021 -0400
+
+    algorithms: Explicitly name ECDH_X448_OID and ECDH_X25519_OID
+    
+    Signed-off-by: Daniel Kahn Gillmor <dkg@fifthhorseman.net>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Fri Sep 10 17:08:52 2021 +0200
+
+    .gitlab-ci.yml: new ASan job with -DAGGRESSIVE_REALLOC
+    
+    This would exercise the same logic currently covered with
+    fedora-valgrind-aggressive in each MR.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Thu Sep 9 18:36:46 2021 +0200
+
+    fuzz: allow multiple definitions of gnutls_rnd in oss-fuzz
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Thu Sep 9 09:46:04 2021 +0200
+
+    build: remove tautological if conditions
+    
+    Spotted by LGTM.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Thu Sep 9 09:38:21 2021 +0200
+
+    ext/{client,server}_cert_type: use proper types for integers
+    
+    Spotted by LGTM.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Mon Sep 6 15:51:41 2021 +0200
+
+    tests: use PYTHONPATH instead of creating symlinks in srcdir
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Tue Sep 7 17:56:02 2021 +0200
+
+    tls-fuzzer: update submodules to the latest
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Miroslav Lichvar <mlichvar@redhat.com>
+Date:   Wed Sep 1 15:48:27 2021 +0200
+
+    fix SSSE3 SHA384 to work more than once
+    
+    The output function called sha512_digest() instead of sha384_digest(),
+    which caused the hash context to be reinitialized for SHA512 instead of
+    SHA384 and all following digests using the hash handle were wrong.
+    
+    Signed-off-by: Miroslav Lichvar <mlichvar@redhat.com>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Sat Sep 4 10:38:23 2021 +0200
+
+    testcompat-openssl-tls13-cli.sh: disable early data testing
+    
+    This test is causing intermittent failure quite often in the CI.
+    Let's temporarily disable it until the cause is properly investigated.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Sun Sep 5 18:48:09 2021 +0200
+
+    testcompat-openssl-tls13-cli.sh: use different tmpdirs for sub-tests
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Sun Sep 5 17:28:43 2021 +0200
+
+    tests: rework port locking
+    
+    This makes the locking logic per port, not per entire make process.
+    It also makes use of absolute paths for locking directory, so that
+    tlsfuzzer tests can use it.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Alexander Sosedkin <asosedkin@redhat.com>
+Date:   Mon Aug 30 19:26:49 2021 +0200
+
+    tests/tls13/post-handshake-with-cert: avoid a race condition
+    
+    A server tries to close connection and kill the client after reauth.
+    Client, in turn, attempts to send data in some cases.
+    This patch makes the server wait for the client to terminate first.
+    
+    Signed-off-by: Alexander Sosedkin <asosedkin@redhat.com>
+
+Author: Alexander Sosedkin <asosedkin@redhat.com>
+Date:   Mon Aug 30 19:38:03 2021 +0200
+
+    tests: remove unused `terminate` from 2 tests
+    
+    Signed-off-by: Alexander Sosedkin <asosedkin@redhat.com>
+
+Author: Alexander Sosedkin <asosedkin@redhat.com>
+Date:   Fri Aug 27 17:10:37 2021 +0200
+
+    tests: add a safeguard to terminate()
+    
+    Add a safeguard to `terminate()` so that we don't kill whole pgroups.
+    
+    Signed-off-by: Alexander Sosedkin <asosedkin@redhat.com>
+
+Author: Alexander Sosedkin <asosedkin@redhat.com>
+Date:   Fri Aug 27 17:02:51 2021 +0200
+
+    tests: don't kill whole pgroups
+    
+    `terminate()` executed from the child process results in a `kill(0, SIGTERM)`,
+    bringing the whole pgroup down. `exit(1)` should be called instead.
+    
+    Signed-off-by: Alexander Sosedkin <asosedkin@redhat.com>
+
+Author: Nick Child <nick.child@ibm.com>
+Date:   Wed Aug 25 15:13:07 2021 -0400
+
+    INSTALL.md: Update documentation on building static library [skip ci]
+    
+    As of commit a88eb79d88c53531c49d7cedfce2207f36ac8a9d, building a
+    static archive (libgnutls.a) is off by default. This commit updates the
+    documentation for building a static library in INSTALL.md .
+    
+    Signed-off-by: Nick Child <nick.child@ibm.com>
+
+Author: Simon South <simon@simonsouth.net>
+Date:   Sun Aug 22 08:41:36 2021 +0200
+
+    guile: Add 'GNUTLS_DIG_SHA256' enum value.
+    
+    * guile/modules/gnutls/build/enums.scm (%digest-enum): Add 'sha256'.
+    * guile/modules/gnutls.in: Export 'digest/sha256'.
+    * guile/tests/x509-certificates.scm: Test 'digest/sha256' with
+    'x509-certificate-fingerprint'.
+    (%sha256-fingerprint): New constant.
+    
+    Signed-off-by: Simon South <simon@simonsouth.net>
+
+Author: Simon South <simon@simonsouth.net>
+Date:   Sun Aug 22 08:40:14 2021 +0200
+
+    guile: Add binding for 'gnutls_x509_crt_get_fingerprint'.
+    
+    * guile/src/core.c (MAX_HASH_SIZE): New constant.
+    (scm_gnutls_x509_certificate_fingerprint): New function.
+    * guile/modules/gnutls.in: Export 'x509-certificate-fingerprint'.
+    * guile/tests/x509-certificates.scm: Test 'x509-certificate-fingerprint'.
+    (%sha1-fingerprint): New constant.
+    (u8vector->hex-string): New procedure.
+    
+    Signed-off-by: Simon South <simon@simonsouth.net>
+
+Author: Craig Gallek <cgallek@gmail.com>
+Date:   Wed Aug 11 12:54:37 2021 -0400
+
+    x509: pin/password callback support for openssl encrypted private keys
+    
+    This attempts to use the registered pin callback when the password for
+    an encrypted openssl private key is not supplied.  This matches the
+    functionality for PKCS8 sealed keys above and is similar to what openssl
+    does in this situation.
+    
+    Signed-off-by: Craig Gallek <cgallek@gmail.com>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Sat Aug 7 09:16:50 2021 +0200
+
+    mem: instrument with ASan memory poisoning as well as valgrind
+    
+    This makes it possible to catch undefined memory access in the more
+    lightweight CI runs.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Mon Aug 2 18:32:28 2021 +0200
+
+    pk: add flags to force RSA-PSS salt length to match digest length
+    
+    This adds a couple of flags to RSA-PSS signing and verification, to
+    enforce that the salt length matches the digest length.  That is not
+    only recommended in RFC 4055, but also mandated in RFC 8446 in the TLS
+    1.3 context.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Wed Jul 21 10:34:23 2021 +0200
+
+    fips: allow more RSA modulus sizes
+    
+    Previously, we restricted RSA modulus size to be either 2048 or 3072
+    bits in FIPS mode, following FIPS 186-4.  On the other hand, FIPS
+    140-2 IG A.14 and FIPS 140-3 IG C.F updates it to allow arbitrary
+    modulus sizes equal to or larger than 2048 bits under certain
+    conditions.
+    
+    This change reflects the guidance, though it only allows known sizes
+    due to the complexity of calculating the approximate security strength
+    using the formula in FIPS 140-2 IG 7.5.
+    
+    Suggested-by: Stephan Mueller
+    Reviewed-by: Stephan Mueller
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Tue Aug 3 14:17:41 2021 +0200
+
+    tests: tls13/key_share: rewrite as single process
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Wed Aug 4 06:45:30 2021 +0200
+
+    .gitlab-ci.yml: cppcheck: disable style checks
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Tue Aug 3 11:44:52 2021 +0200
+
+    devel: suppress cppcheck 2.5 false-positives
+    
+    This fixes errors and warnings as well as some style issues spotted by
+    cppcheck 2.5.  Others are recorded in the suppressions file.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Fiona Klute <fiona.klute@gmx.de>
+Date:   Tue Jul 13 23:53:12 2021 +0200
+
+    gnutls_ocsp_resp_verify: Check key purpose if signer not on trust list
+    
+    According to [1] the id-kp-OCSPSigning key purpose is only needed for
+    delegated signers, not signers explicitly set as trusted. The previous
+    code would reject a signature directly from a CA on the trust list
+    (without delegation) because the CA certificate didn't contain the
+    id-kp-OCSPSigning key purpose.
+    
+    The tests included in this commit check:
+    
+    1. Is a signature directly from a CA on the trust list accepted?
+    
+    2. Is a signature from a delegated signer issued by a CA on the trust
+       list accepted?
+    
+    3. Is a signature from a certificate without id-kp-OCSPSigning issued
+       by a CA on the trust list rejected?
+    
+    Note that the CA in these tests is also the one that issued the
+    certificate the OCSP response is for, but the code (current and
+    previous) doesn't enforce this.
+    
+    [1] https://datatracker.ietf.org/doc/html/rfc6960#section-4.2.2.2
+    
+    Signed-off-by: Fiona Klute <fiona.klute@gmx.de>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Mon Jun 28 07:04:55 2021 +0200
+
+    tests: set SH_LOG_COMPILER so sh tests run under $(SHELL)
+    
+    This omits the need of setting executable bits on shell script tests.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Fri Jun 25 08:39:12 2021 +0200
+
+    key_share: treat X25519 and X448 as same PK type when advertising
+    
+    Previously, if both X25519 and X448 groups were enabled in the
+    priority string, the client sent both algorithms in a key_share
+    extension, while it was only capable of handling one algorithm from
+    the same (Edwards curve) category.  This adds an extra check so the
+    client should send either X25519 or X448.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Michael Catanzaro <mcatanzaro@redhat.com>
+Date:   Tue Jun 22 14:12:09 2021 -0500
+
+    Fix gnutls_certificate_set_trust_list() return value documentation
+    
+    This function is documented to return an error code, but in fact it has
+    no return value and never fails. Fix this.
+    
+    Signed-off-by: Michael Catanzaro <mcatanzaro@redhat.com>
+
+Author: Ludovic Courtès <ludo@gnu.org>
+Date:   Sat Apr 24 22:02:14 2021 +0200
+
+    guile: Writes to record ports handle EAGAIN/EINTR transparently.
+    
+    Reported at <https://issues.guix.gnu.org/47867>
+    by Florian Pelz <pelzflorian@pelzflorian.de>.
+    
+    This is a followup to a229bb36c9592b151f6feb277238c41ab39f40a9.
+    
+    * guile/src/core.c (write_to_session_record_port) [USING_GUILE_BEFORE_2_2]:
+    Keep looping upon GNUTLS_E_AGAIN and GNUTLS_E_INTERRUPTED.
+    (write_to_session_record_port) [!USING_GUILE_BEFORE_2_2]: Loop on
+    GNUTLS_E_INTERRUPTED and return -1 on GNUTLS_E_AGAIN if C_SESSION is
+    backed by a file descriptor.
+    * NEWS: Update.
+    
+    Signed-off-by: Ludovic Courtès <ludo@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Fri Jun 11 06:58:43 2021 +0200
+
+    priority: reflect system wide config when constructing sigalgs
+    
+    Otherwise the client would advertise signature algorithms which it
+    cannot use and cause handshake to fail.
+    
+    Reported by Philip Schaten in:
+    https://lists.gnupg.org/pipermail/gnutls-help/2021-June/004711.html
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Wed Jun 9 14:29:11 2021 +0200
+
+    p11tool: mention how CKA_IDs of certs are calculated upon --write
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
 Author: Daiki Ueno <ueno@gnu.org>
 Date:   Sat May 29 07:18:17 2021 +0200
 
@@ -3516,6 +6715,17 @@ Date:   Sun May 31 12:39:14 2020 +0200
     certificate from the trust store and perform check against it.
     
     Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Mon Mar 16 17:16:08 2020 +0100
+
+    devel: provide external git diff driver for *.abi files [ci skip]
+    
+    This adds an external diff driver for *.abi files, that shows only
+    interesting changes in those files.  This would be useful when adding
+    a new API.
+    
+    Signed-off-by: Daiki Ueno <dueno@redhat.com>
 
 Author: Daiki Ueno <ueno@gnu.org>
 Date:   Sat May 30 11:06:57 2020 +0200
@@ -49219,8 +52429,3 @@ Author: Nikos Mavrogiannopoulos <nmav@gnutls.org>
 Date:   Fri Nov 7 19:01:57 2014 +0100
 
     pkcs11: pass the correct user type to protected authentication login
-
-Author: Nikos Mavrogiannopoulos <nmav@gnutls.org>
-Date:   Fri Nov 7 10:22:11 2014 +0100
-
-    doc: corrected values for INSECURE level

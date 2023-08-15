@@ -30,4 +30,8 @@ according to RFC 6979. Note that this only supports the NIST curves and DSA
 subgroup bits up to 512.
 @item GNUTLS_@-PRIVKEY_@-FLAG_@-CA
 The generated private key is going to be used as a CA (relevant for RSA-PSS keys).
+@item GNUTLS_@-PRIVKEY_@-FLAG_@-RSA_@-PSS_@-FIXED_@-SALT_@-LENGTH
+When making an RSA-PSS
+signature, use the salt whose length is equal to the digest length, as
+mandated in RFC 8446 4.2.3.
 @end table

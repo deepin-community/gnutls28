@@ -17,7 +17,7 @@ This function will import the given private key to the abstract
 @code{gnutls_privkey_t}  type. 
 
 The supported formats are basic unencrypted key, PKCS8, PKCS12, 
-and the openssl format.
+TSS2, and the openssl format.
 
 @strong{Returns:} On success, @code{GNUTLS_E_SUCCESS}  (0) is returned, otherwise a
 negative error value.

@@ -10,4 +10,8 @@ The NULL compression method (no compression).
 The DEFLATE compression method from zlib.
 @item GNUTLS_@-COMP_@-ZLIB
 Same as @code{GNUTLS_COMP_DEFLATE} .
+@item GNUTLS_@-COMP_@-BROTLI
+Brotli compression method.
+@item GNUTLS_@-COMP_@-ZSTD
+Zstandard compression method.
 @end table

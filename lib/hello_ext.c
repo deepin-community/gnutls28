@@ -57,6 +57,7 @@
 #include <num.h>
 #include <ext/client_cert_type.h>
 #include <ext/server_cert_type.h>
+#include <ext/compress_certificate.h>
 #include "intprops.h"
 
 static void
@@ -98,6 +99,7 @@ static hello_ext_entry_st const *extfunc[MAX_EXT_TYPES+1] = {
 	[GNUTLS_EXTENSION_RECORD_SIZE_LIMIT] = &ext_mod_record_size_limit,
 	[GNUTLS_EXTENSION_MAX_RECORD_SIZE] = &ext_mod_max_record_size,
 	[GNUTLS_EXTENSION_PSK_KE_MODES] = &ext_mod_psk_ke_modes,
+	[GNUTLS_EXTENSION_COMPRESS_CERTIFICATE] = &ext_mod_compress_certificate,
 	[GNUTLS_EXTENSION_PRE_SHARED_KEY] = &ext_mod_pre_shared_key,
 	/* This must be the last extension registered.
 	 */
@@ -790,7 +792,8 @@ gnutls_ext_register(const char *name, int id, gnutls_ext_parse_type_t parse_poin
 			gid = extfunc[i]->gid + 1;
 	}
 
-	if (gid > GNUTLS_EXTENSION_MAX_VALUE || gid >= sizeof(extfunc)/sizeof(extfunc[0]))
+	assert(gid < sizeof(extfunc)/sizeof(extfunc[0]));
+	if (gid > GNUTLS_EXTENSION_MAX_VALUE)
 		return gnutls_assert_val(GNUTLS_E_MEMORY_ERROR);
 
 	tmp_mod = gnutls_calloc(1, sizeof(*tmp_mod));

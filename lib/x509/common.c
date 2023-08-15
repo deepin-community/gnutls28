@@ -150,6 +150,12 @@ const struct oid_to_string *_gnutls_oid_get_entry(const struct oid_to_string *ot
 	return NULL;
 }
 
+const char *_gnutls_oid_get_asn_desc(const char *oid)
+{
+	const struct oid_to_string *entry = _gnutls_oid_get_entry(_oid2str, oid);
+	return entry ? entry->asn_desc : NULL;
+}
+
 const char *_gnutls_ldap_string_to_oid(const char *str, unsigned str_len)
 {
 	unsigned int i = 0;
@@ -549,7 +555,9 @@ _gnutls_x509_export_int_named(asn1_node asn1_data, const char *name,
 
 	*output_data_size = (size_t) out.size;
 	if (output_data) {
-		memcpy(output_data, out.data, (size_t) out.size);
+		if (out.size > 0) {
+			memcpy(output_data, out.data, (size_t) out.size);
+		}
 		if (format == GNUTLS_X509_FMT_PEM)
 			output_data[out.size] = 0;
 	}
@@ -630,7 +638,8 @@ _gnutls_x509_decode_string(unsigned int etype,
 	if (td.data == NULL)
 		return gnutls_assert_val(GNUTLS_E_MEMORY_ERROR);
 
-	memcpy(td.data, str, str_size);
+        if (str_size > 0)
+                memcpy(td.data, str, str_size);
 	td.data[str_size] = 0;
 
 	if (allow_ber)
@@ -1701,7 +1710,7 @@ _gnutls_check_valid_key_id(const gnutls_datum_t *key_id,
 	return result;
 }
 
-/* Sort a certficate list in place with subject, issuer order. @clist_size must
+/* Sort a certificate list in place with subject, issuer order. @clist_size must
  * be equal to or less than %DEFAULT_MAX_VERIFY_DEPTH.
  *
  * Returns the index in clist where the initial contiguous segment ends. If the

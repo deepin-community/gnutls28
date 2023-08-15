@@ -64,7 +64,7 @@ void _gnutls_x509_privkey_reinit(gnutls_x509_privkey_t key)
 	gnutls_pk_params_clear(&key->params);
 	gnutls_pk_params_release(&key->params);
 	/* avoid re-use of fields which may have had some sensible value */
-	memset(&key->params, 0, sizeof(key->params));
+	zeroize_key(&key->params, sizeof(key->params));
 
 	if (key->key)
 		asn1_delete_structure2(&key->key, ASN1_DELETE_FLAG_ZEROIZE);
@@ -614,8 +614,10 @@ gnutls_x509_privkey_import(gnutls_x509_privkey_t key,
 	}
 
  cleanup:
-	if (need_free)
+	if (need_free) {
+		zeroize_temp_key(_data.data, _data.size);
 		_gnutls_free_datum(&_data);
+	}
 
 	/* The key has now been decoded.
 	 */
@@ -736,11 +738,9 @@ gnutls_x509_privkey_import2(gnutls_x509_privkey_t key,
 		if (ret >= 0)
 			return ret;
 
-		if (ret < 0) {
-			gnutls_assert();
-			saved_ret = ret;
-			/* fall through to PKCS #8 decoding */
-		}
+		gnutls_assert();
+		saved_ret = ret;
+		/* fall through to PKCS #8 decoding */
 	}
 
 	if ((password != NULL || (flags & GNUTLS_PKCS_NULL_PASSWORD))
@@ -780,6 +780,17 @@ gnutls_x509_privkey_import2(gnutls_x509_privkey_t key,
 				    gnutls_x509_privkey_import_openssl(key,
 								       data,
 								       password);
+
+				if (ret == GNUTLS_E_DECRYPTION_FAILED && password == NULL &&
+						(key->pin.cb || _gnutls_pin_func)) {
+					/* use the callback if any */
+					memset(pin, 0, GNUTLS_PKCS11_MAX_PIN_LEN);
+					ret = _gnutls_retrieve_pin(&key->pin, "key:", "", 0, pin, sizeof(pin));
+					if (ret == 0) {
+						ret = gnutls_x509_privkey_import_openssl(key, data, pin);
+					}
+				}
+
 				if (ret < 0) {
 					gnutls_assert();
 					goto cleanup;

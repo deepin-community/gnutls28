@@ -22,4 +22,6 @@ RegisteredID.
 Virtual SAN, used by certain functions for convenience.
 @item GNUTLS_@-SAN_@-OTHERNAME_@-KRB5PRINCIPAL
 Virtual SAN, used by certain functions for convenience.
+@item GNUTLS_@-SAN_@-OTHERNAME_@-MSUSERPRINCIPAL
+Virtual SAN, used by certain functions for convenience.
 @end table
