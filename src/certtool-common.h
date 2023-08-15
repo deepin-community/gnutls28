@@ -25,6 +25,7 @@
 #include <gnutls/x509.h>
 #include <stdio.h>
 #include <stdbool.h>
+#include "attribute.h"
 
 #define TYPE_CRT 1
 #define TYPE_CRQ 2
@@ -91,6 +92,7 @@ void switch_to_pkcs8_when_needed(common_info_st *cinfo, gnutls_x509_privkey_t ke
 		return;
 
 	if (key_type == GNUTLS_PK_RSA_PSS || key_type == GNUTLS_PK_EDDSA_ED25519 || key_type == GNUTLS_PK_EDDSA_ED448 ||
+            key_type == GNUTLS_PK_ECDH_X25519 || key_type == GNUTLS_PK_ECDH_X448 ||
 	    key_type == GNUTLS_PK_GOST_01 || key_type == GNUTLS_PK_GOST_12_256 ||
 	    key_type == GNUTLS_PK_GOST_12_512) {
 		if (cinfo->verbose)
@@ -175,6 +177,7 @@ void print_dsa_pkey(FILE * outfile, gnutls_datum_t * x, gnutls_datum_t * y,
 		    gnutls_datum_t * p, gnutls_datum_t * q,
 		    gnutls_datum_t * g, int cprint);
 
+ATTRIBUTE_MALLOC
 FILE *safe_open_rw(const char *file, int privkey_op);
 
 const char *get_password(common_info_st * cinfo, unsigned int *flags,

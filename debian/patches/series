@@ -1,2 +1,5 @@
 14_version_gettextcat.diff
 30_guile-snarf.diff
+40_srptest_doubletimeout.diff
+50_Fix-removal-of-duplicate-certs-during-verification.patch
+51_add-gnulib-linkedhash-list-module.diff

@@ -29,8 +29,6 @@ Note that the  @code{tlist} will become part of the credentials
 structure and must not be deallocated. It will be automatically deallocated
 when the  @code{res} structure is deinitialized.
 
-@strong{Returns:} @code{GNUTLS_E_SUCCESS}  (0) on success, or a negative error code.
-
 @strong{Since:} 3.2.2
 @end deftypefun
 
@@ -5218,6 +5216,52 @@ end certificate ( @code{crt} ), including time checks and key usage checks.
 @strong{Since:} 3.4.0
 @end deftypefun
 
+@subheading gnutls_x509_ct_sct_get
+@anchor{gnutls_x509_ct_sct_get}
+@deftypefun {int} {gnutls_x509_ct_sct_get} (const gnutls_x509_ct_scts_t @var{scts}, unsigned @var{idx}, time_t * @var{timestamp}, gnutls_datum_t * @var{logid}, gnutls_sign_algorithm_t * @var{sigalg}, gnutls_datum_t * @var{signature})
+@var{scts}: A list of SCTs
+
+@var{idx}: The index of the target SCT in the list
+
+@var{timestamp}: The timestamp of the SCT
+
+@var{logid}: The LogID field of the SCT; must be freed with @code{gnutls_free()} 
+
+@var{sigalg}: The signature algorithm
+
+@var{signature}: The signature of the SCT; must be freed with @code{gnutls_free()} 
+
+This function will return a specific SCT (Signed Certificate Timestamp)
+stored in the SCT list  @code{scts} .
+
+The datums holding the SCT's LogId and signature will be allocated
+using @code{gnutls_malloc()} .
+
+@strong{Returns:} @code{GNUTLS_E_SUCCESS}  (0) will be returned on success,
+@code{GNUTLS_E_REQUESTED_DATA_NOT_AVAILABLE}  if  @code{idx} exceeds the number of SCTs in the list
+or a negative error value.
+@end deftypefun
+
+@subheading gnutls_x509_ct_sct_get_version
+@anchor{gnutls_x509_ct_sct_get_version}
+@deftypefun {int} {gnutls_x509_ct_sct_get_version} (gnutls_x509_ct_scts_t @var{scts}, unsigned @var{idx}, unsigned int * @var{version_out})
+@var{scts}: A list of SCTs
+
+@var{idx}: The index of the target SCT in the list
+
+@var{version_out}: The version of the target SCT.
+
+This function obtains the version of the SCT at the given position
+in the SCT list.
+
+The version of that SCT will be placed on  @code{version_out} .
+
+Return : @code{GNUTLS_E_SUCCESS}  (0) is returned on success,
+@code{GNUTLS_E_REQUESTED_DATA_NOT_AVAILABLE}  if  @code{idx} exceeds the number of SCTs in the list
+and @code{GNUTLS_E_INVALID_REQUEST}  if the SCT's version is different than 1, as that's currently
+the only defined version.
+@end deftypefun
+
 @subheading gnutls_x509_dn_deinit
 @anchor{gnutls_x509_dn_deinit}
 @deftypefun {void} {gnutls_x509_dn_deinit} (gnutls_x509_dn_t @var{dn})
@@ -5435,6 +5479,57 @@ DN parsing error @code{GNUTLS_E_PARSING_ERROR}  is returned.
 negative error value.
 
 @strong{Since:} 3.5.3
+@end deftypefun
+
+@subheading gnutls_x509_ext_ct_export_scts
+@anchor{gnutls_x509_ext_ct_export_scts}
+@deftypefun {int} {gnutls_x509_ext_ct_export_scts} (const gnutls_x509_ct_scts_t @var{scts}, gnutls_datum_t * @var{ext})
+@var{scts}: An initialized SCT list
+
+@var{ext}: The DER-encoded extension data; must be freed with @code{gnutls_free()} 
+
+This function will convert the provided list of SCTs to a DER-encoded
+SignedCertificateTimestampList extension (1.3.6.1.4.1.11129.2.4.2).
+The output data in  @code{ext} will be allocated using @code{gnutls_malloc()} .
+
+@strong{Returns:} @code{GNUTLS_E_SUCCESS}  (0) on success or a negative error value.
+@end deftypefun
+
+@subheading gnutls_x509_ext_ct_import_scts
+@anchor{gnutls_x509_ext_ct_import_scts}
+@deftypefun {int} {gnutls_x509_ext_ct_import_scts} (const gnutls_datum_t * @var{ext}, gnutls_x509_ct_scts_t @var{scts}, unsigned int @var{flags})
+@var{ext}: a DER-encoded extension
+
+@var{scts}: The SCT list
+
+@var{flags}: should be zero
+
+This function will read a SignedCertificateTimestampList structure
+from the DER data of the X.509 Certificate Transparency SCT extension
+(OID 1.3.6.1.4.1.11129.2.4.2).
+
+The list of SCTs (Signed Certificate Timestamps) is placed on  @code{scts} ,
+which must be previously initialized with @code{gnutls_x509_ext_ct_scts_init()} .
+
+@strong{Returns:} @code{GNUTLS_E_SUCCESS}  (0) on success or a negative error value.
+@end deftypefun
+
+@subheading gnutls_x509_ext_ct_scts_deinit
+@anchor{gnutls_x509_ext_ct_scts_deinit}
+@deftypefun {void} {gnutls_x509_ext_ct_scts_deinit} (gnutls_x509_ct_scts_t @var{scts})
+@var{scts}: The SCT list
+
+This function will deinitialize a Certificate Transparency SCT list.
+@end deftypefun
+
+@subheading gnutls_x509_ext_ct_scts_init
+@anchor{gnutls_x509_ext_ct_scts_init}
+@deftypefun {int} {gnutls_x509_ext_ct_scts_init} (gnutls_x509_ct_scts_t * @var{scts})
+@var{scts}: The SCT list
+
+This function will initialize a Certificate Transparency SCT list.
+
+@strong{Returns:} @code{GNUTLS_E_SUCCESS}  (0) on success, otherwise a negative error value.
 @end deftypefun
 
 @subheading gnutls_x509_ext_deinit
@@ -7568,7 +7663,8 @@ want to prevent them from being deinitialized by this function.
 
 @var{cert}: is the certificate to find issuer for
 
-@var{issuer}: Will hold the issuer if any. Should be treated as constant.
+@var{issuer}: Will hold the issuer if any. Should be treated as constant
+unless @code{GNUTLS_TL_GET_COPY}  is set in  @code{flags} .
 
 @var{flags}: flags from @code{gnutls_trust_list_flags_t}  (@code{GNUTLS_TL_GET_COPY}  is applicable)
 
@@ -7770,7 +7866,7 @@ This function sets a callback to be called when the peer's certificate
 chain is incomplete due a missing intermediate certificate. The callback
 may provide the missing certificate for use during verification.
 
-The callback's function prototype is defined in <gnutls/x509.h> as:
+The callback's function prototype is defined in gnutls/x509.h as:
 
 int (*callback)(gnutls_x509_trust_list_t list,
 const gnutls_x509_crt_t cert,

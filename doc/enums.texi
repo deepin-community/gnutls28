@@ -296,6 +296,10 @@ The NULL compression method (no compression).
 The DEFLATE compression method from zlib.
 @item GNUTLS_@-COMP_@-ZLIB
 Same as @code{GNUTLS_COMP_DEFLATE} .
+@item GNUTLS_@-COMP_@-BROTLI
+Brotli compression method.
+@item GNUTLS_@-COMP_@-ZSTD
+Zstandard compression method.
 @end table
 
 @c gnutls_init_flags_t
@@ -372,6 +376,8 @@ Under TLS1.3 disable auto-sending of
 session tickets during the handshake.
 @item GNUTLS_@-NO_@-END_@-OF_@-EARLY_@-DATA
 Under TLS1.3 suppress sending EndOfEarlyData message. Since 3.7.2.
+@item GNUTLS_@-NO_@-TICKETS_@-TLS12
+Flag to indicate that the session should not use resumption with session tickets. This flag only has effect if TLS 1.2 is used.
 @end table
 
 @c gnutls_alert_level_t
@@ -493,6 +499,8 @@ Certificate status (OCSP).
 Supplemental.
 @item GNUTLS_@-HANDSHAKE_@-KEY_@-UPDATE
 TLS1.3 key update message.
+@item GNUTLS_@-HANDSHAKE_@-COMPRESSED_@-CERTIFICATE_@-PKT
+Compressed certificate packet.
 @item GNUTLS_@-HANDSHAKE_@-CHANGE_@-CIPHER_@-SPEC
 Change Cipher Spec.
 @item GNUTLS_@-HANDSHAKE_@-CLIENT_@-HELLO_@-V2
@@ -541,7 +549,7 @@ The certificate presented isn't the expected one (TOFU)
 @item GNUTLS_@-CERT_@-PURPOSE_@-MISMATCH
 The certificate or an intermediate does not match the intended purpose (extended key usage).
 @item GNUTLS_@-CERT_@-MISSING_@-OCSP_@-STATUS
-The certificate requires the server to send the certifiate status, but no status was received.
+The certificate requires the server to send the certificate status, but no status was received.
 @item GNUTLS_@-CERT_@-INVALID_@-OCSP_@-STATUS
 The received OCSP status response is invalid.
 @item GNUTLS_@-CERT_@-UNKNOWN_@-CRIT_@-EXTENSIONS
@@ -914,7 +922,7 @@ Less than 42 bits of security
 @item GNUTLS_@-CB_@-TLS_@-SERVER_@-END_@-POINT
 "tls-server-end-point" (RFC 5929) channel binding
 @item GNUTLS_@-CB_@-TLS_@-EXPORTER
-"tls-exporter" (draft-ietf-kitten-tls-channel-bindings-for-tls13-03)
+"tls-exporter" (RFC 9266) channel binding
 @end table
 
 @c gnutls_gost_paramset_t
@@ -1075,6 +1083,8 @@ RegisteredID.
 Virtual SAN, used by certain functions for convenience.
 @item GNUTLS_@-SAN_@-OTHERNAME_@-KRB5PRINCIPAL
 Virtual SAN, used by certain functions for convenience.
+@item GNUTLS_@-SAN_@-OTHERNAME_@-MSUSERPRINCIPAL
+Virtual SAN, used by certain functions for convenience.
 @end table
 
 @c gnutls_privkey_type_t
@@ -1176,6 +1186,18 @@ Similarly to @code{GNUTLS_FIPS140_LAX} , it allows forbidden operations; any use
 to a message to the audit callback functions.
 @end table
 
+@c gnutls_fips140_operation_state_t
+@table @code
+@item GNUTLS_@-FIPS140_@-OP_@-INITIAL
+no previous operation has done
+@item GNUTLS_@-FIPS140_@-OP_@-APPROVED
+the previous operation was FIPS approved
+@item GNUTLS_@-FIPS140_@-OP_@-NOT_@-APPROVED
+the previous operation was not FIPS approved
+@item GNUTLS_@-FIPS140_@-OP_@-ERROR
+the previous operation caused an error regardless of FIPS
+@end table
+
 @c gnutls_certificate_import_flags
 @table @code
 @item GNUTLS_@-X509_@-CRT_@-LIST_@-IMPORT_@-FAIL_@-IF_@-EXCEED
@@ -1268,6 +1290,10 @@ process, not to fail on unknown critical extensions.
 @item GNUTLS_@-VERIFY_@-ALLOW_@-SIGN_@-WITH_@-SHA1
 Allow certificates to be signed
 using the broken SHA1 hash algorithm.
+@item GNUTLS_@-VERIFY_@-RSA_@-PSS_@-FIXED_@-SALT_@-LENGTH
+Disallow RSA-PSS signatures made
+with mismatching salt length with digest length, as mandated in RFC 8446
+4.2.3.
 @end table
 
 @c gnutls_certificate_verification_profiles_t
@@ -1536,6 +1562,16 @@ according to RFC 6979. Note that this only supports the NIST curves and DSA
 subgroup bits up to 512.
 @item GNUTLS_@-PRIVKEY_@-FLAG_@-CA
 The generated private key is going to be used as a CA (relevant for RSA-PSS keys).
+@item GNUTLS_@-PRIVKEY_@-FLAG_@-RSA_@-PSS_@-FIXED_@-SALT_@-LENGTH
+When making an RSA-PSS
+signature, use the salt whose length is equal to the digest length, as
+mandated in RFC 8446 4.2.3.
+@end table
+
+@c gnutls_cipher_flags_t
+@table @code
+@item GNUTLS_@-CIPHER_@-PADDING_@-PKCS7
+Flag to indicate PKCS@code{7}  padding
 @end table
 
 @c gnutls_rnd_level_t

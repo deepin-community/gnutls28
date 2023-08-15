@@ -7,7 +7,8 @@
 
 @var{cert}: is the certificate to find issuer for
 
-@var{issuer}: Will hold the issuer if any. Should be treated as constant.
+@var{issuer}: Will hold the issuer if any. Should be treated as constant
+unless @code{GNUTLS_TL_GET_COPY}  is set in  @code{flags} .
 
 @var{flags}: flags from @code{gnutls_trust_list_flags_t}  (@code{GNUTLS_TL_GET_COPY}  is applicable)
 

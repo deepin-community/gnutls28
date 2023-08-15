@@ -24,6 +24,7 @@
 #include <algorithms.h>
 #include "errors.h"
 #include <x509/common.h>
+#include "pk.h"
 
 
 /* KX mappings to PK algorithms */
@@ -146,9 +147,9 @@ static const gnutls_pk_entry pk_algorithms[] = {
 	  .curve = GNUTLS_ECC_CURVE_ED448, .no_prehashed = 1 },
 	{ .name = "DH", .oid = NULL, .id = GNUTLS_PK_DH,
 	   .curve = GNUTLS_ECC_CURVE_INVALID },
-	{ .name = "ECDH (X25519)", .oid = "1.3.101.110", .id = GNUTLS_PK_ECDH_X25519,
+	{ .name = "ECDH (X25519)", .oid = ECDH_X25519_OID, .id = GNUTLS_PK_ECDH_X25519,
 	  .curve = GNUTLS_ECC_CURVE_X25519 },
-	{ .name = "ECDH (X448)", .oid = "1.3.101.111", .id = GNUTLS_PK_ECDH_X448,
+	{ .name = "ECDH (X448)", .oid = ECDH_X448_OID, .id = GNUTLS_PK_ECDH_X448,
 	  .curve = GNUTLS_ECC_CURVE_X448 },
 	{ .name = "UNKNOWN", .oid = NULL, .id = GNUTLS_PK_UNKNOWN, 
 	  .curve = GNUTLS_ECC_CURVE_INVALID },
@@ -203,8 +204,11 @@ const gnutls_pk_algorithm_t *gnutls_pk_list(void)
 		int i = 0;
 
 		GNUTLS_PK_LOOP(
-			if (p->id != GNUTLS_PK_UNKNOWN && supported_pks[i > 0 ? (i - 1) : 0] != p->id)
-				supported_pks[i++] = p->id
+			if (p->id != GNUTLS_PK_UNKNOWN &&
+			    supported_pks[i > 0 ? (i - 1) : 0] != p->id &&
+			    _gnutls_pk_exists(p->id)) {
+				supported_pks[i++] = p->id;
+			}
 		);
 		supported_pks[i++] = 0;
 	}

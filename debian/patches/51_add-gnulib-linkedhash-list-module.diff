@@ -1,0 +1,2637 @@
+Description: Result of rebootstrapping with linkedhash-list module
+ Needed for 50_Fix-removal-of-duplicate-certs-during-verification.patch
+ .
+ Add linkedhash-list to gnulib_modules= in bootstrap.conf and run
+ ./bootstrap
+Author: Andreas Metzler <ametzler@debian.org>
+Origin: vendor
+Forwarded: not-needed
+Last-Update: 2022-10-31
+
+--- /dev/null
++++ b/gl/gl_anyhash1.h
+@@ -0,0 +1,31 @@
++/* Hash table for sequential list, set, and map data type.
++   Copyright (C) 2006, 2009-2021 Free Software Foundation, Inc.
++   Written by Bruno Haible <bruno@clisp.org>, 2006.
++
++   This program is free software: you can redistribute it and/or modify
++   it under the terms of the GNU Lesser General Public License as published by
++   the Free Software Foundation; either version 2.1 of the License, or
++   (at your option) any later version.
++
++   This program is distributed in the hope that it will be useful,
++   but WITHOUT ANY WARRANTY; without even the implied warranty of
++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++   GNU Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public License
++   along with this program.  If not, see <https://www.gnu.org/licenses/>.  */
++
++/* Common code of
++   gl_linkedhash_list.c, gl_avltreehash_list.c, gl_rbtreehash_list.c,
++   gl_linkedhash_set.c, gl_hash_set.c,
++   gl_linkedhash_map.c, gl_hash_map.c.  */
++
++/* Hash table entry.  */
++struct gl_hash_entry
++{
++  struct gl_hash_entry *hash_next;  /* chain of entries in same bucket */
++  size_t hashcode;                  /* cache of the hash code of
++                                       - the key (for map data type) or
++                                       - the value (for list, set data types) */
++};
++typedef struct gl_hash_entry * gl_hash_entry_t;
+--- /dev/null
++++ b/gl/gl_anyhash2.h
+@@ -0,0 +1,82 @@
++/* Hash table for sequential list, set, and map data type.
++   Copyright (C) 2006, 2009-2021 Free Software Foundation, Inc.
++   Written by Bruno Haible <bruno@clisp.org>, 2006.
++
++   This program is free software: you can redistribute it and/or modify
++   it under the terms of the GNU Lesser General Public License as published by
++   the Free Software Foundation; either version 2.1 of the License, or
++   (at your option) any later version.
++
++   This program is distributed in the hope that it will be useful,
++   but WITHOUT ANY WARRANTY; without even the implied warranty of
++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++   GNU Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public License
++   along with this program.  If not, see <https://www.gnu.org/licenses/>.  */
++
++/* Common code of
++   gl_linkedhash_list.c, gl_avltreehash_list.c, gl_rbtreehash_list.c,
++   gl_linkedhash_set.c, gl_hash_set.c,
++   gl_linkedhash_map.c, gl_hash_map.c.  */
++
++#include "gl_anyhash_primes.h"
++
++/* Resizes the hash table with a new estimated size.  */
++static void
++hash_resize (CONTAINER_T container, size_t estimate)
++{
++  size_t new_size = next_prime (estimate);
++
++  if (new_size > container->table_size)
++    {
++      gl_hash_entry_t *old_table = container->table;
++      /* Allocate the new table.  */
++      gl_hash_entry_t *new_table;
++      size_t i;
++
++      if (size_overflow_p (xtimes (new_size, sizeof (gl_hash_entry_t))))
++        goto fail;
++      new_table =
++        (gl_hash_entry_t *) calloc (new_size, sizeof (gl_hash_entry_t));
++      if (new_table == NULL)
++        goto fail;
++
++      /* Iterate through the entries of the old table.  */
++      for (i = container->table_size; i > 0; )
++        {
++          gl_hash_entry_t node = old_table[--i];
++
++          while (node != NULL)
++            {
++              gl_hash_entry_t next = node->hash_next;
++              /* Add the entry to the new table.  */
++              size_t bucket = node->hashcode % new_size;
++              node->hash_next = new_table[bucket];
++              new_table[bucket] = node;
++
++              node = next;
++            }
++        }
++
++      container->table = new_table;
++      container->table_size = new_size;
++      free (old_table);
++    }
++  return;
++
++ fail:
++  /* Just continue without resizing the table.  */
++  return;
++}
++
++/* Resizes the hash table if needed, after CONTAINER_COUNT (container) was
++   incremented.  */
++static void
++hash_resize_after_add (CONTAINER_T container)
++{
++  size_t count = CONTAINER_COUNT (container);
++  size_t estimate = xsum (count, count / 2); /* 1.5 * count */
++  if (estimate > container->table_size)
++    hash_resize (container, estimate);
++}
+--- /dev/null
++++ b/gl/gl_anyhash_primes.h
+@@ -0,0 +1,87 @@
++/* Table of primes, for use by hash tables.
++   Copyright (C) 2006, 2009-2021 Free Software Foundation, Inc.
++   Written by Bruno Haible <bruno@clisp.org>, 2006.
++
++   This program is free software: you can redistribute it and/or modify
++   it under the terms of the GNU Lesser General Public License as published by
++   the Free Software Foundation; either version 2.1 of the License, or
++   (at your option) any later version.
++
++   This program is distributed in the hope that it will be useful,
++   but WITHOUT ANY WARRANTY; without even the implied warranty of
++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++   GNU Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public License
++   along with this program.  If not, see <https://www.gnu.org/licenses/>.  */
++
++/* Array of primes, approximately in steps of factor 1.2.
++   This table was computed by executing the Common Lisp expression
++     (dotimes (i 244) (format t "nextprime(~D)~%" (ceiling (expt 1.2d0 i))))
++   and feeding the result to PARI/gp.  */
++static const size_t primes[] =
++  {
++    11, 13, 17, 19, 23, 29, 37, 41, 47, 59, 67, 83, 97, 127, 139, 167, 199,
++    239, 293, 347, 419, 499, 593, 709, 853, 1021, 1229, 1471, 1777, 2129, 2543,
++    3049, 3659, 4391, 5273, 6323, 7589, 9103, 10937, 13109, 15727, 18899,
++    22651, 27179, 32609, 39133, 46957, 56359, 67619, 81157, 97369, 116849,
++    140221, 168253, 201907, 242309, 290761, 348889, 418667, 502409, 602887,
++    723467, 868151, 1041779, 1250141, 1500181, 1800191, 2160233, 2592277,
++    3110741, 3732887, 4479463, 5375371, 6450413, 7740517, 9288589, 11146307,
++    13375573, 16050689, 19260817, 23112977, 27735583, 33282701, 39939233,
++    47927081, 57512503, 69014987, 82818011, 99381577, 119257891, 143109469,
++    171731387, 206077643, 247293161, 296751781, 356102141, 427322587,
++    512787097, 615344489, 738413383, 886096061, 1063315271, 1275978331,
++    1531174013, 1837408799, 2204890543UL, 2645868653UL, 3175042391UL,
++    3810050851UL,
++#if SIZE_MAX > 4294967295UL
++    4572061027UL, 5486473229UL, 6583767889UL, 7900521449UL, 9480625733UL,
++    11376750877UL, 13652101063UL, 16382521261UL, 19659025513UL, 23590830631UL,
++    28308996763UL, 33970796089UL, 40764955463UL, 48917946377UL, 58701535657UL,
++    70441842749UL, 84530211301UL, 101436253561UL, 121723504277UL,
++    146068205131UL, 175281846149UL, 210338215379UL, 252405858521UL,
++    302887030151UL, 363464436191UL, 436157323417UL, 523388788231UL,
++    628066545713UL, 753679854847UL, 904415825857UL, 1085298991109UL,
++    1302358789181UL, 1562830547009UL, 1875396656429UL, 2250475987709UL,
++    2700571185239UL, 3240685422287UL, 3888822506759UL, 4666587008147UL,
++    5599904409713UL, 6719885291641UL, 8063862349969UL, 9676634819959UL,
++    11611961783951UL, 13934354140769UL, 16721224968907UL, 20065469962669UL,
++    24078563955191UL, 28894276746229UL, 34673132095507UL, 41607758514593UL,
++    49929310217531UL, 59915172260971UL, 71898206713183UL, 86277848055823UL,
++    103533417666967UL, 124240101200359UL, 149088121440451UL, 178905745728529UL,
++    214686894874223UL, 257624273849081UL, 309149128618903UL, 370978954342639UL,
++    445174745211143UL, 534209694253381UL, 641051633104063UL, 769261959724877UL,
++    923114351670013UL, 1107737222003791UL, 1329284666404567UL,
++    1595141599685509UL, 1914169919622551UL, 2297003903547091UL,
++    2756404684256459UL, 3307685621107757UL, 3969222745329323UL,
++    4763067294395177UL, 5715680753274209UL, 6858816903929113UL,
++    8230580284714831UL, 9876696341657791UL, 11852035609989371UL,
++    14222442731987227UL, 17066931278384657UL, 20480317534061597UL,
++    24576381040873903UL, 29491657249048679UL, 35389988698858471UL,
++    42467986438630267UL, 50961583726356109UL, 61153900471627387UL,
++    73384680565952851UL, 88061616679143347UL, 105673940014972061UL,
++    126808728017966413UL, 152170473621559703UL, 182604568345871671UL,
++    219125482015045997UL, 262950578418055169UL, 315540694101666193UL,
++    378648832921999397UL, 454378599506399233UL, 545254319407679131UL,
++    654305183289214771UL, 785166219947057701UL, 942199463936469157UL,
++    1130639356723763129UL, 1356767228068515623UL, 1628120673682218619UL,
++    1953744808418662409UL, 2344493770102394881UL, 2813392524122873857UL,
++    3376071028947448339UL, 4051285234736937517UL, 4861542281684325481UL,
++    5833850738021191727UL, 7000620885625427969UL, 8400745062750513217UL,
++    10080894075300616261UL, 12097072890360739951UL, 14516487468432885797UL,
++    17419784962119465179UL,
++#endif
++    SIZE_MAX /* sentinel, to ensure the search terminates */
++  };
++
++/* Returns a suitable prime >= ESTIMATE.  */
++static size_t
++next_prime (size_t estimate)
++{
++  size_t i;
++
++  for (i = 0; i < sizeof (primes) / sizeof (primes[0]); i++)
++    if (primes[i] >= estimate)
++      return primes[i];
++  return SIZE_MAX; /* not a prime, but better than nothing */
++}
+--- /dev/null
++++ b/gl/gl_anylinked_list1.h
+@@ -0,0 +1,48 @@
++/* Sequential list data type implemented by a linked list.
++   Copyright (C) 2006, 2009-2021 Free Software Foundation, Inc.
++   Written by Bruno Haible <bruno@clisp.org>, 2006.
++
++   This program is free software: you can redistribute it and/or modify
++   it under the terms of the GNU Lesser General Public License as published by
++   the Free Software Foundation; either version 2.1 of the License, or
++   (at your option) any later version.
++
++   This program is distributed in the hope that it will be useful,
++   but WITHOUT ANY WARRANTY; without even the implied warranty of
++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++   GNU Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public License
++   along with this program.  If not, see <https://www.gnu.org/licenses/>.  */
++
++/* Common code of gl_linked_list.c and gl_linkedhash_list.c.  */
++
++/* -------------------------- gl_list_t Data Type -------------------------- */
++
++/* Concrete list node implementation, valid for this file only.  */
++struct gl_list_node_impl
++{
++#if WITH_HASHTABLE
++  struct gl_hash_entry h;           /* hash table entry fields; must be first */
++#endif
++  struct gl_list_node_impl *next;
++  struct gl_list_node_impl *prev;
++  const void *value;
++};
++
++/* Concrete gl_list_impl type, valid for this file only.  */
++struct gl_list_impl
++{
++  struct gl_list_impl_base base;
++#if WITH_HASHTABLE
++  /* A hash table: managed as an array of collision lists.  */
++  struct gl_hash_entry **table;
++  size_t table_size;
++#endif
++  /* A circular list anchored at root.
++     The first node is = root.next, the last node is = root.prev.
++     The root's value is unused.  */
++  struct gl_list_node_impl root;
++  /* Number of list nodes, excluding the root.  */
++  size_t count;
++};
+--- /dev/null
++++ b/gl/gl_anylinked_list2.h
+@@ -0,0 +1,1215 @@
++/* Sequential list data type implemented by a linked list.
++   Copyright (C) 2006-2021 Free Software Foundation, Inc.
++   Written by Bruno Haible <bruno@clisp.org>, 2006.
++
++   This program is free software: you can redistribute it and/or modify
++   it under the terms of the GNU Lesser General Public License as published by
++   the Free Software Foundation; either version 2.1 of the License, or
++   (at your option) any later version.
++
++   This program is distributed in the hope that it will be useful,
++   but WITHOUT ANY WARRANTY; without even the implied warranty of
++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++   GNU Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public License
++   along with this program.  If not, see <https://www.gnu.org/licenses/>.  */
++
++/* Common code of gl_linked_list.c and gl_linkedhash_list.c.  */
++
++/* If the symbol SIGNAL_SAFE_LIST is defined, the code is compiled in such
++   a way that a gl_list_t data structure may be used from within a signal
++   handler.  The operations allowed in the signal handler are:
++     gl_list_iterator, gl_list_iterator_next, gl_list_iterator_free.
++   The list and node fields that are therefore accessed from the signal handler
++   are:
++     list->root, node->next, node->value.
++   We are careful to make modifications to these fields only in an order
++   that maintains the consistency of the list data structure at any moment,
++   and we use 'volatile' assignments to prevent the compiler from reordering
++   such assignments.  */
++#ifdef SIGNAL_SAFE_LIST
++# define ASYNCSAFE(type) *(type volatile *)&
++#else
++# define ASYNCSAFE(type)
++#endif
++
++/* -------------------------- gl_list_t Data Type -------------------------- */
++
++static gl_list_t
++gl_linked_nx_create_empty (gl_list_implementation_t implementation,
++                           gl_listelement_equals_fn equals_fn,
++                           gl_listelement_hashcode_fn hashcode_fn,
++                           gl_listelement_dispose_fn dispose_fn,
++                           bool allow_duplicates)
++{
++  struct gl_list_impl *list =
++    (struct gl_list_impl *) malloc (sizeof (struct gl_list_impl));
++
++  if (list == NULL)
++    return NULL;
++
++  list->base.vtable = implementation;
++  list->base.equals_fn = equals_fn;
++  list->base.hashcode_fn = hashcode_fn;
++  list->base.dispose_fn = dispose_fn;
++  list->base.allow_duplicates = allow_duplicates;
++#if WITH_HASHTABLE
++  list->table_size = 11;
++  list->table =
++    (gl_hash_entry_t *) calloc (list->table_size, sizeof (gl_hash_entry_t));
++  if (list->table == NULL)
++    goto fail;
++#endif
++  list->root.next = &list->root;
++  list->root.prev = &list->root;
++  list->count = 0;
++
++  return list;
++
++#if WITH_HASHTABLE
++ fail:
++  free (list);
++  return NULL;
++#endif
++}
++
++static gl_list_t
++gl_linked_nx_create (gl_list_implementation_t implementation,
++                     gl_listelement_equals_fn equals_fn,
++                     gl_listelement_hashcode_fn hashcode_fn,
++                     gl_listelement_dispose_fn dispose_fn,
++                     bool allow_duplicates,
++                     size_t count, const void **contents)
++{
++  struct gl_list_impl *list =
++    (struct gl_list_impl *) malloc (sizeof (struct gl_list_impl));
++  gl_list_node_t tail;
++
++  if (list == NULL)
++    return NULL;
++
++  list->base.vtable = implementation;
++  list->base.equals_fn = equals_fn;
++  list->base.hashcode_fn = hashcode_fn;
++  list->base.dispose_fn = dispose_fn;
++  list->base.allow_duplicates = allow_duplicates;
++#if WITH_HASHTABLE
++  {
++    size_t estimate = xsum (count, count / 2); /* 1.5 * count */
++    if (estimate < 10)
++      estimate = 10;
++    list->table_size = next_prime (estimate);
++    if (size_overflow_p (xtimes (list->table_size, sizeof (gl_hash_entry_t))))
++      goto fail1;
++    list->table =
++      (gl_hash_entry_t *) calloc (list->table_size, sizeof (gl_hash_entry_t));
++    if (list->table == NULL)
++      goto fail1;
++  }
++#endif
++  list->count = count;
++  tail = &list->root;
++  for (; count > 0; contents++, count--)
++    {
++      gl_list_node_t node =
++        (struct gl_list_node_impl *) malloc (sizeof (struct gl_list_node_impl));
++
++      if (node == NULL)
++        goto fail2;
++
++      node->value = *contents;
++#if WITH_HASHTABLE
++      node->h.hashcode =
++        (list->base.hashcode_fn != NULL
++         ? list->base.hashcode_fn (node->value)
++         : (size_t)(uintptr_t) node->value);
++
++      /* Add node to the hash table.  */
++      if (add_to_bucket (list, node) < 0)
++        {
++          free (node);
++          goto fail2;
++        }
++#endif
++
++      /* Add node to the list.  */
++      node->prev = tail;
++      tail->next = node;
++      tail = node;
++    }
++  tail->next = &list->root;
++  list->root.prev = tail;
++
++  return list;
++
++ fail2:
++  {
++    gl_list_node_t node;
++
++    for (node = tail; node != &list->root; )
++      {
++        gl_list_node_t prev = node->prev;
++
++        free (node);
++        node = prev;
++      }
++  }
++#if WITH_HASHTABLE
++  free (list->table);
++ fail1:
++#endif
++  free (list);
++  return NULL;
++}
++
++static size_t _GL_ATTRIBUTE_PURE
++gl_linked_size (gl_list_t list)
++{
++  return list->count;
++}
++
++static const void * _GL_ATTRIBUTE_PURE
++gl_linked_node_value (gl_list_t list _GL_ATTRIBUTE_MAYBE_UNUSED,
++                      gl_list_node_t node)
++{
++  return node->value;
++}
++
++static int
++gl_linked_node_nx_set_value (gl_list_t list _GL_ATTRIBUTE_MAYBE_UNUSED,
++                             gl_list_node_t node,
++                             const void *elt)
++{
++#if WITH_HASHTABLE
++  if (elt != node->value)
++    {
++      size_t new_hashcode =
++        (list->base.hashcode_fn != NULL
++         ? list->base.hashcode_fn (elt)
++         : (size_t)(uintptr_t) elt);
++
++      if (new_hashcode != node->h.hashcode)
++        {
++          remove_from_bucket (list, node);
++          node->value = elt;
++          node->h.hashcode = new_hashcode;
++          if (add_to_bucket (list, node) < 0)
++            {
++              /* Out of memory.  We removed node from a bucket but cannot add
++                 it to another bucket.  In order to avoid inconsistencies, we
++                 must remove node entirely from the list.  */
++              gl_list_node_t before_removed = node->prev;
++              gl_list_node_t after_removed = node->next;
++              ASYNCSAFE(gl_list_node_t) before_removed->next = after_removed;
++              after_removed->prev = before_removed;
++              list->count--;
++              free (node);
++              return -1;
++            }
++        }
++      else
++        node->value = elt;
++    }
++#else
++  node->value = elt;
++#endif
++  return 0;
++}
++
++static gl_list_node_t _GL_ATTRIBUTE_PURE
++gl_linked_next_node (gl_list_t list, gl_list_node_t node)
++{
++  return (node->next != &list->root ? node->next : NULL);
++}
++
++static gl_list_node_t _GL_ATTRIBUTE_PURE
++gl_linked_previous_node (gl_list_t list, gl_list_node_t node)
++{
++  return (node->prev != &list->root ? node->prev : NULL);
++}
++
++static gl_list_node_t _GL_ATTRIBUTE_PURE
++gl_linked_first_node (gl_list_t list)
++{
++  if (list->count > 0)
++    return list->root.next;
++  else
++    return NULL;
++}
++
++static gl_list_node_t _GL_ATTRIBUTE_PURE
++gl_linked_last_node (gl_list_t list)
++{
++  if (list->count > 0)
++    return list->root.prev;
++  else
++    return NULL;
++}
++
++static const void * _GL_ATTRIBUTE_PURE
++gl_linked_get_at (gl_list_t list, size_t position)
++{
++  size_t count = list->count;
++  gl_list_node_t node;
++
++  if (!(position < count))
++    /* Invalid argument.  */
++    abort ();
++  /* Here we know count > 0.  */
++  if (position <= ((count - 1) / 2))
++    {
++      node = list->root.next;
++      for (; position > 0; position--)
++        node = node->next;
++    }
++  else
++    {
++      position = count - 1 - position;
++      node = list->root.prev;
++      for (; position > 0; position--)
++        node = node->prev;
++    }
++  return node->value;
++}
++
++static gl_list_node_t
++gl_linked_nx_set_at (gl_list_t list, size_t position, const void *elt)
++{
++  size_t count = list->count;
++  gl_list_node_t node;
++
++  if (!(position < count))
++    /* Invalid argument.  */
++    abort ();
++  /* Here we know count > 0.  */
++  if (position <= ((count - 1) / 2))
++    {
++      node = list->root.next;
++      for (; position > 0; position--)
++        node = node->next;
++    }
++  else
++    {
++      position = count - 1 - position;
++      node = list->root.prev;
++      for (; position > 0; position--)
++        node = node->prev;
++    }
++#if WITH_HASHTABLE
++  if (elt != node->value)
++    {
++      size_t new_hashcode =
++        (list->base.hashcode_fn != NULL
++         ? list->base.hashcode_fn (elt)
++         : (size_t)(uintptr_t) elt);
++
++      if (new_hashcode != node->h.hashcode)
++        {
++          remove_from_bucket (list, node);
++          node->value = elt;
++          node->h.hashcode = new_hashcode;
++          if (add_to_bucket (list, node) < 0)
++            {
++              /* Out of memory.  We removed node from a bucket but cannot add
++                 it to another bucket.  In order to avoid inconsistencies, we
++                 must remove node entirely from the list.  */
++              gl_list_node_t before_removed = node->prev;
++              gl_list_node_t after_removed = node->next;
++              ASYNCSAFE(gl_list_node_t) before_removed->next = after_removed;
++              after_removed->prev = before_removed;
++              list->count--;
++              free (node);
++              return NULL;
++            }
++        }
++      else
++        node->value = elt;
++    }
++#else
++  node->value = elt;
++#endif
++  return node;
++}
++
++static gl_list_node_t _GL_ATTRIBUTE_PURE
++gl_linked_search_from_to (gl_list_t list, size_t start_index, size_t end_index,
++                          const void *elt)
++{
++  size_t count = list->count;
++
++  if (!(start_index <= end_index && end_index <= count))
++    /* Invalid arguments.  */
++    abort ();
++  {
++#if WITH_HASHTABLE
++    size_t hashcode =
++      (list->base.hashcode_fn != NULL
++       ? list->base.hashcode_fn (elt)
++       : (size_t)(uintptr_t) elt);
++    size_t bucket = hashcode % list->table_size;
++    gl_listelement_equals_fn equals = list->base.equals_fn;
++
++    if (!list->base.allow_duplicates)
++      {
++        /* Look for the first match in the hash bucket.  */
++        gl_list_node_t found = NULL;
++        gl_list_node_t node;
++
++        for (node = (gl_list_node_t) list->table[bucket];
++             node != NULL;
++             node = (gl_list_node_t) node->h.hash_next)
++          if (node->h.hashcode == hashcode
++              && (equals != NULL
++                  ? equals (elt, node->value)
++                  : elt == node->value))
++            {
++              found = node;
++              break;
++            }
++        if (start_index > 0)
++          /* Look whether found's index is < start_index.  */
++          for (node = list->root.next; ; node = node->next)
++            {
++              if (node == found)
++                return NULL;
++              if (--start_index == 0)
++                break;
++            }
++        if (end_index < count)
++          /* Look whether found's index is >= end_index.  */
++          {
++            end_index = count - end_index;
++            for (node = list->root.prev; ; node = node->prev)
++              {
++                if (node == found)
++                  return NULL;
++                if (--end_index == 0)
++                  break;
++              }
++          }
++        return found;
++      }
++    else
++      {
++        /* Look whether there is more than one match in the hash bucket.  */
++        bool multiple_matches = false;
++        gl_list_node_t first_match = NULL;
++        gl_list_node_t node;
++
++        for (node = (gl_list_node_t) list->table[bucket];
++             node != NULL;
++             node = (gl_list_node_t) node->h.hash_next)
++          if (node->h.hashcode == hashcode
++              && (equals != NULL
++                  ? equals (elt, node->value)
++                  : elt == node->value))
++            {
++              if (first_match == NULL)
++                first_match = node;
++              else
++                {
++                  multiple_matches = true;
++                  break;
++                }
++            }
++        if (multiple_matches)
++          {
++            /* We need the match with the smallest index.  But we don't have
++               a fast mapping node -> index.  So we have to walk the list.  */
++            end_index -= start_index;
++            node = list->root.next;
++            for (; start_index > 0; start_index--)
++              node = node->next;
++
++            for (;
++                 end_index > 0;
++                 node = node->next, end_index--)
++              if (node->h.hashcode == hashcode
++                  && (equals != NULL
++                      ? equals (elt, node->value)
++                      : elt == node->value))
++                return node;
++            /* The matches must have all been at indices < start_index or
++               >= end_index.  */
++            return NULL;
++          }
++        else
++          {
++            if (start_index > 0)
++              /* Look whether first_match's index is < start_index.  */
++              for (node = list->root.next; node != &list->root; node = node->next)
++                {
++                  if (node == first_match)
++                    return NULL;
++                  if (--start_index == 0)
++                    break;
++                }
++            if (end_index < list->count)
++              /* Look whether first_match's index is >= end_index.  */
++              {
++                end_index = list->count - end_index;
++                for (node = list->root.prev; ; node = node->prev)
++                  {
++                    if (node == first_match)
++                      return NULL;
++                    if (--end_index == 0)
++                      break;
++                  }
++              }
++            return first_match;
++          }
++      }
++#else
++    gl_listelement_equals_fn equals = list->base.equals_fn;
++    gl_list_node_t node = list->root.next;
++
++    end_index -= start_index;
++    for (; start_index > 0; start_index--)
++      node = node->next;
++
++    if (equals != NULL)
++      {
++        for (; end_index > 0; node = node->next, end_index--)
++          if (equals (elt, node->value))
++            return node;
++      }
++    else
++      {
++        for (; end_index > 0; node = node->next, end_index--)
++          if (elt == node->value)
++            return node;
++      }
++    return NULL;
++#endif
++  }
++}
++
++static size_t _GL_ATTRIBUTE_PURE
++gl_linked_indexof_from_to (gl_list_t list, size_t start_index, size_t end_index,
++                           const void *elt)
++{
++  size_t count = list->count;
++
++  if (!(start_index <= end_index && end_index <= count))
++    /* Invalid arguments.  */
++    abort ();
++  {
++#if WITH_HASHTABLE
++    /* Here the hash table doesn't help much.  It only allows us to minimize
++       the number of equals() calls, by looking up first the node and then
++       its index.  */
++    size_t hashcode =
++      (list->base.hashcode_fn != NULL
++       ? list->base.hashcode_fn (elt)
++       : (size_t)(uintptr_t) elt);
++    size_t bucket = hashcode % list->table_size;
++    gl_listelement_equals_fn equals = list->base.equals_fn;
++    gl_list_node_t node;
++
++    /* First step: Look up the node.  */
++    if (!list->base.allow_duplicates)
++      {
++        /* Look for the first match in the hash bucket.  */
++        for (node = (gl_list_node_t) list->table[bucket];
++             node != NULL;
++             node = (gl_list_node_t) node->h.hash_next)
++          if (node->h.hashcode == hashcode
++              && (equals != NULL
++                  ? equals (elt, node->value)
++                  : elt == node->value))
++            break;
++      }
++    else
++      {
++        /* Look whether there is more than one match in the hash bucket.  */
++        bool multiple_matches = false;
++        gl_list_node_t first_match = NULL;
++
++        for (node = (gl_list_node_t) list->table[bucket];
++             node != NULL;
++             node = (gl_list_node_t) node->h.hash_next)
++          if (node->h.hashcode == hashcode
++              && (equals != NULL
++                  ? equals (elt, node->value)
++                  : elt == node->value))
++            {
++              if (first_match == NULL)
++                first_match = node;
++              else
++                {
++                  multiple_matches = true;
++                  break;
++                }
++            }
++        if (multiple_matches)
++          {
++            /* We need the match with the smallest index.  But we don't have
++               a fast mapping node -> index.  So we have to walk the list.  */
++            size_t index;
++
++            index = start_index;
++            node = list->root.next;
++            for (; start_index > 0; start_index--)
++              node = node->next;
++
++            for (;
++                 index < end_index;
++                 node = node->next, index++)
++              if (node->h.hashcode == hashcode
++                  && (equals != NULL
++                      ? equals (elt, node->value)
++                      : elt == node->value))
++                return index;
++            /* The matches must have all been at indices < start_index or
++               >= end_index.  */
++            return (size_t)(-1);
++          }
++        node = first_match;
++      }
++
++    /* Second step: Look up the index of the node.  */
++    if (node == NULL)
++      return (size_t)(-1);
++    else
++      {
++        size_t index = 0;
++
++        for (; node->prev != &list->root; node = node->prev)
++          index++;
++
++        if (index >= start_index && index < end_index)
++          return index;
++        else
++          return (size_t)(-1);
++      }
++#else
++    gl_listelement_equals_fn equals = list->base.equals_fn;
++    size_t index = start_index;
++    gl_list_node_t node = list->root.next;
++
++    for (; start_index > 0; start_index--)
++      node = node->next;
++
++    if (equals != NULL)
++      {
++        for (;
++             index < end_index;
++             node = node->next, index++)
++          if (equals (elt, node->value))
++            return index;
++      }
++    else
++      {
++        for (;
++             index < end_index;
++             node = node->next, index++)
++          if (elt == node->value)
++            return index;
++      }
++    return (size_t)(-1);
++#endif
++  }
++}
++
++static gl_list_node_t
++gl_linked_nx_add_first (gl_list_t list, const void *elt)
++{
++  gl_list_node_t node =
++    (struct gl_list_node_impl *) malloc (sizeof (struct gl_list_node_impl));
++
++  if (node == NULL)
++    return NULL;
++
++  ASYNCSAFE(const void *) node->value = elt;
++#if WITH_HASHTABLE
++  node->h.hashcode =
++    (list->base.hashcode_fn != NULL
++     ? list->base.hashcode_fn (node->value)
++     : (size_t)(uintptr_t) node->value);
++
++  /* Add node to the hash table.  */
++  if (add_to_bucket (list, node) < 0)
++    {
++      free (node);
++      return NULL;
++    }
++#endif
++
++  /* Add node to the list.  */
++  node->prev = &list->root;
++  ASYNCSAFE(gl_list_node_t) node->next = list->root.next;
++  node->next->prev = node;
++  ASYNCSAFE(gl_list_node_t) list->root.next = node;
++  list->count++;
++
++#if WITH_HASHTABLE
++  hash_resize_after_add (list);
++#endif
++
++  return node;
++}
++
++static gl_list_node_t
++gl_linked_nx_add_last (gl_list_t list, const void *elt)
++{
++  gl_list_node_t node =
++    (struct gl_list_node_impl *) malloc (sizeof (struct gl_list_node_impl));
++
++  if (node == NULL)
++    return NULL;
++
++  ASYNCSAFE(const void *) node->value = elt;
++#if WITH_HASHTABLE
++  node->h.hashcode =
++    (list->base.hashcode_fn != NULL
++     ? list->base.hashcode_fn (node->value)
++     : (size_t)(uintptr_t) node->value);
++
++  /* Add node to the hash table.  */
++  if (add_to_bucket (list, node) < 0)
++    {
++      free (node);
++      return NULL;
++    }
++#endif
++
++  /* Add node to the list.  */
++  ASYNCSAFE(gl_list_node_t) node->next = &list->root;
++  node->prev = list->root.prev;
++  ASYNCSAFE(gl_list_node_t) node->prev->next = node;
++  list->root.prev = node;
++  list->count++;
++
++#if WITH_HASHTABLE
++  hash_resize_after_add (list);
++#endif
++
++  return node;
++}
++
++static gl_list_node_t
++gl_linked_nx_add_before (gl_list_t list, gl_list_node_t node, const void *elt)
++{
++  gl_list_node_t new_node =
++    (struct gl_list_node_impl *) malloc (sizeof (struct gl_list_node_impl));
++
++  if (new_node == NULL)
++    return NULL;
++
++  ASYNCSAFE(const void *) new_node->value = elt;
++#if WITH_HASHTABLE
++  new_node->h.hashcode =
++    (list->base.hashcode_fn != NULL
++     ? list->base.hashcode_fn (new_node->value)
++     : (size_t)(uintptr_t) new_node->value);
++
++  /* Add new_node to the hash table.  */
++  if (add_to_bucket (list, new_node) < 0)
++    {
++      free (new_node);
++      return NULL;
++    }
++#endif
++
++  /* Add new_node to the list.  */
++  ASYNCSAFE(gl_list_node_t) new_node->next = node;
++  new_node->prev = node->prev;
++  ASYNCSAFE(gl_list_node_t) new_node->prev->next = new_node;
++  node->prev = new_node;
++  list->count++;
++
++#if WITH_HASHTABLE
++  hash_resize_after_add (list);
++#endif
++
++  return new_node;
++}
++
++static gl_list_node_t
++gl_linked_nx_add_after (gl_list_t list, gl_list_node_t node, const void *elt)
++{
++  gl_list_node_t new_node =
++    (struct gl_list_node_impl *) malloc (sizeof (struct gl_list_node_impl));
++
++  if (new_node == NULL)
++    return NULL;
++
++  ASYNCSAFE(const void *) new_node->value = elt;
++#if WITH_HASHTABLE
++  new_node->h.hashcode =
++    (list->base.hashcode_fn != NULL
++     ? list->base.hashcode_fn (new_node->value)
++     : (size_t)(uintptr_t) new_node->value);
++
++  /* Add new_node to the hash table.  */
++  if (add_to_bucket (list, new_node) < 0)
++    {
++      free (new_node);
++      return NULL;
++    }
++#endif
++
++  /* Add new_node to the list.  */
++  new_node->prev = node;
++  ASYNCSAFE(gl_list_node_t) new_node->next = node->next;
++  new_node->next->prev = new_node;
++  ASYNCSAFE(gl_list_node_t) node->next = new_node;
++  list->count++;
++
++#if WITH_HASHTABLE
++  hash_resize_after_add (list);
++#endif
++
++  return new_node;
++}
++
++static gl_list_node_t
++gl_linked_nx_add_at (gl_list_t list, size_t position, const void *elt)
++{
++  size_t count = list->count;
++  gl_list_node_t new_node;
++
++  if (!(position <= count))
++    /* Invalid argument.  */
++    abort ();
++
++  new_node = (struct gl_list_node_impl *) malloc (sizeof (struct gl_list_node_impl));
++  if (new_node == NULL)
++    return NULL;
++
++  ASYNCSAFE(const void *) new_node->value = elt;
++#if WITH_HASHTABLE
++  new_node->h.hashcode =
++    (list->base.hashcode_fn != NULL
++     ? list->base.hashcode_fn (new_node->value)
++     : (size_t)(uintptr_t) new_node->value);
++
++  /* Add new_node to the hash table.  */
++  if (add_to_bucket (list, new_node) < 0)
++    {
++      free (new_node);
++      return NULL;
++    }
++#endif
++
++  /* Add new_node to the list.  */
++  if (position <= (count / 2))
++    {
++      gl_list_node_t node;
++
++      node = &list->root;
++      for (; position > 0; position--)
++        node = node->next;
++      new_node->prev = node;
++      ASYNCSAFE(gl_list_node_t) new_node->next = node->next;
++      new_node->next->prev = new_node;
++      ASYNCSAFE(gl_list_node_t) node->next = new_node;
++    }
++  else
++    {
++      gl_list_node_t node;
++
++      position = count - position;
++      node = &list->root;
++      for (; position > 0; position--)
++        node = node->prev;
++      ASYNCSAFE(gl_list_node_t) new_node->next = node;
++      new_node->prev = node->prev;
++      ASYNCSAFE(gl_list_node_t) new_node->prev->next = new_node;
++      node->prev = new_node;
++    }
++  list->count++;
++
++#if WITH_HASHTABLE
++  hash_resize_after_add (list);
++#endif
++
++  return new_node;
++}
++
++static bool
++gl_linked_remove_node (gl_list_t list, gl_list_node_t node)
++{
++  gl_list_node_t prev;
++  gl_list_node_t next;
++
++#if WITH_HASHTABLE
++  /* Remove node from the hash table.  */
++  remove_from_bucket (list, node);
++#endif
++
++  /* Remove node from the list.  */
++  prev = node->prev;
++  next = node->next;
++
++  ASYNCSAFE(gl_list_node_t) prev->next = next;
++  next->prev = prev;
++  list->count--;
++
++  if (list->base.dispose_fn != NULL)
++    list->base.dispose_fn (node->value);
++  free (node);
++  return true;
++}
++
++static bool
++gl_linked_remove_at (gl_list_t list, size_t position)
++{
++  size_t count = list->count;
++  gl_list_node_t removed_node;
++
++  if (!(position < count))
++    /* Invalid argument.  */
++    abort ();
++  /* Here we know count > 0.  */
++  if (position <= ((count - 1) / 2))
++    {
++      gl_list_node_t node;
++      gl_list_node_t after_removed;
++
++      node = &list->root;
++      for (; position > 0; position--)
++        node = node->next;
++      removed_node = node->next;
++      after_removed = node->next->next;
++      ASYNCSAFE(gl_list_node_t) node->next = after_removed;
++      after_removed->prev = node;
++    }
++  else
++    {
++      gl_list_node_t node;
++      gl_list_node_t before_removed;
++
++      position = count - 1 - position;
++      node = &list->root;
++      for (; position > 0; position--)
++        node = node->prev;
++      removed_node = node->prev;
++      before_removed = node->prev->prev;
++      node->prev = before_removed;
++      ASYNCSAFE(gl_list_node_t) before_removed->next = node;
++    }
++#if WITH_HASHTABLE
++  remove_from_bucket (list, removed_node);
++#endif
++  list->count--;
++
++  if (list->base.dispose_fn != NULL)
++    list->base.dispose_fn (removed_node->value);
++  free (removed_node);
++  return true;
++}
++
++static bool
++gl_linked_remove (gl_list_t list, const void *elt)
++{
++  gl_list_node_t node = gl_linked_search_from_to (list, 0, list->count, elt);
++
++  if (node != NULL)
++    return gl_linked_remove_node (list, node);
++  else
++    return false;
++}
++
++static void
++gl_linked_list_free (gl_list_t list)
++{
++  gl_listelement_dispose_fn dispose = list->base.dispose_fn;
++  gl_list_node_t node;
++
++  for (node = list->root.next; node != &list->root; )
++    {
++      gl_list_node_t next = node->next;
++      if (dispose != NULL)
++        dispose (node->value);
++      free (node);
++      node = next;
++    }
++#if WITH_HASHTABLE
++  free (list->table);
++#endif
++  free (list);
++}
++
++/* --------------------- gl_list_iterator_t Data Type --------------------- */
++
++static gl_list_iterator_t _GL_ATTRIBUTE_PURE
++gl_linked_iterator (gl_list_t list)
++{
++  gl_list_iterator_t result;
++
++  result.vtable = list->base.vtable;
++  result.list = list;
++  result.p = list->root.next;
++  result.q = &list->root;
++#if defined GCC_LINT || defined lint
++  result.i = 0;
++  result.j = 0;
++  result.count = 0;
++#endif
++
++  return result;
++}
++
++static gl_list_iterator_t _GL_ATTRIBUTE_PURE
++gl_linked_iterator_from_to (gl_list_t list,
++                            size_t start_index, size_t end_index)
++{
++  gl_list_iterator_t result;
++  size_t n1, n2, n3;
++
++  if (!(start_index <= end_index && end_index <= list->count))
++    /* Invalid arguments.  */
++    abort ();
++  result.vtable = list->base.vtable;
++  result.list = list;
++  n1 = start_index;
++  n2 = end_index - start_index;
++  n3 = list->count - end_index;
++  /* Find the maximum among n1, n2, n3, so as to reduce the number of
++     loop iterations to n1 + n2 + n3 - max(n1,n2,n3).  */
++  if (n1 > n2 && n1 > n3)
++    {
++      /* n1 is the maximum, use n2 and n3.  */
++      gl_list_node_t node;
++      size_t i;
++
++      node = &list->root;
++      for (i = n3; i > 0; i--)
++        node = node->prev;
++      result.q = node;
++      for (i = n2; i > 0; i--)
++        node = node->prev;
++      result.p = node;
++    }
++  else if (n2 > n3)
++    {
++      /* n2 is the maximum, use n1 and n3.  */
++      gl_list_node_t node;
++      size_t i;
++
++      node = list->root.next;
++      for (i = n1; i > 0; i--)
++        node = node->next;
++      result.p = node;
++
++      node = &list->root;
++      for (i = n3; i > 0; i--)
++        node = node->prev;
++      result.q = node;
++    }
++  else
++    {
++      /* n3 is the maximum, use n1 and n2.  */
++      gl_list_node_t node;
++      size_t i;
++
++      node = list->root.next;
++      for (i = n1; i > 0; i--)
++        node = node->next;
++      result.p = node;
++      for (i = n2; i > 0; i--)
++        node = node->next;
++      result.q = node;
++    }
++
++#if defined GCC_LINT || defined lint
++  result.i = 0;
++  result.j = 0;
++  result.count = 0;
++#endif
++
++  return result;
++}
++
++static bool
++gl_linked_iterator_next (gl_list_iterator_t *iterator,
++                         const void **eltp, gl_list_node_t *nodep)
++{
++  if (iterator->p != iterator->q)
++    {
++      gl_list_node_t node = (gl_list_node_t) iterator->p;
++      *eltp = node->value;
++      if (nodep != NULL)
++        *nodep = node;
++      iterator->p = node->next;
++      return true;
++    }
++  else
++    return false;
++}
++
++static void
++gl_linked_iterator_free (gl_list_iterator_t *iterator _GL_ATTRIBUTE_MAYBE_UNUSED)
++{
++}
++
++/* ---------------------- Sorted gl_list_t Data Type ---------------------- */
++
++static gl_list_node_t _GL_ATTRIBUTE_PURE
++gl_linked_sortedlist_search (gl_list_t list, gl_listelement_compar_fn compar,
++                             const void *elt)
++{
++  gl_list_node_t node;
++
++  for (node = list->root.next; node != &list->root; node = node->next)
++    {
++      int cmp = compar (node->value, elt);
++
++      if (cmp > 0)
++        break;
++      if (cmp == 0)
++        return node;
++    }
++  return NULL;
++}
++
++static gl_list_node_t _GL_ATTRIBUTE_PURE
++gl_linked_sortedlist_search_from_to (gl_list_t list,
++                                     gl_listelement_compar_fn compar,
++                                     size_t low, size_t high,
++                                     const void *elt)
++{
++  size_t count = list->count;
++
++  if (!(low <= high && high <= list->count))
++    /* Invalid arguments.  */
++    abort ();
++
++  high -= low;
++  if (high > 0)
++    {
++      /* Here we know low < count.  */
++      size_t position = low;
++      gl_list_node_t node;
++
++      if (position <= ((count - 1) / 2))
++        {
++          node = list->root.next;
++          for (; position > 0; position--)
++            node = node->next;
++        }
++      else
++        {
++          position = count - 1 - position;
++          node = list->root.prev;
++          for (; position > 0; position--)
++            node = node->prev;
++        }
++
++      do
++        {
++          int cmp = compar (node->value, elt);
++
++          if (cmp > 0)
++            break;
++          if (cmp == 0)
++            return node;
++          node = node->next;
++        }
++      while (--high > 0);
++    }
++  return NULL;
++}
++
++static size_t _GL_ATTRIBUTE_PURE
++gl_linked_sortedlist_indexof (gl_list_t list, gl_listelement_compar_fn compar,
++                              const void *elt)
++{
++  gl_list_node_t node;
++  size_t index;
++
++  for (node = list->root.next, index = 0;
++       node != &list->root;
++       node = node->next, index++)
++    {
++      int cmp = compar (node->value, elt);
++
++      if (cmp > 0)
++        break;
++      if (cmp == 0)
++        return index;
++    }
++  return (size_t)(-1);
++}
++
++static size_t _GL_ATTRIBUTE_PURE
++gl_linked_sortedlist_indexof_from_to (gl_list_t list,
++                                      gl_listelement_compar_fn compar,
++                                      size_t low, size_t high,
++                                      const void *elt)
++{
++  size_t count = list->count;
++
++  if (!(low <= high && high <= list->count))
++    /* Invalid arguments.  */
++    abort ();
++
++  high -= low;
++  if (high > 0)
++    {
++      /* Here we know low < count.  */
++      size_t index = low;
++      size_t position = low;
++      gl_list_node_t node;
++
++      if (position <= ((count - 1) / 2))
++        {
++          node = list->root.next;
++          for (; position > 0; position--)
++            node = node->next;
++        }
++      else
++        {
++          position = count - 1 - position;
++          node = list->root.prev;
++          for (; position > 0; position--)
++            node = node->prev;
++        }
++
++      do
++        {
++          int cmp = compar (node->value, elt);
++
++          if (cmp > 0)
++            break;
++          if (cmp == 0)
++            return index;
++          node = node->next;
++          index++;
++        }
++      while (--high > 0);
++    }
++  return (size_t)(-1);
++}
++
++static gl_list_node_t
++gl_linked_sortedlist_nx_add (gl_list_t list, gl_listelement_compar_fn compar,
++                             const void *elt)
++{
++  gl_list_node_t node;
++
++  for (node = list->root.next; node != &list->root; node = node->next)
++    if (compar (node->value, elt) >= 0)
++      return gl_linked_nx_add_before (list, node, elt);
++  return gl_linked_nx_add_last (list, elt);
++}
++
++static bool
++gl_linked_sortedlist_remove (gl_list_t list, gl_listelement_compar_fn compar,
++                             const void *elt)
++{
++  gl_list_node_t node;
++
++  for (node = list->root.next; node != &list->root; node = node->next)
++    {
++      int cmp = compar (node->value, elt);
++
++      if (cmp > 0)
++        break;
++      if (cmp == 0)
++        return gl_linked_remove_node (list, node);
++    }
++  return false;
++}
+--- /dev/null
++++ b/gl/gl_linkedhash_list.c
+@@ -0,0 +1,114 @@
++/* Sequential list data type implemented by a hash table with a linked list.
++   Copyright (C) 2006, 2008-2021 Free Software Foundation, Inc.
++   Written by Bruno Haible <bruno@clisp.org>, 2006.
++
++   This program is free software: you can redistribute it and/or modify
++   it under the terms of the GNU Lesser General Public License as published by
++   the Free Software Foundation; either version 2.1 of the License, or
++   (at your option) any later version.
++
++   This program is distributed in the hope that it will be useful,
++   but WITHOUT ANY WARRANTY; without even the implied warranty of
++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++   GNU Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public License
++   along with this program.  If not, see <https://www.gnu.org/licenses/>.  */
++
++#include <config.h>
++
++/* Specification.  */
++#include "gl_linkedhash_list.h"
++
++#include <stdint.h> /* for uintptr_t, SIZE_MAX */
++#include <stdlib.h>
++
++#include "xsize.h"
++
++#define WITH_HASHTABLE 1
++
++/* -------------------------- gl_list_t Data Type -------------------------- */
++
++/* Generic hash-table code.  */
++#include "gl_anyhash1.h"
++
++/* Generic linked list code.  */
++#include "gl_anylinked_list1.h"
++
++/* Generic hash-table code.  */
++#define CONTAINER_T gl_list_t
++#define CONTAINER_COUNT(list) (list)->count
++#include "gl_anyhash2.h"
++
++/* Add a node to the hash table structure.  */
++static void
++add_to_bucket (gl_list_t list, gl_list_node_t node)
++{
++  size_t bucket = node->h.hashcode % list->table_size;
++
++  node->h.hash_next = list->table[bucket];
++  list->table[bucket] = &node->h;
++}
++/* Tell all compilers that the return value is 0.  */
++#define add_to_bucket(list,node)  ((add_to_bucket) (list, node), 0)
++
++/* Remove a node from the hash table structure.  */
++static void
++remove_from_bucket (gl_list_t list, gl_list_node_t node)
++{
++  size_t bucket = node->h.hashcode % list->table_size;
++  gl_hash_entry_t *p;
++
++  for (p = &list->table[bucket]; ; p = &(*p)->hash_next)
++    {
++      if (*p == &node->h)
++        {
++          *p = node->h.hash_next;
++          break;
++        }
++      if (*p == NULL)
++        /* node is not in the right bucket.  Did the hash codes
++           change inadvertently?  */
++        abort ();
++    }
++}
++
++/* Generic linked list code.  */
++#include "gl_anylinked_list2.h"
++
++
++const struct gl_list_implementation gl_linkedhash_list_implementation =
++  {
++    gl_linked_nx_create_empty,
++    gl_linked_nx_create,
++    gl_linked_size,
++    gl_linked_node_value,
++    gl_linked_node_nx_set_value,
++    gl_linked_next_node,
++    gl_linked_previous_node,
++    gl_linked_first_node,
++    gl_linked_last_node,
++    gl_linked_get_at,
++    gl_linked_nx_set_at,
++    gl_linked_search_from_to,
++    gl_linked_indexof_from_to,
++    gl_linked_nx_add_first,
++    gl_linked_nx_add_last,
++    gl_linked_nx_add_before,
++    gl_linked_nx_add_after,
++    gl_linked_nx_add_at,
++    gl_linked_remove_node,
++    gl_linked_remove_at,
++    gl_linked_remove,
++    gl_linked_list_free,
++    gl_linked_iterator,
++    gl_linked_iterator_from_to,
++    gl_linked_iterator_next,
++    gl_linked_iterator_free,
++    gl_linked_sortedlist_search,
++    gl_linked_sortedlist_search_from_to,
++    gl_linked_sortedlist_indexof,
++    gl_linked_sortedlist_indexof_from_to,
++    gl_linked_sortedlist_nx_add,
++    gl_linked_sortedlist_remove
++  };
+--- /dev/null
++++ b/gl/gl_linkedhash_list.h
+@@ -0,0 +1,34 @@
++/* Sequential list data type implemented by a hash table with a linked list.
++   Copyright (C) 2006, 2009-2021 Free Software Foundation, Inc.
++   Written by Bruno Haible <bruno@clisp.org>, 2006.
++
++   This program is free software: you can redistribute it and/or modify
++   it under the terms of the GNU Lesser General Public License as published by
++   the Free Software Foundation; either version 2.1 of the License, or
++   (at your option) any later version.
++
++   This program is distributed in the hope that it will be useful,
++   but WITHOUT ANY WARRANTY; without even the implied warranty of
++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++   GNU Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public License
++   along with this program.  If not, see <https://www.gnu.org/licenses/>.  */
++
++#ifndef _GL_LINKEDHASH_LIST_H
++#define _GL_LINKEDHASH_LIST_H
++
++#include "gl_list.h"
++
++#ifdef __cplusplus
++extern "C" {
++#endif
++
++extern const struct gl_list_implementation gl_linkedhash_list_implementation;
++#define GL_LINKEDHASH_LIST &gl_linkedhash_list_implementation
++
++#ifdef __cplusplus
++}
++#endif
++
++#endif /* _GL_LINKEDHASH_LIST_H */
+--- /dev/null
++++ b/gl/gl_list.c
+@@ -0,0 +1,3 @@
++#include <config.h>
++#define GL_LIST_INLINE _GL_EXTERN_INLINE
++#include "gl_list.h"
+--- /dev/null
++++ b/gl/gl_list.h
+@@ -0,0 +1,914 @@
++/* Abstract sequential list data type.  -*- coding: utf-8 -*-
++   Copyright (C) 2006-2021 Free Software Foundation, Inc.
++   Written by Bruno Haible <bruno@clisp.org>, 2006.
++
++   This program is free software: you can redistribute it and/or modify
++   it under the terms of the GNU Lesser General Public License as published by
++   the Free Software Foundation; either version 2.1 of the License, or
++   (at your option) any later version.
++
++   This program is distributed in the hope that it will be useful,
++   but WITHOUT ANY WARRANTY; without even the implied warranty of
++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++   GNU Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public License
++   along with this program.  If not, see <https://www.gnu.org/licenses/>.  */
++
++#ifndef _GL_LIST_H
++#define _GL_LIST_H
++
++#include <stdbool.h>
++#include <stddef.h>
++
++#ifndef _GL_INLINE_HEADER_BEGIN
++ #error "Please include config.h first."
++#endif
++_GL_INLINE_HEADER_BEGIN
++#ifndef GL_LIST_INLINE
++# define GL_LIST_INLINE _GL_INLINE
++#endif
++
++#ifdef __cplusplus
++extern "C" {
++#endif
++
++
++/* gl_list is an abstract list data type.  It can contain any number of
++   objects ('void *' or 'const void *' pointers) in any given order.
++   Duplicates are allowed, but can optionally be forbidden.
++
++   There are several implementations of this list datatype, optimized for
++   different operations or for memory.  You can start using the simplest list
++   implementation, GL_ARRAY_LIST, and switch to a different implementation
++   later, when you realize which operations are performed the most frequently.
++   The API of the different implementations is exactly the same; when
++   switching to a different implementation, you only have to change the
++   gl_list_create call.
++
++   The implementations are:
++     GL_ARRAY_LIST        a growable array
++     GL_CARRAY_LIST       a growable circular array
++     GL_LINKED_LIST       a linked list
++     GL_AVLTREE_LIST      a binary tree (AVL tree)
++     GL_RBTREE_LIST       a binary tree (red-black tree)
++     GL_LINKEDHASH_LIST   a hash table with a linked list
++     GL_AVLTREEHASH_LIST  a hash table with a binary tree (AVL tree)
++     GL_RBTREEHASH_LIST   a hash table with a binary tree (red-black tree)
++
++   The memory consumption is asymptotically the same: O(1) for every object
++   in the list.  When looking more closely at the average memory consumed
++   for an object, GL_ARRAY_LIST is the most compact representation, and
++   GL_LINKEDHASH_LIST and GL_TREEHASH_LIST need more memory.
++
++   The guaranteed average performance of the operations is, for a list of
++   n elements:
++
++   Operation                  ARRAY    LINKED    TREE    LINKEDHASH   TREEHASH
++                              CARRAY                   with|without with|without
++                                                         duplicates  duplicates
++
++   gl_list_size                O(1)     O(1)     O(1)      O(1)         O(1)
++   gl_list_node_value          O(1)     O(1)     O(1)      O(1)         O(1)
++   gl_list_node_set_value      O(1)     O(1)     O(1)      O(1)    O((log n)²)/O(1)
++   gl_list_next_node           O(1)     O(1)   O(log n)    O(1)       O(log n)
++   gl_list_previous_node       O(1)     O(1)   O(log n)    O(1)       O(log n)
++   gl_list_first_node          O(1)     O(1)   O(log n)    O(1)       O(log n)
++   gl_list_last_node           O(1)     O(1)   O(log n)    O(1)       O(log n)
++   gl_list_get_at              O(1)     O(n)   O(log n)    O(n)       O(log n)
++   gl_list_get_first           O(1)     O(1)   O(log n)    O(1)       O(log n)
++   gl_list_get_last            O(1)     O(1)   O(log n)    O(1)       O(log n)
++   gl_list_set_at              O(1)     O(n)   O(log n)    O(n)    O((log n)²)/O(log n)
++   gl_list_set_first           O(1)     O(1)   O(log n)  O(n)/O(1) O((log n)²)/O(log n)
++   gl_list_set_last            O(1)     O(1)   O(log n)  O(n)/O(1) O((log n)²)/O(log n)
++   gl_list_search              O(n)     O(n)     O(n)    O(n)/O(1)    O(log n)/O(1)
++   gl_list_search_from         O(n)     O(n)     O(n)    O(n)/O(1) O((log n)²)/O(log n)
++   gl_list_search_from_to      O(n)     O(n)     O(n)    O(n)/O(1) O((log n)²)/O(log n)
++   gl_list_indexof             O(n)     O(n)     O(n)      O(n)       O(log n)
++   gl_list_indexof_from        O(n)     O(n)     O(n)      O(n)    O((log n)²)/O(log n)
++   gl_list_indexof_from_to     O(n)     O(n)     O(n)      O(n)    O((log n)²)/O(log n)
++   gl_list_add_first         O(n)/O(1)  O(1)   O(log n)    O(1)    O((log n)²)/O(log n)
++   gl_list_add_last            O(1)     O(1)   O(log n)    O(1)    O((log n)²)/O(log n)
++   gl_list_add_before          O(n)     O(1)   O(log n)    O(1)    O((log n)²)/O(log n)
++   gl_list_add_after           O(n)     O(1)   O(log n)    O(1)    O((log n)²)/O(log n)
++   gl_list_add_at              O(n)     O(n)   O(log n)    O(n)    O((log n)²)/O(log n)
++   gl_list_remove_node         O(n)     O(1)   O(log n)  O(n)/O(1) O((log n)²)/O(log n)
++   gl_list_remove_at           O(n)     O(n)   O(log n)    O(n)    O((log n)²)/O(log n)
++   gl_list_remove_first      O(n)/O(1)  O(1)   O(log n)  O(n)/O(1) O((log n)²)/O(log n)
++   gl_list_remove_last         O(1)     O(1)   O(log n)  O(n)/O(1) O((log n)²)/O(log n)
++   gl_list_remove              O(n)     O(n)     O(n)    O(n)/O(1) O((log n)²)/O(log n)
++   gl_list_iterator            O(1)     O(1)   O(log n)    O(1)       O(log n)
++   gl_list_iterator_from_to    O(1)     O(n)   O(log n)    O(n)       O(log n)
++   gl_list_iterator_next       O(1)     O(1)   O(log n)    O(1)       O(log n)
++   gl_sortedlist_search      O(log n)   O(n)   O(log n)    O(n)       O(log n)
++   gl_sortedlist_search_from O(log n)   O(n)   O(log n)    O(n)       O(log n)
++   gl_sortedlist_indexof     O(log n)   O(n)   O(log n)    O(n)       O(log n)
++   gl_sortedlist_indexof_fro O(log n)   O(n)   O(log n)    O(n)       O(log n)
++   gl_sortedlist_add           O(n)     O(n)   O(log n)    O(n)    O((log n)²)/O(log n)
++   gl_sortedlist_remove        O(n)     O(n)   O(log n)    O(n)    O((log n)²)/O(log n)
++ */
++
++/* -------------------------- gl_list_t Data Type -------------------------- */
++
++/* Type of function used to compare two elements.
++   NULL denotes pointer comparison.  */
++typedef bool (*gl_listelement_equals_fn) (const void *elt1, const void *elt2);
++
++/* Type of function used to compute a hash code.
++   NULL denotes a function that depends only on the pointer itself.  */
++typedef size_t (*gl_listelement_hashcode_fn) (const void *elt);
++
++/* Type of function used to dispose an element once it's removed from a list.
++   NULL denotes a no-op.  */
++typedef void (*gl_listelement_dispose_fn) (const void *elt);
++
++struct gl_list_impl;
++/* Type representing an entire list.  */
++typedef struct gl_list_impl * gl_list_t;
++
++struct gl_list_node_impl;
++/* Type representing the position of an element in the list, in a way that
++   is more adapted to the list implementation than a plain index.
++   Note: It is invalidated by insertions and removals!  */
++typedef struct gl_list_node_impl * gl_list_node_t;
++
++struct gl_list_implementation;
++/* Type representing a list datatype implementation.  */
++typedef const struct gl_list_implementation * gl_list_implementation_t;
++
++#if 0 /* Unless otherwise specified, these are defined inline below.  */
++
++/* Creates an empty list.
++   IMPLEMENTATION is one of GL_ARRAY_LIST, GL_CARRAY_LIST, GL_LINKED_LIST,
++   GL_AVLTREE_LIST, GL_RBTREE_LIST, GL_LINKEDHASH_LIST, GL_AVLTREEHASH_LIST,
++   GL_RBTREEHASH_LIST.
++   EQUALS_FN is an element comparison function or NULL.
++   HASHCODE_FN is an element hash code function or NULL.
++   DISPOSE_FN is an element disposal function or NULL.
++   ALLOW_DUPLICATES is false if duplicate elements shall not be allowed in
++   the list. The implementation may verify this at runtime.  */
++/* declared in gl_xlist.h */
++extern gl_list_t gl_list_create_empty (gl_list_implementation_t implementation,
++                                       gl_listelement_equals_fn equals_fn,
++                                       gl_listelement_hashcode_fn hashcode_fn,
++                                       gl_listelement_dispose_fn dispose_fn,
++                                       bool allow_duplicates);
++/* Likewise.  Returns NULL upon out-of-memory.  */
++extern gl_list_t gl_list_nx_create_empty (gl_list_implementation_t implementation,
++                                          gl_listelement_equals_fn equals_fn,
++                                          gl_listelement_hashcode_fn hashcode_fn,
++                                          gl_listelement_dispose_fn dispose_fn,
++                                          bool allow_duplicates);
++
++/* Creates a list with given contents.
++   IMPLEMENTATION is one of GL_ARRAY_LIST, GL_CARRAY_LIST, GL_LINKED_LIST,
++   GL_AVLTREE_LIST, GL_RBTREE_LIST, GL_LINKEDHASH_LIST, GL_AVLTREEHASH_LIST,
++   GL_RBTREEHASH_LIST.
++   EQUALS_FN is an element comparison function or NULL.
++   HASHCODE_FN is an element hash code function or NULL.
++   DISPOSE_FN is an element disposal function or NULL.
++   ALLOW_DUPLICATES is false if duplicate elements shall not be allowed in
++   the list. The implementation may verify this at runtime.
++   COUNT is the number of initial elements.
++   CONTENTS[0..COUNT-1] is the initial contents.  */
++/* declared in gl_xlist.h */
++extern gl_list_t gl_list_create (gl_list_implementation_t implementation,
++                                 gl_listelement_equals_fn equals_fn,
++                                 gl_listelement_hashcode_fn hashcode_fn,
++                                 gl_listelement_dispose_fn dispose_fn,
++                                 bool allow_duplicates,
++                                 size_t count, const void **contents);
++/* Likewise.  Returns NULL upon out-of-memory.  */
++extern gl_list_t gl_list_nx_create (gl_list_implementation_t implementation,
++                                    gl_listelement_equals_fn equals_fn,
++                                    gl_listelement_hashcode_fn hashcode_fn,
++                                    gl_listelement_dispose_fn dispose_fn,
++                                    bool allow_duplicates,
++                                    size_t count, const void **contents);
++
++/* Returns the current number of elements in a list.  */
++extern size_t gl_list_size (gl_list_t list);
++
++/* Returns the element value represented by a list node.  */
++extern const void * gl_list_node_value (gl_list_t list, gl_list_node_t node);
++
++/* Replaces the element value represented by a list node.  */
++/* declared in gl_xlist.h */
++extern void gl_list_node_set_value (gl_list_t list, gl_list_node_t node,
++                                    const void *elt);
++/* Likewise.  Returns 0 upon success, -1 upon out-of-memory.  */
++extern int gl_list_node_nx_set_value (gl_list_t list, gl_list_node_t node,
++                                      const void *elt)
++  _GL_ATTRIBUTE_NODISCARD;
++
++/* Returns the node immediately after the given node in the list, or NULL
++   if the given node is the last (rightmost) one in the list.  */
++extern gl_list_node_t gl_list_next_node (gl_list_t list, gl_list_node_t node);
++
++/* Returns the node immediately before the given node in the list, or NULL
++   if the given node is the first (leftmost) one in the list.  */
++extern gl_list_node_t gl_list_previous_node (gl_list_t list, gl_list_node_t node);
++
++/* Returns the first node in the list, or NULL if the list is empty.
++   This function is useful for iterating through the list like this:
++     gl_list_node_t node;
++     for (node = gl_list_first_node (list); node != NULL; node = gl_list_next_node (node))
++       ...
++ */
++extern gl_list_node_t gl_list_first_node (gl_list_t list);
++
++/* Returns the last node in the list, or NULL if the list is empty.
++   This function is useful for iterating through the list in backward order,
++   like this:
++     gl_list_node_t node;
++     for (node = gl_list_last_node (list); node != NULL; node = gl_list_previous_node (node))
++       ...
++ */
++extern gl_list_node_t gl_list_last_node (gl_list_t list);
++
++/* Returns the element at a given position in the list.
++   POSITION must be >= 0 and < gl_list_size (list).  */
++extern const void * gl_list_get_at (gl_list_t list, size_t position);
++
++/* Returns the element at the first position in the list.
++   The list must be non-empty.  */
++extern const void * gl_list_get_first (gl_list_t list);
++
++/* Returns the element at the last position in the list.
++   The list must be non-empty.  */
++extern const void * gl_list_get_last (gl_list_t list);
++
++/* Replaces the element at a given position in the list.
++   POSITION must be >= 0 and < gl_list_size (list).
++   Returns its node.  */
++/* declared in gl_xlist.h */
++extern gl_list_node_t gl_list_set_at (gl_list_t list, size_t position,
++                                      const void *elt);
++/* Likewise.  Returns NULL upon out-of-memory.  */
++extern gl_list_node_t gl_list_nx_set_at (gl_list_t list, size_t position,
++                                         const void *elt)
++  _GL_ATTRIBUTE_NODISCARD;
++
++/* Replaces the element at the first position in the list.
++   Returns its node.
++   The list must be non-empty.  */
++/* declared in gl_xlist.h */
++extern gl_list_node_t gl_list_set_first (gl_list_t list, const void *elt);
++/* Likewise.  Returns NULL upon out-of-memory.  */
++extern gl_list_node_t gl_list_nx_set_first (gl_list_t list, const void *elt)
++  _GL_ATTRIBUTE_NODISCARD;
++
++/* Replaces the element at the last position in the list.
++   Returns its node.
++   The list must be non-empty.  */
++/* declared in gl_xlist.h */
++extern gl_list_node_t gl_list_set_last (gl_list_t list, const void *elt);
++/* Likewise.  Returns NULL upon out-of-memory.  */
++extern gl_list_node_t gl_list_nx_set_last (gl_list_t list, const void *elt)
++  _GL_ATTRIBUTE_NODISCARD;
++
++/* Searches whether an element is already in the list.
++   Returns its node if found, or NULL if not present in the list.  */
++extern gl_list_node_t gl_list_search (gl_list_t list, const void *elt);
++
++/* Searches whether an element is already in the list,
++   at a position >= START_INDEX.
++   Returns its node if found, or NULL if not present in the list.  */
++extern gl_list_node_t gl_list_search_from (gl_list_t list, size_t start_index,
++                                           const void *elt);
++
++/* Searches whether an element is already in the list,
++   at a position >= START_INDEX and < END_INDEX.
++   Returns its node if found, or NULL if not present in the list.  */
++extern gl_list_node_t gl_list_search_from_to (gl_list_t list,
++                                              size_t start_index,
++                                              size_t end_index,
++                                              const void *elt);
++
++/* Searches whether an element is already in the list.
++   Returns its position if found, or (size_t)(-1) if not present in the list.  */
++extern size_t gl_list_indexof (gl_list_t list, const void *elt);
++
++/* Searches whether an element is already in the list,
++   at a position >= START_INDEX.
++   Returns its position if found, or (size_t)(-1) if not present in the list.  */
++extern size_t gl_list_indexof_from (gl_list_t list, size_t start_index,
++                                    const void *elt);
++
++/* Searches whether an element is already in the list,
++   at a position >= START_INDEX and < END_INDEX.
++   Returns its position if found, or (size_t)(-1) if not present in the list.  */
++extern size_t gl_list_indexof_from_to (gl_list_t list,
++                                       size_t start_index, size_t end_index,
++                                       const void *elt);
++
++/* Adds an element as the first element of the list.
++   Returns its node.  */
++/* declared in gl_xlist.h */
++extern gl_list_node_t gl_list_add_first (gl_list_t list, const void *elt);
++/* Likewise.  Returns NULL upon out-of-memory.  */
++extern gl_list_node_t gl_list_nx_add_first (gl_list_t list, const void *elt)
++  _GL_ATTRIBUTE_NODISCARD;
++
++/* Adds an element as the last element of the list.
++   Returns its node.  */
++/* declared in gl_xlist.h */
++extern gl_list_node_t gl_list_add_last (gl_list_t list, const void *elt);
++/* Likewise.  Returns NULL upon out-of-memory.  */
++extern gl_list_node_t gl_list_nx_add_last (gl_list_t list, const void *elt)
++  _GL_ATTRIBUTE_NODISCARD;
++
++/* Adds an element before a given element node of the list.
++   Returns its node.  */
++/* declared in gl_xlist.h */
++extern gl_list_node_t gl_list_add_before (gl_list_t list, gl_list_node_t node,
++                                          const void *elt);
++/* Likewise.  Returns NULL upon out-of-memory.  */
++extern gl_list_node_t gl_list_nx_add_before (gl_list_t list,
++                                             gl_list_node_t node,
++                                             const void *elt)
++  _GL_ATTRIBUTE_NODISCARD;
++
++/* Adds an element after a given element node of the list.
++   Returns its node.  */
++/* declared in gl_xlist.h */
++extern gl_list_node_t gl_list_add_after (gl_list_t list, gl_list_node_t node,
++                                         const void *elt);
++/* Likewise.  Returns NULL upon out-of-memory.  */
++extern gl_list_node_t gl_list_nx_add_after (gl_list_t list, gl_list_node_t node,
++                                            const void *elt)
++  _GL_ATTRIBUTE_NODISCARD;
++
++/* Adds an element at a given position in the list.
++   POSITION must be >= 0 and <= gl_list_size (list).  */
++/* declared in gl_xlist.h */
++extern gl_list_node_t gl_list_add_at (gl_list_t list, size_t position,
++                                      const void *elt);
++/* Likewise.  Returns NULL upon out-of-memory.  */
++extern gl_list_node_t gl_list_nx_add_at (gl_list_t list, size_t position,
++                                         const void *elt)
++  _GL_ATTRIBUTE_NODISCARD;
++
++/* Removes an element from the list.
++   Returns true.  */
++extern bool gl_list_remove_node (gl_list_t list, gl_list_node_t node);
++
++/* Removes an element at a given position from the list.
++   POSITION must be >= 0 and < gl_list_size (list).
++   Returns true.  */
++extern bool gl_list_remove_at (gl_list_t list, size_t position);
++
++/* Removes the element at the first position from the list.
++   Returns true if it was found and removed, or false if the list was empty.  */
++extern bool gl_list_remove_first (gl_list_t list);
++
++/* Removes the element at the last position from the list.
++   Returns true if it was found and removed, or false if the list was empty.  */
++extern bool gl_list_remove_last (gl_list_t list);
++
++/* Searches and removes an element from the list.
++   Returns true if it was found and removed.  */
++extern bool gl_list_remove (gl_list_t list, const void *elt);
++
++/* Frees an entire list.
++   (But this call does not free the elements of the list.  It only invokes
++   the DISPOSE_FN on each of the elements of the list, and only if the list
++   is not a sublist.)  */
++extern void gl_list_free (gl_list_t list);
++
++#endif /* End of inline and gl_xlist.h-defined functions.  */
++
++/* --------------------- gl_list_iterator_t Data Type --------------------- */
++
++/* Functions for iterating through a list.  */
++
++/* Type of an iterator that traverses a list.
++   This is a fixed-size struct, so that creation of an iterator doesn't need
++   memory allocation on the heap.  */
++typedef struct
++{
++  /* For fast dispatch of gl_list_iterator_next.  */
++  const struct gl_list_implementation *vtable;
++  /* For detecting whether the last returned element was removed.  */
++  gl_list_t list;
++  size_t count;
++  /* Other, implementation-private fields.  */
++  void *p; void *q;
++  size_t i; size_t j;
++} gl_list_iterator_t;
++
++#if 0 /* These are defined inline below.  */
++
++/* Creates an iterator traversing a list.
++   The list contents must not be modified while the iterator is in use,
++   except for replacing or removing the last returned element.  */
++extern gl_list_iterator_t gl_list_iterator (gl_list_t list);
++
++/* Creates an iterator traversing the element with indices i,
++   start_index <= i < end_index, of a list.
++   The list contents must not be modified while the iterator is in use,
++   except for replacing or removing the last returned element.  */
++extern gl_list_iterator_t gl_list_iterator_from_to (gl_list_t list,
++                                                    size_t start_index,
++                                                    size_t end_index);
++
++/* If there is a next element, stores the next element in *ELTP, stores its
++   node in *NODEP if NODEP is non-NULL, advances the iterator and returns true.
++   Otherwise, returns false.  */
++extern bool gl_list_iterator_next (gl_list_iterator_t *iterator,
++                                   const void **eltp, gl_list_node_t *nodep);
++
++/* Frees an iterator.  */
++extern void gl_list_iterator_free (gl_list_iterator_t *iterator);
++
++#endif /* End of inline functions.  */
++
++/* ---------------------- Sorted gl_list_t Data Type ---------------------- */
++
++/* The following functions are for lists without duplicates where the
++   order is given by a sort criterion.  */
++
++/* Type of function used to compare two elements.  Same as for qsort().
++   NULL denotes pointer comparison.  */
++typedef int (*gl_listelement_compar_fn) (const void *elt1, const void *elt2);
++
++#if 0 /* Unless otherwise specified, these are defined inline below.  */
++
++/* Searches whether an element is already in the list.
++   The list is assumed to be sorted with COMPAR.
++   Returns its node if found, or NULL if not present in the list.
++   If the list contains several copies of ELT, the node of the leftmost one is
++   returned.  */
++extern gl_list_node_t gl_sortedlist_search (gl_list_t list,
++                                            gl_listelement_compar_fn compar,
++                                            const void *elt);
++
++/* Searches whether an element is already in the list.
++   The list is assumed to be sorted with COMPAR.
++   Only list elements with indices >= START_INDEX and < END_INDEX are
++   considered; the implementation uses these bounds to minimize the number
++   of COMPAR invocations.
++   Returns its node if found, or NULL if not present in the list.
++   If the list contains several copies of ELT, the node of the leftmost one is
++   returned.  */
++extern gl_list_node_t gl_sortedlist_search_from_to (gl_list_t list,
++                                                    gl_listelement_compar_fn compar,
++                                                    size_t start_index,
++                                                    size_t end_index,
++                                                    const void *elt);
++
++/* Searches whether an element is already in the list.
++   The list is assumed to be sorted with COMPAR.
++   Returns its position if found, or (size_t)(-1) if not present in the list.
++   If the list contains several copies of ELT, the position of the leftmost one
++   is returned.  */
++extern size_t gl_sortedlist_indexof (gl_list_t list,
++                                     gl_listelement_compar_fn compar,
++                                     const void *elt);
++
++/* Searches whether an element is already in the list.
++   The list is assumed to be sorted with COMPAR.
++   Only list elements with indices >= START_INDEX and < END_INDEX are
++   considered; the implementation uses these bounds to minimize the number
++   of COMPAR invocations.
++   Returns its position if found, or (size_t)(-1) if not present in the list.
++   If the list contains several copies of ELT, the position of the leftmost one
++   is returned.  */
++extern size_t gl_sortedlist_indexof_from_to (gl_list_t list,
++                                             gl_listelement_compar_fn compar,
++                                             size_t start_index,
++                                             size_t end_index,
++                                             const void *elt);
++
++/* Adds an element at the appropriate position in the list.
++   The list is assumed to be sorted with COMPAR.
++   Returns its node.  */
++/* declared in gl_xlist.h */
++extern gl_list_node_t gl_sortedlist_add (gl_list_t list,
++                                         gl_listelement_compar_fn compar,
++                                         const void *elt);
++/* Likewise.  Returns NULL upon out-of-memory.  */
++extern gl_list_node_t gl_sortedlist_nx_add (gl_list_t list,
++                                            gl_listelement_compar_fn compar,
++                                            const void *elt)
++  _GL_ATTRIBUTE_NODISCARD;
++
++/* Searches and removes an element from the list.
++   The list is assumed to be sorted with COMPAR.
++   Returns true if it was found and removed.
++   If the list contains several copies of ELT, only the leftmost one is
++   removed.  */
++extern bool gl_sortedlist_remove (gl_list_t list,
++                                  gl_listelement_compar_fn compar,
++                                  const void *elt);
++
++#endif /* End of inline and gl_xlist.h-defined functions.  */
++
++/* ------------------------ Implementation Details ------------------------ */
++
++struct gl_list_implementation
++{
++  /* gl_list_t functions.  */
++  gl_list_t (*nx_create_empty) (gl_list_implementation_t implementation,
++                                gl_listelement_equals_fn equals_fn,
++                                gl_listelement_hashcode_fn hashcode_fn,
++                                gl_listelement_dispose_fn dispose_fn,
++                                bool allow_duplicates);
++  gl_list_t (*nx_create) (gl_list_implementation_t implementation,
++                          gl_listelement_equals_fn equals_fn,
++                          gl_listelement_hashcode_fn hashcode_fn,
++                          gl_listelement_dispose_fn dispose_fn,
++                          bool allow_duplicates,
++                          size_t count, const void **contents);
++  size_t (*size) (gl_list_t list);
++  const void * (*node_value) (gl_list_t list, gl_list_node_t node);
++  int (*node_nx_set_value) (gl_list_t list, gl_list_node_t node,
++                            const void *elt);
++  gl_list_node_t (*next_node) (gl_list_t list, gl_list_node_t node);
++  gl_list_node_t (*previous_node) (gl_list_t list, gl_list_node_t node);
++  gl_list_node_t (*first_node) (gl_list_t list);
++  gl_list_node_t (*last_node) (gl_list_t list);
++  const void * (*get_at) (gl_list_t list, size_t position);
++  gl_list_node_t (*nx_set_at) (gl_list_t list, size_t position,
++                               const void *elt);
++  gl_list_node_t (*search_from_to) (gl_list_t list, size_t start_index,
++                                    size_t end_index, const void *elt);
++  size_t (*indexof_from_to) (gl_list_t list, size_t start_index,
++                             size_t end_index, const void *elt);
++  gl_list_node_t (*nx_add_first) (gl_list_t list, const void *elt);
++  gl_list_node_t (*nx_add_last) (gl_list_t list, const void *elt);
++  gl_list_node_t (*nx_add_before) (gl_list_t list, gl_list_node_t node,
++                                   const void *elt);
++  gl_list_node_t (*nx_add_after) (gl_list_t list, gl_list_node_t node,
++                                  const void *elt);
++  gl_list_node_t (*nx_add_at) (gl_list_t list, size_t position,
++                               const void *elt);
++  bool (*remove_node) (gl_list_t list, gl_list_node_t node);
++  bool (*remove_at) (gl_list_t list, size_t position);
++  bool (*remove_elt) (gl_list_t list, const void *elt);
++  void (*list_free) (gl_list_t list);
++  /* gl_list_iterator_t functions.  */
++  gl_list_iterator_t (*iterator) (gl_list_t list);
++  gl_list_iterator_t (*iterator_from_to) (gl_list_t list,
++                                          size_t start_index,
++                                          size_t end_index);
++  bool (*iterator_next) (gl_list_iterator_t *iterator,
++                         const void **eltp, gl_list_node_t *nodep);
++  void (*iterator_free) (gl_list_iterator_t *iterator);
++  /* Sorted gl_list_t functions.  */
++  gl_list_node_t (*sortedlist_search) (gl_list_t list,
++                                       gl_listelement_compar_fn compar,
++                                       const void *elt);
++  gl_list_node_t (*sortedlist_search_from_to) (gl_list_t list,
++                                               gl_listelement_compar_fn compar,
++                                               size_t start_index,
++                                               size_t end_index,
++                                               const void *elt);
++  size_t (*sortedlist_indexof) (gl_list_t list,
++                                gl_listelement_compar_fn compar,
++                                const void *elt);
++  size_t (*sortedlist_indexof_from_to) (gl_list_t list,
++                                        gl_listelement_compar_fn compar,
++                                        size_t start_index, size_t end_index,
++                                        const void *elt);
++  gl_list_node_t (*sortedlist_nx_add) (gl_list_t list,
++                                       gl_listelement_compar_fn compar,
++                                    const void *elt);
++  bool (*sortedlist_remove) (gl_list_t list,
++                             gl_listelement_compar_fn compar,
++                             const void *elt);
++};
++
++struct gl_list_impl_base
++{
++  const struct gl_list_implementation *vtable;
++  gl_listelement_equals_fn equals_fn;
++  gl_listelement_hashcode_fn hashcode_fn;
++  gl_listelement_dispose_fn dispose_fn;
++  bool allow_duplicates;
++};
++
++/* Define all functions of this file as accesses to the
++   struct gl_list_implementation.  */
++
++GL_LIST_INLINE gl_list_t
++gl_list_nx_create_empty (gl_list_implementation_t implementation,
++                         gl_listelement_equals_fn equals_fn,
++                         gl_listelement_hashcode_fn hashcode_fn,
++                         gl_listelement_dispose_fn dispose_fn,
++                         bool allow_duplicates)
++{
++  return implementation->nx_create_empty (implementation, equals_fn,
++                                          hashcode_fn, dispose_fn,
++                                          allow_duplicates);
++}
++
++GL_LIST_INLINE gl_list_t
++gl_list_nx_create (gl_list_implementation_t implementation,
++                   gl_listelement_equals_fn equals_fn,
++                   gl_listelement_hashcode_fn hashcode_fn,
++                   gl_listelement_dispose_fn dispose_fn,
++                   bool allow_duplicates,
++                   size_t count, const void **contents)
++{
++  return implementation->nx_create (implementation, equals_fn, hashcode_fn,
++                                    dispose_fn, allow_duplicates, count,
++                                    contents);
++}
++
++GL_LIST_INLINE size_t
++gl_list_size (gl_list_t list)
++{
++  return ((const struct gl_list_impl_base *) list)->vtable
++         ->size (list);
++}
++
++GL_LIST_INLINE const void *
++gl_list_node_value (gl_list_t list, gl_list_node_t node)
++{
++  return ((const struct gl_list_impl_base *) list)->vtable
++         ->node_value (list, node);
++}
++
++GL_LIST_INLINE _GL_ATTRIBUTE_NODISCARD int
++gl_list_node_nx_set_value (gl_list_t list, gl_list_node_t node,
++                           const void *elt)
++{
++  return ((const struct gl_list_impl_base *) list)->vtable
++         ->node_nx_set_value (list, node, elt);
++}
++
++GL_LIST_INLINE gl_list_node_t
++gl_list_next_node (gl_list_t list, gl_list_node_t node)
++{
++  return ((const struct gl_list_impl_base *) list)->vtable
++         ->next_node (list, node);
++}
++
++GL_LIST_INLINE gl_list_node_t
++gl_list_previous_node (gl_list_t list, gl_list_node_t node)
++{
++  return ((const struct gl_list_impl_base *) list)->vtable
++         ->previous_node (list, node);
++}
++
++GL_LIST_INLINE gl_list_node_t
++gl_list_first_node (gl_list_t list)
++{
++  return ((const struct gl_list_impl_base *) list)->vtable
++         ->first_node (list);
++}
++
++GL_LIST_INLINE gl_list_node_t
++gl_list_last_node (gl_list_t list)
++{
++  return ((const struct gl_list_impl_base *) list)->vtable
++         ->last_node (list);
++}
++
++GL_LIST_INLINE const void *
++gl_list_get_at (gl_list_t list, size_t position)
++{
++  return ((const struct gl_list_impl_base *) list)->vtable
++         ->get_at (list, position);
++}
++
++GL_LIST_INLINE const void *
++gl_list_get_first (gl_list_t list)
++{
++  return gl_list_get_at (list, 0);
++}
++
++GL_LIST_INLINE const void *
++gl_list_get_last (gl_list_t list)
++{
++  return gl_list_get_at (list, gl_list_size (list) - 1);
++}
++
++GL_LIST_INLINE _GL_ATTRIBUTE_NODISCARD gl_list_node_t
++gl_list_nx_set_at (gl_list_t list, size_t position, const void *elt)
++{
++  return ((const struct gl_list_impl_base *) list)->vtable
++         ->nx_set_at (list, position, elt);
++}
++
++GL_LIST_INLINE _GL_ATTRIBUTE_NODISCARD gl_list_node_t
++gl_list_nx_set_first (gl_list_t list, const void *elt)
++{
++  return gl_list_nx_set_at (list, 0, elt);
++}
++
++GL_LIST_INLINE _GL_ATTRIBUTE_NODISCARD gl_list_node_t
++gl_list_nx_set_last (gl_list_t list, const void *elt)
++{
++  return gl_list_nx_set_at (list, gl_list_size (list) - 1, elt);
++}
++
++GL_LIST_INLINE gl_list_node_t
++gl_list_search (gl_list_t list, const void *elt)
++{
++  size_t size = ((const struct gl_list_impl_base *) list)->vtable->size (list);
++  return ((const struct gl_list_impl_base *) list)->vtable
++         ->search_from_to (list, 0, size, elt);
++}
++
++GL_LIST_INLINE gl_list_node_t
++gl_list_search_from (gl_list_t list, size_t start_index, const void *elt)
++{
++  size_t size = ((const struct gl_list_impl_base *) list)->vtable->size (list);
++  return ((const struct gl_list_impl_base *) list)->vtable
++         ->search_from_to (list, start_index, size, elt);
++}
++
++GL_LIST_INLINE gl_list_node_t
++gl_list_search_from_to (gl_list_t list, size_t start_index, size_t end_index,
++                        const void *elt)
++{
++  return ((const struct gl_list_impl_base *) list)->vtable
++         ->search_from_to (list, start_index, end_index, elt);
++}
++
++GL_LIST_INLINE size_t
++gl_list_indexof (gl_list_t list, const void *elt)
++{
++  size_t size = ((const struct gl_list_impl_base *) list)->vtable->size (list);
++  return ((const struct gl_list_impl_base *) list)->vtable
++         ->indexof_from_to (list, 0, size, elt);
++}
++
++GL_LIST_INLINE size_t
++gl_list_indexof_from (gl_list_t list, size_t start_index, const void *elt)
++{
++  size_t size = ((const struct gl_list_impl_base *) list)->vtable->size (list);
++  return ((const struct gl_list_impl_base *) list)->vtable
++         ->indexof_from_to (list, start_index, size, elt);
++}
++
++GL_LIST_INLINE size_t
++gl_list_indexof_from_to (gl_list_t list, size_t start_index, size_t end_index,
++                         const void *elt)
++{
++  return ((const struct gl_list_impl_base *) list)->vtable
++         ->indexof_from_to (list, start_index, end_index, elt);
++}
++
++GL_LIST_INLINE _GL_ATTRIBUTE_NODISCARD gl_list_node_t
++gl_list_nx_add_first (gl_list_t list, const void *elt)
++{
++  return ((const struct gl_list_impl_base *) list)->vtable
++         ->nx_add_first (list, elt);
++}
++
++GL_LIST_INLINE _GL_ATTRIBUTE_NODISCARD gl_list_node_t
++gl_list_nx_add_last (gl_list_t list, const void *elt)
++{
++  return ((const struct gl_list_impl_base *) list)->vtable
++         ->nx_add_last (list, elt);
++}
++
++GL_LIST_INLINE _GL_ATTRIBUTE_NODISCARD gl_list_node_t
++gl_list_nx_add_before (gl_list_t list, gl_list_node_t node, const void *elt)
++{
++  return ((const struct gl_list_impl_base *) list)->vtable
++         ->nx_add_before (list, node, elt);
++}
++
++GL_LIST_INLINE _GL_ATTRIBUTE_NODISCARD gl_list_node_t
++gl_list_nx_add_after (gl_list_t list, gl_list_node_t node, const void *elt)
++{
++  return ((const struct gl_list_impl_base *) list)->vtable
++         ->nx_add_after (list, node, elt);
++}
++
++GL_LIST_INLINE _GL_ATTRIBUTE_NODISCARD gl_list_node_t
++gl_list_nx_add_at (gl_list_t list, size_t position, const void *elt)
++{
++  return ((const struct gl_list_impl_base *) list)->vtable
++         ->nx_add_at (list, position, elt);
++}
++
++GL_LIST_INLINE bool
++gl_list_remove_node (gl_list_t list, gl_list_node_t node)
++{
++  return ((const struct gl_list_impl_base *) list)->vtable
++         ->remove_node (list, node);
++}
++
++GL_LIST_INLINE bool
++gl_list_remove_at (gl_list_t list, size_t position)
++{
++  return ((const struct gl_list_impl_base *) list)->vtable
++         ->remove_at (list, position);
++}
++
++GL_LIST_INLINE bool
++gl_list_remove_first (gl_list_t list)
++{
++  size_t size = gl_list_size (list);
++  if (size > 0)
++    return gl_list_remove_at (list, 0);
++  else
++    return false;
++}
++
++GL_LIST_INLINE bool
++gl_list_remove_last (gl_list_t list)
++{
++  size_t size = gl_list_size (list);
++  if (size > 0)
++    return gl_list_remove_at (list, size - 1);
++  else
++    return false;
++}
++
++GL_LIST_INLINE bool
++gl_list_remove (gl_list_t list, const void *elt)
++{
++  return ((const struct gl_list_impl_base *) list)->vtable
++         ->remove_elt (list, elt);
++}
++
++GL_LIST_INLINE void
++gl_list_free (gl_list_t list)
++{
++  ((const struct gl_list_impl_base *) list)->vtable->list_free (list);
++}
++
++GL_LIST_INLINE gl_list_iterator_t
++gl_list_iterator (gl_list_t list)
++{
++  return ((const struct gl_list_impl_base *) list)->vtable
++         ->iterator (list);
++}
++
++GL_LIST_INLINE gl_list_iterator_t
++gl_list_iterator_from_to (gl_list_t list, size_t start_index, size_t end_index)
++{
++  return ((const struct gl_list_impl_base *) list)->vtable
++         ->iterator_from_to (list, start_index, end_index);
++}
++
++GL_LIST_INLINE bool
++gl_list_iterator_next (gl_list_iterator_t *iterator,
++                       const void **eltp, gl_list_node_t *nodep)
++{
++  return iterator->vtable->iterator_next (iterator, eltp, nodep);
++}
++
++GL_LIST_INLINE void
++gl_list_iterator_free (gl_list_iterator_t *iterator)
++{
++  iterator->vtable->iterator_free (iterator);
++}
++
++GL_LIST_INLINE gl_list_node_t
++gl_sortedlist_search (gl_list_t list, gl_listelement_compar_fn compar, const void *elt)
++{
++  return ((const struct gl_list_impl_base *) list)->vtable
++         ->sortedlist_search (list, compar, elt);
++}
++
++GL_LIST_INLINE gl_list_node_t
++gl_sortedlist_search_from_to (gl_list_t list, gl_listelement_compar_fn compar, size_t start_index, size_t end_index, const void *elt)
++{
++  return ((const struct gl_list_impl_base *) list)->vtable
++         ->sortedlist_search_from_to (list, compar, start_index, end_index,
++                                      elt);
++}
++
++GL_LIST_INLINE size_t
++gl_sortedlist_indexof (gl_list_t list, gl_listelement_compar_fn compar, const void *elt)
++{
++  return ((const struct gl_list_impl_base *) list)->vtable
++         ->sortedlist_indexof (list, compar, elt);
++}
++
++GL_LIST_INLINE size_t
++gl_sortedlist_indexof_from_to (gl_list_t list, gl_listelement_compar_fn compar, size_t start_index, size_t end_index, const void *elt)
++{
++  return ((const struct gl_list_impl_base *) list)->vtable
++         ->sortedlist_indexof_from_to (list, compar, start_index, end_index,
++                                       elt);
++}
++
++GL_LIST_INLINE _GL_ATTRIBUTE_NODISCARD gl_list_node_t
++gl_sortedlist_nx_add (gl_list_t list, gl_listelement_compar_fn compar, const void *elt)
++{
++  return ((const struct gl_list_impl_base *) list)->vtable
++         ->sortedlist_nx_add (list, compar, elt);
++}
++
++GL_LIST_INLINE bool
++gl_sortedlist_remove (gl_list_t list, gl_listelement_compar_fn compar, const void *elt)
++{
++  return ((const struct gl_list_impl_base *) list)->vtable
++         ->sortedlist_remove (list, compar, elt);
++}
++
++#ifdef __cplusplus
++}
++#endif
++
++_GL_INLINE_HEADER_END
++
++#endif /* _GL_LIST_H */
+--- a/gl/Makefile.am
++++ b/gl/Makefile.am
+@@ -58,10 +58,11 @@
+ #  inet_pton \
+ #  intprops \
+ #  ldd \
+ #  lib-msvc-compat \
+ #  lib-symbol-versions \
++#  linkedhash-list \
+ #  lock \
+ #  maintainer-makefile \
+ #  manywarnings \
+ #  memmem-simple \
+ #  minmax \
+@@ -679,10 +680,22 @@
+ 
+ EXTRA_DIST += limits.in.h
+ 
+ ## end   gnulib module limits-h
+ 
++## begin gnulib module linkedhash-list
++
++libgnu_la_SOURCES += gl_linkedhash_list.h gl_linkedhash_list.c gl_anyhash1.h gl_anyhash2.h gl_anyhash_primes.h gl_anylinked_list1.h gl_anylinked_list2.h
++
++## end   gnulib module linkedhash-list
++
++## begin gnulib module list
++
++libgnu_la_SOURCES += gl_list.h gl_list.c
++
++## end   gnulib module list
++
+ ## begin gnulib module lock
+ 
+ libgnu_la_SOURCES += glthread/lock.h glthread/lock.c
+ 
+ ## end   gnulib module lock
+--- a/m4/gnulib-comp.m4
++++ b/m4/gnulib-comp.m4
+@@ -98,10 +98,12 @@
+   # Code from module ldd:
+   # Code from module lib-msvc-compat:
+   # Code from module lib-symbol-versions:
+   # Code from module libc-config:
+   # Code from module limits-h:
++  # Code from module linkedhash-list:
++  # Code from module list:
+   # Code from module lock:
+   # Code from module lseek:
+   # Code from module maintainer-makefile:
+   # Code from module malloc-posix:
+   # Code from module malloca:
+@@ -764,10 +766,19 @@
+   lib/getdelim.c
+   lib/getdtablesize.c
+   lib/getline.c
+   lib/gettext.h
+   lib/gettimeofday.c
++  lib/gl_anyhash1.h
++  lib/gl_anyhash2.h
++  lib/gl_anyhash_primes.h
++  lib/gl_anylinked_list1.h
++  lib/gl_anylinked_list2.h
++  lib/gl_linkedhash_list.c
++  lib/gl_linkedhash_list.h
++  lib/gl_list.c
++  lib/gl_list.h
+   lib/glthread/lock.c
+   lib/glthread/lock.h
+   lib/glthread/threadlib.c
+   lib/hash-pjw-bare.c
+   lib/hash-pjw-bare.h

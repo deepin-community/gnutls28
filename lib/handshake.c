@@ -58,9 +58,8 @@
 #include "tls13/early_data.h"
 #include "tls13/session_ticket.h"
 #include "locks.h"
-#ifdef HAVE_VALGRIND_MEMCHECK_H
-#include <valgrind/memcheck.h>
-#endif
+#include "system/ktls.h"
+
 
 static int check_if_null_comp_present(gnutls_session_t session,
 					     uint8_t * data, int datalen);
@@ -220,6 +219,8 @@ static int tls12_resume_copy_required_vals(gnutls_session_t session, unsigned ti
 
 void _gnutls_set_client_random(gnutls_session_t session, uint8_t * rnd)
 {
+	_gnutls_memory_mark_defined(session->security_parameters.client_random,
+				    GNUTLS_RANDOM_SIZE);
 	memcpy(session->security_parameters.client_random, rnd,
 	       GNUTLS_RANDOM_SIZE);
 }
@@ -231,23 +232,24 @@ int _gnutls_gen_client_random(gnutls_session_t session)
 
 	/* no random given, we generate. */
 	if (session->internals.sc_random_set != 0) {
+		_gnutls_memory_mark_defined(session->security_parameters.client_random,
+					    GNUTLS_RANDOM_SIZE);
 		memcpy(session->security_parameters.client_random,
 		       session->internals.
 		       resumed_security_parameters.client_random,
 		       GNUTLS_RANDOM_SIZE);
 	} else {
+		_gnutls_memory_mark_defined(session->security_parameters.client_random,
+					    GNUTLS_RANDOM_SIZE);
 		ret = gnutls_rnd(GNUTLS_RND_NONCE,
 			session->security_parameters.client_random,
 			GNUTLS_RANDOM_SIZE);
-		if (ret < 0)
+		if (ret < 0) {
+			_gnutls_memory_mark_undefined(session->security_parameters.client_random,
+						      GNUTLS_RANDOM_SIZE);
 			return gnutls_assert_val(ret);
+		}
 	}
-
-#ifdef HAVE_VALGRIND_MEMCHECK_H
-	if (RUNNING_ON_VALGRIND)
-		VALGRIND_MAKE_MEM_DEFINED(session->security_parameters.client_random,
-					  GNUTLS_RANDOM_SIZE);
-#endif
 
 	return 0;
 }
@@ -257,6 +259,8 @@ int _gnutls_set_server_random(gnutls_session_t session, const version_entry_st *
 {
 	const version_entry_st *max;
 
+	_gnutls_memory_mark_defined(session->security_parameters.server_random,
+				    GNUTLS_RANDOM_SIZE);
 	memcpy(session->security_parameters.server_random, rnd,
 	       GNUTLS_RANDOM_SIZE);
 
@@ -294,6 +298,8 @@ int _gnutls_gen_server_random(gnutls_session_t session, int version)
 	const version_entry_st *max;
 
 	if (session->internals.sc_random_set != 0) {
+		_gnutls_memory_mark_defined(session->security_parameters.server_random,
+					    GNUTLS_RANDOM_SIZE);
 		memcpy(session->security_parameters.server_random,
 		       session->internals.
 		       resumed_security_parameters.server_random,
@@ -304,6 +310,9 @@ int _gnutls_gen_server_random(gnutls_session_t session, int version)
 	max = _gnutls_version_max(session);
 	if (max == NULL)
 		return gnutls_assert_val(GNUTLS_E_NO_CIPHER_SUITES);
+
+	_gnutls_memory_mark_defined(session->security_parameters.server_random,
+				    GNUTLS_RANDOM_SIZE);
 
 	if (!IS_DTLS(session) && max->id >= GNUTLS_TLS1_3 &&
 	    version <= GNUTLS_TLS1_2) {
@@ -324,14 +333,10 @@ int _gnutls_gen_server_random(gnutls_session_t session, int version)
 
 	if (ret < 0) {
 		gnutls_assert();
+		_gnutls_memory_mark_undefined(session->security_parameters.server_random,
+					      GNUTLS_RANDOM_SIZE);
 		return ret;
 	}
-
-#ifdef HAVE_VALGRIND_MEMCHECK_H
-	if (RUNNING_ON_VALGRIND)
-		VALGRIND_MAKE_MEM_DEFINED(session->security_parameters.server_random,
-					  GNUTLS_RANDOM_SIZE);
-#endif
 
 	return 0;
 }
@@ -438,10 +443,17 @@ _gnutls_finished(gnutls_session_t session, int type, void *ret,
 		mesg = CLIENT_MSG;
 	}
 
-	return _gnutls_PRF(session,
-			   session->security_parameters.master_secret,
-			   GNUTLS_MASTER_SIZE, mesg, siz, concat, hash_len,
-			   12, ret);
+	_gnutls_memory_mark_defined(session->security_parameters.master_secret,
+				    GNUTLS_MASTER_SIZE);
+	rc = _gnutls_PRF(session,
+			 session->security_parameters.master_secret,
+			 GNUTLS_MASTER_SIZE, mesg, siz, concat, hash_len,
+			 12, ret);
+	if (rc < 0) {
+		_gnutls_memory_mark_undefined(session->security_parameters.master_secret,
+					      GNUTLS_MASTER_SIZE);
+	}
+	return rc;
 }
 
 
@@ -1397,6 +1409,7 @@ _gnutls_send_handshake2(gnutls_session_t session, mbuffer_st * bufel,
 		case GNUTLS_HANDSHAKE_ENCRYPTED_EXTENSIONS: /* followed by finished or cert */
 		case GNUTLS_HANDSHAKE_CERTIFICATE_REQUEST:  /* followed by certificate */
 		case GNUTLS_HANDSHAKE_CERTIFICATE_PKT:	/* this one is followed by cert verify */
+		case GNUTLS_HANDSHAKE_COMPRESSED_CERTIFICATE_PKT:	/* as above */
 		case GNUTLS_HANDSHAKE_CERTIFICATE_VERIFY: /* followed by finished */
 			ret = 0; /* cache */
 			break;
@@ -1411,6 +1424,7 @@ _gnutls_send_handshake2(gnutls_session_t session, mbuffer_st * bufel,
 		case GNUTLS_HANDSHAKE_CERTIFICATE_PKT:	/* this one is followed by ServerHelloDone
 							 * or ClientKeyExchange always.
 							 */
+		case GNUTLS_HANDSHAKE_COMPRESSED_CERTIFICATE_PKT:	/* as above */
 		case GNUTLS_HANDSHAKE_CERTIFICATE_STATUS:
 		case GNUTLS_HANDSHAKE_SERVER_KEY_EXCHANGE:	/* as above */
 		case GNUTLS_HANDSHAKE_SERVER_HELLO:	/* as above */
@@ -1714,6 +1728,7 @@ _gnutls_recv_handshake(gnutls_session_t session,
 		}
 		break;
 	case GNUTLS_HANDSHAKE_CERTIFICATE_PKT:
+	case GNUTLS_HANDSHAKE_COMPRESSED_CERTIFICATE_PKT:
 	case GNUTLS_HANDSHAKE_CERTIFICATE_STATUS:
 	case GNUTLS_HANDSHAKE_FINISHED:
 	case GNUTLS_HANDSHAKE_ENCRYPTED_EXTENSIONS:
@@ -2843,6 +2858,20 @@ int gnutls_handshake(gnutls_session_t session)
 			end->tv_nsec =
 				(start->tv_nsec + tmo_ms * 1000000LL) % 1000000000LL;
 		}
+
+#ifdef ENABLE_KTLS
+		if (_gnutls_config_is_ktls_enabled()) {
+			if ((session->internals.pull_func &&
+				session->internals.pull_func != system_read) ||
+			    session->internals.push_func) {
+				_gnutls_audit_log(session,
+						  "Not enabling KTLS with "
+						  "custom pull/push function\n");
+			} else {
+				_gnutls_ktls_enable(session);
+			}
+		}
+#endif
 	}
 
 	if (session->internals.recv_state == RECV_STATE_FALSE_START) {
@@ -2892,6 +2921,12 @@ int gnutls_handshake(gnutls_session_t session)
 			session->internals.ertt = timespec_sub_ms(&handshake_finish_time, &session->internals.handshake_start_time)/4;
 		}
 	}
+
+#ifdef ENABLE_KTLS
+	if (IS_KTLS_ENABLED(session, GNUTLS_KTLS_DUPLEX)) {
+		_gnutls_ktls_set_keys(session);
+	}
+#endif
 
 	return 0;
 }

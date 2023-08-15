@@ -81,6 +81,7 @@ gnutls_ecc_curve_entry_st ecc_curves[] = {
 	},
 	{
 	 .name = "X25519",
+         .oid = ECDH_X25519_OID,
 	 .id = GNUTLS_ECC_CURVE_X25519,
 	 .group = GNUTLS_GROUP_X25519,
 	 .pk = GNUTLS_PK_ECDH_X25519,
@@ -98,6 +99,7 @@ gnutls_ecc_curve_entry_st ecc_curves[] = {
 	},
 	{
 	 .name = "X448",
+         .oid = ECDH_X448_OID,
 	 .id = GNUTLS_ECC_CURVE_X448,
 	 .pk = GNUTLS_PK_ECDH_X448,
 	 .size = 56,
@@ -123,7 +125,7 @@ gnutls_ecc_curve_entry_st ecc_curves[] = {
 	 * exchange (CryptoPro-XchA = CryptoPro-A and CryptoPro-XchB =
 	 * CryptoPro-C).
 	 *
-	 * Then TC26 (Standard comittee working on cryptographic standards) has
+	 * Then TC26 (Standard committee working on cryptographic standards) has
 	 * defined one 256-bit curve (TC26-256-A) and three 512-bit curves
 	 * (TC26-512-A, -B, -C).
 	 *
@@ -351,13 +353,43 @@ gnutls_ecc_curve_t gnutls_ecc_curve_get_id(const char *name)
 	return ret;
 }
 
-int _gnutls_ecc_curve_mark_disabled(const char *name)
+/* This is only called by cfg_apply in priority.c, in blocklisting mode. */
+int _gnutls_ecc_curve_mark_disabled(gnutls_ecc_curve_t curve)
 {
 	gnutls_ecc_curve_entry_st *p;
 
 	for(p = ecc_curves; p->name != NULL; p++) {
-		if (c_strcasecmp(p->name, name) == 0) {
-			p->supported = 0;
+		if (p->id == curve) {
+			p->supported = false;
+			return 0;
+		}
+	}
+
+	return gnutls_assert_val(GNUTLS_E_INVALID_REQUEST);
+}
+
+/* This is only called by cfg_apply in priority.c, in allowlisting mode. */
+void _gnutls_ecc_curve_mark_disabled_all(void)
+{
+	gnutls_ecc_curve_entry_st *p;
+
+	for(p = ecc_curves; p->name != NULL; p++) {
+		p->supported = false;
+		p->supported_revertible = true;
+	}
+}
+
+int
+_gnutls_ecc_curve_set_enabled(gnutls_ecc_curve_t curve, unsigned int enabled)
+{
+	gnutls_ecc_curve_entry_st *p;
+
+	for(p = ecc_curves; p->name != NULL; p++) {
+		if (p->id == curve) {
+			if (!p->supported_revertible) {
+				return gnutls_assert_val(GNUTLS_E_INVALID_REQUEST);
+			}
+			p->supported = enabled;
 			return 0;
 		}
 	}

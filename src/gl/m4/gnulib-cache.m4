@@ -66,6 +66,7 @@
 #  inttypes \
 #  linked-list \
 #  listen \
+#  lock \
 #  memmem-simple \
 #  minmax \
 #  netdb \
@@ -73,6 +74,7 @@
 #  parse-datetime \
 #  progname \
 #  read-file \
+#  reallocarray \
 #  recv \
 #  recvfrom \
 #  secure_getenv \
@@ -138,6 +140,7 @@ gl_MODULES([
   inttypes
   linked-list
   listen
+  lock
   memmem-simple
   minmax
   netdb
@@ -145,6 +148,7 @@ gl_MODULES([
   parse-datetime
   progname
   read-file
+  reallocarray
   recv
   recvfrom
   secure_getenv

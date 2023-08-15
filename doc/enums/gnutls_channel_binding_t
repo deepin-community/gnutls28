@@ -7,5 +7,5 @@
 @item GNUTLS_@-CB_@-TLS_@-SERVER_@-END_@-POINT
 "tls-server-end-point" (RFC 5929) channel binding
 @item GNUTLS_@-CB_@-TLS_@-EXPORTER
-"tls-exporter" (draft-ietf-kitten-tls-channel-bindings-for-tls13-03)
+"tls-exporter" (RFC 9266) channel binding
 @end table

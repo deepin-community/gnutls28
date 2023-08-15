@@ -48,6 +48,7 @@ AC_DEFUN([gl_EARLY],
   # Code from module alloca-opt:
   # Code from module arpa_inet:
   # Code from module attribute:
+  # Code from module basename-lgpl:
   # Code from module bitrotate:
   # Code from module builtin-expect:
   # Code from module byteswap:
@@ -56,6 +57,8 @@ AC_DEFUN([gl_EARLY],
   # Code from module c99:
   # Code from module cloexec:
   # Code from module close:
+  # Code from module dirname-lgpl:
+  # Code from module double-slash-root:
   # Code from module dup2:
   # Code from module errno:
   # Code from module explicit_bzero:
@@ -97,6 +100,7 @@ AC_DEFUN([gl_EARLY],
   # Code from module lib-symbol-versions:
   # Code from module libc-config:
   # Code from module limits-h:
+  # Code from module lock:
   # Code from module lseek:
   # Code from module maintainer-makefile:
   # Code from module malloc-posix:
@@ -163,6 +167,10 @@ AC_DEFUN([gl_EARLY],
   # Code from module vsnprintf:
   # Code from module warnings:
   # Code from module wchar:
+  # Code from module windows-mutex:
+  # Code from module windows-once:
+  # Code from module windows-recmutex:
+  # Code from module windows-rwlock:
   # Code from module xalloc-oversized:
   # Code from module xsize:
 ])
@@ -199,6 +207,7 @@ AC_SUBST([LTALLOCA])
     AC_LIBOBJ([close])
   fi
   gl_UNISTD_MODULE_INDICATOR([close])
+  gl_DOUBLE_SLASH_ROOT
   gl_FUNC_DUP2
   if test $REPLACE_DUP2 = 1; then
     AC_LIBOBJ([dup2])
@@ -326,6 +335,8 @@ AC_SUBST([LTALLOCA])
   gl_LD_VERSION_SCRIPT
   gl___INLINE
   gl_LIMITS_H
+  gl_LOCK
+  gl_MODULE_INDICATOR([lock])
   gl_FUNC_LSEEK
   if test $REPLACE_LSEEK = 1; then
     AC_LIBOBJ([lseek])
@@ -530,6 +541,30 @@ AC_SUBST([LTALLOCA])
   gl_STDIO_MODULE_INDICATOR([vsnprintf])
   gl_WCHAR_H
   gl_WCHAR_H_REQUIRE_DEFAULTS
+  AC_REQUIRE([AC_CANONICAL_HOST])
+  case "$host_os" in
+    mingw*)
+      AC_LIBOBJ([windows-mutex])
+      ;;
+  esac
+  AC_REQUIRE([AC_CANONICAL_HOST])
+  case "$host_os" in
+    mingw*)
+      AC_LIBOBJ([windows-once])
+      ;;
+  esac
+  AC_REQUIRE([AC_CANONICAL_HOST])
+  case "$host_os" in
+    mingw*)
+      AC_LIBOBJ([windows-recmutex])
+      ;;
+  esac
+  AC_REQUIRE([AC_CANONICAL_HOST])
+  case "$host_os" in
+    mingw*)
+      AC_LIBOBJ([windows-rwlock])
+      ;;
+  esac
   gl_XSIZE
   # End of code from modules
   m4_ifval(gl_LIBSOURCES_LIST, [
@@ -693,6 +728,8 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/asnprintf.c
   lib/asprintf.c
   lib/attribute.h
+  lib/basename-lgpl.c
+  lib/basename-lgpl.h
   lib/bitrotate.c
   lib/bitrotate.h
   lib/byteswap.in.h
@@ -706,6 +743,8 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/cloexec.c
   lib/cloexec.h
   lib/close.c
+  lib/dirname-lgpl.c
+  lib/dirname.h
   lib/dup2.c
   lib/errno.in.h
   lib/explicit_bzero.c
@@ -727,6 +766,8 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/getline.c
   lib/gettext.h
   lib/gettimeofday.c
+  lib/glthread/lock.c
+  lib/glthread/lock.h
   lib/glthread/threadlib.c
   lib/hash-pjw-bare.c
   lib/hash-pjw-bare.h
@@ -785,6 +826,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/strdup.c
   lib/string.in.h
   lib/strings.in.h
+  lib/stripslash.c
   lib/strncasecmp.c
   lib/strndup.c
   lib/strnlen.c
@@ -808,6 +850,15 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/w32sock.h
   lib/warn-on-use.h
   lib/wchar.in.h
+  lib/windows-initguard.h
+  lib/windows-mutex.c
+  lib/windows-mutex.h
+  lib/windows-once.c
+  lib/windows-once.h
+  lib/windows-recmutex.c
+  lib/windows-recmutex.h
+  lib/windows-rwlock.c
+  lib/windows-rwlock.h
   lib/xalloc-oversized.h
   lib/xsize.c
   lib/xsize.h
@@ -819,6 +870,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/builtin-expect.m4
   m4/byteswap.m4
   m4/close.m4
+  m4/double-slash-root.m4
   m4/dup2.m4
   m4/eealloc.m4
   m4/errno_h.m4
@@ -857,6 +909,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/lib-link.m4
   m4/lib-prefix.m4
   m4/limits-h.m4
+  m4/lock.m4
   m4/lseek.m4
   m4/malloc.m4
   m4/malloca.m4
@@ -880,6 +933,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/pathmax.m4
   m4/pid_t.m4
   m4/printf.m4
+  m4/pthread_rwlock_rdlock.m4
   m4/read-file.m4
   m4/realloc.m4
   m4/secure_getenv.m4

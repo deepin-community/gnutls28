@@ -2,8 +2,9 @@
 
 |Branch|CI system|Status|Test suite coverage|Fuzzer coverage|
 |:----:|:-------:|-----:|:------:|:-------------:|
-|Master/3.6.x|Gitlab|[![build status](https://gitlab.com/gnutls/gnutls/badges/master/pipeline.svg)](https://gitlab.com/gnutls/gnutls/commits/master)|[![coverage report](https://gitlab.com/gnutls/gnutls/badges/master/coverage.svg)](https://gnutls.gitlab.io/coverage/master)|[![Fuzzer coverage report](https://gnutls.gitlab.io/coverage/master-fuzz/badge.svg)](https://gnutls.gitlab.io/coverage/master-fuzz)|
-|Master/3.6.x|Github Actions|[![build status](https://github.com/gnutls/gnutls/workflows/MacOS%20CI/badge.svg)](https://github.com/gnutls/gnutls/actions)|N/A|N/A|
+|Master/3.7.x|Gitlab|[![build status](https://gitlab.com/gnutls/gnutls/badges/master/pipeline.svg)](https://gitlab.com/gnutls/gnutls/commits/master)|[![coverage report](https://gitlab.com/gnutls/gnutls/badges/master/coverage.svg)](https://gnutls.gitlab.io/coverage/master)|[![Fuzzer coverage report](https://gnutls.gitlab.io/coverage/master-fuzz/badge.svg)](https://gnutls.gitlab.io/coverage/master-fuzz)|
+|Master/3.7.x|Github Actions|[![build status](https://github.com/gnutls/gnutls/workflows/MacOS%20CI/badge.svg)](https://github.com/gnutls/gnutls/actions)|N/A|N/A|
+|3.6.x|Gitlab|[![build status](https://gitlab.com/gnutls/gnutls/badges/gnutls_3_6_x/pipeline.svg)](https://gitlab.com/gnutls/gnutls/commits/gnutls_3_6_x)|N/A|N/A|
 
 
 # GnuTLS -- Information for developers
@@ -21,7 +22,7 @@ We require several tools to check out and build the software, including:
 * [Make](https://www.gnu.org/software/make/)
 * [Automake](https://www.gnu.org/software/automake/) (use 1.11.3 or later)
 * [Autoconf](https://www.gnu.org/software/autoconf/)
-* [Autogen](https://www.gnu.org/software/autogen/) (use 5.16 or later)
+* [Python](https://www.python.org/) (use 3.6 or later)
 * [Libtool](https://www.gnu.org/software/libtool/)
 * [Gettext](https://www.gnu.org/software/gettext/)
 * [Texinfo](https://www.gnu.org/software/texinfo/)
@@ -42,10 +43,13 @@ We require several tools to check out and build the software, including:
 * [bison](https://www.gnu.org/software/bison) (for datetime parser in certtool)
 * [libunbound](https://unbound.net/) (for DANE support)
 * [libabigail](https://pagure.io/libabigail/) (for abi comparison in make dist)
+* [tpm2-tss](https://github.com/tpm2-software/tpm2-tss) (for TPM 2.0 support; optional)
 * [tcsd](https://trousers.sourceforge.net/) (for TPM support; optional)
 * [swtpm](https://github.com/stefanberger/swtpm) (for TPM test; optional)
-* [ncat](https://nmap.org/download.html) (for TPM test; optional)
 * [tpm-tools](https://trousers.sourceforge.net/) (for TPM test; optional)
+* [tpm2-tools](https://github.com/tpm2-software/tpm2-tools/) (for TPM 2.0 test; optional)
+* [tpm2-tss-engine](https://github.com/tpm2-software/tpm2-tss-engine/) (for TPM 2.0 test; optional)
+* [ncat](https://nmap.org/download.html) (for TPM test; optional)
 * [expect](https://core.tcl.tk/expect/index) (for TPM test; optional)
 
 The required software is typically distributed with your operating
@@ -55,9 +59,9 @@ some hints:
 Debian/Ubuntu:
 ```
 apt-get install -y dash git-core autoconf libtool gettext autopoint
-apt-get install -y automake autogen nettle-dev libp11-kit-dev libtspi-dev libunistring-dev
-apt-get install -y guile-2.2-dev libtasn1-6-dev libidn2-0-dev gawk gperf
-apt-get install -y libunbound-dev dns-root-data bison gtk-doc-tools
+apt-get install -y automake python3 nettle-dev libp11-kit-dev libtspi-dev libunistring-dev
+apt-get install -y guile-2.2-dev libtasn1-bin libtasn1-6-dev libidn2-0-dev gawk gperf
+apt-get install -y libtss2-dev libunbound-dev dns-root-data bison gtk-doc-tools
 apt-get install -y texinfo texlive texlive-generic-recommended texlive-extra-utils
 ```
 
@@ -66,14 +70,14 @@ Available backport repos, APT-Pinning or source code compilating can be used to 
 
 Fedora/RHEL:
 ```
-yum install -y dash git autoconf libtool gettext-devel automake autogen patch
-yum install -y nettle-devel p11-kit-devel autogen-libopts-devel libunistring-devel
-yum install -y trousers-devel guile22-devel libtasn1-devel libidn2-devel gawk gperf
+yum install -y dash git autoconf libtool gettext-devel automake patch
+yum install -y nettle-devel p11-kit-devel libunistring-devel
+yum install -y tpm2-tss-devel trousers-devel guile22-devel libtasn1-devel libidn2-devel gawk gperf
 yum install -y libtasn1-tools unbound-devel bison gtk-doc texinfo texlive
 ```
 
 Sometimes, you may need to install more recent versions of Automake,
-Nettle, P11-kit and Autogen, which you will need to build from sources. 
+Nettle, and P11-kit, which you will need to build from sources. 
 
 Dependencies that are used during make check or make dist are listed below.
 Moreover, for basic interoperability testing you may want to install openssl
@@ -156,7 +160,7 @@ yum install -y wine mingw32-nettle mingw32-libtasn1 mingw32-gcc
 and build as:
 
 ```
-mingw32-configure --enable-local-libopts --disable-non-suiteb-curves --disable-doc --without-p11-kit
+mingw32-configure --disable-non-suiteb-curves --disable-doc --without-p11-kit
 mingw32-make
 mingw32-make check
 ```

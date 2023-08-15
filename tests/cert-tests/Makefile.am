@@ -46,7 +46,7 @@ EXTRA_DIST = data/ca-no-pathlen.pem data/no-ca-or-pathlen.pem data/aki-cert.pem 
 	data/name-constraints-ip2.pem data/chain-md5.pem data/pubkey-ecc256.pem \
 	templates/template-dates-after2038.tmpl data/template-dates-after2038.pem \
 	data/gost-cert.pem data/gost-cert-nogost.pem data/gost94-cert.pem \
-	templates/template-tlsfeature.tmpl data/userid.pem data/cert-with-crl.p12 \
+	templates/template-tlsfeature.tmpl data/cert-with-crl.p12 \
 	data/template-tlsfeature.pem data/template-tlsfeature.csr \
 	templates/template-tlsfeature-crq.tmpl templates/arb-extensions.tmpl data/arb-extensions.pem \
 	data/arb-extensions.csr data/pkcs1-pad-ok.pem data/pkcs1-pad-broken.pem \
@@ -106,13 +106,13 @@ EXTRA_DIST = data/ca-no-pathlen.pem data/no-ca-or-pathlen.pem data/aki-cert.pem 
 
 dist_check_SCRIPTS = pathlen.sh aki.sh invalid-sig.sh email.sh \
 	pkcs7.sh pkcs7-broken-sigs.sh privkey-import.sh name-constraints.sh certtool-long-cn.sh crl.sh provable-privkey.sh \
-	provable-dh.sh userid.sh sha2-test.sh sha2-dsa-test.sh provable-privkey-dsa2048.sh \
+	provable-dh.sh sha2-test.sh sha2-dsa-test.sh provable-privkey-dsa2048.sh \
 	provable-privkey-rsa2048.sh provable-privkey-gen-default.sh pkcs7-constraints.sh \
 	pkcs7-constraints2.sh certtool-long-oids.sh pkcs7-cat.sh cert-sanity.sh cert-critical.sh \
 	pkcs12.sh certtool-crl-decoding.sh pkcs12-encode.sh pkcs12-corner-cases.sh inhibit-anypolicy.sh \
 	smime.sh cert-time.sh alt-chain.sh pkcs7-list-sign.sh pkcs7-eddsa.sh certtool-ecdsa.sh \
 	key-id.sh pkcs8.sh pkcs8-decode.sh ecdsa.sh illegal-rsa.sh pkcs8-invalid.sh key-invalid.sh \
-	pkcs8-eddsa.sh certtool-subca.sh certtool-verify-profiles.sh x509-duplicate-ext.sh
+	pkcs8-eddsa.sh certtool-subca.sh certtool-verify-profiles.sh x509-duplicate-ext.sh x25519-and-x448.sh
 
 dist_check_SCRIPTS += key-id.sh ecdsa.sh pkcs8-invalid.sh key-invalid.sh pkcs8-decode.sh pkcs8.sh pkcs8-eddsa.sh \
 	certtool-utf8.sh crq.sh
@@ -152,13 +152,15 @@ TESTS = $(dist_check_SCRIPTS)
 # which are not trivial, and makes no point to address.
 TESTS_ENVIRONMENT = EXEEXT=$(EXEEXT) \
 	LC_ALL="C"				\
-	VALGRIND="$(VALGRIND)"			\
+	VALGRIND='$(LOG_VALGRIND)'		\
 	LIBTOOL="$(LIBTOOL)"			\
 	top_builddir="$(top_builddir)"		\
+	abs_top_builddir="$(abs_top_builddir)"	\
 	ac_cv_sizeof_time_t="$(ac_cv_sizeof_time_t)" \
 	ASAN_OPTIONS="detect_leaks=0:exitcode=6" \
 	GNUTLS_TEST_SUITE_RUN=1			\
 	GNUTLS_SYSTEM_PRIORITY_FILE=$(abs_top_srcdir)/tests/system.prio \
+	PKCS12_ITER_COUNT="$(PKCS12_ITER_COUNT)" \
 	srcdir="$(srcdir)"
 
 if ENABLE_FIPS140
@@ -178,6 +180,9 @@ endif
 if DISABLE_BASH_TESTS
 TESTS_ENVIRONMENT += DISABLE_BASH_TESTS=1
 endif
+
+AM_VALGRINDFLAGS = --suppressions=$(srcdir)/suppressions.valgrind
+LOG_COMPILER = $(LOG_VALGRIND)
 
 distclean-local:
 	rm -rf tmp-* *.tmp

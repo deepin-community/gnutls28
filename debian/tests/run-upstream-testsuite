@@ -31,7 +31,8 @@ export  CLI=/usr/bin/gnutls-cli \
 	PSKTOOL=/usr/bin/psktool DANETOOL=/usr/bin/danetool \
 	DCLI=/usr/bin/gnutls-cli-debug \
 	OCSPTOOL=/usr/bin/ocsptool \
-	ENABLE_GOST=1
+	ENABLE_GOST=1 \
+	PKCS12_ITER_COUNT=600000
 
 # Set the sizeof(time_t) to the correct value for the platform, to ensure we
 # run the correct tests.
@@ -45,7 +46,8 @@ fi
 
 count=1
 for i in $(find ../../tests/ -type f -perm -u+rx | \
-	grep -Ev 'tests/gnutls-cli-debug.sh|tests/system-override-hash.sh|tests/pkgconfig.sh|tests/system-override-sig.sh|tests/tls13/prf-early.sh|tests/dtls/dtls.sh|tests/dtls/dtls-resume.sh|tests/cert-tests/tolerate-invalid-time.sh|tests/slow/') ; do
+	grep -Ev 'tests/gnutls-cli-debug.sh|tests/system-override-hash.sh|tests/pkgconfig.sh|tests/system-override-sig.sh|tests/system-override-sig-allowlist.sh|tests/system-override-sig-tls.sh|tests/tls13/prf-early.sh|tests/dtls/dtls.sh|tests/dtls/dtls-resume.sh|tests/cert-tests/tolerate-invalid-time.sh|tests/slow/|tests/protocol-set-allowlist.sh|tests/system-override-hash-allowlist.sh|tests/system-override-curves-allowlist.sh|tests/ktls.sh' \
+	| env LC_COLLATE=C.UTF-8 sort) ; do
 	echo "running [$count]$i ..."
 	case $(dirname $i) in
 		*/tests/suite)

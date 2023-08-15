@@ -55,9 +55,6 @@
 #include "ext/cert_types.h"
 #include "locks.h"
 #include "kx.h"
-#ifdef HAVE_VALGRIND_MEMCHECK_H
-#include <valgrind/memcheck.h>
-#endif
 
 /* to be used by supplemental data support to disable TLS1.3
  * when supplemental data have been globally registered */
@@ -324,6 +321,35 @@ gnutls_early_prf_hash_get(const gnutls_session_t session)
 
 	return (gnutls_digest_algorithm_t)session->internals.
 		resumed_security_parameters.prf->id;
+}
+
+/**
+ * gnutls_ciphersuite_get:
+ * @session: is a #gnutls_session_t type.
+ *
+ * Get the canonical name of negotiated TLS ciphersuite.  The names
+ * returned by this function match the IANA registry, with one
+ * exception:
+ *
+ *   TLS_DHE_DSS_RC4_128_SHA { 0x00, 0x66 }
+ *
+ * which is reserved for compatibility.
+ *
+ * To get a detailed description of the current ciphersuite, it is
+ * recommended to use gnutls_session_get_desc().
+ *
+ * Returns: a string that contains the canonical name of a TLS ciphersuite,
+ *     or %NULL if the handshake is not completed.
+ *
+ * Since: 3.7.4
+ **/
+const char *
+gnutls_ciphersuite_get(gnutls_session_t session)
+{
+	if (unlikely(session->internals.handshake_in_progress)) {
+		return NULL;
+	}
+	return session->security_parameters.cs->canonical_name;
 }
 
 void reset_binders(gnutls_session_t session)
@@ -640,19 +666,19 @@ int gnutls_init(gnutls_session_t * session, unsigned int flags)
 	 * runtime before being used. Mark such regions with a
 	 * valgrind client request as undefined.
 	 */
-#ifdef HAVE_VALGRIND_MEMCHECK_H
-	if (RUNNING_ON_VALGRIND) {
-		if (flags & GNUTLS_CLIENT)
-			VALGRIND_MAKE_MEM_UNDEFINED((*session)->security_parameters.client_random,
-						    GNUTLS_RANDOM_SIZE);
-		if (flags & GNUTLS_SERVER) {
-			VALGRIND_MAKE_MEM_UNDEFINED((*session)->security_parameters.server_random,
-						    GNUTLS_RANDOM_SIZE);
-			VALGRIND_MAKE_MEM_UNDEFINED((*session)->key.session_ticket_key,
-						    TICKET_MASTER_KEY_SIZE);
-		}
-	}
-#endif
+	_gnutls_memory_mark_undefined((*session)->security_parameters.master_secret,
+				      GNUTLS_MASTER_SIZE);
+	_gnutls_memory_mark_undefined((*session)->security_parameters.client_random,
+				      GNUTLS_RANDOM_SIZE);
+	_gnutls_memory_mark_undefined((*session)->security_parameters.server_random,
+				      GNUTLS_RANDOM_SIZE);
+	_gnutls_memory_mark_undefined((*session)->key.session_ticket_key,
+				      TICKET_MASTER_KEY_SIZE);
+	_gnutls_memory_mark_undefined((*session)->key.previous_ticket_key,
+				      TICKET_MASTER_KEY_SIZE);
+	_gnutls_memory_mark_undefined((*session)->key.initial_stek,
+				      TICKET_MASTER_KEY_SIZE);
+
 	handshake_internal_state_clear1(*session);
 
 #ifdef MSG_NOSIGNAL
@@ -665,6 +691,7 @@ int gnutls_init(gnutls_session_t * session, unsigned int flags)
 	(*session)->internals.pull_func = system_read;
 	(*session)->internals.errno_func = system_errno;
 
+	(*session)->internals.saved_username = NULL;
 	(*session)->internals.saved_username_size = -1;
 
 	/* heartbeat timeouts */
@@ -756,6 +783,7 @@ void gnutls_deinit(gnutls_session_t session)
 	gnutls_free(session->internals.rexts);
 	gnutls_free(session->internals.post_handshake_cr_context.data);
 
+	gnutls_free(session->internals.saved_username);
 	gnutls_free(session->internals.rsup);
 
 	gnutls_credentials_clear(session);
@@ -771,12 +799,26 @@ void gnutls_deinit(gnutls_session_t session)
 	gnutls_memset(&session->key.proto, 0, sizeof(session->key.proto));
 
 	/* clear session ticket keys */
+	_gnutls_memory_mark_defined(session->key.session_ticket_key,
+				    TICKET_MASTER_KEY_SIZE);
 	gnutls_memset(&session->key.session_ticket_key, 0,
 	              TICKET_MASTER_KEY_SIZE);
+	_gnutls_memory_mark_undefined(session->key.session_ticket_key,
+				      TICKET_MASTER_KEY_SIZE);
+
+	_gnutls_memory_mark_defined(session->key.previous_ticket_key,
+				    TICKET_MASTER_KEY_SIZE);
 	gnutls_memset(&session->key.previous_ticket_key, 0,
 	              TICKET_MASTER_KEY_SIZE);
+	_gnutls_memory_mark_undefined(session->key.previous_ticket_key,
+				      TICKET_MASTER_KEY_SIZE);
+
+	_gnutls_memory_mark_defined(session->key.initial_stek,
+				    TICKET_MASTER_KEY_SIZE);
 	gnutls_memset(&session->key.initial_stek, 0,
 	              TICKET_MASTER_KEY_SIZE);
+	_gnutls_memory_mark_undefined(session->key.initial_stek,
+				      TICKET_MASTER_KEY_SIZE);
 
 	gnutls_mutex_deinit(&session->internals.post_negotiation_lock);
 	gnutls_mutex_deinit(&session->internals.epoch_lock);
@@ -1327,7 +1369,7 @@ gnutls_session_channel_binding(gnutls_session_t session,
 	if (cbtype == GNUTLS_CB_TLS_UNIQUE) {
 		const version_entry_st *ver = get_version(session);
 		if (unlikely(ver == NULL || ver->tls13_sem))
-			return GNUTLS_E_INVALID_REQUEST;
+			return GNUTLS_E_CHANNEL_BINDING_NOT_AVAILABLE;
 
 		cb->size = session->internals.cb_tls_unique_len;
 		cb->data = gnutls_malloc(cb->size);
@@ -1386,8 +1428,7 @@ gnutls_session_channel_binding(gnutls_session_t session,
 			gnutls_x509_crt_deinit (cert);
 			return GNUTLS_E_UNIMPLEMENTED_FEATURE;
 		default:
-			/* no-op */
-			algo = algo;
+			break;
 		}
 
 		/* preallocate 512 bits buffer as maximum supported digest */
@@ -1419,6 +1460,21 @@ gnutls_session_channel_binding(gnutls_session_t session,
 #define RFC5705_LABEL_LEN 24
 #define EXPORTER_CTX_DATA ""
 #define EXPORTER_CTX_LEN 0
+
+		const version_entry_st *ver = get_version(session);
+		if (unlikely(ver == NULL)) {
+			return GNUTLS_E_CHANNEL_BINDING_NOT_AVAILABLE;
+		}
+
+		/* "tls-exporter" channel binding is defined only when
+		 * the TLS handshake results in unique master secrets,
+		 * i.e., either TLS 1.3, or TLS 1.2 with extended
+		 * master secret negotiated.
+		 */
+		if (!ver->tls13_sem &&
+		    gnutls_session_ext_master_secret_status(session) == 0) {
+			return GNUTLS_E_CHANNEL_BINDING_NOT_AVAILABLE;
+		}
 
 		cb->size = 32;
 		cb->data = gnutls_malloc(cb->size);

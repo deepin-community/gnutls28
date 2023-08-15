@@ -40,7 +40,7 @@ The certificate presented isn't the expected one (TOFU)
 @item GNUTLS_@-CERT_@-PURPOSE_@-MISMATCH
 The certificate or an intermediate does not match the intended purpose (extended key usage).
 @item GNUTLS_@-CERT_@-MISSING_@-OCSP_@-STATUS
-The certificate requires the server to send the certifiate status, but no status was received.
+The certificate requires the server to send the certificate status, but no status was received.
 @item GNUTLS_@-CERT_@-INVALID_@-OCSP_@-STATUS
 The received OCSP status response is invalid.
 @item GNUTLS_@-CERT_@-UNKNOWN_@-CRIT_@-EXTENSIONS

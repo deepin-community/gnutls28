@@ -108,7 +108,10 @@ typedef int ssize_t;
 
 #define MAX_CIPHER_IV_SIZE 16
 
-#define MAX_USERNAME_SIZE 128
+/* Maximum size of 2^16-1 has been chosen so that usernames can hold
+ * PSK identities as defined in RFC 4279 section 2 and RFC 8446 section 4.2.11
+ */
+#define MAX_USERNAME_SIZE 65535
 #define MAX_SERVER_NAME_SIZE 256
 
 #define AEAD_EXPLICIT_DATA_SIZE 8
@@ -174,6 +177,9 @@ typedef enum record_send_state_t {
 
 /* To check whether we have a DTLS session */
 #define IS_DTLS(session) (session->internals.transport == GNUTLS_DGRAM)
+
+/* To check whether we have a KTLS enabled */
+#define IS_KTLS_ENABLED(session, interface) (session->internals.ktls_enabled & interface)
 
 /* the maximum size of encrypted packets */
 #define DEFAULT_MAX_RECORD_SIZE 16384
@@ -330,6 +336,7 @@ typedef enum extensions_t {
 	GNUTLS_EXTENSION_PSK_KE_MODES,
 	GNUTLS_EXTENSION_RECORD_SIZE_LIMIT,
 	GNUTLS_EXTENSION_MAX_RECORD_SIZE,
+	GNUTLS_EXTENSION_COMPRESS_CERTIFICATE,
 	/*
 	 * pre_shared_key and dumbfw must always be the last extensions,
 	 * in that order */
@@ -580,6 +587,10 @@ struct gnutls_key_st {
 		/* Initial key supplied by the caller */
 		initial_stek[TICKET_MASTER_KEY_SIZE];
 
+	/* Whether the initial_stek is set through
+	 * gnutls_session_ticket_enable_server() */
+	bool stek_initialized;
+
 	/* this is used to hold the peers authentication data
 	 */
 	/* auth_info_t structures SHOULD NOT contain malloced
@@ -615,6 +626,7 @@ typedef struct record_parameters_st record_parameters_st;
 #define GNUTLS_CIPHER_FLAG_ONLY_AEAD	(1 << 0) /* When set, this cipher is only available through the new AEAD API */
 #define GNUTLS_CIPHER_FLAG_XOR_NONCE	(1 << 1) /* In this TLS AEAD cipher xor the implicit_iv with the nonce */
 #define GNUTLS_CIPHER_FLAG_NO_REKEY	(1 << 2) /* whether this tls1.3 cipher doesn't need to rekey after 2^24 messages */
+#define GNUTLS_CIPHER_FLAG_TAG_PREFIXED (1 << 3) /* When set, this cipher prefixes authentication tag */
 
 /* cipher and mac parameters */
 typedef struct cipher_entry_st {
@@ -633,6 +645,7 @@ typedef struct cipher_entry_st {
 typedef struct gnutls_cipher_suite_entry_st {
 	const char *name;
 	const uint8_t id[2];
+	const char *canonical_name;
 	gnutls_cipher_algorithm_t block_algorithm;
 	gnutls_kx_algorithm_t kx_algorithm;
 	gnutls_mac_algorithm_t mac_algorithm;
@@ -662,6 +675,8 @@ typedef struct gnutls_group_entry_st {
 
 #define GNUTLS_MAC_FLAG_PREIMAGE_INSECURE	1  /* if this algorithm should not be trusted for pre-image attacks */
 #define GNUTLS_MAC_FLAG_CONTINUOUS_MAC		(1 << 1) /* if this MAC should be used in a 'continuous' way in TLS */
+#define GNUTLS_MAC_FLAG_PREIMAGE_INSECURE_REVERTIBLE	(1 << 2)  /* if this algorithm should not be trusted for pre-image attacks, but can be enabled through API */
+#define GNUTLS_MAC_FLAG_ALLOW_INSECURE_REVERTIBLE	(1 << 3)  /* when checking with _gnutls_digest_is_insecure2, don't treat revertible setting as fatal */
 /* This structure is used both for MACs and digests
  */
 typedef struct mac_entry_st {
@@ -685,6 +700,7 @@ typedef struct {
 	uint8_t minor;		/* defined by the protocol */
 	transport_t transport;	/* Type of transport, stream or datagram */
 	bool supported;	/* 0 not supported, > 0 is supported */
+	bool supported_revertible;
 	bool explicit_iv;
 	bool extensions;	/* whether it supports extensions */
 	bool selectable_sighash;	/* whether signatures can be selected */
@@ -946,6 +962,7 @@ struct gnutls_priority_st {
 	bool server_precedence;
 	bool allow_server_key_usage_violation; /* for test suite purposes only */
 	bool no_tickets;
+	bool no_tickets_tls12;
 	bool have_cbc;
 	bool have_psk;
 	bool force_etm;
@@ -1432,7 +1449,10 @@ typedef struct {
 	bool cert_hash_set;
 
 	/* The saved username from PSK or SRP auth */
-	char saved_username[MAX_USERNAME_SIZE+1];
+	char *saved_username;
+	/* Length of the saved username without the NULL terminating byte.
+	 * Must be set to -1 when saved username is NULL
+	 */
 	int saved_username_size;
 
 	/* Needed for TCP Fast Open (TFO), set by gnutls_transport_set_fastopen() */
@@ -1487,6 +1507,12 @@ typedef struct {
 	/* Protects _gnutls_epoch_gc() from _gnutls_epoch_get(); these may be
 	 * called in parallel when false start is used and false start is used. */
 	void *epoch_lock;
+
+	/* indicates whether or not was KTLS initialized properly. */
+	int ktls_enabled;
+
+	/* Compression method for certificate compression */
+	gnutls_compression_method_t compress_certificate_method;
 
 	/* If you add anything here, check _gnutls_handshake_internal_state_clear().
 	 */
@@ -1628,5 +1654,7 @@ get_certificate_type(gnutls_session_t session,
 #define CONSTCHECK_EQUAL(a, b) (1U - CONSTCHECK_NOT_EQUAL(a, b))
 
 extern unsigned int _gnutls_global_version;
+
+bool _gnutls_config_is_ktls_enabled(void);
 
 #endif /* GNUTLS_LIB_GNUTLS_INT_H */

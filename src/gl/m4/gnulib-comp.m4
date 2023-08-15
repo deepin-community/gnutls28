@@ -632,6 +632,8 @@ AC_SUBST([LTALLOCA])
     AC_LIBOBJ([listen])
   fi
   gl_SYS_SOCKET_MODULE_INDICATOR([listen])
+  gl_LOCK
+  gl_MODULE_INDICATOR([lock])
   gl_FUNC_LSEEK
   if test $REPLACE_LSEEK = 1; then
     AC_LIBOBJ([lseek])
@@ -952,6 +954,30 @@ AC_SUBST([LTALLOCA])
   gl_STDIO_MODULE_INDICATOR([vsnprintf])
   gl_WCHAR_H
   gl_WCHAR_H_REQUIRE_DEFAULTS
+  AC_REQUIRE([AC_CANONICAL_HOST])
+  case "$host_os" in
+    mingw*)
+      AC_LIBOBJ([windows-mutex])
+      ;;
+  esac
+  AC_REQUIRE([AC_CANONICAL_HOST])
+  case "$host_os" in
+    mingw*)
+      AC_LIBOBJ([windows-once])
+      ;;
+  esac
+  AC_REQUIRE([AC_CANONICAL_HOST])
+  case "$host_os" in
+    mingw*)
+      AC_LIBOBJ([windows-recmutex])
+      ;;
+  esac
+  AC_REQUIRE([AC_CANONICAL_HOST])
+  case "$host_os" in
+    mingw*)
+      AC_LIBOBJ([windows-rwlock])
+      ;;
+  esac
   gl_XALLOC
   gl_MODULE_INDICATOR([xalloc])
   gl_MODULE_INDICATOR([xalloc-die])
@@ -1064,8 +1090,6 @@ changequote([, ])dnl
   gl_LOCALENAME
   gl_LOCALE_MODULE_INDICATOR([localename])
   AC_CHECK_FUNCS_ONCE([newlocale])
-  gl_LOCK
-  gl_MODULE_INDICATOR([lock])
   AC_CHECK_HEADERS_ONCE([semaphore.h])
   AC_CHECK_DECLS_ONCE([alarm])
   AC_REQUIRE([gl_SEMAPHORE])
@@ -1203,30 +1227,6 @@ changequote([, ])dnl
   gl_FUNC_MMAP_ANON
   AC_REQUIRE([AC_C_INLINE])
   AC_CHECK_FUNCS_ONCE([mquery pstat_getprocvm])
-  AC_REQUIRE([AC_CANONICAL_HOST])
-  case "$host_os" in
-    mingw*)
-      AC_LIBOBJ([windows-mutex])
-      ;;
-  esac
-  AC_REQUIRE([AC_CANONICAL_HOST])
-  case "$host_os" in
-    mingw*)
-      AC_LIBOBJ([windows-once])
-      ;;
-  esac
-  AC_REQUIRE([AC_CANONICAL_HOST])
-  case "$host_os" in
-    mingw*)
-      AC_LIBOBJ([windows-recmutex])
-      ;;
-  esac
-  AC_REQUIRE([AC_CANONICAL_HOST])
-  case "$host_os" in
-    mingw*)
-      AC_LIBOBJ([windows-rwlock])
-      ;;
-  esac
   AC_REQUIRE([AC_CANONICAL_HOST])
   case "$host_os" in
     mingw*)
@@ -1410,6 +1410,8 @@ AC_DEFUN([ggl_FILE_LIST], [
   lib/gl_list.h
   lib/gl_xlist.c
   lib/gl_xlist.h
+  lib/glthread/lock.c
+  lib/glthread/lock.h
   lib/glthread/threadlib.c
   lib/hash-pjw-bare.c
   lib/hash-pjw-bare.h
@@ -1523,6 +1525,15 @@ AC_DEFUN([ggl_FILE_LIST], [
   lib/w32sock.h
   lib/warn-on-use.h
   lib/wchar.in.h
+  lib/windows-initguard.h
+  lib/windows-mutex.c
+  lib/windows-mutex.h
+  lib/windows-once.c
+  lib/windows-once.h
+  lib/windows-recmutex.c
+  lib/windows-recmutex.h
+  lib/windows-rwlock.c
+  lib/windows-rwlock.h
   lib/xalloc-die.c
   lib/xalloc-oversized.h
   lib/xalloc.h
@@ -1921,8 +1932,6 @@ AC_DEFUN([ggl_FILE_LIST], [
   tests=lib/getpagesize.c
   tests=lib/gl_array_list.c
   tests=lib/gl_array_list.h
-  tests=lib/glthread/lock.c
-  tests=lib/glthread/lock.h
   tests=lib/glthread/thread.c
   tests=lib/glthread/thread.h
   tests=lib/glthread/yield.h
@@ -1978,14 +1987,6 @@ AC_DEFUN([ggl_FILE_LIST], [
   tests=lib/w32sock.h
   tests=lib/warn-on-use.h
   tests=lib/windows-initguard.h
-  tests=lib/windows-mutex.c
-  tests=lib/windows-mutex.h
-  tests=lib/windows-once.c
-  tests=lib/windows-once.h
-  tests=lib/windows-recmutex.c
-  tests=lib/windows-recmutex.h
-  tests=lib/windows-rwlock.c
-  tests=lib/windows-rwlock.h
   tests=lib/windows-thread.c
   tests=lib/windows-thread.h
   tests=lib/windows-tls.c
