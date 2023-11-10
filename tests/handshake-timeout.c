@@ -30,7 +30,7 @@
 
 #if defined(_WIN32)
 
-int main()
+int main(void)
 {
 	exit(77);
 }
@@ -83,7 +83,8 @@ static void client(int fd, int tmo_ms)
 	gnutls_handshake_set_timeout(session, tmo_ms);
 
 	/* Use default priorities */
-	gnutls_priority_set_direct(session, "NORMAL:+ANON-ECDH:-VERS-ALL:+VERS-TLS1.2", NULL);
+	gnutls_priority_set_direct(
+		session, "NORMAL:+ANON-ECDH:-VERS-ALL:+VERS-TLS1.2", NULL);
 
 	/* put the anonymous credentials to the current session
 	 */
@@ -95,8 +96,7 @@ static void client(int fd, int tmo_ms)
 	 */
 	do {
 		ret = gnutls_handshake(session);
-	}
-	while (ret < 0 && gnutls_error_is_fatal(ret) == 0);
+	} while (ret < 0 && gnutls_error_is_fatal(ret) == 0);
 
 	gnutls_deinit(session);
 	gnutls_anon_free_client_credentials(anoncred);
@@ -145,7 +145,8 @@ static void server(int fd, int tmo_ms)
 	/* avoid calling all the priority functions, since the defaults
 	 * are adequate.
 	 */
-	gnutls_priority_set_direct(session, "NORMAL:+ANON-ECDH:-VERS-ALL:+VERS-TLS1.2", NULL);
+	gnutls_priority_set_direct(
+		session, "NORMAL:+ANON-ECDH:-VERS-ALL:+VERS-TLS1.2", NULL);
 
 	gnutls_credentials_set(session, GNUTLS_CRD_ANON, anoncred);
 
@@ -160,8 +161,7 @@ static void server(int fd, int tmo_ms)
 	} else {
 		do {
 			ret = gnutls_handshake(session);
-		}
-		while (ret < 0 && gnutls_error_is_fatal(ret) == 0);
+		} while (ret < 0 && gnutls_error_is_fatal(ret) == 0);
 
 		if (ret == 0)
 			gnutls_bye(session, GNUTLS_SHUT_RDWR);
@@ -231,4 +231,4 @@ void doit(void)
 	start(1000);
 }
 
-#endif				/* _WIN32 */
+#endif /* _WIN32 */

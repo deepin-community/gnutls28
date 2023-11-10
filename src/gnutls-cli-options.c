@@ -151,6 +151,7 @@ static const struct option long_options[] =
   { "waitresumption", no_argument, 0, CHAR_MAX + 64 },
   { "ca-auto-retrieve", no_argument, 0, CHAR_MAX + 65 },
   { "no-ca-auto-retrieve", no_argument, 0, CHAR_MAX + 66 },
+  { "attime", required_argument, 0, CHAR_MAX + 67 },
   { "version", optional_argument, 0, 'v' },
   { "help", no_argument, 0, 'h' },
   { "more-help", no_argument, 0, '!' },
@@ -506,6 +507,11 @@ process_options (int argc, char **argv)
         opts->present.ca_auto_retrieve = true;
         opts->enabled.ca_auto_retrieve = false;
         break;
+      case CHAR_MAX + 67: /* --attime */
+        opts->present.attime = true;
+        opts->arg.attime = optarg;
+        opts->enabled.attime = true;
+        break;
       case 'v':
         opts->present.version = true;
         opts->arg.version = optarg;
@@ -645,8 +651,8 @@ process_options (int argc, char **argv)
       if (!OPT_ARG_VERSION || !strcmp (OPT_ARG_VERSION, "c"))
         {
           const char str[] =
-            "gnutls-cli 3.7.9\n"
-            "Copyright (C) 2000-2021 Free Software Foundation, and others\n"
+            "gnutls-cli 3.8.1\n"
+            "Copyright (C) 2000-2023 Free Software Foundation, and others\n"
             "This is free software. It is licensed for use, modification and\n"
             "redistribution under the terms of the GNU General Public License,\n"
             "version 3 or later <http://gnu.org/licenses/gpl.html>\n"
@@ -658,15 +664,15 @@ process_options (int argc, char **argv)
       else if (!strcmp (OPT_ARG_VERSION, "v"))
         {
           const char str[] =
-            "gnutls-cli 3.7.9\n";
+            "gnutls-cli 3.8.1\n";
           fprintf (stdout, "%s", str);
           exit(0);
         }
       else if (!strcmp (OPT_ARG_VERSION, "n"))
         {
           const char str[] =
-            "gnutls-cli 3.7.9\n"
-            "Copyright (C) 2000-2021 Free Software Foundation, and others\n"
+            "gnutls-cli 3.8.1\n"
+            "Copyright (C) 2000-2023 Free Software Foundation, and others\n"
             "This is free software. It is licensed for use, modification and\n"
             "redistribution under the terms of the GNU General Public License,\n"
             "version 3 or later <http://gnu.org/licenses/gpl.html>\n"
@@ -792,6 +798,7 @@ usage (FILE *out, int status)
     "       --keymatexportsize=num Size of the exported keying material\n"
     "       --waitresumption       Block waiting for the resumption data under TLS1.3\n"
     "       --ca-auto-retrieve     Enable automatic retrieval of missing CA certificates\n"
+    "       --attime=str           Perform validation at the timestamp instead of the system time\n"
     "\n"
     "Version, usage and configuration options:\n"
     "\n"

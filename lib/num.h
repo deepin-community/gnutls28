@@ -29,12 +29,12 @@
 #include <byteswap.h>
 
 /* data should be at least 3 bytes */
-inline static uint32_t _gnutls_read_uint24(const uint8_t * data)
+inline static uint32_t _gnutls_read_uint24(const uint8_t *data)
 {
 	return (data[0] << 16) | (data[1] << 8) | (data[2]);
 }
 
-inline static uint64_t _gnutls_read_uint64(const uint8_t * data)
+inline static uint64_t _gnutls_read_uint64(const uint8_t *data)
 {
 	uint64_t res;
 
@@ -45,7 +45,7 @@ inline static uint64_t _gnutls_read_uint64(const uint8_t * data)
 	return res;
 }
 
-inline static void _gnutls_write_uint64(uint64_t num, uint8_t * data)
+inline static void _gnutls_write_uint64(uint64_t num, uint8_t *data)
 {
 #ifndef WORDS_BIGENDIAN
 	num = bswap_64(num);
@@ -53,14 +53,14 @@ inline static void _gnutls_write_uint64(uint64_t num, uint8_t * data)
 	memcpy(data, &num, 8);
 }
 
-inline static void _gnutls_write_uint24(uint32_t num, uint8_t * data)
+inline static void _gnutls_write_uint24(uint32_t num, uint8_t *data)
 {
 	data[0] = num >> 16;
 	data[1] = num >> 8;
 	data[2] = num;
 }
 
-inline static uint32_t _gnutls_read_uint32(const uint8_t * data)
+inline static uint32_t _gnutls_read_uint32(const uint8_t *data)
 {
 	uint32_t res;
 
@@ -71,16 +71,15 @@ inline static uint32_t _gnutls_read_uint32(const uint8_t * data)
 	return res;
 }
 
-inline static void _gnutls_write_uint32(uint32_t num, uint8_t * data)
+inline static void _gnutls_write_uint32(uint32_t num, uint8_t *data)
 {
-
 #ifndef WORDS_BIGENDIAN
 	num = bswap_32(num);
 #endif
 	memcpy(data, &num, sizeof(uint32_t));
 }
 
-inline static uint16_t _gnutls_read_uint16(const uint8_t * data)
+inline static uint16_t _gnutls_read_uint16(const uint8_t *data)
 {
 	uint16_t res;
 	memcpy(&res, data, sizeof(uint16_t));
@@ -90,9 +89,8 @@ inline static uint16_t _gnutls_read_uint16(const uint8_t * data)
 	return res;
 }
 
-inline static void _gnutls_write_uint16(uint16_t num, uint8_t * data)
+inline static void _gnutls_write_uint16(uint16_t num, uint8_t *data)
 {
-
 #ifndef WORDS_BIGENDIAN
 	num = bswap_16(num);
 #endif

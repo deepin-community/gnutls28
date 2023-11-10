@@ -1,34 +1,35 @@
 /* Determine name of the currently selected locale.
-   Copyright (C) 1995-2021 Free Software Foundation, Inc.
+   Copyright (C) 1995-2023 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
-   it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 3 of the License, or
+   it under the terms of the GNU Lesser General Public License as published by
+   the Free Software Foundation; either version 2.1 of the License, or
    (at your option) any later version.
 
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   GNU General Public License for more details.
+   GNU Lesser General Public License for more details.
 
-   You should have received a copy of the GNU General Public License
+   You should have received a copy of the GNU Lesser General Public License
    along with this program.  If not, see <https://www.gnu.org/licenses/>.  */
 
 /* Written by Ulrich Drepper <drepper@gnu.org>, 1995.  */
 /* Native Windows code written by Tor Lillqvist <tml@iki.fi>.  */
 /* Mac OS X code written by Bruno Haible <bruno@clisp.org>.  */
 
+/* Don't use __attribute__ __nonnull__ in this compilation unit.  Otherwise gcc
+   optimizes away the locale == NULL tests below in duplocale() and freelocale(),
+   or xlclang reports -Wtautological-pointer-compare warnings for these tests.
+ */
+#define _GL_ARG_NONNULL(params)
+
 #include <config.h>
 
 /* Specification.  */
-#ifdef IN_LIBINTL
-# include "gettextP.h"
-#else
-# include "localename.h"
-#endif
+#include "localename.h"
 
 #include <limits.h>
-#include <stdbool.h>
 #include <stddef.h>
 #include <stdlib.h>
 #include <locale.h>
@@ -46,9 +47,7 @@
 # if (__GLIBC__ >= 2 && !defined __UCLIBC__) || (defined __linux__ && HAVE_LANGINFO_H) || defined __CYGWIN__
 #  include <langinfo.h>
 # endif
-# if !defined IN_LIBINTL
-#  include "glthread/lock.h"
-# endif
+# include "glthread/lock.h"
 # if defined __sun
 #  if HAVE_GETLOCALENAME_L
 /* Solaris >= 12.  */
@@ -69,9 +68,7 @@ extern char * getlocalename_l(int, locale_t);
 
 #if defined _WIN32 && !defined __CYGWIN__
 # define WINDOWS_NATIVE
-# if !defined IN_LIBINTL
-#  include "glthread/lock.h"
-# endif
+# include "glthread/lock.h"
 #endif
 
 #if defined WINDOWS_NATIVE || defined __CYGWIN__ /* Native Windows or Cygwin */
@@ -3103,7 +3100,7 @@ freelocale (locale_t locale)
 static
 # endif
 const char *
-gl_locale_name_thread_unsafe (int category, const char *categoryname _GL_UNUSED)
+gl_locale_name_thread_unsafe (int category, _GL_UNUSED const char *categoryname)
 {
 # if HAVE_GOOD_USELOCALE
   {
@@ -3218,7 +3215,7 @@ gl_locale_name_thread_unsafe (int category, const char *categoryname _GL_UNUSED)
 #endif
 
 const char *
-gl_locale_name_thread (int category, const char *categoryname _GL_UNUSED)
+gl_locale_name_thread (int category, _GL_UNUSED const char *categoryname)
 {
 #if HAVE_GOOD_USELOCALE
   const char *name = gl_locale_name_thread_unsafe (category, categoryname);
@@ -3242,7 +3239,7 @@ gl_locale_name_thread (int category, const char *categoryname _GL_UNUSED)
 #endif
 
 const char *
-gl_locale_name_posix (int category, const char *categoryname _GL_UNUSED)
+gl_locale_name_posix (int category, _GL_UNUSED const char *categoryname)
 {
 #if defined WINDOWS_NATIVE
   if (LC_MIN <= category && category <= LC_MAX)
@@ -3307,7 +3304,7 @@ gl_locale_name_posix (int category, const char *categoryname _GL_UNUSED)
 }
 
 const char *
-gl_locale_name_environ (int category _GL_UNUSED, const char *categoryname)
+gl_locale_name_environ (_GL_UNUSED int category, const char *categoryname)
 {
   const char *retval;
 

@@ -46,50 +46,45 @@ struct gcm_x86_aes_ctx {
 	size_t rekey_counter;
 };
 
-static void x86_aes_encrypt(const void *_ctx,
-				size_t length, uint8_t * dst,
-				const uint8_t * src)
+static void x86_aes_encrypt(const void *_ctx, size_t length, uint8_t *dst,
+			    const uint8_t *src)
 {
-	AES_KEY *ctx = (void*)_ctx;
+	AES_KEY *ctx = (void *)_ctx;
 	unsigned i;
-	unsigned blocks = (length+15) / 16;
+	unsigned blocks = (length + 15) / 16;
 
-	assert(blocks*16 == length);
+	assert(blocks * 16 == length);
 
-	for (i=0;i<blocks;i++) {
+	for (i = 0; i < blocks; i++) {
 		vpaes_encrypt(src, dst, ctx);
 		dst += 16;
 		src += 16;
 	}
 }
 
-static void x86_aes_128_set_encrypt_key(void *_ctx,
-				    const uint8_t * key)
+static void x86_aes_128_set_encrypt_key(void *_ctx, const uint8_t *key)
 {
 	AES_KEY *ctx = _ctx;
 
-	vpaes_set_encrypt_key(key, 16*8, ctx);
+	vpaes_set_encrypt_key(key, 16 * 8, ctx);
 }
 
-static void x86_aes_192_set_encrypt_key(void *_ctx,
-				    const uint8_t * key)
+static void x86_aes_192_set_encrypt_key(void *_ctx, const uint8_t *key)
 {
 	AES_KEY *ctx = _ctx;
 
-	vpaes_set_encrypt_key(key, 24*8, ctx);
+	vpaes_set_encrypt_key(key, 24 * 8, ctx);
 }
 
-static void x86_aes_256_set_encrypt_key(void *_ctx,
-				    const uint8_t * key)
+static void x86_aes_256_set_encrypt_key(void *_ctx, const uint8_t *key)
 {
 	AES_KEY *ctx = _ctx;
 
-	vpaes_set_encrypt_key(key, 32*8, ctx);
+	vpaes_set_encrypt_key(key, 32 * 8, ctx);
 }
 
-static int
-aes_gcm_cipher_init(gnutls_cipher_algorithm_t algorithm, void **_ctx,
-		    int enc)
+static int aes_gcm_cipher_init(gnutls_cipher_algorithm_t algorithm, void **_ctx,
+			       int enc)
 {
 	/* we use key size to distinguish */
 	if (algorithm != GNUTLS_CIPHER_AES_128_GCM &&
@@ -106,20 +101,19 @@ aes_gcm_cipher_init(gnutls_cipher_algorithm_t algorithm, void **_ctx,
 	return 0;
 }
 
-static int
-aes_gcm_cipher_setkey(void *_ctx, const void *key, size_t keysize)
+static int aes_gcm_cipher_setkey(void *_ctx, const void *key, size_t keysize)
 {
 	struct gcm_x86_aes_ctx *ctx = _ctx;
 
 	if (keysize == 16) {
-		GCM_SET_KEY(&ctx->inner, x86_aes_128_set_encrypt_key, x86_aes_encrypt,
-			    key);
+		GCM_SET_KEY(&ctx->inner, x86_aes_128_set_encrypt_key,
+			    x86_aes_encrypt, key);
 	} else if (keysize == 24) {
-		GCM_SET_KEY(&ctx->inner, x86_aes_192_set_encrypt_key, x86_aes_encrypt,
-			    key);
+		GCM_SET_KEY(&ctx->inner, x86_aes_192_set_encrypt_key,
+			    x86_aes_encrypt, key);
 	} else if (keysize == 32) {
-		GCM_SET_KEY(&ctx->inner, x86_aes_256_set_encrypt_key, x86_aes_encrypt,
-			    key);
+		GCM_SET_KEY(&ctx->inner, x86_aes_256_set_encrypt_key,
+			    x86_aes_encrypt, key);
 	} else
 		return GNUTLS_E_INVALID_REQUEST;
 
@@ -140,9 +134,8 @@ static int aes_gcm_setiv(void *_ctx, const void *iv, size_t iv_size)
 	return 0;
 }
 
-static int
-aes_gcm_encrypt(void *_ctx, const void *src, size_t src_size,
-		void *dst, size_t length)
+static int aes_gcm_encrypt(void *_ctx, const void *src, size_t src_size,
+			   void *dst, size_t length)
 {
 	struct gcm_x86_aes_ctx *ctx = _ctx;
 	int ret;
@@ -160,9 +153,8 @@ aes_gcm_encrypt(void *_ctx, const void *src, size_t src_size,
 	return 0;
 }
 
-static int
-aes_gcm_decrypt(void *_ctx, const void *src, size_t src_size,
-		void *dst, size_t dst_size)
+static int aes_gcm_decrypt(void *_ctx, const void *src, size_t src_size,
+			   void *dst, size_t dst_size)
 {
 	struct gcm_x86_aes_ctx *ctx = _ctx;
 

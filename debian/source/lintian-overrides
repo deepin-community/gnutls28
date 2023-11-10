@@ -1,6 +1,2 @@
-# Only used as fallback with dpkg-dev < 1.18.8. debhelper 10 requires
-# dpkg-dev (>= 1.18.2~), so we still need this.
-gnutls28 source: debian-rules-parses-dpkg-parsechangelog
 # False positives. Built by makeinfo --html
-gnutls28 source: source-is-missing [doc/gnutls-guile.html]
 gnutls28 source: source-is-missing [doc/gnutls.html]

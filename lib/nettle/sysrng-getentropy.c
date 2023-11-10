@@ -52,14 +52,13 @@
 
 get_entropy_func _rnd_get_system_entropy = NULL;
 
-static int _rnd_get_system_entropy_simple(void* _rnd, size_t size)
+static int _rnd_get_system_entropy_simple(void *_rnd, size_t size)
 {
 	if (getentropy(_rnd, size) < 0) {
 		int e = errno;
 		gnutls_assert();
-		_gnutls_debug_log
-			("Failed to use getentropy: %s\n",
-					 strerror(e));
+		_gnutls_debug_log("Failed to use getentropy: %s\n",
+				  strerror(e));
 		return GNUTLS_E_RANDOM_DEVICE_ERROR;
 	}
 	return 0;
@@ -75,4 +74,3 @@ void _rnd_system_entropy_deinit(void)
 {
 	return;
 }
-

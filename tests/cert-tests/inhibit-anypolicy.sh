@@ -15,8 +15,7 @@
 # General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with GnuTLS; if not, write to the Free Software Foundation,
-# Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+# along with GnuTLS.  If not, see <https://www.gnu.org/licenses/>.
 
 #set -e
 
@@ -36,13 +35,10 @@ SUBCAFILE=inhibit-subca.$$.tmp
 
 . ${srcdir}/../scripts/common.sh
 
-skip_if_no_datefudge
-
-datefudge -s "2017-04-22" \
-	"${CERTTOOL}" --generate-self-signed \
-		--load-privkey "${srcdir}/data/key-ca.pem" \
-		--template "${srcdir}/templates/inhibit-anypolicy.tmpl" \
-		--outfile ${CAFILE} 2>/dev/null
+"${CERTTOOL}" --attime "2017-04-22" --generate-self-signed \
+	--load-privkey "${srcdir}/data/key-ca.pem" \
+	--template "${srcdir}/templates/inhibit-anypolicy.tmpl" \
+	--outfile ${CAFILE} 2>/dev/null
 
 ${DIFF} "${srcdir}/data/inhibit-anypolicy.pem" ${CAFILE}
 rc=$?
@@ -57,8 +53,7 @@ fi
 echo ca > $TEMPLFILE
 echo "cn = sub-CA" >> $TEMPLFILE
 
-datefudge -s "2017-04-23" \
-"${CERTTOOL}" -d 2 --generate-certificate --template $TEMPLFILE \
+"${CERTTOOL}" --attime "2017-04-23" -d 2 --generate-certificate --template $TEMPLFILE \
 	--load-ca-privkey "${srcdir}/data/key-ca.pem" \
 	--load-ca-certificate $CAFILE \
 	--load-privkey "${srcdir}/data/key-subca.pem" \
@@ -72,7 +67,7 @@ fi
 cat $SUBCAFILE $CAFILE > ${TMPFILE}
 
 # we do not support the inhibit any policy extension for verification
-datefudge -s "2017-04-25" "${CERTTOOL}" --verify-chain --infile ${TMPFILE}
+"${CERTTOOL}"  --attime "2017-04-25" --verify-chain --infile ${TMPFILE}
 rc=$?
 if test "$rc" != "0"; then
 	echo "Verification failed unexpectedly ($rc)"

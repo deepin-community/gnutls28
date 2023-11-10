@@ -1,5 +1,4 @@
 14_version_gettextcat.diff
-30_guile-snarf.diff
 40_srptest_doubletimeout.diff
-50_Fix-removal-of-duplicate-certs-during-verification.patch
-51_add-gnulib-linkedhash-list-module.diff
+50-0001-Fix-build-on-GNU-Hurd.patch
+50-0002-Move-the-GNUTLS_NO_EXTENSIONS-compatibility-define-t.patch

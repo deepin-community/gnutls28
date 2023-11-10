@@ -1409,6 +1409,16 @@ GNUTLS_3_7_7
 	*;
 } GNUTLS_3_7_5;
 
+GNUTLS_3_8_1
+{
+ global:
+	gnutls_psk_set_server_credentials_function3;
+	gnutls_psk_set_client_credentials_function3;
+	gnutls_psk_format_imported_identity;
+ local:
+	*;
+} GNUTLS_3_7_7;
+
 GNUTLS_FIPS140_3_4 {
   global:
 	gnutls_cipher_self_test;
@@ -1512,4 +1522,11 @@ GNUTLS_PRIVATE_3_4 {
 	_gnutls_buffer_clear;
 	# needed by tests/cipher-alignment
 	_gnutls_crypto_register_cipher;
+	# needed by tests/tls12-rehandshake-cert-ticket
+	_gnutls_session_ticket_disable_server;
+	# needed by tests/pathbuf
+	_gnutls_pathbuf_init;
+	_gnutls_pathbuf_append;
+	_gnutls_pathbuf_truncate;
+	_gnutls_pathbuf_deinit;
 } GNUTLS_3_4;

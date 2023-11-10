@@ -63,6 +63,7 @@ None:
 				- file must pre-exist
        --ignore-errors        Ignore any verification errors
        --verify-allow-broken  Allow broken algorithms, such as MD5 for verification
+       --attime=str           Perform validation at the timestamp instead of the system time
 
 Version, usage and configuration options:
 
@@ -148,6 +149,16 @@ The output will be in PEM format.
 
 This is the ``allow broken algorithms, such as md5 for verification'' option.
 This can be combined with --verify-response.
+@subsubheading attime option.
+@anchor{ocsptool attime}
+
+This is the ``perform validation at the timestamp instead of the system time'' option.
+This option takes a ArgumentType.STRING argument @file{timestamp}.
+timestamp is an instance in time encoded as Unix time or in a human
+ readable timestring such as "29 Feb 2004", "2004-02-29".
+Full documentation available at 
+<https://www.gnu.org/software/coreutils/manual/html_node/Date-input-formats.html>
+or locally via info '(coreutils) date invocation'.
 @subsubheading version option (-v).
 @anchor{ocsptool version}
 

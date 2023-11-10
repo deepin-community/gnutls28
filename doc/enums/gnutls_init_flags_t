@@ -10,8 +10,8 @@ Connection end is a client.
 Connection is datagram oriented (DTLS). Since 3.0.0.
 @item GNUTLS_@-NONBLOCK
 Connection should not block. Since 3.0.0.
-@item GNUTLS_@-NO_@-EXTENSIONS
-Do not enable any TLS extensions by default (since 3.1.2). As TLS 1.2 and later require extensions this option is considered obsolete and should not be used.
+@item GNUTLS_@-NO_@-DEFAULT_@-EXTENSIONS
+Do not enable any TLS extensions by default such as session tickets and OCSP certificate status request (since 3.1.2). As TLS 1.2 and later require extensions this option is considered obsolete and should not be used.
 @item GNUTLS_@-NO_@-REPLAY_@-PROTECTION
 Disable any replay protection in DTLS. This must only be used if  replay protection is achieved using other means. Since 3.2.2.
 @item GNUTLS_@-NO_@-SIGNAL
@@ -76,4 +76,7 @@ session tickets during the handshake.
 Under TLS1.3 suppress sending EndOfEarlyData message. Since 3.7.2.
 @item GNUTLS_@-NO_@-TICKETS_@-TLS12
 Flag to indicate that the session should not use resumption with session tickets. This flag only has effect if TLS 1.2 is used.
+@item GNUTLS_@-NO_@-STATUS_@-REQUEST
+Prevents client from including the "status_request" TLS extension
+in the client hello, thus disabling the receival of certificate status information. Since 3.8.0.
 @end table

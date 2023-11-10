@@ -37,7 +37,8 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 	ret = gnutls_x509_privkey_init(&key);
 	assert(ret >= 0);
 
-	ret = gnutls_x509_privkey_import_pkcs8(key, &raw, GNUTLS_X509_FMT_DER, "password", 0);
+	ret = gnutls_x509_privkey_import_pkcs8(key, &raw, GNUTLS_X509_FMT_DER,
+					       "password", 0);
 	if (ret < 0) {
 		goto cleanup;
 	}

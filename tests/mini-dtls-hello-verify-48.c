@@ -17,8 +17,7 @@
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GnuTLS; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
+ * along with GnuTLS.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 #ifdef HAVE_CONFIG_H
@@ -35,7 +34,7 @@
 
 #if defined(_WIN32)
 
-int main()
+int main(void)
 {
 	exit(77);
 }
@@ -69,10 +68,9 @@ static void client_log_func(int level, const char *str)
 
 #define MAX_BUF 1024
 
-static ssize_t
-push(gnutls_transport_ptr_t tr, const void *data, size_t len)
+static ssize_t push(gnutls_transport_ptr_t tr, const void *data, size_t len)
 {
-	int fd = (long int) tr;
+	int fd = (long int)tr;
 
 	return send(fd, data, len, 0);
 }
@@ -100,9 +98,10 @@ static void client(int fd)
 	gnutls_handshake_set_timeout(session, get_timeout());
 
 	/* Use default priorities */
-	gnutls_priority_set_direct(session,
-				   "NONE:+VERS-DTLS-ALL:+CIPHER-ALL:+MAC-ALL:+SIGN-ALL:+COMP-ALL:+ANON-ECDH:+CURVE-ALL",
-				   NULL);
+	gnutls_priority_set_direct(
+		session,
+		"NONE:+VERS-DTLS-ALL:+CIPHER-ALL:+MAC-ALL:+SIGN-ALL:+COMP-ALL:+ANON-ECDH:+CURVE-ALL",
+		NULL);
 
 	/* put the anonymous credentials to the current session
 	 */
@@ -115,8 +114,7 @@ static void client(int fd)
 	 */
 	do {
 		ret = gnutls_handshake(session);
-	}
-	while (ret < 0 && gnutls_error_is_fatal(ret) == 0);
+	} while (ret < 0 && gnutls_error_is_fatal(ret) == 0);
 
 	if (ret < 0) {
 		success("client: Handshake failed as expected\n");
@@ -127,7 +125,7 @@ static void client(int fd)
 		goto exit;
 	}
 
- exit:
+exit:
 	gnutls_deinit(session);
 
 	gnutls_anon_free_client_credentials(anoncred);
@@ -135,19 +133,18 @@ static void client(int fd)
 	gnutls_global_deinit();
 }
 
-
 /* These are global */
 pid_t child;
 
-#define CLI_ADDR (void*)"test"
+#define CLI_ADDR (void *)"test"
 #define CLI_ADDR_LEN 4
 
-static
-ssize_t recv_timeout(int sockfd, void *buf, size_t len, unsigned flags, unsigned sec)
+static ssize_t recv_timeout(int sockfd, void *buf, size_t len, unsigned flags,
+			    unsigned sec)
 {
-int ret;
-struct timeval tv;
-fd_set set;
+	int ret;
+	struct timeval tv;
+	fd_set set;
 
 	tv.tv_sec = sec;
 	tv.tv_usec = 0;
@@ -203,9 +200,10 @@ static void server(int fd)
 	/* avoid calling all the priority functions, since the defaults
 	 * are adequate.
 	 */
-	gnutls_priority_set_direct(session,
-				   "NONE:+VERS-DTLS1.0:+CIPHER-ALL:+MAC-ALL:+SIGN-ALL:+COMP-ALL:+ANON-ECDH:+CURVE-ALL",
-				   NULL);
+	gnutls_priority_set_direct(
+		session,
+		"NONE:+VERS-DTLS1.0:+CIPHER-ALL:+MAC-ALL:+SIGN-ALL:+COMP-ALL:+ANON-ECDH:+CURVE-ALL",
+		NULL);
 
 	gnutls_credentials_set(session, GNUTLS_CRD_ANON, anoncred);
 
@@ -213,7 +211,8 @@ static void server(int fd)
 	gnutls_transport_set_push_function(session, push);
 
 	for (;;) {
-		ret = recv_timeout(fd, buffer, sizeof(buffer), MSG_PEEK, SERV_TIMEOUT);
+		ret = recv_timeout(fd, buffer, sizeof(buffer), MSG_PEEK,
+				   SERV_TIMEOUT);
 		if (ret < 0) {
 			if (try != 0) {
 				success("Server was terminated as expected!\n");
@@ -228,27 +227,24 @@ static void server(int fd)
 		memset(&prestate, 0, sizeof(prestate));
 		prestate.record_seq = 105791312;
 		prestate.hsk_write_seq = 67166359;
-		ret =
-		    gnutls_dtls_cookie_verify(&cookie_key, CLI_ADDR,
-					      CLI_ADDR_LEN, buffer, ret,
-					      &prestate);
-		if (ret < 0) {	/* cookie not valid */
+		ret = gnutls_dtls_cookie_verify(&cookie_key, CLI_ADDR,
+						CLI_ADDR_LEN, buffer, ret,
+						&prestate);
+		if (ret < 0) { /* cookie not valid */
 			if (debug)
 				success("Sending hello verify request\n");
 
-			ret =
-			    gnutls_dtls_cookie_send(&cookie_key, CLI_ADDR,
-						    CLI_ADDR_LEN,
-						    &prestate,
-						    (gnutls_transport_ptr_t)
-						    (long) fd, push);
+			ret = gnutls_dtls_cookie_send(
+				&cookie_key, CLI_ADDR, CLI_ADDR_LEN, &prestate,
+				(gnutls_transport_ptr_t)(long)fd, push);
 			if (ret < 0) {
 				fail("Cannot send data\n");
 				exit(1);
 			}
 
 			/* discard peeked data */
-			recv_timeout(fd, buffer, sizeof(buffer), 0, SERV_TIMEOUT);
+			recv_timeout(fd, buffer, sizeof(buffer), 0,
+				     SERV_TIMEOUT);
 			csend++;
 
 			if (csend > 2) {
@@ -265,7 +261,7 @@ static void server(int fd)
 
 	fail("Shouldn't have reached here\n");
 	exit(1);
- exit:
+exit:
 	gnutls_deinit(session);
 	gnutls_free(cookie_key.data);
 
@@ -308,4 +304,4 @@ void doit(void)
 	}
 }
 
-#endif				/* _WIN32 */
+#endif /* _WIN32 */

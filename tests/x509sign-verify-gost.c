@@ -30,11 +30,11 @@
 #include <stdlib.h>
 #include <string.h>
 #ifndef _WIN32
-# include <sys/types.h>
-# include <netinet/in.h>
-# include <sys/socket.h>
-# include <arpa/inet.h>
-# include <unistd.h>
+#include <sys/types.h>
+#include <netinet/in.h>
+#include <sys/socket.h>
+#include <arpa/inet.h>
+#include <unistd.h>
 #endif
 #include <gnutls/gnutls.h>
 #include <gnutls/x509.h>
@@ -54,11 +54,16 @@ void doit(void)
 	if (debug)
 		gnutls_global_set_log_level(6);
 
-	test_sig(GNUTLS_PK_GOST_01, GNUTLS_DIG_GOSTR_94, GNUTLS_CURVE_TO_BITS(GNUTLS_ECC_CURVE_GOST256CPA));
-	test_sig(GNUTLS_PK_GOST_12_256, GNUTLS_DIG_STREEBOG_256, GNUTLS_CURVE_TO_BITS(GNUTLS_ECC_CURVE_GOST256CPA));
-	test_sig(GNUTLS_PK_GOST_01, GNUTLS_DIG_GOSTR_94, GNUTLS_CURVE_TO_BITS(GNUTLS_ECC_CURVE_GOST256CPXA));
-	test_sig(GNUTLS_PK_GOST_12_256, GNUTLS_DIG_STREEBOG_256, GNUTLS_CURVE_TO_BITS(GNUTLS_ECC_CURVE_GOST256CPXA));
-	test_sig(GNUTLS_PK_GOST_12_512, GNUTLS_DIG_STREEBOG_512, GNUTLS_CURVE_TO_BITS(GNUTLS_ECC_CURVE_GOST512A));
+	test_sig(GNUTLS_PK_GOST_01, GNUTLS_DIG_GOSTR_94,
+		 GNUTLS_CURVE_TO_BITS(GNUTLS_ECC_CURVE_GOST256CPA));
+	test_sig(GNUTLS_PK_GOST_12_256, GNUTLS_DIG_STREEBOG_256,
+		 GNUTLS_CURVE_TO_BITS(GNUTLS_ECC_CURVE_GOST256CPA));
+	test_sig(GNUTLS_PK_GOST_01, GNUTLS_DIG_GOSTR_94,
+		 GNUTLS_CURVE_TO_BITS(GNUTLS_ECC_CURVE_GOST256CPXA));
+	test_sig(GNUTLS_PK_GOST_12_256, GNUTLS_DIG_STREEBOG_256,
+		 GNUTLS_CURVE_TO_BITS(GNUTLS_ECC_CURVE_GOST256CPXA));
+	test_sig(GNUTLS_PK_GOST_12_512, GNUTLS_DIG_STREEBOG_512,
+		 GNUTLS_CURVE_TO_BITS(GNUTLS_ECC_CURVE_GOST512A));
 
 	gnutls_global_deinit();
 #endif

@@ -15,8 +15,7 @@
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GnuTLS; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
+ * along with GnuTLS.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 /* This program tests the GNUTLS_ALPN_SERVER_PRECEDENCE
@@ -66,7 +65,8 @@ static void client_log_func(int level, const char *str)
 /* These are global */
 static pid_t child;
 
-static void client(int fd, const char *protocol0, const char *protocol1, const char *protocol2)
+static void client(int fd, const char *protocol0, const char *protocol1,
+		   const char *protocol2)
 {
 	gnutls_session_t session;
 	int ret;
@@ -88,16 +88,17 @@ static void client(int fd, const char *protocol0, const char *protocol1, const c
 	gnutls_init(&session, GNUTLS_CLIENT);
 
 	/* Use default priorities */
-	gnutls_priority_set_direct(session,
-				   "NONE:+VERS-TLS1.0:+CIPHER-ALL:+MAC-ALL:+SIGN-ALL:+COMP-ALL:+ANON-ECDH:+CURVE-ALL",
-				   NULL);
+	gnutls_priority_set_direct(
+		session,
+		"NONE:+VERS-TLS1.0:+CIPHER-ALL:+MAC-ALL:+SIGN-ALL:+COMP-ALL:+ANON-ECDH:+CURVE-ALL",
+		NULL);
 	if (protocol1) {
 		gnutls_datum_t t[3];
-		t[0].data = (void *) protocol0;
+		t[0].data = (void *)protocol0;
 		t[0].size = strlen(protocol0);
-		t[1].data = (void *) protocol1;
+		t[1].data = (void *)protocol1;
 		t[1].size = strlen(protocol1);
-		t[2].data = (void *) protocol2;
+		t[2].data = (void *)protocol2;
 		t[2].size = strlen(protocol2);
 
 		ret = gnutls_alpn_set_protocols(session, t, 3, 0);
@@ -117,8 +118,7 @@ static void client(int fd, const char *protocol0, const char *protocol1, const c
 	 */
 	do {
 		ret = gnutls_handshake(session);
-	}
-	while (ret < 0 && gnutls_error_is_fatal(ret) == 0);
+	} while (ret < 0 && gnutls_error_is_fatal(ret) == 0);
 
 	if (ret < 0) {
 		fail("client: Handshake failed\n");
@@ -131,8 +131,8 @@ static void client(int fd, const char *protocol0, const char *protocol1, const c
 
 	if (debug)
 		success("client: TLS version is: %s\n",
-			gnutls_protocol_get_name
-			(gnutls_protocol_get_version(session)));
+			gnutls_protocol_get_name(
+				gnutls_protocol_get_version(session)));
 
 	ret = gnutls_alpn_get_selected_protocol(session, &proto);
 	if (ret < 0) {
@@ -141,10 +141,9 @@ static void client(int fd, const char *protocol0, const char *protocol1, const c
 	}
 
 	if (debug) {
-		fprintf(stderr, "selected protocol: %.*s\n",
-			(int) proto.size, proto.data);
+		fprintf(stderr, "selected protocol: %.*s\n", (int)proto.size,
+			proto.data);
 	}
-
 
 	gnutls_bye(session, GNUTLS_SHUT_WR);
 
@@ -166,7 +165,8 @@ static void terminate(void)
 	exit(1);
 }
 
-static void server(int fd, const char *protocol1, const char *protocol2, const char *expected)
+static void server(int fd, const char *protocol1, const char *protocol2,
+		   const char *expected)
 {
 	int ret;
 	gnutls_session_t session;
@@ -190,16 +190,18 @@ static void server(int fd, const char *protocol1, const char *protocol2, const c
 	/* avoid calling all the priority functions, since the defaults
 	 * are adequate.
 	 */
-	gnutls_priority_set_direct(session,
-				   "NONE:+VERS-TLS1.0:+CIPHER-ALL:+MAC-ALL:+SIGN-ALL:+COMP-ALL:+ANON-ECDH:+CURVE-ALL",
-				   NULL);
+	gnutls_priority_set_direct(
+		session,
+		"NONE:+VERS-TLS1.0:+CIPHER-ALL:+MAC-ALL:+SIGN-ALL:+COMP-ALL:+ANON-ECDH:+CURVE-ALL",
+		NULL);
 
-	t[0].data = (void *) protocol1;
+	t[0].data = (void *)protocol1;
 	t[0].size = strlen(protocol1);
-	t[1].data = (void *) protocol2;
+	t[1].data = (void *)protocol2;
 	t[1].size = strlen(protocol2);
 
-	ret = gnutls_alpn_set_protocols(session, t, 2, GNUTLS_ALPN_SERVER_PRECEDENCE);
+	ret = gnutls_alpn_set_protocols(session, t, 2,
+					GNUTLS_ALPN_SERVER_PRECEDENCE);
 	if (ret < 0) {
 		gnutls_perror(ret);
 		exit(1);
@@ -211,8 +213,7 @@ static void server(int fd, const char *protocol1, const char *protocol2, const c
 
 	do {
 		ret = gnutls_handshake(session);
-	}
-	while (ret < 0 && gnutls_error_is_fatal(ret) == 0);
+	} while (ret < 0 && gnutls_error_is_fatal(ret) == 0);
 	if (ret < 0) {
 		close(fd);
 		gnutls_deinit(session);
@@ -225,8 +226,8 @@ static void server(int fd, const char *protocol1, const char *protocol2, const c
 
 	if (debug)
 		success("server: TLS version is: %s\n",
-			gnutls_protocol_get_name
-			(gnutls_protocol_get_version(session)));
+			gnutls_protocol_get_name(
+				gnutls_protocol_get_version(session)));
 
 	ret = gnutls_alpn_get_selected_protocol(session, &selected);
 	if (ret < 0) {
@@ -235,11 +236,13 @@ static void server(int fd, const char *protocol1, const char *protocol2, const c
 	}
 
 	if (debug) {
-		success("Protocol: %.*s\n", (int) selected.size, selected.data);
+		success("Protocol: %.*s\n", (int)selected.size, selected.data);
 	}
 
-	if (selected.size != strlen(expected) || memcmp(selected.data, expected, selected.size) != 0) {
-		fail("did not select the expected protocol (selected %.*s, expected %s)\n", selected.size, selected.data, expected);
+	if (selected.size != strlen(expected) ||
+	    memcmp(selected.data, expected, selected.size) != 0) {
+		fail("did not select the expected protocol (selected %.*s, expected %s)\n",
+		     selected.size, selected.data, expected);
 		exit(1);
 	}
 
@@ -258,7 +261,8 @@ static void server(int fd, const char *protocol1, const char *protocol2, const c
 		success("server: finished\n");
 }
 
-static void start(const char *p1, const char *p2, const char *cp1, const char *cp2, const char *expected)
+static void start(const char *p1, const char *p2, const char *cp1,
+		  const char *cp2, const char *expected)
 {
 	int fd[2];
 	int ret;
@@ -307,4 +311,4 @@ void doit(void)
 	start("h2", "http/1.1", "http/1.1", "h3", "http/1.1");
 }
 
-#endif				/* _WIN32 */
+#endif /* _WIN32 */

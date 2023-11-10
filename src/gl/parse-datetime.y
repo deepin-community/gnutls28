@@ -1,11 +1,11 @@
 %{
 /* Parse a string into an internal timestamp.
 
-   Copyright (C) 1999-2000, 2002-2021 Free Software Foundation, Inc.
+   Copyright (C) 1999-2000, 2002-2023 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 3 of the License, or
+   the Free Software Foundation, either version 3 of the License, or
    (at your option) any later version.
 
    This program is distributed in the hope that it will be useful,
@@ -38,7 +38,6 @@
 #include "idx.h"
 #include "intprops.h"
 #include "timespec.h"
-#include "verify.h"
 #include "strftime.h"
 
 /* There's no need to extend the stack, so there's no need to involve
@@ -51,16 +50,6 @@
    implementations have lame stack-overflow checking.  */
 #define YYMAXDEPTH 20
 #define YYINITDEPTH YYMAXDEPTH
-
-/* Since the code of parse-datetime.y is not included in the Emacs executable
-   itself, there is no need to #define static in this file.  Even if
-   the code were included in the Emacs executable, it probably
-   wouldn't do any harm to #undef it here; this will only cause
-   problems if we try to write to a static variable, which I don't
-   think this code needs to do.  */
-#ifdef emacs
-# undef static
-#endif
 
 #include <inttypes.h>
 #include <c-ctype.h>
@@ -104,9 +93,9 @@
 /* Verify that time_t is an integer as POSIX requires, and that every
    time_t value fits in intmax_t.  Please file a bug report if these
    assumptions are false on your platform.  */
-verify (TYPE_IS_INTEGER (time_t));
-verify (!TYPE_SIGNED (time_t) || INTMAX_MIN <= TYPE_MINIMUM (time_t));
-verify (TYPE_MAXIMUM (time_t) <= INTMAX_MAX);
+static_assert (TYPE_IS_INTEGER (time_t));
+static_assert (!TYPE_SIGNED (time_t) || INTMAX_MIN <= TYPE_MINIMUM (time_t));
+static_assert (TYPE_MAXIMUM (time_t) <= INTMAX_MAX);
 
 /* True if N is out of range for time_t.  */
 static bool
@@ -215,6 +204,7 @@ typedef struct
   bool rels_seen;
   idx_t dates_seen;
   idx_t days_seen;
+  idx_t J_zones_seen;
   idx_t local_zones_seen;
   idx_t dsts_seen;
   idx_t times_seen;
@@ -633,6 +623,11 @@ item:
       {
         pc->local_zones_seen++;
         debug_print_current_time (_("local_zone"), pc);
+      }
+  | 'J'
+      {
+        pc->J_zones_seen++;
+        debug_print_current_time ("J", pc);
       }
   | zone
       {
@@ -1163,7 +1158,8 @@ static table const time_zone_table[] =
    RFC 822 got these backwards, but RFC 5322 makes the incorrect
    treatment optional, so do them the right way here.
 
-   Note 'T' is a special case, as it is used as the separator in ISO
+   'J' is special, as it is local time.
+   'T' is also special, as it is the separator in ISO
    8601 date and time of day representation.  */
 static table const military_table[] =
 {
@@ -1176,6 +1172,7 @@ static table const military_table[] =
   { "G", tZONE,  HOUR ( 7) },
   { "H", tZONE,  HOUR ( 8) },
   { "I", tZONE,  HOUR ( 9) },
+  { "J", 'J',    0 },
   { "K", tZONE,  HOUR (10) },
   { "L", tZONE,  HOUR (11) },
   { "M", tZONE,  HOUR (12) },
@@ -1255,7 +1252,7 @@ enum { TM_YEAR_BUFSIZE = INT_BUFSIZE_BOUND (int) + 1 };
 static char const *
 tm_year_str (int tm_year, char buf[TM_YEAR_BUFSIZE])
 {
-  verify (TM_YEAR_BASE % 100 == 0);
+  static_assert (TM_YEAR_BASE % 100 == 0);
   sprintf (buf, &"-%02d%02d"[-TM_YEAR_BASE <= tm_year],
            abs (tm_year / 100 + TM_YEAR_BASE / 100),
            abs (tm_year % 100));
@@ -1544,8 +1541,8 @@ yylex (union YYSTYPE *lvalp, parser_control *pc)
 
 /* Do nothing if the parser reports an error.  */
 static int
-yyerror (parser_control const *pc _GL_UNUSED,
-         char const *s _GL_UNUSED)
+yyerror (_GL_UNUSED parser_control const *pc,
+         _GL_UNUSED char const *s)
 {
   return 0;
 }
@@ -1826,6 +1823,7 @@ parse_datetime_body (struct timespec *result, char const *p,
   pc.dates_seen = 0;
   pc.days_seen = 0;
   pc.times_seen = 0;
+  pc.J_zones_seen = 0;
   pc.local_zones_seen = 0;
   pc.dsts_seen = 0;
   pc.zones_seen = 0;
@@ -1951,7 +1949,7 @@ parse_datetime_body (struct timespec *result, char const *p,
   else
     {
       if (1 < (pc.times_seen | pc.dates_seen | pc.days_seen | pc.dsts_seen
-               | (pc.local_zones_seen + pc.zones_seen)))
+               | (pc.J_zones_seen + pc.local_zones_seen + pc.zones_seen)))
         {
           if (debugging (&pc))
             {
@@ -1963,7 +1961,7 @@ parse_datetime_body (struct timespec *result, char const *p,
                 dbg_printf ("error: seen multiple days parts\n");
               if (pc.dsts_seen > 1)
                 dbg_printf ("error: seen multiple daylight-saving parts\n");
-              if ((pc.local_zones_seen + pc.zones_seen) > 1)
+              if ((pc.J_zones_seen + pc.local_zones_seen + pc.zones_seen) > 1)
                 dbg_printf ("error: seen multiple time-zone parts\n");
             }
           goto fail;
@@ -2076,21 +2074,20 @@ parse_datetime_body (struct timespec *result, char const *p,
       if (pc.days_seen && ! pc.dates_seen)
         {
           intmax_t dayincr;
-          if (INT_MULTIPLY_WRAPV ((pc.day_ordinal
-                                   - (0 < pc.day_ordinal
-                                      && tm.tm_wday != pc.day_number)),
-                                  7, &dayincr)
-              || INT_ADD_WRAPV ((pc.day_number - tm.tm_wday + 7) % 7,
-                                dayincr, &dayincr)
-              || INT_ADD_WRAPV (dayincr, tm.tm_mday, &tm.tm_mday))
-            Start = -1;
-          else
+          tm.tm_yday = -1;
+          if (! (INT_MULTIPLY_WRAPV ((pc.day_ordinal
+                                      - (0 < pc.day_ordinal
+                                         && tm.tm_wday != pc.day_number)),
+                                     7, &dayincr)
+                 || INT_ADD_WRAPV ((pc.day_number - tm.tm_wday + 7) % 7,
+                                   dayincr, &dayincr)
+                 || INT_ADD_WRAPV (dayincr, tm.tm_mday, &tm.tm_mday)))
             {
               tm.tm_isdst = -1;
               Start = mktime_z (tz, &tm);
             }
 
-          if (Start == (time_t) -1)
+          if (tm.tm_yday < 0)
             {
               if (debugging (&pc))
                 dbg_printf (_("error: day '%s' "
@@ -2156,8 +2153,9 @@ parse_datetime_body (struct timespec *result, char const *p,
           tm.tm_min = tm0.tm_min;
           tm.tm_sec = tm0.tm_sec;
           tm.tm_isdst = tm0.tm_isdst;
+          tm.tm_wday = -1;
           Start = mktime_z (tz, &tm);
-          if (Start == (time_t) -1)
+          if (tm.tm_wday < 0)
             {
               if (debugging (&pc))
                 dbg_printf (_("error: adding relative date resulted "

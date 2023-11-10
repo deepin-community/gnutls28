@@ -28,9 +28,9 @@
 
 #ifdef HAVE_LIBIDN2
 
-# include <idn2.h>
+#include <idn2.h>
 
-# define ICAST char
+#define ICAST char
 
 /**
  * gnutls_idna_map:
@@ -56,7 +56,8 @@
  *
  * Since: 3.5.8
  **/
-int gnutls_idna_map(const char *input, unsigned ilen, gnutls_datum_t *out, unsigned flags)
+int gnutls_idna_map(const char *input, unsigned ilen, gnutls_datum_t *out,
+		    unsigned flags)
 {
 	char *idna = NULL;
 	int rc, ret;
@@ -79,7 +80,7 @@ int gnutls_idna_map(const char *input, unsigned ilen, gnutls_datum_t *out, unsig
 	idn2_tflags |= IDN2_TRANSITIONAL | IDN2_USE_STD3_ASCII_RULES;
 
 	if (ilen == 0) {
-		out->data = (uint8_t*)gnutls_strdup("");
+		out->data = (uint8_t *)gnutls_strdup("");
 		out->size = 0;
 		if (out->data == NULL)
 			return gnutls_assert_val(GNUTLS_E_MEMORY_ERROR);
@@ -96,28 +97,31 @@ int gnutls_idna_map(const char *input, unsigned ilen, gnutls_datum_t *out, unsig
 		return ret;
 	}
 
-	rc = idn2_to_ascii_8z((ICAST*)istr.data, (ICAST**)&idna, idn2_flags);
+	rc = idn2_to_ascii_8z((ICAST *)istr.data, (ICAST **)&idna, idn2_flags);
 	if (rc == IDN2_DISALLOWED && !(flags & GNUTLS_IDNA_FORCE_2008))
-		rc = idn2_to_ascii_8z((ICAST*)istr.data, (ICAST**)&idna, idn2_tflags);
+		rc = idn2_to_ascii_8z((ICAST *)istr.data, (ICAST **)&idna,
+				      idn2_tflags);
 
 	if (rc != IDN2_OK) {
 		gnutls_assert();
 		idna = NULL; /* in case idn2_lookup_u8 modifies &idna */
-		_gnutls_debug_log("unable to convert name '%s' to IDNA format: %s\n", istr.data, idn2_strerror(rc));
+		_gnutls_debug_log(
+			"unable to convert name '%s' to IDNA format: %s\n",
+			istr.data, idn2_strerror(rc));
 		ret = GNUTLS_E_INVALID_UTF8_STRING;
 		goto fail;
 	}
 
 	if (gnutls_free != idn2_free) {
 		ret = _gnutls_set_strdatum(out, idna, strlen(idna));
-	} else  {
-		out->data = (unsigned char*)idna;
+	} else {
+		out->data = (unsigned char *)idna;
 		out->size = strlen(idna);
 		idna = NULL;
 		ret = 0;
 	}
 
- fail:
+fail:
 	idn2_free(idna);
 	gnutls_free(istr.data);
 	return ret;
@@ -142,14 +146,15 @@ int gnutls_idna_map(const char *input, unsigned ilen, gnutls_datum_t *out, unsig
  *
  * Since: 3.5.8
  **/
-int gnutls_idna_reverse_map(const char *input, unsigned ilen, gnutls_datum_t *out, unsigned flags)
+int gnutls_idna_reverse_map(const char *input, unsigned ilen,
+			    gnutls_datum_t *out, unsigned flags)
 {
 	char *u8 = NULL;
 	int rc, ret;
 	gnutls_datum_t istr;
 
 	if (ilen == 0) {
-		out->data = (uint8_t*)gnutls_strdup("");
+		out->data = (uint8_t *)gnutls_strdup("");
 		out->size = 0;
 		if (out->data == NULL)
 			return gnutls_assert_val(GNUTLS_E_MEMORY_ERROR);
@@ -163,23 +168,25 @@ int gnutls_idna_reverse_map(const char *input, unsigned ilen, gnutls_datum_t *ou
 	}
 
 	/* currently libidn2 just converts single labels, thus a wrapper function */
-	rc = idn2_to_unicode_8z8z((char*)istr.data, &u8, 0);
+	rc = idn2_to_unicode_8z8z((char *)istr.data, &u8, 0);
 	if (rc != IDN2_OK) {
 		gnutls_assert();
-		_gnutls_debug_log("unable to convert ACE name '%s' to UTF-8 format: %s\n", istr.data, idn2_strerror(rc));
+		_gnutls_debug_log(
+			"unable to convert ACE name '%s' to UTF-8 format: %s\n",
+			istr.data, idn2_strerror(rc));
 		ret = GNUTLS_E_INVALID_UTF8_STRING;
 		goto fail;
 	}
 
 	if (gnutls_malloc != malloc) {
 		ret = _gnutls_set_strdatum(out, u8, strlen(u8));
-	} else  {
-		out->data = (unsigned char*)u8;
+	} else {
+		out->data = (unsigned char *)u8;
 		out->size = strlen(u8);
 		u8 = NULL;
 		ret = 0;
 	}
- fail:
+fail:
 	idn2_free(u8);
 	gnutls_free(istr.data);
 	return ret;
@@ -187,8 +194,9 @@ int gnutls_idna_reverse_map(const char *input, unsigned ilen, gnutls_datum_t *ou
 
 #else /* no HAVE_LIBIDN2 */
 
-# undef gnutls_idna_map
-int gnutls_idna_map(const char *input, unsigned ilen, gnutls_datum_t *out, unsigned flags)
+#undef gnutls_idna_map
+int gnutls_idna_map(const char *input, unsigned ilen, gnutls_datum_t *out,
+		    unsigned flags)
 {
 	if (!_gnutls_str_is_print(input, ilen)) {
 		return gnutls_assert_val(GNUTLS_E_UNIMPLEMENTED_FEATURE);
@@ -197,17 +205,19 @@ int gnutls_idna_map(const char *input, unsigned ilen, gnutls_datum_t *out, unsig
 	return _gnutls_set_strdatum(out, input, ilen);
 }
 
-int gnutls_idna_reverse_map(const char *input, unsigned ilen, gnutls_datum_t *out, unsigned flags)
+int gnutls_idna_reverse_map(const char *input, unsigned ilen,
+			    gnutls_datum_t *out, unsigned flags)
 {
 	return gnutls_assert_val(GNUTLS_E_UNIMPLEMENTED_FEATURE);
 }
 #endif /* HAVE_LIBIDN2 */
 
-int _gnutls_idna_email_map(const char *input, unsigned ilen, gnutls_datum_t *output)
+int _gnutls_idna_email_map(const char *input, unsigned ilen,
+			   gnutls_datum_t *output)
 {
 	const char *p = input;
 
-	while(*p != 0 && *p != '@') {
+	while (*p != 0 && *p != '@') {
 		if (!c_isprint(*p))
 			return gnutls_assert_val(GNUTLS_E_INVALID_UTF8_EMAIL);
 		p++;
@@ -218,24 +228,24 @@ int _gnutls_idna_email_map(const char *input, unsigned ilen, gnutls_datum_t *out
 	}
 
 	if (*p == '@') {
-		unsigned name_part = p-input;
+		unsigned name_part = p - input;
 		int ret;
 		gnutls_datum_t domain;
 
-		ret = gnutls_idna_map(p+1, ilen-name_part-1, &domain, 0);
+		ret = gnutls_idna_map(p + 1, ilen - name_part - 1, &domain, 0);
 		if (ret < 0)
 			return gnutls_assert_val(ret);
 
-		output->data = gnutls_malloc(name_part+1+domain.size+1);
+		output->data = gnutls_malloc(name_part + 1 + domain.size + 1);
 		if (output->data == NULL) {
 			gnutls_free(domain.data);
 			return gnutls_assert_val(GNUTLS_E_MEMORY_ERROR);
 		}
 		memcpy(output->data, input, name_part);
 		output->data[name_part] = '@';
-		memcpy(&output->data[name_part+1], domain.data, domain.size);
-		output->data[name_part+domain.size+1] = 0;
-		output->size = name_part+domain.size+1;
+		memcpy(&output->data[name_part + 1], domain.data, domain.size);
+		output->data[name_part + domain.size + 1] = 0;
+		output->size = name_part + domain.size + 1;
 		gnutls_free(domain.data);
 		return 0;
 	} else {
@@ -243,35 +253,37 @@ int _gnutls_idna_email_map(const char *input, unsigned ilen, gnutls_datum_t *out
 	}
 }
 
-int _gnutls_idna_email_reverse_map(const char *input, unsigned ilen, gnutls_datum_t *output)
+int _gnutls_idna_email_reverse_map(const char *input, unsigned ilen,
+				   gnutls_datum_t *output)
 {
 	const char *p = input;
 
-	while(*p != 0 && *p != '@') {
+	while (*p != 0 && *p != '@') {
 		if (!c_isprint(*p))
 			return gnutls_assert_val(GNUTLS_E_INVALID_UTF8_EMAIL);
 		p++;
 	}
 
 	if (*p == '@') {
-		unsigned name_part = p-input;
+		unsigned name_part = p - input;
 		int ret;
 		gnutls_datum_t domain;
 
-		ret = gnutls_idna_reverse_map(p+1, ilen-name_part-1, &domain, 0);
+		ret = gnutls_idna_reverse_map(p + 1, ilen - name_part - 1,
+					      &domain, 0);
 		if (ret < 0)
 			return gnutls_assert_val(ret);
 
-		output->data = gnutls_malloc(name_part+1+domain.size+1);
+		output->data = gnutls_malloc(name_part + 1 + domain.size + 1);
 		if (output->data == NULL) {
 			gnutls_free(domain.data);
 			return gnutls_assert_val(GNUTLS_E_MEMORY_ERROR);
 		}
 		memcpy(output->data, input, name_part);
 		output->data[name_part] = '@';
-		memcpy(&output->data[name_part+1], domain.data, domain.size);
-		output->data[name_part+domain.size+1] = 0;
-		output->size = name_part+domain.size+1;
+		memcpy(&output->data[name_part + 1], domain.data, domain.size);
+		output->data[name_part + domain.size + 1] = 0;
+		output->size = name_part + domain.size + 1;
 		gnutls_free(domain.data);
 		return 0;
 	} else {

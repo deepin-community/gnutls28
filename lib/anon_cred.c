@@ -37,8 +37,7 @@
  *
  * Free a gnutls_anon_server_credentials_t structure.
  **/
-void
-gnutls_anon_free_server_credentials(gnutls_anon_server_credentials_t sc)
+void gnutls_anon_free_server_credentials(gnutls_anon_server_credentials_t sc)
 {
 	if (sc->deinit_dh_params) {
 		gnutls_dh_params_deinit(sc->dh_params);
@@ -54,16 +53,12 @@ gnutls_anon_free_server_credentials(gnutls_anon_server_credentials_t sc)
  *
  * Returns: %GNUTLS_E_SUCCESS on success, or an error code.
  **/
-int
-gnutls_anon_allocate_server_credentials(gnutls_anon_server_credentials_t *
-					sc)
+int gnutls_anon_allocate_server_credentials(gnutls_anon_server_credentials_t *sc)
 {
-
 	*sc = gnutls_calloc(1, sizeof(anon_server_credentials_st));
 
 	return 0;
 }
-
 
 /**
  * gnutls_anon_free_client_credentials:
@@ -71,14 +66,12 @@ gnutls_anon_allocate_server_credentials(gnutls_anon_server_credentials_t *
  *
  * Free a gnutls_anon_client_credentials_t structure.
  **/
-void
-gnutls_anon_free_client_credentials(gnutls_anon_client_credentials_t sc)
+void gnutls_anon_free_client_credentials(gnutls_anon_client_credentials_t sc)
 {
 }
 
 static struct gnutls_anon_client_credentials_st anon_dummy_struct;
-static const gnutls_anon_client_credentials_t anon_dummy =
-    &anon_dummy_struct;
+static const gnutls_anon_client_credentials_t anon_dummy = &anon_dummy_struct;
 
 /**
  * gnutls_anon_allocate_client_credentials:
@@ -88,9 +81,7 @@ static const gnutls_anon_client_credentials_t anon_dummy =
  *
  * Returns: %GNUTLS_E_SUCCESS on success, or an error code.
  **/
-int
-gnutls_anon_allocate_client_credentials(gnutls_anon_client_credentials_t *
-					sc)
+int gnutls_anon_allocate_client_credentials(gnutls_anon_client_credentials_t *sc)
 {
 	/* anon_dummy is only there for *sc not to be null.
 	 * it is not used at all;
@@ -113,9 +104,8 @@ gnutls_anon_allocate_client_credentials(gnutls_anon_client_credentials_t *
  * or later. Since 3.6.0, DH parameters are negotiated
  * following RFC7919.
  **/
-void
-gnutls_anon_set_server_dh_params(gnutls_anon_server_credentials_t res,
-				 gnutls_dh_params_t dh_params)
+void gnutls_anon_set_server_dh_params(gnutls_anon_server_credentials_t res,
+				      gnutls_dh_params_t dh_params)
 {
 	if (res->deinit_dh_params) {
 		res->deinit_dh_params = 0;
@@ -124,7 +114,8 @@ gnutls_anon_set_server_dh_params(gnutls_anon_server_credentials_t res,
 	}
 
 	res->dh_params = dh_params;
-	res->dh_sec_param = gnutls_pk_bits_to_sec_param(GNUTLS_PK_DH, _gnutls_mpi_get_nbits(dh_params->params[0]));
+	res->dh_sec_param = gnutls_pk_bits_to_sec_param(
+		GNUTLS_PK_DH, _gnutls_mpi_get_nbits(dh_params->params[0]));
 }
 
 /**
@@ -146,9 +137,8 @@ gnutls_anon_set_server_dh_params(gnutls_anon_server_credentials_t res,
  *
  * Since: 3.5.6
  **/
-int
-gnutls_anon_set_server_known_dh_params(gnutls_anon_server_credentials_t res,
-					gnutls_sec_param_t sec_param)
+int gnutls_anon_set_server_known_dh_params(gnutls_anon_server_credentials_t res,
+					   gnutls_sec_param_t sec_param)
 {
 	res->dh_sec_param = sec_param;
 
@@ -169,9 +159,8 @@ gnutls_anon_set_server_known_dh_params(gnutls_anon_server_credentials_t res,
  * following RFC7919.
  *
  **/
-void
-gnutls_anon_set_server_params_function(gnutls_anon_server_credentials_t
-				       res, gnutls_params_function * func)
+void gnutls_anon_set_server_params_function(
+	gnutls_anon_server_credentials_t res, gnutls_params_function *func)
 {
 	res->params_func = func;
 }
@@ -190,9 +179,8 @@ gnutls_anon_set_server_params_function(gnutls_anon_server_credentials_t
  * following RFC7919.
  *
  **/
-void
-gnutls_anon_set_params_function(gnutls_anon_server_credentials_t res,
-				gnutls_params_function * func)
+void gnutls_anon_set_params_function(gnutls_anon_server_credentials_t res,
+				     gnutls_params_function *func)
 {
 	res->params_func = func;
 }

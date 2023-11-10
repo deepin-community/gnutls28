@@ -16,8 +16,7 @@
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GnuTLS; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
+ * along with GnuTLS.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 /* This program tests if gnutls_certificate_set_ocsp_status_request_file()
@@ -50,10 +49,10 @@ void doit(void)
 	gnutls_certificate_allocate_credentials(&x509_cred);
 	/* The file does not need to exist for this test
 	 */
-	gnutls_certificate_set_ocsp_status_request_file
-	    (x509_cred, "ocsp-status.der", 0);
-	gnutls_certificate_set_ocsp_status_request_file
-	    (x509_cred, "ocsp-status.der", 0);
+	gnutls_certificate_set_ocsp_status_request_file(x509_cred,
+							"ocsp-status.der", 0);
+	gnutls_certificate_set_ocsp_status_request_file(x509_cred,
+							"ocsp-status.der", 0);
 
 	gnutls_certificate_free_credentials(x509_cred);
 }

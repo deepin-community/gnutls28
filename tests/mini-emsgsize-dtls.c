@@ -16,8 +16,7 @@
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GnuTLS; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
+ * along with GnuTLS.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 #ifdef HAVE_CONFIG_H
@@ -46,16 +45,16 @@ static void tls_log_func(int level, const char *str)
 static int handshake = 0;
 
 #define MAX_BUF 1024
-#define MSG "Hello TLS, and hi and how are you and more data here... and more... and even more and even more more data..."
+#define MSG \
+	"Hello TLS, and hi and how are you and more data here... and more... and even more and even more more data..."
 
-static ssize_t
-client_push_300(gnutls_transport_ptr_t tr, const void *data, size_t len)
+static ssize_t client_push_300(gnutls_transport_ptr_t tr, const void *data,
+			       size_t len)
 {
 	size_t newlen;
 
 	if (len > 300) {
-		gnutls_transport_set_errno((gnutls_session_t) tr,
-					   EMSGSIZE);
+		gnutls_transport_set_errno((gnutls_session_t)tr, EMSGSIZE);
 		return -1;
 	}
 
@@ -66,19 +65,18 @@ client_push_300(gnutls_transport_ptr_t tr, const void *data, size_t len)
 	to_server_len = newlen;
 #ifdef EAGAIN_DEBUG
 	fprintf(stderr, "eagain: pushed %d bytes to server (avail: %d)\n",
-		(int) len, (int) to_server_len);
+		(int)len, (int)to_server_len);
 #endif
 	return len;
 }
 
-static ssize_t
-server_push_300(gnutls_transport_ptr_t tr, const void *data, size_t len)
+static ssize_t server_push_300(gnutls_transport_ptr_t tr, const void *data,
+			       size_t len)
 {
 	size_t newlen;
 
 	if (len > 300) {
-		gnutls_transport_set_errno((gnutls_session_t) tr,
-					   EMSGSIZE);
+		gnutls_transport_set_errno((gnutls_session_t)tr, EMSGSIZE);
 		return -1;
 	}
 
@@ -89,7 +87,7 @@ server_push_300(gnutls_transport_ptr_t tr, const void *data, size_t len)
 	to_client_len = newlen;
 #ifdef EAGAIN_DEBUG
 	fprintf(stderr, "eagain: pushed %d bytes to client (avail: %d)\n",
-		(int) len, (int) to_client_len);
+		(int)len, (int)to_client_len);
 #endif
 
 	return len;
@@ -99,7 +97,7 @@ void doit(void)
 {
 	/* Server stuff. */
 	gnutls_anon_server_credentials_t s_anoncred;
-	const gnutls_datum_t p3 = { (void *) pkcs3, strlen(pkcs3) };
+	const gnutls_datum_t p3 = { (void *)pkcs3, strlen(pkcs3) };
 	static gnutls_dh_params_t dh_params;
 	gnutls_session_t server;
 	int sret, cret;
@@ -121,12 +119,11 @@ void doit(void)
 	gnutls_dh_params_init(&dh_params);
 	gnutls_dh_params_import_pkcs3(dh_params, &p3, GNUTLS_X509_FMT_PEM);
 	gnutls_anon_set_server_dh_params(s_anoncred, dh_params);
-	gnutls_init(&server,
-		    GNUTLS_SERVER | GNUTLS_DATAGRAM | GNUTLS_NONBLOCK);
-	ret =
-	    gnutls_priority_set_direct(server,
-					"NONE:+VERS-DTLS1.2:+CIPHER-ALL:+MAC-ALL:+SIGN-ALL:+COMP-ALL:+ANON-DH",
-					NULL);
+	gnutls_init(&server, GNUTLS_SERVER | GNUTLS_DATAGRAM | GNUTLS_NONBLOCK);
+	ret = gnutls_priority_set_direct(
+		server,
+		"NONE:+VERS-DTLS1.2:+CIPHER-ALL:+MAC-ALL:+SIGN-ALL:+COMP-ALL:+ANON-DH",
+		NULL);
 	if (ret < 0)
 		exit(1);
 	gnutls_credentials_set(server, GNUTLS_CRD_ANON, s_anoncred);
@@ -138,12 +135,11 @@ void doit(void)
 
 	/* Init client */
 	gnutls_anon_allocate_client_credentials(&c_anoncred);
-	gnutls_init(&client,
-		    GNUTLS_CLIENT | GNUTLS_DATAGRAM | GNUTLS_NONBLOCK);
-	cret =
-	    gnutls_priority_set_direct(client,
-					"NONE:+VERS-DTLS1.2:+CIPHER-ALL:+MAC-ALL:+SIGN-ALL:+COMP-ALL:+ANON-DH",
-					NULL);
+	gnutls_init(&client, GNUTLS_CLIENT | GNUTLS_DATAGRAM | GNUTLS_NONBLOCK);
+	cret = gnutls_priority_set_direct(
+		client,
+		"NONE:+VERS-DTLS1.2:+CIPHER-ALL:+MAC-ALL:+SIGN-ALL:+COMP-ALL:+ANON-DH",
+		NULL);
 	if (cret < 0)
 		exit(1);
 	gnutls_credentials_set(client, GNUTLS_CRD_ANON, c_anoncred);
@@ -167,8 +163,7 @@ void doit(void)
 
 	do {
 		ret = gnutls_record_send(client, MSG, strlen(MSG));
-	}
-	while (ret == GNUTLS_E_AGAIN);
+	} while (ret == GNUTLS_E_AGAIN);
 
 	msglen = strlen(MSG);
 	TRANSFER(client, server, MSG, msglen, buffer, MAX_BUF);

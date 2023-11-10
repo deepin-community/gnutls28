@@ -44,11 +44,9 @@
  * Returns: On success, %GNUTLS_E_SUCCESS (0) is returned, otherwise
  *   an error code is returned.
  **/
-int
-gnutls_session_get_data(gnutls_session_t session,
-			void *session_data, size_t * session_data_size)
+int gnutls_session_get_data(gnutls_session_t session, void *session_data,
+			    size_t *session_data_size)
 {
-
 	gnutls_datum_t psession;
 	int ret;
 
@@ -70,7 +68,7 @@ gnutls_session_get_data(gnutls_session_t session,
 
 	ret = 0;
 
-      error:
+error:
 	_gnutls_free_datum(&psession);
 	return ret;
 }
@@ -118,8 +116,7 @@ gnutls_session_get_data(gnutls_session_t session,
  * Returns: On success, %GNUTLS_E_SUCCESS (0) is returned, otherwise
  *   an error code is returned.
  **/
-int
-gnutls_session_get_data2(gnutls_session_t session, gnutls_datum_t *data)
+int gnutls_session_get_data2(gnutls_session_t session, gnutls_datum_t *data)
 {
 	const version_entry_st *vers = get_version(session);
 	int ret;
@@ -128,7 +125,8 @@ gnutls_session_get_data2(gnutls_session_t session, gnutls_datum_t *data)
 		return gnutls_assert_val(GNUTLS_E_INVALID_REQUEST);
 	}
 
-	if (vers->tls13_sem && !(session->internals.hsk_flags & HSK_TICKET_RECEIVED)) {
+	if (vers->tls13_sem &&
+	    !(session->internals.hsk_flags & HSK_TICKET_RECEIVED)) {
 		unsigned ertt = session->internals.ertt;
 		/* use our estimation of round-trip + some time for the server to calculate
 		 * the value(s). */
@@ -136,19 +134,24 @@ gnutls_session_get_data2(gnutls_session_t session, gnutls_datum_t *data)
 
 		/* we cannot use a read with timeout if the caller has not set
 		 * a callback with gnutls_transport_set_pull_timeout_function() */
-		if (NO_TIMEOUT_FUNC_SET(session) || (session->internals.flags & GNUTLS_NONBLOCK)) {
+		if (NO_TIMEOUT_FUNC_SET(session) ||
+		    (session->internals.flags & GNUTLS_NONBLOCK)) {
 			if (!(session->internals.flags & GNUTLS_NONBLOCK))
-				_gnutls_debug_log("TLS1.3 works efficiently if a callback with gnutls_transport_set_pull_timeout_function() is set\n");
+				_gnutls_debug_log(
+					"TLS1.3 works efficiently if a callback with gnutls_transport_set_pull_timeout_function() is set\n");
 		} else {
 			/* wait for a message with timeout */
-			ret = _gnutls_recv_in_buffers(session, GNUTLS_APPLICATION_DATA, -1, ertt);
-			if (ret < 0 && (gnutls_error_is_fatal(ret) && ret != GNUTLS_E_TIMEDOUT)) {
+			ret = _gnutls_recv_in_buffers(
+				session, GNUTLS_APPLICATION_DATA, -1, ertt);
+			if (ret < 0 && (gnutls_error_is_fatal(ret) &&
+					ret != GNUTLS_E_TIMEDOUT)) {
 				return gnutls_assert_val(ret);
 			}
 		}
 
 		if (!(session->internals.hsk_flags & HSK_TICKET_RECEIVED)) {
-			ret = _gnutls_set_datum(data, EMPTY_DATA, EMPTY_DATA_SIZE);
+			ret = _gnutls_set_datum(data, EMPTY_DATA,
+						EMPTY_DATA_SIZE);
 			if (ret < 0)
 				return gnutls_assert_val(ret);
 
@@ -157,8 +160,11 @@ gnutls_session_get_data2(gnutls_session_t session, gnutls_datum_t *data)
 	} else if (!vers->tls13_sem) {
 		/* under TLS1.3 we want to pack the latest ticket, while that's
 		 * not the case in TLS1.2 or earlier. */
-		if (gnutls_session_is_resumed(session) && session->internals.resumption_data.data) {
-			ret = _gnutls_set_datum(data, session->internals.resumption_data.data, session->internals.resumption_data.size);
+		if (gnutls_session_is_resumed(session) &&
+		    session->internals.resumption_data.data) {
+			ret = _gnutls_set_datum(
+				data, session->internals.resumption_data.data,
+				session->internals.resumption_data.size);
 			if (ret < 0)
 				return gnutls_assert_val(ret);
 
@@ -177,7 +183,6 @@ gnutls_session_get_data2(gnutls_session_t session, gnutls_datum_t *data)
 
 	return 0;
 }
-
 
 /**
  * gnutls_session_get_id:
@@ -206,9 +211,8 @@ gnutls_session_get_data2(gnutls_session_t session, gnutls_datum_t *data)
  * Returns: On success, %GNUTLS_E_SUCCESS (0) is returned, otherwise
  *   an error code is returned.
  **/
-int
-gnutls_session_get_id(gnutls_session_t session,
-		      void *session_id, size_t * session_id_size)
+int gnutls_session_get_id(gnutls_session_t session, void *session_id,
+			  size_t *session_id_size)
 {
 	size_t given_session_id_size = *session_id_size;
 
@@ -258,9 +262,7 @@ gnutls_session_get_id(gnutls_session_t session,
  *
  * Since: 3.1.4
  **/
-int
-gnutls_session_get_id2(gnutls_session_t session,
-		       gnutls_datum_t * session_id)
+int gnutls_session_get_id2(gnutls_session_t session, gnutls_datum_t *session_id)
 {
 	session_id->size = session->security_parameters.session_id_size;
 	session_id->data = session->security_parameters.session_id;
@@ -286,14 +288,13 @@ gnutls_session_get_id2(gnutls_session_t session,
  * Returns: On success, %GNUTLS_E_SUCCESS (0) is returned, otherwise
  *   an error code is returned.
  **/
-int
-gnutls_session_set_data(gnutls_session_t session,
-			const void *session_data, size_t session_data_size)
+int gnutls_session_set_data(gnutls_session_t session, const void *session_data,
+			    size_t session_data_size)
 {
 	int ret;
 	gnutls_datum_t psession;
 
-	psession.data = (uint8_t *) session_data;
+	psession.data = (uint8_t *)session_data;
 	psession.size = session_data_size;
 
 	if (session_data == NULL || session_data_size == 0) {
@@ -318,7 +319,8 @@ gnutls_session_set_data(gnutls_session_t session,
 
 	if (session->internals.resumption_data.data != NULL)
 		gnutls_free(session->internals.resumption_data.data);
-	ret = _gnutls_set_datum(&session->internals.resumption_data, session_data, session_data_size);
+	ret = _gnutls_set_datum(&session->internals.resumption_data,
+				session_data, session_data_size);
 	if (ret < 0) {
 		gnutls_assert();
 		return ret;
@@ -385,7 +387,8 @@ char *gnutls_session_get_desc(gnutls_session_t session)
 	if (group_name == NULL && _gnutls_kx_is_dhe(kx)) {
 		dh_bits = gnutls_dh_get_prime_bits(session);
 		if (dh_bits > 0)
-			snprintf(_group_name, sizeof(_group_name), "CUSTOM%d", dh_bits);
+			snprintf(_group_name, sizeof(_group_name), "CUSTOM%d",
+				 dh_bits);
 		else
 			snprintf(_group_name, sizeof(_group_name), "CUSTOM");
 		group_name = _group_name;
@@ -403,21 +406,22 @@ char *gnutls_session_get_desc(gnutls_session_t session)
 		if (session->internals.hsk_flags & HSK_PSK_SELECTED) {
 			if (group) {
 				if (group->pk == GNUTLS_PK_DH)
-					snprintf(kx_name, sizeof(kx_name), "(DHE-PSK-%s)",
-						 group_name);
+					snprintf(kx_name, sizeof(kx_name),
+						 "(DHE-PSK-%s)", group_name);
 				else
-					snprintf(kx_name, sizeof(kx_name), "(ECDHE-PSK-%s)",
-						 group_name);
+					snprintf(kx_name, sizeof(kx_name),
+						 "(ECDHE-PSK-%s)", group_name);
 			} else {
-					snprintf(kx_name, sizeof(kx_name), "(PSK)");
+				snprintf(kx_name, sizeof(kx_name), "(PSK)");
 			}
 		} else if (group && sign_str) {
 			if (group->curve)
-				snprintf(kx_name, sizeof(kx_name), "(ECDHE-%s)-(%s)",
-					 group_name, sign_str);
+				snprintf(kx_name, sizeof(kx_name),
+					 "(ECDHE-%s)-(%s)", group_name,
+					 sign_str);
 			else
-				snprintf(kx_name, sizeof(kx_name), "(DHE-%s)-(%s)",
-					 group_name, sign_str);
+				snprintf(kx_name, sizeof(kx_name),
+					 "(DHE-%s)-(%s)", group_name, sign_str);
 		}
 	} else {
 		kx_str = gnutls_kx_get_name(kx);
@@ -427,48 +431,59 @@ char *gnutls_session_get_desc(gnutls_session_t session)
 		}
 
 		if ((kx == GNUTLS_KX_ECDHE_ECDSA || kx == GNUTLS_KX_ECDHE_RSA ||
-		    kx == GNUTLS_KX_ECDHE_PSK) && group_name) {
+		     kx == GNUTLS_KX_ECDHE_PSK) &&
+		    group_name) {
 			if (sign_str)
-				snprintf(kx_name, sizeof(kx_name), "(ECDHE-%s)-(%s)",
-					 group_name, sign_str);
+				snprintf(kx_name, sizeof(kx_name),
+					 "(ECDHE-%s)-(%s)", group_name,
+					 sign_str);
 			else
 				snprintf(kx_name, sizeof(kx_name), "(ECDHE-%s)",
 					 group_name);
-		} else if ((kx == GNUTLS_KX_DHE_DSS || kx == GNUTLS_KX_DHE_RSA ||
-		    kx == GNUTLS_KX_DHE_PSK) && group_name) {
+		} else if ((kx == GNUTLS_KX_DHE_DSS ||
+			    kx == GNUTLS_KX_DHE_RSA ||
+			    kx == GNUTLS_KX_DHE_PSK) &&
+			   group_name) {
 			if (sign_str)
-				snprintf(kx_name, sizeof(kx_name), "(DHE-%s)-(%s)", group_name, sign_str);
+				snprintf(kx_name, sizeof(kx_name),
+					 "(DHE-%s)-(%s)", group_name, sign_str);
 			else
-				snprintf(kx_name, sizeof(kx_name), "(DHE-%s)", group_name);
+				snprintf(kx_name, sizeof(kx_name), "(DHE-%s)",
+					 group_name);
 		} else if (kx == GNUTLS_KX_RSA) {
 			/* Possible enhancement: include the certificate bits */
 			snprintf(kx_name, sizeof(kx_name), "(RSA)");
 		} else {
-			snprintf(kx_name, sizeof(kx_name), "(%s)",
-				 kx_str);
+			snprintf(kx_name, sizeof(kx_name), "(%s)", kx_str);
 		}
 	}
 
 	if (are_alternative_cert_types_allowed(session)) {
 		// Get certificate types
-		ctype_client = get_certificate_type(session, GNUTLS_CTYPE_CLIENT);
-		ctype_server = get_certificate_type(session, GNUTLS_CTYPE_SERVER);
+		ctype_client =
+			get_certificate_type(session, GNUTLS_CTYPE_CLIENT);
+		ctype_server =
+			get_certificate_type(session, GNUTLS_CTYPE_SERVER);
 
 		if (ctype_client == ctype_server) {
 			// print proto version, client/server cert type
-			snprintf(proto_name, sizeof(proto_name), "%s-%s",
-				 gnutls_protocol_get_name(get_num_version(session)),
-				 gnutls_certificate_type_get_name(ctype_client));
+			snprintf(
+				proto_name, sizeof(proto_name), "%s-%s",
+				gnutls_protocol_get_name(
+					get_num_version(session)),
+				gnutls_certificate_type_get_name(ctype_client));
 		} else {
 			// print proto version, client cert type, server cert type
-			snprintf(proto_name, sizeof(proto_name), "%s-%s-%s",
-				 gnutls_protocol_get_name(get_num_version(session)),
-				 gnutls_certificate_type_get_name(ctype_client),
-				 gnutls_certificate_type_get_name(ctype_server));
+			snprintf(
+				proto_name, sizeof(proto_name), "%s-%s-%s",
+				gnutls_protocol_get_name(
+					get_num_version(session)),
+				gnutls_certificate_type_get_name(ctype_client),
+				gnutls_certificate_type_get_name(ctype_server));
 		}
 	} else { // Assumed default certificate type (X.509)
 		snprintf(proto_name, sizeof(proto_name), "%s",
-				 gnutls_protocol_get_name(get_num_version(session)));
+			 gnutls_protocol_get_name(get_num_version(session)));
 	}
 
 	desc = gnutls_malloc(DESC_SIZE);
@@ -477,15 +492,10 @@ char *gnutls_session_get_desc(gnutls_session_t session)
 
 	mac_id = gnutls_mac_get(session);
 	if (mac_id == GNUTLS_MAC_AEAD) { /* no need to print */
-		snprintf(desc, DESC_SIZE,
-			 "(%s)-%s-(%s)",
-			 proto_name,
-			 kx_name,
+		snprintf(desc, DESC_SIZE, "(%s)-%s-(%s)", proto_name, kx_name,
 			 gnutls_cipher_get_name(gnutls_cipher_get(session)));
 	} else {
-		snprintf(desc, DESC_SIZE,
-			 "(%s)-%s-(%s)-(%s)",
-			 proto_name,
+		snprintf(desc, DESC_SIZE, "(%s)-%s-(%s)-(%s)", proto_name,
 			 kx_name,
 			 gnutls_cipher_get_name(gnutls_cipher_get(session)),
 			 gnutls_mac_get_name(mac_id));
@@ -510,8 +520,7 @@ char *gnutls_session_get_desc(gnutls_session_t session)
  *
  * Since: 3.2.1
  **/
-int
-gnutls_session_set_id(gnutls_session_t session, const gnutls_datum_t * sid)
+int gnutls_session_set_id(gnutls_session_t session, const gnutls_datum_t *sid)
 {
 	if (session->security_parameters.entity == GNUTLS_SERVER ||
 	    sid->size > GNUTLS_MAX_SESSION_ID_SIZE)
@@ -521,7 +530,7 @@ gnutls_session_set_id(gnutls_session_t session, const gnutls_datum_t * sid)
 	       sizeof(session->internals.resumed_security_parameters));
 
 	session->internals.resumed_security_parameters.session_id_size =
-	    sid->size;
+		sid->size;
 	memcpy(session->internals.resumed_security_parameters.session_id,
 	       sid->data, sid->size);
 

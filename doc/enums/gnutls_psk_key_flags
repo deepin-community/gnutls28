@@ -6,4 +6,6 @@
 PSK-key in raw format.
 @item GNUTLS_@-PSK_@-KEY_@-HEX
 PSK-key in hex format.
+@item GNUTLS_@-PSK_@-KEY_@-EXT
+PSK-key is external and to be imported.
 @end table

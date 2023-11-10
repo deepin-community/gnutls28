@@ -14,8 +14,7 @@
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GnuTLS; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
+ * along with GnuTLS.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 #ifdef HAVE_CONFIG_H
@@ -53,9 +52,7 @@ static unsigned char rsa_key_pem[] =
 	"vXMBcuCE1aJHZDxqRx8XFZDZl+Ij/jrBMmtI15ebDuzH\n"
 	"-----END RSA PRIVATE KEY-----\n";
 
-const gnutls_datum_t rsa_key = { rsa_key_pem,
-	sizeof(rsa_key_pem)-1
-};
+const gnutls_datum_t rsa_key = { rsa_key_pem, sizeof(rsa_key_pem) - 1 };
 
 static unsigned char p8_rsa_pem[] =
 	"-----BEGIN ENCRYPTED PRIVATE KEY-----\n"
@@ -76,12 +73,9 @@ static unsigned char p8_rsa_pem[] =
 	"eng1/Czj\n"
 	"-----END ENCRYPTED PRIVATE KEY-----\n";
 
-const gnutls_datum_t p8_rsa_key = { p8_rsa_pem,
-	sizeof(p8_rsa_pem)-1
-};
+const gnutls_datum_t p8_rsa_key = { p8_rsa_pem, sizeof(p8_rsa_pem) - 1 };
 
-static
-int check_x509_privkey(void)
+static int check_x509_privkey(void)
 {
 	gnutls_x509_privkey_t key;
 	int ret;
@@ -101,8 +95,7 @@ int check_x509_privkey(void)
 	return 0;
 }
 
-static
-int check_pkcs8_privkey1(void)
+static int check_pkcs8_privkey1(void)
 {
 	gnutls_x509_privkey_t key;
 	int ret;
@@ -113,7 +106,8 @@ int check_pkcs8_privkey1(void)
 	if (ret < 0)
 		fail("error: %s\n", gnutls_strerror(ret));
 
-	ret = gnutls_x509_privkey_import_pkcs8(key, &p8_rsa_key, GNUTLS_X509_FMT_PEM, "1234", 0);
+	ret = gnutls_x509_privkey_import_pkcs8(key, &p8_rsa_key,
+					       GNUTLS_X509_FMT_PEM, "1234", 0);
 	if (ret != GNUTLS_E_PK_INVALID_PRIVKEY)
 		fail("error: %s\n", gnutls_strerror(ret));
 
@@ -122,8 +116,7 @@ int check_pkcs8_privkey1(void)
 	return 0;
 }
 
-static
-int check_pkcs8_privkey2(void)
+static int check_pkcs8_privkey2(void)
 {
 	gnutls_privkey_t key;
 	int ret;
@@ -134,7 +127,8 @@ int check_pkcs8_privkey2(void)
 	if (ret < 0)
 		fail("error: %s\n", gnutls_strerror(ret));
 
-	ret = gnutls_privkey_import_x509_raw(key, &p8_rsa_key, GNUTLS_X509_FMT_PEM, "1234", 0);
+	ret = gnutls_privkey_import_x509_raw(key, &p8_rsa_key,
+					     GNUTLS_X509_FMT_PEM, "1234", 0);
 	if (ret != GNUTLS_E_PK_INVALID_PRIVKEY)
 		fail("error: %s\n", gnutls_strerror(ret));
 
@@ -148,7 +142,8 @@ void doit(void)
 	if (gnutls_fips140_mode_enabled())
 		exit(77);
 
-#if NETTLE_VERSION_MAJOR < 3 || (NETTLE_VERSION_MAJOR == 3 && NETTLE_VERSION_MINOR <= 2)
+#if NETTLE_VERSION_MAJOR < 3 || \
+	(NETTLE_VERSION_MAJOR == 3 && NETTLE_VERSION_MINOR <= 2)
 	/* These checks are enforced only on new versions of nettle */
 	exit(77);
 #else

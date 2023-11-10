@@ -1,16 +1,1003 @@
 Author: Zoltan Fridrich <zfridric@redhat.com>
-Date:   Thu Feb 9 09:39:41 2023 +0100
+Date:   Thu Aug 3 11:52:04 2023 +0200
 
-    Release 3.7.9
+    Release 3.8.1
     
     Signed-off-by: Zoltan Fridrich <zfridric@redhat.com>
 
 Author: Zoltan Fridrich <zfridric@redhat.com>
-Date:   Tue Jan 3 09:06:01 2023 +0100
+Date:   Thu Aug 3 14:09:33 2023 +0200
 
-    Update year of copyright notices in doc/gnutls.texi
+    Safeguard against overflow inside pkcs11_find_objects
     
     Signed-off-by: Zoltan Fridrich <zfridric@redhat.com>
+
+Author: Zoltan Fridrich <zfridric@redhat.com>
+Date:   Tue Jul 25 16:23:49 2023 +0200
+
+    Refactor pkcs11_find_objects to use p11-kit iterator
+    
+    Signed-off-by: Zoltan Fridrich <zfridric@redhat.com>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Mon Jul 31 23:46:19 2023 +0900
+
+    tests: propagate $CFLAGS in pkgconfig.sh
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Mon Jul 31 11:54:27 2023 +0900
+
+    .gitlab-ci.yml: re-enable i686 cross build
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Mon Jul 31 17:38:02 2023 +0900
+
+    doc: fix C++ example compilation on MinGW
+    
+    The examples under doc/examples/ are compiled with Gnulib, which
+    overrides write if it's not available, as a macro.  This conflicts
+    with the usage of std::iostream::write in ex-cxx.cpp.  To avoid the
+    build issue, use a custom namespace to hide it, as suggested in:
+    https://www.gnu.org/software/gnulib/manual/html_node/A-C_002b_002b-namespace-for-gnulib.html
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Zoltan Fridrich <zfridric@redhat.com>
+Date:   Thu Jul 27 10:36:48 2023 +0200
+
+    Reduce the number of objects received per iteration in pkcs11_find_objects
+    
+    Signed-off-by: Zoltan Fridrich <zfridric@redhat.com>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Mon Jul 24 09:14:20 2023 +0200
+
+    .gitlab-ci.yml: drop use of Debian cross images
+    
+    Due to licensing concern, we had to remove the Debian-based CI images
+    for cross compilation.  Some of them are already covered by the
+    Fedora-based CI images, though it would be nice if the following are
+    added back:
+    
+    - x86 (32-bit): maybe we could just use -m32 on Fedora image,
+      similarly to mingw targets
+    - Arm (32-bit)
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Sun Jul 23 08:17:32 2023 +0200
+
+    .gitlab-ci.yml: enable use of Fedora cross toolchain
+    
+    This adds new tests for cross-compiling to AArch64, PowerPC 64 (LE),
+    and s390x through the CI image based on Fedora 38.  The main advantage
+    of doing this is that the toolchain version is in sync with the
+    current Fedora native builds.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Thu Jul 20 08:54:36 2023 +0200
+
+    accelerated: check nonce length in aead_{encrypt,decrypt}
+    
+    This propagates any IV length mismatch detected as an error, in the
+    accelerated code for x86.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Thu Jul 20 08:49:30 2023 +0200
+
+    nettle: check nonce length in aead_{encrypt,decrypt}
+    
+    This adds a missing check on the maximum IV length in aead_encrypt and
+    aead_decrypt, to the Nettle crypto backend.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Elias Gustafsson <elias.skondal@gmail.com>
+Date:   Tue Apr 4 02:16:04 2023 +0200
+
+    tests: add negative serial number test
+    
+    Signed-off-by: Elias Gustafsson <elias.skondal@gmail.com>
+
+Author: Elias Gustafsson <elias.skondal@gmail.com>
+Date:   Tue Apr 4 02:07:21 2023 +0200
+
+    certtool: reject negative serial numbers
+    
+    Signed-off-by: Elias Gustafsson <elias.skondal@gmail.com>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Mon Jul 10 14:53:35 2023 +0200
+
+    tests: use template file for generating long DNS certificate request
+    
+    Instead of an interaction file, which causes problems on Windows when
+    reading a password from tty.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Sat Jul 8 14:47:19 2023 +0200
+
+    tests: fix error code in ocsp-tests/ocsp-must-staple-connection.sh
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Sat Jul 8 14:42:33 2023 +0200
+
+    tests: print diff when cert-tests/crq.sh produces unexpected output
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Sat Jul 8 06:36:39 2023 +0200
+
+    build: remove unused backward compatibility macro
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Fri Jul 7 15:48:19 2023 +0200
+
+    tests: remove unnecessary calls to skip_if_no_datefudge
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Wed Jul 5 17:00:40 2023 +0200
+
+    NEWS: mention --attime option
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Wed Jul 5 17:45:54 2023 +0200
+
+    tests: use SH_LOG_COMPILER in cert-tests
+    
+    This omits the need of setting executable bits on shell script tests,
+    as well as makes the log file naming consistent.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Sat Jul 8 06:29:17 2023 +0200
+
+    gnutls-serv, gnutls-cli, gnutls-cli-debug: add --attime option
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Wilbur Wetterquarz <freaxmate@protonmail.com>
+Date:   Wed Mar 22 01:00:09 2023 +0100
+
+    certtool: add --attime option
+    
+    This adds a --attime option to certtool, so the tests don't need
+    faketime or datefudge to adjust system time.
+    
+    Signed-off-by: Wilbur Wetterquarz <freaxmate@protonmail.com>
+    Modified-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Thu Jul 6 14:30:52 2023 +0200
+
+    ocsptool: fix memleak spotted by ASan
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Pravek Sharma <sharmapravek@gmail.com>
+Date:   Sun Mar 12 22:31:33 2023 -0400
+
+    ocsptool: add --attime option
+    
+    This adds a --attime option to ocsptool, so the tests don't need
+    faketime or datefudge to adjust system time.
+    
+    Signed-off-by: Pravek Sharma <sharmapravek@gmail.com>
+    Modified-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Wed Jul 5 17:28:47 2023 +0200
+
+    system: override gettime if time is overridden
+    
+    If the gnutls_time is manually set by user, it would be more intuitive
+    to also update gnutls_gettime to use it internally.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Wed Jul 5 15:55:16 2023 +0200
+
+    tests: detect faketime at configure time
+    
+    Previously, the test suite checked the existence of faketime or
+    datefudge at "make check", multiple times when it is needed.  This
+    moves the check to configure and check it only once.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+    Co-authored-by: Andreas Metzler <ametzler@bebt.de>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Tue Jul 4 09:47:52 2023 +0200
+
+    priority: add config keyword "tls-session-hash"
+    
+    This adds a new keyword in the configuration file, "tls-session-hash",
+    which shall appear in the [overrides] section and takes either
+    "request" or "require" as the argument.  This is particularly useful
+    when reverting the EMS requirement in FIPS mode for interoperability
+    reasons.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Thu Jun 29 10:04:51 2023 +0200
+
+    tls1-prf: mark use of non-EMS PRF non-approved in FIPS
+    
+    This adds service indicator transitions around the use of TLS 1.2 PRF.
+    As of May 16, 2023, the use of extended master secret is mandatory
+    according to FIPS 140-3 IG.  This patch detects the usage of non-EMS
+    KDF by checking the label: if it is "master secret", the service
+    indicator transitions to a non-approved state.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Andreas Metzler <ametzler@debian.org>
+Date:   Sun Jun 4 14:15:45 2023 +0200
+
+    Fix update-copyright-year target for switch from GNU autogen
+    
+    Signed-off-by: Andreas Metzler <ametzler@bebt.de>
+
+Author: Andreas Metzler <ametzler@debian.org>
+Date:   Sun Jun 4 13:53:43 2023 +0200
+
+    Automate and fix manpage copyright year update
+    
+    Handle manpage copyright year update in update-copyright-year
+    target, and fix the library manpage copyright year statement, $(YEAR)
+    expanded to an empty string
+    
+    Broken by: 5a58370864e04f5dbb05b0ae453e6fa592a93175
+    Signed-off-by: Andreas Metzler <ametzler@bebt.de>
+
+Author: Andreas Metzler <ametzler@debian.org>
+Date:   Sat Jun 3 13:27:53 2023 +0200
+
+    Bump manpage copyright year
+    
+    Signed-off-by: Andreas Metzler <ametzler@bebt.de>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Mon Jun 5 16:47:36 2023 +0200
+
+    tests: re-add test-ciphersuite-names.sh to TESTS
+    
+    The test was removed from TESTS in commit
+    5e52b0d0fec0d9eaac30ca8f35fd7b8368064222.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Thu Jun 1 16:08:24 2023 +0200
+
+    tests: update tests/suite/ciphersuite after a96b04ff
+    
+    The commit a96b04ffcf8fd7375dc3c0f90602bf679f5a9791 introduced a new
+    field in gnutls_cipher_suite_entry_st for gnutls_ciphersuite_get. The
+    scan-gnutls.sh script needs to be updated to correctly parse the
+    ciphersuites list.  This also fixes the include path so the test
+    doesn't require gnutls to be installed on the system.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Fri Jul 7 13:18:20 2023 +0200
+
+    tests: make testcompat-openssl-tls13-serv.sh less flaky
+    
+    Bash has a special variable GROUPS[1] which clashes with our use in
+    testcompat-openssl-tls13-serv.sh as a list of key exchange groups.
+    This avoids using it as well as expands the logging message to
+    indicate what is tested.
+    
+    1. https://www.gnu.org/software/bash/manual/html_node/Bash-Variables.html#index-GROUPS
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Fri Jul 7 10:07:26 2023 +0200
+
+    lib: suppress -Wmaybe-uninitialized warning
+    
+    Spotted by GCC 13:
+    
+      pkcs11.c: In function 'gnutls_pkcs11_token_get_info':
+      pkcs11.c:2535:25: error: 'str' may be used uninitialized [-Werror=maybe-uninitialized]
+       2535 |                         memcpy(output, str, len);
+            |                         ^~~~~~~~~~~~~~~~~~~~~~~~
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Wed Jun 7 16:44:00 2023 +0200
+
+    lib: suppress false-positive -Wanalyzer-out-of-bounds
+    
+    GCC analyzer from GCC 13 reports this:
+    
+      verify-high.c:1471:21: error: stack-based buffer over-read [CWE-126] [-Werror=analyzer-out-of-bounds]
+       1471 |                 if (gnutls_x509_trust_list_get_issuer(
+            |                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+       1472 |                             list, cert_list[i - 1], &issuer,
+    
+    This is false-positive, as i is always in a range 0 < i < cert_list_size.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Wed Jun 7 11:54:54 2023 +0200
+
+    lib: suppress false-positive -Wanalyzer-deref-before-check
+    
+    GCC analyzer from GCC 13 reports an error when a pointer dereference
+    followed by a memcpy:
+    
+      x509_dn.c:54:17: error: check of '*name.data' for NULL after already dereferencing it [-Werror=analyzer-deref-before-check]
+         54 |                 memcpy(_oid, name->data, name->size);
+            |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    
+    This is a false-positive, because we check name->size is > 0 on a
+    previous line.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Wed Jun 7 11:43:32 2023 +0200
+
+    src: suppress clang-analyzer warning
+    
+    clang-analyzer from Clang 16 reports the following:
+    
+      serv.c:2069:2: warning: Null pointer passed to 1st parameter expecting 'nonnull' [core.NonNullParamChecker]
+              memcpy(cache_db[i].session_data.data, data.data, data.size);
+              ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Tue Jun 6 09:30:50 2023 +0200
+
+    .gitlab-ci.yml: switch to Fedora 38 images
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Ajit Singh <ajeetsinghchahar2@gmail.com>
+Date:   Wed Jun 7 22:06:57 2023 +0530
+
+    m4/hooks.m4: Fixed typo
+    
+    Signed-off-by: Ajit Singh <ajeetsinghchahar2@gmail.com>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Wed May 24 09:02:26 2023 +0200
+
+    .gitlab-ci.yml: pull in clang16-extra-tools instead of clang15-*
+    
+    Also re-indent the existing code with the newer version of clang.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Thu May 11 09:57:09 2023 +0900
+
+    tests: use GNUTLS_SELF_TEST_FLAG_ALL macro instead of magic number
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Thu May 11 09:52:20 2023 +0900
+
+    crypto-selftests: mark CFB8 block sizes tests optional
+    
+    It was not obvious that the second function supplied to CASE2 macro
+    was only called when GNUTLS_SELF_TEST_FLAG_ALL is set.  This splits
+    the macro into two: the one to be required and the other to be
+    optional.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Thu May 11 22:13:25 2023 +0900
+
+    nettle: remove files no longer used
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Tue May 2 08:41:08 2023 +0900
+
+    psk: Add basic support for RFC 9258 external PSK importer interface
+    
+    This adds a minimal, callback-based API to import external PSK,
+    following RFC 9258.  The client and the server importing external PSK
+    are supposed to set a callback to retrieve PSK, which returns flags
+    that may indicate the PSK is imported, along with the key:
+    
+      typedef int gnutls_psk_client_credentials_function3(
+              gnutls_session_t session,
+              gnutls_datum_t *username, gnutls_datum_t *key,
+              gnutls_psk_key_flags *flags);
+    
+      typedef int gnutls_psk_server_credentials_function3(
+              gnutls_session_t session,
+              const gnutls_datum_t *username, gnutls_datum_t *key,
+              gnutls_psk_key_flags *flags);
+    
+    Those callbacks are responsible to call
+    gnutls_psk_format_imported_identity() for external PSKs to build a
+    serialized PSK identity, and set GNUTLS_PSK_KEY_EXT in flags if the
+    identity is an imported one.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Mon Apr 24 12:39:42 2023 +0900
+
+    build: re-indent code
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Fri Mar 17 18:17:30 2023 +0900
+
+    doc: add missing documentation for enums
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Thu Mar 16 11:31:42 2023 +0900
+
+    .gitlab-ci.yml: install clang15-extra-tools for clang-format
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Fri Mar 17 13:05:41 2023 +0900
+
+    gnutls.h.in: stop indenting doc-comments for typedefs
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Thu Mar 16 16:21:37 2023 +0900
+
+    build: use /* clang-format {on|off} */ annotation
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Mon Apr 24 12:38:56 2023 +0900
+
+    doc: mention how to indent source code
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Thu Mar 16 10:33:14 2023 +0900
+
+    build: switch to using clang-format instead of GNU indent
+    
+    GNU indent yields weird output when using the Linux kernel coding
+    style as in the below examples, which affects code readability.
+    
+    - Too long lines cause unexpected indentation:
+                            if (!
+                                (priv->flags &
+                                 GNUTLS_PKCS11_OBJ_FLAG_RETRIEVE_DISTRUSTED)
+      && (priv->flags & GNUTLS_PKCS11_OBJ_FLAG_OVERWRITE_TRUSTMOD_EXT)
+      && data.size > 0) {
+    
+    - Unary operators (`-` and `+`) after a type cast are not recognized
+      properly: `(time_t)-1` becomes `(time-t) - 1`
+    
+    - Long conditionals are wrapped before binary operators, such as `&&`
+      or `||`.  This is not mandatory in the style, but all the occurrences
+      are replaced with that style
+    
+    This switches to using clang-format instead, with the configuration
+    used in the Linux kernel as of commit
+    596ff4a09b8981790e15572e8e7bc904df5835e7:
+    https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/.clang-format
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Sat Apr 15 08:04:01 2023 +0900
+
+    doc: fix typo in %DISABLE_SAFE_RENEGOTIATION documentation
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Sun Apr 2 08:21:41 2023 +0900
+
+    doc: mention ClientHello extensions shuffling
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Sun Apr 2 08:16:33 2023 +0900
+
+    hello_ext: minor cleanup of extension shuffling code
+    
+    This reduces the number of calls to gnutls_rnd(GNUTLS_RND_RANDOM)
+    based on the assumption that extension indices fit in uint8_t.
+    
+    This also renames the priority string modifier from %NO_EXTS_SHUFFLE
+    to %NO_SHUFFLE_EXTENSIONS.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: xuraoqing <609179072@qq.com>
+Date:   Thu Apr 13 09:56:26 2023 +0000
+
+    tests: add test for gnutls_certificate_set_x509_trust
+    
+    Signed-off-by: xuraoqing <xuraoqing@huawei.com>
+
+Author: Andreas Metzler <ametzler@debian.org>
+Date:   Sun Mar 5 14:27:39 2023 +0100
+
+    Update docs for faketime instead of datefudge
+    
+    Signed-off-by: Andreas Metzler <ametzler@bebt.de>
+
+Author: Andreas Metzler <ametzler@debian.org>
+Date:   Sun Mar 19 14:42:27 2023 +0100
+
+    Drop unused function.
+    
+    Signed-off-by: Andreas Metzler <ametzler@bebt.de>
+
+Author: Andreas Metzler <ametzler@debian.org>
+Date:   Sun Mar 5 14:17:31 2023 +0100
+
+    Also use gnutls_timewrapper non-frozen time
+    
+    also switch timeout/wrapper order
+    
+    Signed-off-by: Andreas Metzler <ametzler@bebt.de>
+
+Author: Andreas Metzler <ametzler@debian.org>
+Date:   Sun Mar 5 11:29:17 2023 +0100
+
+    Use gnutls_timewrapper for static (frozen time) instances
+    
+    Also switch setsid/wrapper order
+    
+    Signed-off-by: Andreas Metzler <ametzler@bebt.de>
+
+Author: Andreas Metzler <ametzler@debian.org>
+Date:   Fri Mar 17 18:18:46 2023 +0100
+
+    Add wrapper around faketime/datefudge
+    
+    Prefer faketime, fall back to datefudge.
+    
+    Signed-off-by: Andreas Metzler <ametzler@bebt.de>
+
+Author: Andreas Metzler <ametzler@debian.org>
+Date:   Tue Feb 28 18:49:56 2023 +0100
+
+    Change timestamp format for faketime compatibility.
+    
+    Change all timestamps passed to "datefudge -s" to "YYYY-MM-DD hh:mm:ss"
+    format for compatibility with faketime -f ("Freeze clock" advanced format)
+    
+    Signed-off-by: Andreas Metzler <ametzler@bebt.de>
+
+Author: ATHARVA S MARATHE <atharvamarathe8@gmail.com>
+Date:   Tue Apr 4 03:49:13 2023 +0000
+
+    gnutls-serv: add configurable timeout
+    
+    This adds --timeout option to gnutls-serv to control the inactivity
+    interval, which would be useful for testing.
+    
+    Fixes: #1471
+    Signed-off-by: maratheatharva <atharvamarathe8@gmail.com>
+
+Author: @Ajit <ajeetsinghchahar2@gmail.com>
+Date:   Sat Apr 1 23:05:00 2023 +0000
+
+    hello_ext: add ClientHello extension permutation
+    
+    This adds a mechanism to randomize the order of TLS extensions in the
+    ClientHello to make fingerprinting harder. The mechanism is enabled by
+    default and a new priority keyword %NO_EXTS_SHUFFLE has been added to
+    turn it off.
+    
+    Signed-off-by: peonix <ajeetsinghchahar2@gmail.com>
+
+Author: Tobias Heider <tobias.heider@canonical.com>
+Date:   Thu Mar 30 16:38:05 2023 +0200
+
+    fips: adjust pbkdf2 tests for SP 800-132 limits
+    
+    - Make sure to always use approved iteration count
+    - Check that salt < 16 return non-approved
+    - Check that iteration count < 1000 returns non-approved
+    
+    Signed-off-by: Tobias Heider <tobias.heider@canonical.com>
+
+Author: Tobias Heider <tobias.heider@canonical.com>
+Date:   Thu Mar 30 11:36:34 2023 +0200
+
+    fips: add additional pbkdf limit checks as defined in SP 800-132
+    
+    Signed-off-by: Tobias Heider <tobias.heider@canonical.com>
+
+Author: peonix <ajeetsinghchahar2@gmail.com>
+Date:   Tue Mar 28 14:21:07 2023 +0530
+
+    changes to keep backward compatibility
+    
+    Signed-off-by: peonix <ajeetsinghchahar2@gmail.com>
+
+Author: peonix <ajeetsinghchahar2@gmail.com>
+Date:   Tue Mar 28 14:20:47 2023 +0530
+
+    reformatted
+    
+    Signed-off-by: peonix <ajeetsinghchahar2@gmail.com>
+
+Author: peonix <ajeetsinghchahar2@gmail.com>
+Date:   Tue Mar 28 09:10:36 2023 +0530
+
+    Updated desc for @GNUTLS_NO_DEFAULT_EXTENSIONS
+    
+    Signed-off-by: peonix <ajeetsinghchahar2@gmail.com>
+
+Author: peonix <ajeetsinghchahar2@gmail.com>
+Date:   Tue Mar 28 09:08:40 2023 +0530
+
+    Modifier GNUTLS_NO_EXTENSIONS renamed to GNUTLS_NO_DEFAULT_EXTENSIONS
+    
+    Signed-off-by: peonix <ajeetsinghchahar2@gmail.com>
+
+Author: xuraoqing <xuraoqing@huawei.com>
+Date:   Wed Mar 22 11:46:55 2023 +0800
+
+    fix incorrect parameter description of crl import function
+    
+    Signed-off-by: xuraoqing <xuraoqing@huawei.com>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Sun Mar 19 13:01:39 2023 +0900
+
+    psk: guard against the case where psk_auth_info_t has NULL username
+    
+    This happens when gnutls_psk_server_get_username is called from a
+    client.  Also simplify the embedded NUL-byte check with memchr.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Sun Mar 19 13:00:36 2023 +0900
+
+    src: print_info: prefer gnutls_psk_server_get_username2
+    
+    gnutls_psk_server_get_username only supports NUL-terminated usernames,
+    while we added support for non-NULL terminated usernames in
+    d00638997fa269a975095d852633b48b2b64fbf9.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: xuraoqing <xuraoqing@huawei.com>
+Date:   Mon Mar 20 14:43:34 2023 +0800
+
+    add DER crl list import test
+    
+    Signed-off-by: xuraoqing <xuraoqing@huawei.com>
+
+Author: xuraoqing <xuraoqing@huawei.com>
+Date:   Mon Mar 20 14:18:19 2023 +0800
+
+    add get dn by oid test
+    
+    Signed-off-by: xuraoqing <xuraoqing@huawei.com>
+
+Author: Yongye Zhu <zyy1102000@gmail.com>
+Date:   Sat Mar 18 15:33:57 2023 -0500
+
+    rewrite tests/tls13/key_limits.c in single process
+    
+    Signed-off-by: Yongye Zhu <zyy1102000@gmail.com>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Sat Mar 18 10:52:13 2023 +0900
+
+    .gitlab-ci.yml: make use of .pre stage
+    
+    Jobs in the .pre stage run before any other jobs:
+    https://docs.gitlab.com/ee/ci/yaml/index.html#stage-pre
+    
+    As commit-check is lightweight and a prerequisite for merging MRs,
+    this moves it from the test stage to .pre.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Mon Mar 13 16:58:45 2023 +0900
+
+    pkcs11: respect Mozilla's time-based distrust upon issuer lookup
+    
+    This implements the basic logic needed to support time-based distrust
+    of CA, according to [1].
+    
+    1. https://wiki.mozilla.org/CA/Additional_Trust_Changes#Distrust_After
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: xuraoqing <609179072@qq.com>
+Date:   Mon Mar 13 14:04:03 2023 +0000
+
+    tests: add tests for CRL issuer get functions
+    
+    Signed-off-by: xuraoqing <xuraoqing@huawei.com>
+
+Author: Richard W.M. Jones <rjones@redhat.com>
+Date:   Fri Mar 10 11:15:19 2023 +0000
+
+    ktls: Do not return GNUTLS_E_INTERRUPTED/AGAIN from short writes
+    
+    If sendmsg returns a short write, we end up going around the loop with
+    data_to_send being smaller.  However if sendmsg then returns -EAGAIN
+    or -EINTR then we return an error.  But we have "forgotten" that we
+    already sent some data.
+    
+    This causes the caller to retry gnutls_record_send with the full
+    buffer (ie. with a buffer that has already been partially sent),
+    causing desynchronization.
+    
+    Instead check if we sent some data in this case and return the number
+    of bytes sent.
+    
+    Fixes: https://gitlab.com/gnutls/gnutls/-/issues/1470
+    Thanks: Dan Berrange for suggesting a fix
+    Signed-off-by: Richard W.M. Jones <rjones@redhat.com>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Thu Mar 9 14:09:14 2023 +0900
+
+    tests: skip TLS 1.2 resume tests without EMS under FIPS
+    
+    In FIPS mode, extended master secret is required and those tests are
+    not supported.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Sun Mar 5 15:20:35 2023 +0900
+
+    tests: close unused peer socket in the tests using socketpair
+    
+    Otherwise, the subsequent call to wait will block, when the child
+    process exits abnormally.  Checked with the following script:
+    
+      for i in $(git grep -l socketpair); do
+              if ! grep -q 'close.*\[' $i; then echo $i; fi
+      done
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Tue Feb 21 15:35:37 2023 +0900
+
+    fips: enable %FORCE_SESSION_HASH by default under FIPS mode
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Tue Feb 21 14:46:09 2023 +0900
+
+    priority: add %FORCE_SESSION_HASH modifier
+    
+    This adds a new priority string modifier %FORCE_SESSION_HASH, which
+    requires to negotiate extended master secret and aborts the connection
+    if the peer does not send the extension in hello messages.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: xuraoqing <xuraoqing@huawei.com>
+Date:   Mon Mar 6 14:42:16 2023 +0800
+
+    add gnutls_pkcs7_get_signature_count test
+    
+    Signed-off-by: xuraoqing <xuraoqing@huawei.com>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Thu Mar 2 13:24:22 2023 +0900
+
+    .gitlab-ci.yml: switch to Fedora 37 images
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Christopher Baines <mail@cbaines.net>
+Date:   Tue Sep 20 11:33:45 2022 +0200
+
+    doc: Don't depend on /usr/bin/perl in the Makefile.am.
+    
+    Instead, work if perl is on the $PATH. I hit this problem on GNU Guix
+    which doesn't use the /usr/bin directory.
+    
+    Signed-off-by: Christopher Baines <mail@cbaines.net>
+
+Author: xuraoqing <xuraoqing@huawei.com>
+Date:   Tue Feb 28 11:40:11 2023 +0800
+
+    remove unused extern variables
+    
+    Signed-off-by: xuraoqing <xuraoqing@huawei.com>
+
+Author: Pedro Monreal <pmgdeb@gmail.com>
+Date:   Thu Feb 16 17:02:38 2023 +0100
+
+    pk: extend pair-wise consistency to cover DH key generation
+    
+    Perform SP800 56A (rev 3) 5.6.2.1.4 Owner Assurance of Pair-wise
+    Consistency check, even if we only support ephemeral DH, as it is
+    required by FIPS 140-3 IG 10.3.A.
+    
+    Signed-off-by: Pedro Monreal <pmgdeb@gmail.com>
+    Co-authored-by: Daiki Ueno <ueno@gnu.org>
+
+Author: xuraoqing <609179072@qq.com>
+Date:   Mon Feb 27 05:37:50 2023 +0000
+
+    gnutls-serv: fix possible memory leakage around realloc
+    
+    Signed-off-by: xuraoqing <xuraoqing@huawei.com>
+
+Author: Radostin Stoyanov <radostin@redhat.com>
+Date:   Sat Feb 25 10:16:38 2023 +0900
+
+    tests: fix typo in rsa-encrypt-decrypt
+    
+    Signed-off-by: Radostin Stoyanov <radostin@redhat.com>
+
+Author: Pedro Monreal <pmgdeb@gmail.com>
+Date:   Fri Feb 24 22:02:48 2023 +0000
+
+    ecdh: perform SP800-56A rev3 full pubkey validation on key derivation
+    
+    This implements full public key validation required in
+    SP800-56A rev3, section 5.6.2.3.3.
+    
+    Co-authored-by: Daiki Ueno <ueno@gnu.org>
+    Signed-off-by: Pedro Monreal <pmgdeb@gmail.com>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Thu Feb 23 10:41:41 2023 +0900
+
+    .gitmodules: revert to use full URLs for submodules
+    
+    The previous attempt to use relative paths caused issues when the
+    repository is mirrored, requiring all the local submodules are
+    mirrored as well.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Zoltan Fridrich <zfridric@redhat.com>
+Date:   Fri Feb 10 11:32:43 2023 +0100
+
+    Update release steps
+    
+    Signed-off-by: Zoltan Fridrich <zfridric@redhat.com>
+
+Author: Zoltan Fridrich <zfridric@redhat.com>
+Date:   Fri Feb 10 11:31:38 2023 +0100
+
+    Fix typo in NEWS
+    
+    Signed-off-by: Zoltan Fridrich <zfridric@redhat.com>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Tue Feb 21 17:09:49 2023 +0900
+
+    .gitlab-ci.yml: simplify timestamp preservation
+    
+    This simplifies commit 738b968271 to consolidate the logic into
+    default target.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Mon Feb 20 09:36:00 2023 +0900
+
+    .gitlab-ci.yml: bump cache version
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Mon Feb 20 17:35:38 2023 +0900
+
+    .gitlab-ci.yml: preserve timestamp around bootstrap
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Mon Feb 20 09:49:32 2023 +0900
+
+    .gitlab-ci.yml: take advantage of git submodules in GitLab CI
+    
+    GitLab CI has support for automatic checkout of submodules, though it
+    requires some modifications to .gitmodules:
+    https://docs.gitlab.com/ee/ci/git_submodules.html
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Fri Feb 17 15:02:29 2023 +0900
+
+    .gitlab-ci.yml: use artifacts:untracked
+    
+    The "artifacts:untracked" enables to efficiently archive build
+    artifacts:
+    https://docs.gitlab.com/ee/ci/yaml/#artifactsuntracked
+    
+    Also copy files with bootstrap, as symlinks are excluded from the
+    artifacts.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Fri Feb 17 11:29:23 2023 +0900
+
+    gnulib: update git submodule
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: xuraoqing <609179072@qq.com>
+Date:   Mon Feb 13 11:32:34 2023 +0800
+
+    use xrealloc replace realloc in src/serv.c which just for test.
+    
+    Signed-off-by: xuraoqing <609179072@qq.com>
+
+Author: Peter Leitmann <pleitman@redhat.com>
+Date:   Thu Feb 9 22:34:00 2023 +0100
+
+    add new interop tests
+    
+    Signed-off-by: Peter Leitmann <pleitman@redhat.com>
+
+Author: Zoltan Fridrich <zfridric@redhat.com>
+Date:   Thu Feb 9 12:47:13 2023 +0100
+
+    Release 3.8.0
+    
+    Signed-off-by: Zoltan Fridrich <zfridric@redhat.com>
+
+Author: xuraoqing <609179072@qq.com>
+Date:   Tue Feb 7 11:37:04 2023 +0800
+
+    fix possible out-of-bounds access
+    
+    Signed-off-by: xuraoqing <609179072@qq.com>
 
 Author: Hubert Kario <hkario@redhat.com>
 Date:   Wed Feb 8 14:43:45 2023 +0100
@@ -40,6 +1027,1096 @@ Date:   Tue Aug 9 16:05:53 2022 +0200
     Signed-off-by: Hubert Kario <hkario@redhat.com>
     Tested-by: Hubert Kario <hkario@redhat.com>
 
+Author: xuraoqing <609179072@qq.com>
+Date:   Tue Feb 7 10:34:48 2023 +0800
+
+    remove inoperative variable
+    
+    Signed-off-by: xuraoqing <609179072@qq.com>
+
+Author: Zoltan Fridrich <zfridric@redhat.com>
+Date:   Wed Feb 1 13:29:34 2023 +0100
+
+    socket: set pull/push functions on windows
+    
+    Signed-off-by: Zoltan Fridrich <zfridric@redhat.com>
+
+Author: Zoltan Fridrich <zfridric@redhat.com>
+Date:   Wed Feb 1 10:00:12 2023 +0100
+
+    Add missing dll to mingw archive
+    
+    Signed-off-by: Zoltan Fridrich <zfridric@redhat.com>
+
+Author: Zoltan Fridrich <zfridric@redhat.com>
+Date:   Mon Jan 30 12:32:56 2023 +0100
+
+    Indent cpp header
+    
+    Signed-off-by: Zoltan Fridrich <zfridric@redhat.com>
+
+Author: Nikolaos Chatzikonstantinou <nchatz314@gmail.com>
+Date:   Mon Dec 19 07:34:49 2022 +0200
+
+    gnutlsxx: add source file for shared library
+    
+    The compiler will not produce a shared library from a header, so a
+    source file is necessary when producing the gnutlsxx shared library.
+    
+    Signed-off-by: Nikolaos Chatzikonstantinou <nchatz314@gmail.com>
+
+Author: Nikolaos Chatzikonstantinou <nchatz314@gmail.com>
+Date:   Mon Dec 19 06:02:17 2022 +0200
+
+    gnutlsxx: remove unnecessary linking from makefiles
+    
+    Signed-off-by: Nikolaos Chatzikonstantinou <nchatz314@gmail.com>
+
+Author: Nikolaos Chatzikonstantinou <nchatz314@gmail.com>
+Date:   Mon Dec 19 01:37:08 2022 +0200
+
+    gnutlsxx: become header-only library
+    
+    This patch removes the old gnutlsxx library and instead moves all the
+    definitions of the source file `gnutlsxx.c` to the header file
+    `gnutlsxx.h`. However, both the C and the C++ library are built. (as
+    before.)
+    
+    The user of the C++ interface has two options to choose from:
+    
+    1. include `gnutlsxx.h` in their application and link against the C
+       library. (the default.)
+    2. include `gnutlsxx.h` in their application, compile with the
+       GNUTLS_GNUTLSXX_NO_HEADERONLY macro defined and link against the C++
+       library.
+    
+    Addresses Ref #1381
+    
+    Signed-off-by: Nikolaos Chatzikonstantinou <nchatz314@gmail.com>
+
+Author: Zoltan Fridrich <zfridric@redhat.com>
+Date:   Fri Jan 27 15:42:39 2023 +0100
+
+    Silence 'make syntax-check'
+    
+    Co-authored-by: Simon Josefsson <simon@josefsson.org>
+    Signed-off-by: Zoltan Fridrich <zfridric@redhat.com>
+
+Author: Zoltan Fridrich <zfridric@redhat.com>
+Date:   Fri Jan 27 15:22:01 2023 +0100
+
+    NEWS: mention code indentation
+    
+    Co-authored-by: Simon Josefsson <simon@josefsson.org>
+    Signed-off-by: Zoltan Fridrich <zfridric@redhat.com>
+
+Author: Zoltan Fridrich <zfridric@redhat.com>
+Date:   Fri Jan 27 15:03:53 2023 +0100
+
+    Indent code
+    
+    Co-authored-by: Simon Josefsson <simon@josefsson.org>
+    Signed-off-by: Zoltan Fridrich <zfridric@redhat.com>
+
+Author: Zoltan Fridrich <zfridric@redhat.com>
+Date:   Fri Jan 27 11:10:51 2023 +0100
+
+    Check code indentation in 'check_commit'
+    
+    Co-authored-by: Simon Josefsson <simon@josefsson.org>
+    Signed-off-by: Zoltan Fridrich <zfridric@redhat.com>
+
+Author: Zoltan Fridrich <zfridric@redhat.com>
+Date:   Fri Jan 27 11:08:05 2023 +0100
+
+    Deal with '# define' for indent -ppi1
+    
+    Co-authored-by: Simon Josefsson <simon@josefsson.org>
+    Signed-off-by: Zoltan Fridrich <zfridric@redhat.com>
+
+Author: Zoltan Fridrich <zfridric@redhat.com>
+Date:   Fri Jan 27 10:27:21 2023 +0100
+
+    Fix indent errors
+    
+    Co-authored-by: Simon Josefsson <simon@josefsson.org>
+    Signed-off-by: Zoltan Fridrich <zfridric@redhat.com>
+
+Author: Zoltan Fridrich <zfridric@redhat.com>
+Date:   Fri Jan 27 13:38:45 2023 +0100
+
+    Add code indentation scripts
+    
+    Co-authored-by: Simon Josefsson <simon@josefsson.org>
+    Signed-off-by: Zoltan Fridrich <zfridric@redhat.com>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Tue Jan 17 19:47:11 2023 +0900
+
+    .gitlab-ci.yml: take advantage of GitLab code coverage visualization
+    
+    This switches to using gcovr instead of our custom coverage generation
+    rule to take advantage of "Test coverage visualization" in GitLab:
+    https://docs.gitlab.com/ee/ci/testing/test_coverage_visualization.html
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Fri Dec 30 11:08:36 2022 +0900
+
+    .gitlab-ci.yml: consolidate duplicate "aggressive" targets
+    
+    The UB+ASAN-Werror.Fedora.x86_64.gcc-aggressive shared almost same
+    tasks with UB+ASAN-Werror-aggressive.Fedora.x86_64.gcc, except the
+    former explicitly specified --disable-hardware-acceleration.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Wed Jan 11 15:24:14 2023 +0900
+
+    .gitlab-ci.yml: disable cppcheck for now
+    
+    The current version of cppcheck hangs at the usage of Gnulib's
+    intprops module:
+    https://trac.cppcheck.net/ticket/10192
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Tue Sep 20 15:08:59 2022 +0900
+
+    trust: make filesystem path construction flexible
+    
+    To handle pathnames longer than the fixed length (previously 256),
+    this adds a set of internal API functions around the gnutls_pathbuf_st
+    struct, which enables to safely and efficiently construct pathnames.
+    The new API initially uses the statically allocated buffer and starts
+    allocating memory on heap only after the limit has reached.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Zoltan Fridrich <zfridric@redhat.com>
+Date:   Mon Jan 2 13:25:14 2023 +0100
+
+    Fix error codes for unsolicited compressed certificate
+    
+    Signed-off-by: Zoltan Fridrich <zfridric@redhat.com>
+
+Author: Zoltan Fridrich <zfridric@redhat.com>
+Date:   Tue Jan 3 09:06:01 2023 +0100
+
+    Update year of copyright notices in doc/gnutls.texi
+    
+    Signed-off-by: Zoltan Fridrich <zfridric@redhat.com>
+
+Author: Zoltan Fridrich <zfridric@redhat.com>
+Date:   Thu Dec 8 12:41:34 2022 +0100
+
+    Forbid unsolicited CompressedCertificate message
+    
+    Signed-off-by: Zoltan Fridrich <zfridric@redhat.com>
+
+Author: Zoltan Fridrich <zfridric@redhat.com>
+Date:   Thu Dec 8 11:49:16 2022 +0100
+
+    Fail when received cert is compressed with disabled method
+    
+    Signed-off-by: Zoltan Fridrich <zfridric@redhat.com>
+
+Author: Zoltan Fridrich <zfridric@redhat.com>
+Date:   Thu Dec 8 12:08:10 2022 +0100
+
+    Slight reformating of compress_certificate code
+    
+    Signed-off-by: Zoltan Fridrich <zfridric@redhat.com>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Wed Dec 28 12:42:27 2022 +0900
+
+    build: suppress ABI change for GNUTLS_SRTP_AEAD_AES_*_GCM additions
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Stefan Kangas <stefankangas@gmail.com>
+Date:   Tue Dec 27 19:53:11 2022 +0100
+
+    doc: Fix Debian package name texlive-plain-generic
+    
+    The package texlive-generic-recommended is a transitional dummy package for
+    texlive-plain-generic in Debian buster (currently oldstable).
+    See: https://packages.debian.org/texlive-generic-recommended
+    
+    Signed-off-by: Stefan Kangas <stefankangas@gmail.com>
+
+Author: Stefan Kangas <stefankangas@gmail.com>
+Date:   Tue Dec 27 19:13:53 2022 +0100
+
+    doc: Fix several minor issues in INSTALL.md
+    
+    - Fix reference to moved file.
+    - Fix a dead link, and a typo.
+    - Use two spaces between sentences, and no trailing whitespace.
+    
+    Signed-off-by: Stefan Kangas <stefankangas@gmail.com>
+
+Author: Stefan Kangas <stefankangas@gmail.com>
+Date:   Tue Dec 27 18:02:13 2022 +0100
+
+    Sync GPL/LGPL license files from Gnulib
+    
+    Signed-off-by: Stefan Kangas <stefankangas@gmail.com>
+
+Author: Stefan Kangas <stefankangas@gmail.com>
+Date:   Tue Dec 27 16:42:58 2022 +0100
+
+    Replace FSF snail mail addresses with URL
+    
+    This is the latest recommendation, as described here:
+    https://www.gnu.org/licenses/gpl-howto.html
+    
+    Signed-off-by: Stefan Kangas <stefankangas@gmail.com>
+
+Author: Stefan Kangas <stefankangas@gmail.com>
+Date:   Tue Dec 27 15:16:05 2022 +0100
+
+    Prefer HTTPS to HTTP in URLs
+    
+    This mostly updates NEWS and license links.  All links have been
+    manually tested and confirmed working.
+    
+    Signed-off-by: Stefan Kangas <stefankangas@gmail.com>
+
+Author: Stefan Kangas <stefankangas@gmail.com>
+Date:   Mon Dec 26 23:48:16 2022 +0100
+
+    Fix typos
+    
+    Signed-off-by: Stefan Kangas <stefankangas@gmail.com>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Sat Dec 24 17:37:24 2022 +0900
+
+    srtp: support AES-GCM profiles
+    
+    This adds support for SRTP_AEAD_AES_128_GCM and SRTP_AEAD_AES_256_GCM
+    profiles defined in RFC 7714.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Sat Dec 24 17:07:26 2022 +0900
+
+    build: remove MAX_RECORD_SEND_SIZE in favor of max_record_send_size
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Thu Dec 8 11:53:20 2022 +0900
+
+    record: enable check on CCS content also in TLS 1.2
+    
+    This generilizes the value check of Change Cipher Spec for all TLS
+    protocol versions including TLS 1.2 or earlier.  It also fixes the
+    logic of the check so the value is decrypted before being examined,
+    according to the RFC.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Sun Dec 18 08:00:59 2022 +0900
+
+    tests: conditionalize SRP tests
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Sat Dec 17 15:44:07 2022 +0900
+
+    build: disable SRP authentication by default
+    
+    SRP authentication in TLS is not up to date with the latest TLS
+    standards and its ciphersuites are based on the CBC mode and SHA-1.
+    This makes the feature disabled by default at compile time, though the
+    users are still be able to enable it with --enable-srp-authentication
+    configure option.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Mon Dec 19 18:40:37 2022 +0900
+
+    .gitlab-ci.yml: ensure libtasn1-tools is installed
+    
+    With recent DNF, removing libtasn1-devel causes libtasn1-tools to be
+    removed.  Manually reinstall it in that case.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Sat Dec 17 15:55:33 2022 +0900
+
+    build: disable TLS heartbeat extension by default
+    
+    The heartbeat extension in TLS (RFC 6520) is not widely used given
+    other implementations dropped support for it. This makes it disabled
+    by default, though the users are able to enable it back with the
+    --enable-heartbeat-support configure option.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: xuraoqing <xuraoqing@huawei.com>
+Date:   Thu Dec 15 17:02:59 2022 +0800
+
+    fix memory leak when process client ecdh key exchage
+    
+    Signed-off-by: xuraoqing <xuraoqing@huawei.com>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Sun Dec 18 08:21:46 2022 +0900
+
+    cert-auth: alloc_and_load_x509_certs: check requested cert count
+    
+    ... instead of pointer. Otherwise GCC analyzer treats it as
+    -Wanalyzer-null-dereference in the caller side.  While that shouldn't
+    happen, it would be nice to make the code handle it robustly.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Sun Dec 18 08:05:05 2022 +0900
+
+    build: avoid using implicit int to adhere to C99
+    
+    Otherwise -Wstrict-prototypes now emits the following warnings:
+    
+      mini-dtls-large.c:30:5: error: function declaration isn't a prototype [-Werror=strict-prototypes]
+         30 | int main()
+            |     ^~~~
+      mini-dtls-large.c: In function 'main':
+      mini-dtls-large.c:30:5: error: old-style function definition [-Werror=old-style-definition]
+      cc1: all warnings being treated as errors
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Peter Leitmann <pleitman@redhat.com>
+Date:   Wed Dec 14 18:22:54 2022 +0100
+
+    new interop-tests
+    
+    Signed-off-by: Peter Leitmann <pleitman@redhat.com>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Thu Dec 15 00:51:42 2022 +0900
+
+    build: remove code guarded with no longer defined ENABLE_RSA_EXPORT
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Thu Dec 15 00:48:16 2022 +0900
+
+    build: remove checks on no longer defined ENABLE_OPENPGP
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Thu Dec 15 00:45:04 2022 +0900
+
+    srp: provide stubs of public functions even if SRP is disabled
+    
+    This adds stub definitions of public SRP functions even if SRP is
+    disabled with --disable-srp-authentication, to preserve the ABI.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: xuraoqing <xuraoqing@huawei.com>
+Date:   Mon Dec 12 15:10:59 2022 +0800
+
+    fix log print server write mac key size error
+    
+    Signed-off-by: xuraoqing <xuraoqing@huawei.com>
+
+Author: xuraoqing <xuraoqing@huawei.com>
+Date:   Mon Dec 12 15:06:14 2022 +0800
+
+    fix log print client write mac key size error
+    
+    Signed-off-by: xuraoqing <xuraoqing@huawei.com>
+
+Author: xuraoqing <xuraoqing@huawei.com>
+Date:   Mon Dec 12 15:05:20 2022 +0800
+
+    fix get credential type with key exchange algorithm fail
+    
+    Signed-off-by: xuraoqing <xuraoqing@huawei.com>
+
+Author: Zoltan Fridrich <zfridric@redhat.com>
+Date:   Fri Dec 2 13:12:30 2022 +0100
+
+    Use soname instead of file name in fipshmac sections
+    
+    Using fipshmac program with an argument, for example:
+    fipshmac /usr/lib64/libgnutls.so.30.28.1
+    would create a section [libgnutls.so.30.28.1]
+    and the internal comparison with soname would fail.
+    
+    Signed-off-by: Zoltan Fridrich <zfridric@redhat.com>
+
+Author: František Krenželok <krenzelok.frantisek@gmail.com>
+Date:   Mon Oct 31 12:17:43 2022 +0100
+
+    KTLS: Invalidate session on ktls error
+    
+    We invalidate the session if an KTLS related error occurs after it was
+    initialized i.e. keys were set on the interfaces.
+    
+    As of now this only affects key_update() which should be fixed via a
+    kernel patch. Thus future fallback mechanism implementation is not likely
+    as that would require yet another kernel patch.
+    
+    Signed-off-by: Frantisek Krenzelok <krenzelok.frantisek@gmail.com>
+
+Author: František Krenželok <krenzelok.frantisek@gmail.com>
+Date:   Fri Dec 2 11:07:48 2022 +0100
+
+    KTLS: add ciphersuites (tests)
+    
+    Signed-off-by: Frantisek Krenzelok <krenzelok.frantisek@gmail.com>
+
+Author: František Krenželok <krenzelok.frantisek@gmail.com>
+Date:   Thu Dec 1 15:37:33 2022 +0100
+
+    KTLS: add ciphersuites
+    
+    * TLS_AES_128_CCM_SHA256
+    * TLS_CHACHA20_POLY1305_SHA256
+    
+    Signed-off-by: Frantisek Krenzelok <krenzelok.frantisek@gmail.com>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Tue Nov 29 11:15:34 2022 +0900
+
+    fips: rename .gnutls.hmac back to .libgnutls.so.*.hmac
+    
+    Using a GnuTLS specific construction of .hmac file name causes a
+    problem with dracut, which expects that .hmac files are installed
+    alongside the corresponding shared libraries.
+    
+    To preserve backward compatibility, this renames the file name back to
+    .libgnutls.so.*.hmac, while the content remains the same covering all
+    the dependent libraries (libgnutls, libhogweed, libnettle, and
+    libgmp).
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Mon Nov 28 12:15:26 2022 +0900
+
+    priority: accept "ktls = false" in configuration file
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Mon Nov 28 12:13:31 2022 +0900
+
+    src: print KTLS enablement status in gnutls-serv/gnutls-cli
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Mon Nov 28 12:17:12 2022 +0900
+
+    includes: move KTLS function definition out of <gnutls/socket.h>
+    
+    <gnutls/socket.h> is meant for the functions that depend on
+    <sys/socket.h>, which is not available on Windows platforms.
+    
+    As the KTLS API doesn't rely on <sys/socket.h>, move the function and
+    enum to <gnutls/gnutls.h>.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Mon Nov 28 11:14:53 2022 +0900
+
+    tests: fix memory leak in resume-with-previous-stek
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Mon Nov 28 11:10:58 2022 +0900
+
+    src: fix memory leak in print_rawpk_info
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Wed Nov 23 15:38:25 2022 +0900
+
+    .gitlab-ci.yml: disable full test suite in fedora-nettle jobs
+    
+    This adds --disable-full-test-suite to fedora-nettle jobs, assuming
+    other tests have enough coverage of what Nettle provides.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Tue Nov 22 13:01:58 2022 +0900
+
+    build: pacify sc_unportable_grep_q check
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Tue Nov 22 12:20:58 2022 +0900
+
+    .gitlab-ci.yml: disable GCC analyzer in sanitizer jobs
+    
+    It turned out that -fanalyzer combined with -fsanitize=undefined takes
+    excessive time when compiling certain files, e.g., lib/priority.c.
+    Removing -fanalyzer should be safe as it is enabled in other
+    Fedora-based jobs.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Thu Oct 6 18:44:48 2022 +0900
+
+    build: suppress GCC analyzer warnings
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Wed Oct 5 17:44:01 2022 +0900
+
+    tests: skip tpm2.sh test for now if OpenSSL version 3 is detected
+    
+    tpm2-tss-engine does not work well with OpenSSL 3 yet.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Fri Sep 30 15:52:41 2022 +0900
+
+    .gitlab-ci.yml: bump cache version
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Tue Sep 27 13:13:21 2022 +0900
+
+    .gitlab-ci.yml: update fedora image to Fedora 36
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Mon Sep 26 16:48:24 2022 +0900
+
+    tests: move <assert.h> out of extern "C"
+    
+    This fixes the issue with <assert.h> provided by Gnulib:
+    
+     ../gl/assert.h:209:1: error: template with C linkage
+       209 | template <int w>
+           | ^~~~~~~~
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Mon Sep 26 16:46:47 2022 +0900
+
+    build: use AM_DISTCHECK_CONFIGURE_FLAGS
+    
+    Also remove AUTOGEN=false setting, which is no longer necessary.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Sun Sep 25 05:36:49 2022 +0900
+
+    .gitlab-ci.yml: update mingw image to Fedora 36
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Mon Sep 26 15:40:55 2022 +0900
+
+    gl: add workaround for mingw32 build
+    
+    This reverts __MINGW_USE_VC2005_COMPAT setting that causes undesired
+    effects, as mentioned in:
+    https://lists.gnu.org/archive/html/bug-gnulib/2022-09/msg00150.html
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Sat Jan 8 18:14:16 2022 +0100
+
+    gnulib: update git submodule
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Wed Nov 16 23:02:13 2022 +0900
+
+    nettle: mark non-compliant RSA-PSS salt length to be not-approved
+    
+    According to FIPS 186-5 5.4, the salt length must be in the range
+    between 0 and the hash length inclusive.  While the use of those salt
+    lengths is still allowed for compatibility, it is reported as
+    non-approved operation through FIPS service indicator.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Samuel Thibault <samuel.thibault@ens-lyon.org>
+Date:   Wed Nov 16 00:38:54 2022 +0000
+
+    tests: More SIGPIPE treatment as error
+    
+    81f8d97b3486 ("tests: treat all signals as error") turned some SIGPIPE signals
+    to EPIPE, but missed tests/mini-dtls-mtu.c.
+    
+    During
+    
+    gnutls_bye(session, GNUTLS_SHUT_WR),
+    
+    on Linux we get
+    
+    client|<11>| WRITE: enqueued 39 bytes for 0x3. Total 39 bytes.
+    client|<11>| WRITE FLUSH: 39 bytes in buffer.
+    client|<2>| WRITE: -1 returned from 0x3, errno: 111
+    (ECONNREFUSED)
+    
+    but on GNU/Hurd a SIGPIPE is sent instead of returning of ECONNREFUSED.
+    We thus need to turn it into an error to correctly interpret the test
+    result.
+    
+    Signed-off-by: Samuel Thibault <samuel.thibault@ens-lyon.org>
+
+Author: Zoltan Fridrich <zfridric@redhat.com>
+Date:   Tue Nov 15 14:35:24 2022 +0100
+
+    Remove library path checking from FIPS integrity check
+    
+    The library path check is being dropped as checking the HMAC of
+    libraries should be sufficient. Checking the exact path where the
+    library resides showed to be failure prone. The sonames of libraries are
+    internally indirectly compared.
+    
+    Signed-off-by: Zoltan Fridrich <zfridric@redhat.com>
+
+Author: Zoltan Fridrich <zfridric@redhat.com>
+Date:   Wed Nov 9 16:10:58 2022 +0100
+
+    Fipshmac: always use realpaths
+    
+    Signed-off-by: Zoltan Fridrich <zfridric@redhat.com>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Mon Oct 31 20:15:48 2022 +0900
+
+    handshake: clear server's session ticket indication at rehandshake
+    
+    While OpenSSL server doesn't indicate a session ticket in the second
+    handshake of TLS 1.2 rehandshake, GnuTLS client previously waited for
+    it as it didn't clear the internal flag (session_ticket_renew) thus
+    the effect remained.  This patch clears the flag properly at the end
+    of each handshake.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Eric Blake <eblake@redhat.com>
+Date:   Thu Oct 13 17:21:21 2022 -0500
+
+    priority: fix typos in documentation
+    
+    Fixes: ac2751d8049bf97cf486469d3c3407b83dd1fb3c
+    Signed-off-by: Eric Blake <eblake@redhat.com>
+
+Author: Eric Blake <eblake@redhat.com>
+Date:   Fri Oct 14 14:02:14 2022 -0500
+
+    priority: Use gnutls_free consistently
+    
+    The whole point of gnutls_calloc() is to allow an alternative to
+    malloc() where that alternative takes over all aspects of heap
+    management; as such, it is never safe to pair bare free() with memory
+    managed by gnutls.  Not to mention that it looks bad to mix calls to
+    gnutls_free() and free() to the same variable within the same
+    function.
+    
+    Signed-off-by: Eric Blake <eblake@redhat.com>
+
+Author: Eric Blake <eblake@redhat.com>
+Date:   Wed Nov 2 08:48:19 2022 -0500
+
+    privkey: Allow deinit after failed export
+    
+    The documentation for gnutls_privkey_export_* states that the caller
+    must use gnutls_*_deinit on key, without mentioning whether this
+    requirement is still present when the function fails.  But the
+    implementation has a code path where key is left uninitialized.
+    Similar to the recent fix for *_init, guarantee that *key is set to a
+    sane value on all exit paths.
+    
+    Signed-off-by: Eric Blake <eblake@redhat.com>
+
+Author: Eric Blake <eblake@redhat.com>
+Date:   Fri Oct 14 13:40:50 2022 -0500
+
+    lib: Consistenly return sane results for all *_init()
+    
+    After looking at gnutls_init(), I went and audited all other
+    *_init(gnutls_*_t) functions, to see if Bug #1414 applies in more
+    situations.  We had an inconsistent mix: some functions that went out
+    of their way to leave the parameter uninitialized on failure (such as
+    gnutls_x509_crt_init()); many that always left the parameter
+    initialized on failure (such as gnutls_x509_ext_ct_scts_init()), often
+    by relying on the gnutls_free() macro that assigns the pointer to NULL
+    after using the gnutls_free_function() callback pointer (such as
+    gnutls_pkcs11_obj_init()); but a few others that left stale pointers
+    on certain failures (such as gnutls_priority_init2()) or even which
+    used the wrong deallocation function (such as
+    gnutls_pkcs11_privkey_init()).
+    
+    As with gnutls_init(), portable programs should either pre-initialize
+    memory to zero before calling _init() if they plan to unconditionally
+    call _deinit() (safe for all but gnutls_pkcs11_privkey_init()), or
+    they should avoid calling _deinit() if _init() failed.  But since we
+    can't force all existing clients to change, it is safest if we
+    unconditionally and consistently initialize the client's memory before
+    ALL failure paths.
+    
+    Rather than try to adjust documentation of each *_init() function
+    (including those not needing a change), I instead generalized
+    documentation into the manual.
+    
+    Signed-off-by: Eric Blake <eblake@redhat.com>
+
+Author: Eric Blake <eblake@redhat.com>
+Date:   Thu Oct 13 14:07:29 2022 -0500
+
+    gnutls_init: Always initialize *session
+    
+    We provide gnutls_session_t as an opaque type, therefore, unless we
+    document otherwise, client code should not assume that there is a safe
+    initialization value to assign to such storage, leaving the only way
+    to properly initialize the type as a call to gnutls_init().  Likewise,
+    the documentation was clear that gnutls_deinit(session) must be used
+    after success, but ambiguous as to whether that was necessary after
+    failure.
+    
+    Our implementation has always been such that the opaque types are
+    pointers under the hood, where gnutls_deinit(NULL) is a no-op, and
+    that (for gnutls_init at least) it is safe to omit a call to
+    gnutls_deinit(session) on failure.  But without documentation, clients
+    cannot rely on either of those facts; and our code base was
+    inconsistent on whether all other *_init/*_deinit function pairs
+    behave in the same manner (see the next commit).
+    
+    A search of existing code in the wild shows that some clients
+    pre-initialize the memory to 0 (which happens to be safe although
+    currently undocumented), often by passing in a pointer to a
+    gnutls_session_t residing in a larger struct that was reserved with
+    calloc(), cleared with memset(), or similar; but this is not
+    universal, and there are other clients in the wild that pass in
+    uninitialized memory.  It's too late to change the documentation to
+    mandate that users should pre-initialize their memory to 0 prior to
+    gnutls_init(), although it doesn't hurt to recommend it for
+    portability when building for older versions of gnutls.
+    
+    In most cases, using gnutls_deinit(session) after failure was a no-op
+    - most of our error exit paths use the gnutls_free() macro which has
+    the side effect of forcing the caller's pointer to NULL on failure
+    (since gnutls is built with GNUTLS_INTERNAL_BUILD defined).  We also
+    happen to be lucky for a user that pre-initializes their memory to 0
+    before calling gnutls_init() - any error exit path where we did not
+    touch the user's pointer leaves the client with gnutls_deinit(session)
+    being a no-op.  But if the client passes in an uninitialized pointer,
+    and FAIL_IF_LIB_ERROR triggers, then we fail the function while
+    leaving the pointer uninitialized, at which point the caller using
+    gnutls_deinit(session) attempts to free uninitialized memory, which
+    has potential security implications - yet we did not warn the client
+    to avoid gnutls_deinit() in that scenario.
+    
+    The most robust fix is thus along two fronts: improving the
+    documentation to inform the user what they can expect, but also
+    tweaking our code to avoid undefined behavior with existing client
+    code bases by guaranteeing that whether or not the client
+    pre-initializes memory to 0 and/or calls gnutls_deinit() on failure,
+    they can't mess up.
+    
+    Fixes: bug #1414.
+    Signed-off-by: Eric Blake <eblake@redhat.com>
+
+Author: Eric Blake <eblake@redhat.com>
+Date:   Wed Nov 2 08:40:08 2022 -0500
+
+    build: Silence cppcheck false positive
+    
+    An upcoming patch will touch gnutls_pkcs11_privkey_init(), which is
+    sufficient to make the cppcheck portion of CI choke on a false
+    positive in the unrelated gnutls_pkcs11_privkey_import_url() because
+    the file becomes interesting again.  cppcheck is not smart enough to
+    realize that an out-of-scope memory reference stored in a[1] is not
+    going to be utilized by the later pkcs11_get_attribute_value(..., a,
+    1) outside the if block; but the solution is as simple as expanding
+    the scope of tval.
+    
+    Signed-off-by: Eric Blake <eblake@redhat.com>
+
+Author: Tim Kosse <tim.kosse@filezilla-project.org>
+Date:   Fri Oct 14 15:51:28 2022 +0200
+
+    Handle private keys with lowercase hex digits in DEK-Info
+    
+    Some tools, for example win-acme, create encrypted private keys in OpenSSL's
+    traditional format containing lowercase hex digits in the IV part of the
+    DEK-Info PEM header. These key files are accepted by OpenSSL. Prior to this
+    patch, GnuTLS did reject these keys with GNUTLS_E_INVALID_REQUEST.
+    
+    Signed-off-by: Tim Kosse <tim.kosse@filezilla-project.org>
+    Co-authored-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Simon Josefsson <jas@josefsson.org>
+Date:   Mon Oct 31 21:24:01 2022 +0100
+
+    Drop stale doc/announce.txt.
+    
+    Signed-off-by: Simon Josefsson <simon@josefsson.org>
+
+Author: Zoltan Fridrich <zfridric@redhat.com>
+Date:   Mon Oct 17 15:27:37 2022 +0200
+
+    Fix removal of duplicate certs during verification
+    
+    Co-authored-by: Daiki Ueno <ueno@gnu.org>
+    Signed-off-by: Zoltan Fridrich <zfridric@redhat.com>
+
+Author: Simon Josefsson <jas@josefsson.org>
+Date:   Wed Oct 12 15:02:35 2022 +0200
+
+    Drop guile bindings.  See <https://gitlab.com/gnutls/guile/>.
+    
+    Signed-off-by: Simon Josefsson <simon@josefsson.org>
+
+Author: Simon Josefsson <jas@josefsson.org>
+Date:   Tue Oct 25 14:46:30 2022 +0200
+
+    doc: Add NEWS entry.
+    
+    Signed-off-by: Simon Josefsson <simon@josefsson.org>
+
+Author: Simon Josefsson <jas@josefsson.org>
+Date:   Tue Oct 25 14:45:29 2022 +0200
+
+    Update libtasn1 to 4.19.0.
+    
+    Signed-off-by: Simon Josefsson <simon@josefsson.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Fri Oct 21 15:48:39 2022 +0900
+
+    cipher: add restriction on CCM tag length under FIPS mode
+    
+    This change prohibits any use of tag length other than 4, 6, 8, 10,
+    12, 14, and 16 bytes in CCM used under FIPS mode, in accordance with
+    SP800-38C A.1.  While use of tag lengths smaller than 8 bytes is not
+    recommended, we simply allow 4 and 6 bytes tags for now.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Zoltan Fridrich <zfridric@redhat.com>
+Date:   Mon Oct 24 11:01:44 2022 +0200
+
+    compress_certificate: fix err code on invalid length
+    
+    Signed-off-by: Zoltan Fridrich <zfridric@redhat.com>
+
+Author: Zoltan Fridrich <zfridric@redhat.com>
+Date:   Fri Oct 21 11:19:56 2022 +0200
+
+    Ignore unknown algorithms received in compress_certificate extension
+    
+    Signed-off-by: Zoltan Fridrich <zfridric@redhat.com>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Fri Oct 21 18:12:33 2022 +0900
+
+    build: fix AUTHORS generation
+    
+    Without revision supplied, git shortlog expects to read commits from
+    stdin and produces the following error:
+    
+        GEN      AUTHORS
+      fatal: using multiple --group options with stdin is not supported
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Zoltan Fridrich <zfridric@redhat.com>
+Date:   Thu Oct 20 12:38:39 2022 +0200
+
+    Fix handshake segfault if no privkey is supplied
+    
+    Signed-off-by: Zoltan Fridrich <zfridric@redhat.com>
+
+Author: Zoltan Fridrich <zfridric@redhat.com>
+Date:   Fri Sep 23 12:59:52 2022 +0200
+
+    gnutls_rnd manage memory per-thread
+    
+    Co-authored-by: Pedro Marzo <marzo.pedro@gmail.com>
+    Signed-off-by: Zoltan Fridrich <zfridric@redhat.com>
+
+Author: Zoltan Fridrich <zfridric@redhat.com>
+Date:   Tue Oct 4 16:37:29 2022 +0200
+
+    Add GNUTLS_NO_STATUS_REQUEST flag and NO_STATUS_REQUEST priority string modifier
+    
+    Signed-off-by: Zoltan Fridrich <zfridric@redhat.com>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Thu Sep 29 21:19:26 2022 +0900
+
+    fips: only mark HMAC as approved in PBKDF2
+    
+    As ACVP only allows HMAC used with PBKDF2[1], this change marks other
+    hash algorithms not-approved.
+    
+    1. https://pages.nist.gov/ACVP/draft-celi-acvp-pbkdf.html
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Tue Sep 20 01:25:51 2022 +0900
+
+    fips: mark gnutls_key_generate with short key sizes non-approved
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Mon Sep 19 14:49:23 2022 +0900
+
+    fips: mark PBKDF2 with short key and output sizes non-approved
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Thu Oct 6 19:30:57 2022 +0900
+
+    .gitignore: follow tests/fips-rsa-sizes naming change
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Mon Oct 17 11:11:43 2022 +0900
+
+    tests: move FIPS service indicator functions to common file
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: František Krenželok <krenzelok.frantisek@gmail.com>
+Date:   Mon Sep 5 13:05:17 2022 +0200
+
+    KTLS: fallback to default
+    
+    If an error occurs during setting of keys either initial or key update
+    then fallback to default mode of operation (disable ktls) and let the
+    user know
+    
+    Signed-off-by: Frantisek Krenzelok <krenzelok.frantisek@gmail.com>
+
+Author: František Krenželok <krenzelok.frantisek@gmail.com>
+Date:   Tue Aug 9 12:11:16 2022 +0200
+
+    KTLS: rekey test
+    
+    Signed-off-by: Frantisek Krenzelok <krenzelok.frantisek@gmail.com>
+
+Author: František Krenželok <krenzelok.frantisek@gmail.com>
+Date:   Fri Aug 5 16:38:02 2022 +0200
+
+    KTLS: set write alert callback
+    
+    Use callback for sending alerts.
+    
+    Signed-off-by: Frantisek Krenzelok <krenzelok.frantisek@gmail.com>
+
+Author: František Krenželok <krenzelok.frantisek@gmail.com>
+Date:   Mon Aug 22 10:50:37 2022 +0200
+
+    KTLS: receive key update
+    
+    handle received GNUTLS_HANDSHAKE_KEY_UPDATE set keys accordingly
+    
+    Signed-off-by: Frantisek Krenzelok <krenzelok.frantisek@gmail.com>
+
+Author: František Krenželok <krenzelok.frantisek@gmail.com>
+Date:   Wed Aug 3 14:20:35 2022 +0200
+
+    KTLS: send update key request
+    
+    Set hanshake send function after interface initialization
+    TODO: handel setting function differently
+    
+    Signed-off-by: Frantisek Krenzelok <krenzelok.frantisek@gmail.com>
+
+Author: František Krenželok <krenzelok.frantisek@gmail.com>
+Date:   Tue Aug 2 13:35:39 2022 +0200
+
+    KTLS: set new keys for keyupdate
+    
+    set new keys durring gnutls_session_key_update()
+    setting keys
+    
+    Signed-off-by: Frantisek Krenzelok <krenzelok.frantisek@gmail.com>
+
+Author: František Krenželok <krenzelok.frantisek@gmail.com>
+Date:   Tue Aug 2 15:00:50 2022 +0200
+
+    KTLS: set key on specific interfaces
+    
+    It is now possible to set key on specific interface.
+    If interface given is not ktls enabled then it will be ignored.
+    
+    Signed-off-by: Frantisek Krenzelok <krenzelok.frantisek@gmail.com>
+
+Author: Zoltan Fridrich <zfridric@redhat.com>
+Date:   Thu Sep 29 15:31:28 2022 +0200
+
+    Make XTS key check failure not fatal
+    
+    Signed-off-by: Zoltan Fridrich <zfridric@redhat.com>
+
+Author: Stanislav Zidek <szidek@redhat.com>
+Date:   Fri Sep 30 15:36:17 2022 +0200
+
+    NSS interoperability test - 2way TLSv1.3
+    
+    Signed-off-by: Stanislav Zidek <szidek@redhat.com>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Thu Sep 29 17:13:00 2022 +0900
+
+    fips: mark composite signature API not-approved
+    
+    This makes the FIPS service indicator to transit to not-approved when
+    gnutls_privkey_sign_hash* is used.  In FIPS, single-shot
+    API (gnutls_privkey_sign_data*) is preferred over composite API.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Author: Daiki Ueno <ueno@gnu.org>
+Date:   Tue Sep 20 16:06:13 2022 +0900
+
+    fips: fix checking on hash algorithm used in ECDSA
+    
+    Previously we checked against the "preferred" hash algorithm based on
+    the curve, instead of the one actually used.
+    
+    Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
 Author: Alexander Sosedkin <asosedkin@redhat.com>
 Date:   Wed Sep 21 14:56:49 2022 +0200
 
@@ -55,6 +2132,13 @@ Date:   Wed Sep 21 14:26:55 2022 +0200
     NEWS: add an entry for allowlisting-relaxing functions restriction
     
     Signed-off-by: Alexander Sosedkin <asosedkin@redhat.com>
+
+Author: Zoltan Fridrich <zfridric@redhat.com>
+Date:   Tue Sep 13 17:07:37 2022 +0200
+
+    Reduce sensitive language
+    
+    Signed-off-by: Zoltan Fridrich <zfridric@redhat.com>
 
 Author: Daiki Ueno <ueno@gnu.org>
 Date:   Mon Sep 19 07:40:01 2022 +0900
@@ -52429,3 +54513,8 @@ Author: Nikos Mavrogiannopoulos <nmav@gnutls.org>
 Date:   Fri Nov 7 19:01:57 2014 +0100
 
     pkcs11: pass the correct user type to protected authentication login
+
+Author: Nikos Mavrogiannopoulos <nmav@gnutls.org>
+Date:   Fri Nov 7 10:22:11 2014 +0100
+
+    doc: corrected values for INSECURE level

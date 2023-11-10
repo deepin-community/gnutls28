@@ -15,8 +15,7 @@
 # General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with GnuTLS; if not, write to the Free Software Foundation,
-# Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+# along with GnuTLS.  If not, see <https://www.gnu.org/licenses/>.
 
 #set -e
 
@@ -36,9 +35,7 @@ OUTFILE=out-pkcs7.$$.tmp
 
 . ${srcdir}/../scripts/common.sh
 
-skip_if_no_datefudge
-datefudge -s "2016-10-1" \
-${VALGRIND} "${CERTTOOL}" --verify-allow-broken --p7-verify --inder --infile "${srcdir}/data/pkcs7-cat.p7" --load-ca-certificate "${srcdir}/data/pkcs7-cat-ca.pem" 
+${VALGRIND} "${CERTTOOL}" --attime "2016-10-01" --verify-allow-broken --p7-verify --inder --infile "${srcdir}/data/pkcs7-cat.p7" --load-ca-certificate "${srcdir}/data/pkcs7-cat-ca.pem" 
 rc=$?
 
 if test "${rc}" != "0"; then

@@ -15,8 +15,7 @@
 # General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with GnuTLS; if not, write to the Free Software Foundation,
-# Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+# along with GnuTLS.  If not, see <https://www.gnu.org/licenses/>.
 
 #set -e
 
@@ -38,7 +37,6 @@ TMPFILE=tmp-pkcs7.$$.tmp
 
 . ${srcdir}/../scripts/common.sh
 
-skip_if_no_datefudge
 
 if test "${ENABLE_GOST}" = "1" && test "${GNUTLS_FORCE_FIPS_MODE}" != "1"
 then
@@ -81,8 +79,7 @@ fi
 
 for FILE in full.p7b openssl.p7b openssl-keyid.p7b; do
 # check validation with date prior to CA issuance
-datefudge -s "2011-1-10" \
-${VALGRIND} "${CERTTOOL}" --inder --p7-verify --load-ca-certificate "${srcdir}/../../doc/credentials/x509/ca.pem" --infile "${srcdir}/data/${FILE}" >"${OUTFILE}"
+${VALGRIND} "${CERTTOOL}" --attime "2011-01-10" --inder --p7-verify --load-ca-certificate "${srcdir}/../../doc/credentials/x509/ca.pem" --infile "${srcdir}/data/${FILE}" >"${OUTFILE}"
 rc=$?
 
 if test "${rc}" = "0"; then
@@ -91,8 +88,7 @@ if test "${rc}" = "0"; then
 fi
 
 # check validation with date prior to intermediate cert issuance
-datefudge -s "2011-5-28 08:38:00 UTC" \
-${VALGRIND} "${CERTTOOL}" --inder --p7-verify --load-ca-certificate "${srcdir}/../../doc/credentials/x509/ca.pem" --infile "${srcdir}/data/${FILE}" >"${OUTFILE}"
+${VALGRIND} "${CERTTOOL}" --attime "2011-5-28 08:38:00 UTC" --inder --p7-verify --load-ca-certificate "${srcdir}/../../doc/credentials/x509/ca.pem" --infile "${srcdir}/data/${FILE}" >"${OUTFILE}"
 rc=$?
 
 if test "${rc}" = "0"; then
@@ -101,8 +97,7 @@ if test "${rc}" = "0"; then
 fi
 
 # check validation with date after intermediate cert issuance
-datefudge -s "2038-10-13" \
-${VALGRIND} "${CERTTOOL}" --inder --p7-verify --load-ca-certificate "${srcdir}/../../doc/credentials/x509/ca.pem" --infile "${srcdir}/data/${FILE}" >"${OUTFILE}"
+${VALGRIND} "${CERTTOOL}" --attime "2038-10-13" --inder --p7-verify --load-ca-certificate "${srcdir}/../../doc/credentials/x509/ca.pem" --infile "${srcdir}/data/${FILE}" >"${OUTFILE}"
 rc=$?
 
 if test "${rc}" = "0"; then

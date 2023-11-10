@@ -2,7 +2,7 @@
 
 
 
-@deftypefun {int} {gnutls_x509_crt_get_preferred_hash_algorithm} (gnutls_x509_crt_t @var{crt}, gnutls_digest_algorithm_t *           @var{hash}, unsigned int * @var{mand})
+@deftypefun {int} {gnutls_x509_crt_get_preferred_hash_algorithm} (gnutls_x509_crt_t @var{crt}, gnutls_digest_algorithm_t * @var{hash}, unsigned int * @var{mand})
 @var{crt}: Holds the certificate
 
 @var{hash}: The result of the call with the hash algorithm used for signature

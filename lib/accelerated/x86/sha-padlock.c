@@ -34,10 +34,10 @@
 
 #ifdef HAVE_LIBNETTLE
 
-typedef void (*update_func) (void *, size_t, const uint8_t *);
-typedef void (*digest_func) (void *, size_t, uint8_t *);
-typedef void (*set_key_func) (void *, size_t, const uint8_t *);
-typedef void (*init_func) (void *);
+typedef void (*update_func)(void *, size_t, const uint8_t *);
+typedef void (*digest_func)(void *, size_t, uint8_t *);
+typedef void (*set_key_func)(void *, size_t, const uint8_t *);
+typedef void (*init_func)(void *);
 
 struct padlock_hash_ctx {
 	union {
@@ -55,8 +55,8 @@ struct padlock_hash_ctx {
 	init_func init;
 };
 
-static int
-wrap_padlock_hash_update(void *_ctx, const void *text, size_t textsize)
+static int wrap_padlock_hash_update(void *_ctx, const void *text,
+				    size_t textsize)
 {
 	struct padlock_hash_ctx *ctx = _ctx;
 
@@ -71,33 +71,32 @@ static void wrap_padlock_hash_deinit(void *hd)
 }
 
 #define MD1_INCR(c) (c->count++)
-#define SHA1_COMPRESS(ctx, data) (padlock_sha1_blocks((void*)(ctx)->state, data, 1))
-#define SHA256_COMPRESS(ctx, data) (padlock_sha256_blocks((void*)(ctx)->state, data, 1))
-#define SHA512_COMPRESS(ctx, data) (padlock_sha512_blocks((void*)(ctx)->state, data, 1))
+#define SHA1_COMPRESS(ctx, data) \
+	(padlock_sha1_blocks((void *)(ctx)->state, data, 1))
+#define SHA256_COMPRESS(ctx, data) \
+	(padlock_sha256_blocks((void *)(ctx)->state, data, 1))
+#define SHA512_COMPRESS(ctx, data) \
+	(padlock_sha512_blocks((void *)(ctx)->state, data, 1))
 
-void
-padlock_sha1_update(struct sha1_ctx *ctx,
-		    size_t length, const uint8_t * data)
+void padlock_sha1_update(struct sha1_ctx *ctx, size_t length,
+			 const uint8_t *data)
 {
 	MD_UPDATE(ctx, length, data, SHA1_COMPRESS, MD1_INCR(ctx));
 }
 
-void
-padlock_sha256_update(struct sha256_ctx *ctx,
-		      size_t length, const uint8_t * data)
+void padlock_sha256_update(struct sha256_ctx *ctx, size_t length,
+			   const uint8_t *data)
 {
 	MD_UPDATE(ctx, length, data, SHA256_COMPRESS, MD1_INCR(ctx));
 }
 
-void
-padlock_sha512_update(struct sha512_ctx *ctx,
-		      size_t length, const uint8_t * data)
+void padlock_sha512_update(struct sha512_ctx *ctx, size_t length,
+			   const uint8_t *data)
 {
 	MD_UPDATE(ctx, length, data, SHA512_COMPRESS, MD_INCR(ctx));
 }
 
-static void
-_nettle_write_be32(unsigned length, uint8_t * dst, uint32_t * src)
+static void _nettle_write_be32(unsigned length, uint8_t *dst, uint32_t *src)
 {
 	unsigned i;
 	unsigned words;
@@ -130,9 +129,8 @@ _nettle_write_be32(unsigned length, uint8_t * dst, uint32_t * src)
 	}
 }
 
-static void
-padlock_sha1_digest(struct sha1_ctx *ctx,
-		    size_t length, uint8_t * digest)
+static void padlock_sha1_digest(struct sha1_ctx *ctx, size_t length,
+				uint8_t *digest)
 {
 	uint64_t bit_count;
 
@@ -150,9 +148,8 @@ padlock_sha1_digest(struct sha1_ctx *ctx,
 	_nettle_write_be32(length, digest, ctx->state);
 }
 
-static void
-padlock_sha256_digest(struct sha256_ctx *ctx,
-		      size_t length, uint8_t * digest)
+static void padlock_sha256_digest(struct sha256_ctx *ctx, size_t length,
+				  uint8_t *digest)
 {
 	uint64_t bit_count;
 
@@ -172,9 +169,8 @@ padlock_sha256_digest(struct sha256_ctx *ctx,
 	_nettle_write_be32(length, digest, ctx->state);
 }
 
-static void
-padlock_sha512_digest(struct sha512_ctx *ctx,
-		      size_t length, uint8_t * digest)
+static void padlock_sha512_digest(struct sha512_ctx *ctx, size_t length,
+				  uint8_t *digest)
 {
 	uint64_t high, low;
 
@@ -214,48 +210,47 @@ padlock_sha512_digest(struct sha512_ctx *ctx,
 	}
 }
 
-
 static int _ctx_init(gnutls_digest_algorithm_t algo,
 		     struct padlock_hash_ctx *ctx)
 {
 	switch (algo) {
 	case GNUTLS_DIG_SHA1:
 		sha1_init(&ctx->ctx.sha1);
-		ctx->update = (update_func) padlock_sha1_update;
-		ctx->digest = (digest_func) padlock_sha1_digest;
-		ctx->init = (init_func) sha1_init;
+		ctx->update = (update_func)padlock_sha1_update;
+		ctx->digest = (digest_func)padlock_sha1_digest;
+		ctx->init = (init_func)sha1_init;
 		ctx->ctx_ptr = &ctx->ctx.sha1;
 		ctx->length = SHA1_DIGEST_SIZE;
 		break;
 	case GNUTLS_DIG_SHA224:
 		sha224_init(&ctx->ctx.sha224);
-		ctx->update = (update_func) padlock_sha256_update;
-		ctx->digest = (digest_func) padlock_sha256_digest;
-		ctx->init = (init_func) sha224_init;
+		ctx->update = (update_func)padlock_sha256_update;
+		ctx->digest = (digest_func)padlock_sha256_digest;
+		ctx->init = (init_func)sha224_init;
 		ctx->ctx_ptr = &ctx->ctx.sha224;
 		ctx->length = SHA224_DIGEST_SIZE;
 		break;
 	case GNUTLS_DIG_SHA256:
 		sha256_init(&ctx->ctx.sha256);
-		ctx->update = (update_func) padlock_sha256_update;
-		ctx->digest = (digest_func) padlock_sha256_digest;
-		ctx->init = (init_func) sha256_init;
+		ctx->update = (update_func)padlock_sha256_update;
+		ctx->digest = (digest_func)padlock_sha256_digest;
+		ctx->init = (init_func)sha256_init;
 		ctx->ctx_ptr = &ctx->ctx.sha256;
 		ctx->length = SHA256_DIGEST_SIZE;
 		break;
 	case GNUTLS_DIG_SHA384:
 		sha384_init(&ctx->ctx.sha384);
-		ctx->update = (update_func) padlock_sha512_update;
-		ctx->digest = (digest_func) padlock_sha512_digest;
-		ctx->init = (init_func) sha384_init;
+		ctx->update = (update_func)padlock_sha512_update;
+		ctx->digest = (digest_func)padlock_sha512_digest;
+		ctx->init = (init_func)sha384_init;
 		ctx->ctx_ptr = &ctx->ctx.sha384;
 		ctx->length = SHA384_DIGEST_SIZE;
 		break;
 	case GNUTLS_DIG_SHA512:
 		sha512_init(&ctx->ctx.sha512);
-		ctx->update = (update_func) padlock_sha512_update;
-		ctx->digest = (digest_func) padlock_sha512_digest;
-		ctx->init = (init_func) sha512_init;
+		ctx->update = (update_func)padlock_sha512_update;
+		ctx->digest = (digest_func)padlock_sha512_digest;
+		ctx->init = (init_func)sha512_init;
 		ctx->ctx_ptr = &ctx->ctx.sha512;
 		ctx->length = SHA512_DIGEST_SIZE;
 		break;
@@ -267,9 +262,7 @@ static int _ctx_init(gnutls_digest_algorithm_t algo,
 	return 0;
 }
 
-
-static int
-wrap_padlock_hash_init(gnutls_digest_algorithm_t algo, void **_ctx)
+static int wrap_padlock_hash_init(gnutls_digest_algorithm_t algo, void **_ctx)
 {
 	struct padlock_hash_ctx *ctx;
 	int ret;
@@ -292,11 +285,10 @@ wrap_padlock_hash_init(gnutls_digest_algorithm_t algo, void **_ctx)
 	return 0;
 }
 
-static void *
-wrap_padlock_hash_copy(const void *_ctx)
+static void *wrap_padlock_hash_copy(const void *_ctx)
 {
 	struct padlock_hash_ctx *new_ctx;
-	const struct padlock_hash_ctx *ctx=_ctx;
+	const struct padlock_hash_ctx *ctx = _ctx;
 	ptrdiff_t off = (uint8_t *)ctx->ctx_ptr - (uint8_t *)(&ctx->ctx);
 
 	new_ctx = gnutls_malloc(sizeof(struct padlock_hash_ctx));
@@ -311,8 +303,8 @@ wrap_padlock_hash_copy(const void *_ctx)
 	return new_ctx;
 }
 
-static int
-wrap_padlock_hash_output(void *src_ctx, void *digest, size_t digestsize)
+static int wrap_padlock_hash_output(void *src_ctx, void *digest,
+				    size_t digestsize)
 {
 	struct padlock_hash_ctx *ctx;
 	ctx = src_ctx;
@@ -327,28 +319,22 @@ wrap_padlock_hash_output(void *src_ctx, void *digest, size_t digestsize)
 	return 0;
 }
 
-int wrap_padlock_hash_fast(gnutls_digest_algorithm_t algo,
-			   const void *text, size_t text_size,
-			   void *digest)
+int wrap_padlock_hash_fast(gnutls_digest_algorithm_t algo, const void *text,
+			   size_t text_size, void *digest)
 {
 	if (text_size == 0 && text == NULL)
 		text = digest;
 	if (algo == GNUTLS_DIG_SHA1) {
 		uint32_t iv[5] = {
-			0x67452301UL,
-			0xEFCDAB89UL,
-			0x98BADCFEUL,
-			0x10325476UL,
-			0xC3D2E1F0UL,
+			0x67452301UL, 0xEFCDAB89UL, 0x98BADCFEUL,
+			0x10325476UL, 0xC3D2E1F0UL,
 		};
 		padlock_sha1_oneshot(iv, text, text_size);
 		_nettle_write_be32(20, digest, iv);
 	} else if (algo == GNUTLS_DIG_SHA256) {
 		uint32_t iv[8] = {
-			0x6a09e667UL, 0xbb67ae85UL, 0x3c6ef372UL,
-			    0xa54ff53aUL,
-			0x510e527fUL, 0x9b05688cUL, 0x1f83d9abUL,
-			    0x5be0cd19UL,
+			0x6a09e667UL, 0xbb67ae85UL, 0x3c6ef372UL, 0xa54ff53aUL,
+			0x510e527fUL, 0x9b05688cUL, 0x1f83d9abUL, 0x5be0cd19UL,
 		};
 		padlock_sha256_oneshot(iv, text, text_size);
 		_nettle_write_be32(32, digest, iv);
@@ -369,11 +355,16 @@ int wrap_padlock_hash_fast(gnutls_digest_algorithm_t algo,
 	return 0;
 }
 
-const struct nettle_hash padlock_sha1 = NN_HASH(sha1, padlock_sha1_update, padlock_sha1_digest, SHA1);
-const struct nettle_hash padlock_sha224 = NN_HASH(sha224, padlock_sha256_update, padlock_sha256_digest, SHA224);
-const struct nettle_hash padlock_sha256 = NN_HASH(sha256, padlock_sha256_update, padlock_sha256_digest, SHA256);
-const struct nettle_hash padlock_sha384 = NN_HASH(sha384, padlock_sha512_update, padlock_sha512_digest, SHA384);
-const struct nettle_hash padlock_sha512 = NN_HASH(sha512, padlock_sha512_update, padlock_sha512_digest, SHA512);
+const struct nettle_hash padlock_sha1 =
+	NN_HASH(sha1, padlock_sha1_update, padlock_sha1_digest, SHA1);
+const struct nettle_hash padlock_sha224 =
+	NN_HASH(sha224, padlock_sha256_update, padlock_sha256_digest, SHA224);
+const struct nettle_hash padlock_sha256 =
+	NN_HASH(sha256, padlock_sha256_update, padlock_sha256_digest, SHA256);
+const struct nettle_hash padlock_sha384 =
+	NN_HASH(sha384, padlock_sha512_update, padlock_sha512_digest, SHA384);
+const struct nettle_hash padlock_sha512 =
+	NN_HASH(sha512, padlock_sha512_update, padlock_sha512_digest, SHA512);
 
 const gnutls_crypto_digest_st _gnutls_sha_padlock_oneshot = {
 	.init = NULL,
@@ -392,4 +383,4 @@ const gnutls_crypto_digest_st _gnutls_sha_padlock = {
 	.fast = wrap_padlock_hash_fast,
 };
 
-#endif				/* HAVE_LIBNETTLE */
+#endif /* HAVE_LIBNETTLE */

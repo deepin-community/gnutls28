@@ -68,7 +68,7 @@ static const char _domaincontroller[] = {
 };
 
 static const char _issuingca[] = {
-/* The intermediate CA with name constraints */
+	/* The intermediate CA with name constraints */
 	"-----BEGIN CERTIFICATE-----\n"
 	"MIIE0jCCA7qgAwIBAgITLgAAAAK9f34egj9VJAAAAAAAAjANBgkqhkiG9w0BAQsF\n"
 	"ADA2MRUwEwYDVQQKEwxFeGFtcGxlIEluYy4xHTAbBgNVBAMTFEV4YW1wbGUgQ29y\n"
@@ -118,13 +118,15 @@ void verify_upn_constraints(gnutls_x509_name_constraints_t name_constraints)
 	}
 
 	if (type != GNUTLS_SAN_OTHERNAME_MSUSERPRINCIPAL) {
-		fail("Error permitted constraint 3 is not UPN line: %d Found: %u\n", __LINE__, type);
+		fail("Error permitted constraint 3 is not UPN line: %d Found: %u\n",
+		     __LINE__, type);
 		exit(1);
 	}
 
 	if ((constraint.size != sizeof(example3) - 1) ||
 	    memcmp(constraint.data, example3, sizeof(example3) - 1) != 0) {
-		fail("Error permitted constraint 3 was %s expected %s line: %d\n", constraint.data, example3, __LINE__);
+		fail("Error permitted constraint 3 was %s expected %s line: %d\n",
+		     constraint.data, example3, __LINE__);
 		exit(1);
 	}
 
@@ -137,13 +139,15 @@ void verify_upn_constraints(gnutls_x509_name_constraints_t name_constraints)
 	}
 
 	if (type != GNUTLS_SAN_OTHERNAME_MSUSERPRINCIPAL) {
-		fail("Error permitted constraint 4 is not UPN line: %d Found: %u\n", __LINE__, type);
+		fail("Error permitted constraint 4 is not UPN line: %d Found: %u\n",
+		     __LINE__, type);
 		exit(1);
 	}
 
 	if ((constraint.size != sizeof(example4) - 1) ||
 	    memcmp(constraint.data, example4, sizeof(example4) - 1) != 0) {
-		fail("Error permitted constraint 4 was %s expected %s line: %d\n", constraint.data, example4, __LINE__);
+		fail("Error permitted constraint 4 was %s expected %s line: %d\n",
+		     constraint.data, example4, __LINE__);
 		exit(1);
 	}
 
@@ -156,13 +160,15 @@ void verify_upn_constraints(gnutls_x509_name_constraints_t name_constraints)
 	}
 
 	if (type != GNUTLS_SAN_OTHERNAME_MSUSERPRINCIPAL) {
-		fail("Error excluded constraint 2 is not UPN line: %d Found %u\n", __LINE__, type);
+		fail("Error excluded constraint 2 is not UPN line: %d Found %u\n",
+		     __LINE__, type);
 		exit(1);
 	}
 
 	if ((constraint.size != sizeof(subdomain2) - 1) ||
 	    memcmp(constraint.data, subdomain2, sizeof(subdomain2) - 1) != 0) {
-		fail("Error excluded constraint 2 was %s expected %s line: %d\n", constraint.data, subdomain2, __LINE__);
+		fail("Error excluded constraint 2 was %s expected %s line: %d\n",
+		     constraint.data, subdomain2, __LINE__);
 		exit(1);
 	}
 
@@ -175,13 +181,15 @@ void verify_upn_constraints(gnutls_x509_name_constraints_t name_constraints)
 	}
 
 	if (type != GNUTLS_SAN_OTHERNAME_MSUSERPRINCIPAL) {
-		fail("Error excluded constraint 3 is not UPN line: %d Found %u\n", __LINE__, type);
+		fail("Error excluded constraint 3 is not UPN line: %d Found %u\n",
+		     __LINE__, type);
 		exit(1);
 	}
 
 	if ((constraint.size != sizeof(subdomain3) - 1) ||
 	    memcmp(constraint.data, subdomain3, sizeof(subdomain3) - 1) != 0) {
-		fail("Error excluded constraint 3 was %s expected %s line: %d\n", constraint.data, subdomain3, __LINE__);
+		fail("Error excluded constraint 3 was %s expected %s line: %d\n",
+		     constraint.data, subdomain3, __LINE__);
 		exit(1);
 	}
 }
@@ -191,8 +199,8 @@ void verify_non_upn_leaf(gnutls_x509_name_constraints_t name_constraints)
 	// This test specifically checks for resolution of issue 1132
 	int ret = 0;
 	gnutls_x509_crt_t domaincontroller;
-	gnutls_datum_t domaincontroller_datum = { (void *)_domaincontroller,
-		sizeof(_domaincontroller) - 1
+	gnutls_datum_t domaincontroller_datum = {
+		(void *)_domaincontroller, sizeof(_domaincontroller) - 1
 	};
 
 	gnutls_x509_crt_init(&domaincontroller);
@@ -205,11 +213,11 @@ void verify_non_upn_leaf(gnutls_x509_name_constraints_t name_constraints)
 		exit(1);
 	}
 
-	ret = gnutls_x509_name_constraints_check_crt(name_constraints,
-						     GNUTLS_SAN_DNSNAME,
-						     domaincontroller);
+	ret = gnutls_x509_name_constraints_check_crt(
+		name_constraints, GNUTLS_SAN_DNSNAME, domaincontroller);
 	if (ret < 0) {
-		fail("Error failed to verify leaf cert against constraints line: %d\n", __LINE__);
+		fail("Error failed to verify leaf cert against constraints line: %d\n",
+		     __LINE__);
 		exit(1);
 	}
 
@@ -221,8 +229,8 @@ void doit(void)
 	int ret;
 	unsigned int critical = 0;
 	gnutls_x509_crt_t issuingca;
-	gnutls_datum_t issuingca_datum =
-	    { (void *)_issuingca, sizeof(_issuingca) - 1 };
+	gnutls_datum_t issuingca_datum = { (void *)_issuingca,
+					   sizeof(_issuingca) - 1 };
 
 	gnutls_x509_crt_init(&issuingca);
 
@@ -243,9 +251,8 @@ void doit(void)
 		exit(1);
 	}
 
-	ret =
-	    gnutls_x509_crt_get_name_constraints(issuingca, name_constraints, 0,
-						 &critical);
+	ret = gnutls_x509_crt_get_name_constraints(issuingca, name_constraints,
+						   0, &critical);
 	if (ret < 0) {
 		// Failure here is potentially a regression to issue 1132 behavior
 		fail("Error loading constraints line: %d\n", __LINE__);
@@ -259,7 +266,7 @@ void doit(void)
 	gnutls_x509_name_constraints_deinit(name_constraints);
 	gnutls_x509_crt_deinit(issuingca);
 
-	success("UPN constraints tests completed succesfully\n");
+	success("UPN constraints tests completed successfully\n");
 }
 
 /* The following cert is the root CA that signed the intermediate CA used in

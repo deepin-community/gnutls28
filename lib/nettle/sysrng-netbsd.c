@@ -35,15 +35,15 @@
 
 #include <sys/sysctl.h>
 
-#define	ARRAY_SIZE(A)	(sizeof(A)/sizeof((A)[0]))
+#define ARRAY_SIZE(A) (sizeof(A) / sizeof((A)[0]))
 
 get_entropy_func _rnd_get_system_entropy = NULL;
 
-static int _rnd_get_system_entropy_sysctl(void* _rnd, size_t size)
+static int _rnd_get_system_entropy_sysctl(void *_rnd, size_t size)
 {
-	static int name[] = {CTL_KERN, KERN_ARND};
+	static int name[] = { CTL_KERN, KERN_ARND };
 	size_t count, req;
-	unsigned char* p;
+	unsigned char *p;
 
 	p = _rnd;
 	while (size) {
@@ -75,4 +75,3 @@ void _rnd_system_entropy_deinit(void)
 {
 	return;
 }
-

@@ -24,6 +24,7 @@
 #define GNUTLS_LIB_TLS13_KEY_UPDATE_H
 
 int _gnutls13_recv_key_update(gnutls_session_t session, gnutls_buffer_st *buf);
-int _gnutls13_send_key_update(gnutls_session_t session, unsigned again, unsigned flags);
+int _gnutls13_send_key_update(gnutls_session_t session, unsigned again,
+			      unsigned flags);
 
 #endif /* GNUTLS_LIB_TLS13_KEY_UPDATE_H */

@@ -174,6 +174,14 @@ aesni_xts_encrypt, function in aes-x86
 </dt>
 <dd></dd>
 <dt>
+aes_gcm_aead_decrypt, function in aes-gcm-aead
+</dt>
+<dd></dd>
+<dt>
+aes_gcm_aead_encrypt, function in aes-gcm-aead
+</dt>
+<dd></dd>
+<dt>
 AES_GCM_ENCRYPT_MAX_BYTES, macro in aes-x86
 </dt>
 <dd></dd>
@@ -742,10 +750,6 @@ asn1_static_node_t, macro in libtasn1
 </dt>
 <dd></dd>
 <dt>
-asn1_strerror, function in libtasn1
-</dt>
-<dd></dd>
-<dt>
 ASN1_SUCCESS, macro in libtasn1
 </dt>
 <dd></dd>
@@ -903,6 +907,14 @@ ATTRIBUTE_COLD, macro in attribute
 <dd></dd>
 <dt>
 ATTRIBUTE_CONST, macro in attribute
+</dt>
+<dd></dd>
+<dt>
+ATTRIBUTE_DEALLOC, macro in attribute
+</dt>
+<dd></dd>
+<dt>
+ATTRIBUTE_DEALLOC_FREE, macro in attribute
 </dt>
 <dd></dd>
 <dt>
@@ -1071,11 +1083,11 @@ block8_xor_bytes, function in block-internal
 </dt>
 <dd></dd>
 <dt>
-_Bool, typedef in stdbool.in
+BOOL_MAX, macro in limits.in
 </dt>
 <dd></dd>
 <dt>
-bool, macro in stdbool.in
+BOOL_WIDTH, macro in limits.in
 </dt>
 <dd></dd>
 <dt>
@@ -1168,6 +1180,10 @@ cbc_mac_verify, function in cipher
 </dt>
 <dd></dd>
 <dt>
+CertEnumCRLsInStoreFunc, user_function in system
+</dt>
+<dd></dd>
+<dt>
 certificate_credentials_st, struct in cert
 </dt>
 <dd></dd>
@@ -1244,11 +1260,19 @@ cipher_setkey_func, user_function in cipher_int
 </dt>
 <dd></dd>
 <dt>
+cipher_suite_get, function in algorithms
+</dt>
+<dd></dd>
+<dt>
 cipher_tag_func, user_function in cipher_int
 </dt>
 <dd></dd>
 <dt>
 cipher_to_entry, macro in algorithms
+</dt>
+<dd></dd>
+<dt>
+cipher_type_t, enum in gnutls_int
 </dt>
 <dd></dd>
 <dt>
@@ -1421,10 +1445,6 @@ content_type_t, enum in gnutls_int
 <dd></dd>
 <dt>
 copy_func, user_function in hash_int
-</dt>
-<dd></dd>
-<dt>
-credentials, function in gnutlsxx
 </dt>
 <dd></dd>
 <dt>
@@ -1753,6 +1773,10 @@ DERIVED_LABEL, macro in handshake-defs
 </dt>
 <dd></dd>
 <dt>
+DERIVED_PSK_LABEL, macro in handshake-defs
+</dt>
+<dd></dd>
+<dt>
 dev_t, macro in types
 </dt>
 <dd></dd>
@@ -1897,6 +1921,10 @@ dss_params_validation_seeds, struct in dsa-fips
 </dt>
 <dd></dd>
 <dt>
+dst, variable in gnutlsxx
+</dt>
+<dd></dd>
+<dt>
 DTLS_DEFAULT_MTU, macro in gnutls_int
 </dt>
 <dd></dd>
@@ -1927,10 +1955,6 @@ EARLY_EXPORTER_MASTER_LABEL, macro in handshake-defs
 <dd></dd>
 <dt>
 EARLY_TRAFFIC_LABEL, macro in handshake-defs
-</dt>
-<dd></dd>
-<dt>
-ecc_curve, struct in ecc-gost-curve
 </dt>
 <dd></dd>
 <dt>
@@ -2059,6 +2083,10 @@ EXTRA_COMP_SIZE, macro in gnutls_int
 <dd></dd>
 <dt>
 EXT_BINDER_LABEL, macro in handshake-defs
+</dt>
+<dd></dd>
+<dt>
+ext_master_secret_t, enum in gnutls_int
 </dt>
 <dd></dd>
 <dt>
@@ -2272,6 +2300,10 @@ get_entropy_func, user_function in rnd-common
 </dt>
 <dd></dd>
 <dt>
+get_group, function in state
+</dt>
+<dd></dd>
+<dt>
 get_handshake_last_out, function in gnutlsxx
 </dt>
 <dd></dd>
@@ -2297,6 +2329,10 @@ get_total_headers2, function in record
 <dd></dd>
 <dt>
 get_transport_ptr, function in gnutlsxx
+</dt>
+<dd></dd>
+<dt>
+get_type, function in gnutlsxx
 </dt>
 <dd></dd>
 <dt>
@@ -2448,7 +2484,7 @@ GNULIB_defined_stdint_types, macro in stdint.in
 </dt>
 <dd></dd>
 <dt>
-<a class="link" href="gnutls-gnutls.html#gnutls-alert-get" title="gnutls_alert_get ()">gnutls_alert_get</a>, function in <a class="link" href="gnutls-gnutls.html" title="gnutls">gnutls</a>
+<a class="link" href="gnutls-gnutls.html#gnutls-alert-get" title="gnutls_alert_get ()">gnutls_alert_get</a>, function in gnutlsxx
 </dt>
 <dd></dd>
 <dt>
@@ -2672,11 +2708,15 @@ gnutls_buffer_st, struct in str
 </dt>
 <dd></dd>
 <dt>
-<a class="link" href="gnutls-gnutls.html#gnutls-certificate-activation-time-peers" title="gnutls_certificate_activation_time_peers ()">gnutls_certificate_activation_time_peers</a>, function in <a class="link" href="gnutls-gnutls.html" title="gnutls">gnutls</a>
+<a class="link" href="gnutls-gnutls.html#gnutls-certificate-activation-time-peers" title="gnutls_certificate_activation_time_peers ()">gnutls_certificate_activation_time_peers</a>, function in gnutlsxx
 </dt>
 <dd></dd>
 <dt>
 <a class="link" href="gnutls-gnutls.html#gnutls-certificate-allocate-credentials" title="gnutls_certificate_allocate_credentials ()">gnutls_certificate_allocate_credentials</a>, function in <a class="link" href="gnutls-gnutls.html" title="gnutls">gnutls</a>
+</dt>
+<dd></dd>
+<dt>
+<a class="link" href="gnutls-gnutls.html#gnutls-certificate-client-credentials" title="gnutls_certificate_client_credentials">gnutls_certificate_client_credentials</a>, typedef in <a class="link" href="gnutls-gnutls.html" title="gnutls">gnutls</a>
 </dt>
 <dd></dd>
 <dt>
@@ -2688,7 +2728,7 @@ gnutls_buffer_st, struct in str
 </dt>
 <dd></dd>
 <dt>
-<a class="link" href="gnutls-gnutls.html#gnutls-certificate-expiration-time-peers" title="gnutls_certificate_expiration_time_peers ()">gnutls_certificate_expiration_time_peers</a>, function in <a class="link" href="gnutls-gnutls.html" title="gnutls">gnutls</a>
+<a class="link" href="gnutls-gnutls.html#gnutls-certificate-expiration-time-peers" title="gnutls_certificate_expiration_time_peers ()">gnutls_certificate_expiration_time_peers</a>, function in gnutlsxx
 </dt>
 <dd></dd>
 <dt>
@@ -2777,6 +2817,10 @@ gnutls_buffer_st, struct in str
 <dd></dd>
 <dt>
 <a class="link" href="gnutls-gnutls.html#gnutls-certificate-send-x509-rdn-sequence" title="gnutls_certificate_send_x509_rdn_sequence ()">gnutls_certificate_send_x509_rdn_sequence</a>, function in <a class="link" href="gnutls-gnutls.html" title="gnutls">gnutls</a>
+</dt>
+<dd></dd>
+<dt>
+<a class="link" href="gnutls-gnutls.html#gnutls-certificate-server-credentials" title="gnutls_certificate_server_credentials">gnutls_certificate_server_credentials</a>, typedef in <a class="link" href="gnutls-gnutls.html" title="gnutls">gnutls</a>
 </dt>
 <dd></dd>
 <dt>
@@ -2956,7 +3000,7 @@ gnutls_buffer_st, struct in str
 </dt>
 <dd></dd>
 <dt>
-<a class="link" href="gnutls-gnutls.html#gnutls-certificate-type-get" title="gnutls_certificate_type_get ()">gnutls_certificate_type_get</a>, function in <a class="link" href="gnutls-gnutls.html" title="gnutls">gnutls</a>
+<a class="link" href="gnutls-gnutls.html#gnutls-certificate-type-get" title="gnutls_certificate_type_get ()">gnutls_certificate_type_get</a>, function in gnutlsxx
 </dt>
 <dd></dd>
 <dt>
@@ -3100,7 +3144,7 @@ GNUTLS_CIPHER_FLAG_XOR_NONCE, macro in gnutls_int
 </dt>
 <dd></dd>
 <dt>
-<a class="link" href="gnutls-gnutls.html#gnutls-cipher-get" title="gnutls_cipher_get ()">gnutls_cipher_get</a>, function in <a class="link" href="gnutls-gnutls.html" title="gnutls">gnutls</a>
+<a class="link" href="gnutls-gnutls.html#gnutls-cipher-get" title="gnutls_cipher_get ()">gnutls_cipher_get</a>, function in gnutlsxx
 </dt>
 <dd></dd>
 <dt>
@@ -3180,7 +3224,7 @@ gnutls_cipher_suite_entry_st, struct in gnutls_int
 </dt>
 <dd></dd>
 <dt>
-gnutls_compression_get, function in compat
+gnutls_compression_get, function in gnutlsxx
 </dt>
 <dd></dd>
 <dt>
@@ -4748,15 +4792,19 @@ gnutls_group_entry_st, struct in gnutls_int
 </dt>
 <dd></dd>
 <dt>
+<a class="link" href="gnutls-gnutls.html#gnutls-handshake-description-get-name" title="gnutls_handshake_description_get_name ()">gnutls_handshake_description_get_name</a>, function in <a class="link" href="gnutls-gnutls.html" title="gnutls">gnutls</a>
+</dt>
+<dd></dd>
+<dt>
 <a class="link" href="gnutls-gnutls.html#gnutls-handshake-description-t" title="enum gnutls_handshake_description_t">gnutls_handshake_description_t</a>, enum in <a class="link" href="gnutls-gnutls.html" title="gnutls">gnutls</a>
 </dt>
 <dd></dd>
 <dt>
-<a class="link" href="gnutls-gnutls.html#gnutls-handshake-get-last-in" title="gnutls_handshake_get_last_in ()">gnutls_handshake_get_last_in</a>, function in <a class="link" href="gnutls-gnutls.html" title="gnutls">gnutls</a>
+<a class="link" href="gnutls-gnutls.html#gnutls-handshake-get-last-in" title="gnutls_handshake_get_last_in ()">gnutls_handshake_get_last_in</a>, function in gnutlsxx
 </dt>
 <dd></dd>
 <dt>
-<a class="link" href="gnutls-gnutls.html#gnutls-handshake-get-last-out" title="gnutls_handshake_get_last_out ()">gnutls_handshake_get_last_out</a>, function in <a class="link" href="gnutls-gnutls.html" title="gnutls">gnutls</a>
+<a class="link" href="gnutls-gnutls.html#gnutls-handshake-get-last-out" title="gnutls_handshake_get_last_out ()">gnutls_handshake_get_last_out</a>, function in gnutlsxx
 </dt>
 <dd></dd>
 <dt>
@@ -5100,7 +5148,7 @@ gnutls_key_st, struct in gnutls_int
 </dt>
 <dd></dd>
 <dt>
-<a class="link" href="gnutls-gnutls.html#gnutls-kx-get" title="gnutls_kx_get ()">gnutls_kx_get</a>, function in <a class="link" href="gnutls-gnutls.html" title="gnutls">gnutls</a>
+<a class="link" href="gnutls-gnutls.html#gnutls-kx-get" title="gnutls_kx_get ()">gnutls_kx_get</a>, function in gnutlsxx
 </dt>
 <dd></dd>
 <dt>
@@ -5156,7 +5204,7 @@ GNUTLS_MAC_FLAG_PREIMAGE_INSECURE_REVERTIBLE, macro in gnutls_int
 </dt>
 <dd></dd>
 <dt>
-<a class="link" href="gnutls-gnutls.html#gnutls-mac-get" title="gnutls_mac_get ()">gnutls_mac_get</a>, function in <a class="link" href="gnutls-gnutls.html" title="gnutls">gnutls</a>
+<a class="link" href="gnutls-gnutls.html#gnutls-mac-get" title="gnutls_mac_get ()">gnutls_mac_get</a>, function in gnutlsxx
 </dt>
 <dd></dd>
 <dt>
@@ -5340,7 +5388,11 @@ gnutls_nettle_backport_nettle_block8, union in block8
 </dt>
 <dd></dd>
 <dt>
-<a class="link" href="gnutls-gnutls.html#GNUTLS-NO-EXTENSIONS:CAPS">GNUTLS_NO_EXTENSIONS</a>, macro in <a class="link" href="gnutls-gnutls.html" title="gnutls">gnutls</a>
+<a class="link" href="gnutls-gnutls.html#GNUTLS-NO-DEFAULT-EXTENSIONS:CAPS">GNUTLS_NO_DEFAULT_EXTENSIONS</a>, macro in <a class="link" href="gnutls-gnutls.html" title="gnutls">gnutls</a>
+</dt>
+<dd></dd>
+<dt>
+GNUTLS_NO_EXTENSIONS, macro in state
 </dt>
 <dd></dd>
 <dt>
@@ -5872,6 +5924,10 @@ GNUTLS_OPENPGP_KEY, macro in compat
 </dt>
 <dd></dd>
 <dt>
+<a class="link" href="gnutls-openpgp.html#gnutls-openpgp-keyid-t" title="gnutls_openpgp_keyid_t">gnutls_openpgp_keyid_t</a>, typedef in <a class="link" href="gnutls-openpgp.html" title="openpgp">openpgp</a>
+</dt>
+<dd></dd>
+<dt>
 <a class="link" href="gnutls-openpgp.html#gnutls-openpgp-keyring-check-id" title="gnutls_openpgp_keyring_check_id ()">gnutls_openpgp_keyring_check_id</a>, function in <a class="link" href="gnutls-openpgp.html" title="openpgp">openpgp</a>
 </dt>
 <dd></dd>
@@ -6112,7 +6168,11 @@ gnutls_openpgp_send_key, macro in compat
 </dt>
 <dd></dd>
 <dt>
-GNUTLS_PATH_MAX, macro in system
+gnutls_pathbuf_st, struct in pathbuf
+</dt>
+<dd></dd>
+<dt>
+GNUTLS_PATH_MAX, macro in pathbuf
 </dt>
 <dd></dd>
 <dt>
@@ -7444,6 +7504,10 @@ gnutls_privkey_pk_params_func, user_function in abstract_int
 </dt>
 <dd></dd>
 <dt>
+gnutls_protocol_get_version, function in gnutlsxx
+</dt>
+<dd></dd>
+<dt>
 <a class="link" href="gnutls-gnutls.html#gnutls-protocol-set-enabled" title="gnutls_protocol_set_enabled ()">gnutls_protocol_set_enabled</a>, function in <a class="link" href="gnutls-gnutls.html" title="gnutls">gnutls</a>
 </dt>
 <dd></dd>
@@ -7460,7 +7524,15 @@ gnutls_privkey_pk_params_func, user_function in abstract_int
 </dt>
 <dd></dd>
 <dt>
+<a class="link" href="gnutls-gnutls.html#gnutls-psk-client-credentials-t" title="gnutls_psk_client_credentials_t">gnutls_psk_client_credentials_t</a>, typedef in <a class="link" href="gnutls-gnutls.html" title="gnutls">gnutls</a>
+</dt>
+<dd></dd>
+<dt>
 <a class="link" href="gnutls-gnutls.html#gnutls-psk-client-get-hint" title="gnutls_psk_client_get_hint ()">gnutls_psk_client_get_hint</a>, function in <a class="link" href="gnutls-gnutls.html" title="gnutls">gnutls</a>
+</dt>
+<dd></dd>
+<dt>
+<a class="link" href="gnutls-gnutls.html#gnutls-psk-format-imported-identity" title="gnutls_psk_format_imported_identity ()">gnutls_psk_format_imported_identity</a>, function in <a class="link" href="gnutls-gnutls.html" title="gnutls">gnutls</a>
 </dt>
 <dd></dd>
 <dt>
@@ -7476,7 +7548,11 @@ gnutls_privkey_pk_params_func, user_function in abstract_int
 </dt>
 <dd></dd>
 <dt>
-<a class="link" href="gnutls-gnutls.html#gnutls-psk-server-get-username" title="gnutls_psk_server_get_username ()">gnutls_psk_server_get_username</a>, function in <a class="link" href="gnutls-gnutls.html" title="gnutls">gnutls</a>
+<a class="link" href="gnutls-gnutls.html#gnutls-psk-server-credentials-t" title="gnutls_psk_server_credentials_t">gnutls_psk_server_credentials_t</a>, typedef in <a class="link" href="gnutls-gnutls.html" title="gnutls">gnutls</a>
+</dt>
+<dd></dd>
+<dt>
+<a class="link" href="gnutls-gnutls.html#gnutls-psk-server-get-username" title="gnutls_psk_server_get_username ()">gnutls_psk_server_get_username</a>, function in gnutlsxx
 </dt>
 <dd></dd>
 <dt>
@@ -7500,6 +7576,10 @@ gnutls_privkey_pk_params_func, user_function in abstract_int
 </dt>
 <dd></dd>
 <dt>
+<a class="link" href="gnutls-gnutls.html#gnutls-psk-set-client-credentials-function3" title="gnutls_psk_set_client_credentials_function3 ()">gnutls_psk_set_client_credentials_function3</a>, function in <a class="link" href="gnutls-gnutls.html" title="gnutls">gnutls</a>
+</dt>
+<dd></dd>
+<dt>
 <a class="link" href="gnutls-gnutls.html#gnutls-psk-set-params-function" title="gnutls_psk_set_params_function ()">gnutls_psk_set_params_function</a>, function in <a class="link" href="gnutls-gnutls.html" title="gnutls">gnutls</a>
 </dt>
 <dd></dd>
@@ -7513,6 +7593,10 @@ gnutls_privkey_pk_params_func, user_function in abstract_int
 <dd></dd>
 <dt>
 <a class="link" href="gnutls-gnutls.html#gnutls-psk-set-server-credentials-function2" title="gnutls_psk_set_server_credentials_function2 ()">gnutls_psk_set_server_credentials_function2</a>, function in <a class="link" href="gnutls-gnutls.html" title="gnutls">gnutls</a>
+</dt>
+<dd></dd>
+<dt>
+<a class="link" href="gnutls-gnutls.html#gnutls-psk-set-server-credentials-function3" title="gnutls_psk_set_server_credentials_function3 ()">gnutls_psk_set_server_credentials_function3</a>, function in <a class="link" href="gnutls-gnutls.html" title="gnutls">gnutls</a>
 </dt>
 <dd></dd>
 <dt>
@@ -7800,7 +7884,7 @@ gnutls_realloc_fast, function in mem
 </dt>
 <dd></dd>
 <dt>
-<a class="link" href="gnutls-gnutls.html#gnutls-record-check-pending" title="gnutls_record_check_pending ()">gnutls_record_check_pending</a>, function in <a class="link" href="gnutls-gnutls.html" title="gnutls">gnutls</a>
+<a class="link" href="gnutls-gnutls.html#gnutls-record-check-pending" title="gnutls_record_check_pending ()">gnutls_record_check_pending</a>, function in gnutlsxx
 </dt>
 <dd></dd>
 <dt>
@@ -7820,7 +7904,7 @@ gnutls_realloc_fast, function in mem
 </dt>
 <dd></dd>
 <dt>
-<a class="link" href="gnutls-gnutls.html#gnutls-record-get-direction" title="gnutls_record_get_direction ()">gnutls_record_get_direction</a>, function in <a class="link" href="gnutls-gnutls.html" title="gnutls">gnutls</a>
+<a class="link" href="gnutls-gnutls.html#gnutls-record-get-direction" title="gnutls_record_get_direction ()">gnutls_record_get_direction</a>, function in gnutlsxx
 </dt>
 <dd></dd>
 <dt>
@@ -7832,7 +7916,7 @@ gnutls_realloc_fast, function in mem
 </dt>
 <dd></dd>
 <dt>
-<a class="link" href="gnutls-gnutls.html#gnutls-record-get-max-size" title="gnutls_record_get_max_size ()">gnutls_record_get_max_size</a>, function in <a class="link" href="gnutls-gnutls.html" title="gnutls">gnutls</a>
+<a class="link" href="gnutls-gnutls.html#gnutls-record-get-max-size" title="gnutls_record_get_max_size ()">gnutls_record_get_max_size</a>, function in gnutlsxx
 </dt>
 <dd></dd>
 <dt>
@@ -8044,6 +8128,10 @@ GNUTLS_SELF_TEST_FLAG_NO_COMPAT, macro in self-test
 </dt>
 <dd></dd>
 <dt>
+gnutls_session_get_client_random, function in compat
+</dt>
+<dd></dd>
+<dt>
 <a class="link" href="gnutls-gnutls.html#gnutls-session-get-data" title="gnutls_session_get_data ()">gnutls_session_get_data</a>, function in <a class="link" href="gnutls-gnutls.html" title="gnutls">gnutls</a>
 </dt>
 <dd></dd>
@@ -8076,11 +8164,15 @@ GNUTLS_SELF_TEST_FLAG_NO_COMPAT, macro in self-test
 </dt>
 <dd></dd>
 <dt>
-<a class="link" href="gnutls-gnutls.html#gnutls-session-get-ptr" title="gnutls_session_get_ptr ()">gnutls_session_get_ptr</a>, function in <a class="link" href="gnutls-gnutls.html" title="gnutls">gnutls</a>
+<a class="link" href="gnutls-gnutls.html#gnutls-session-get-ptr" title="gnutls_session_get_ptr ()">gnutls_session_get_ptr</a>, function in gnutlsxx
 </dt>
 <dd></dd>
 <dt>
 <a class="link" href="gnutls-gnutls.html#gnutls-session-get-random" title="gnutls_session_get_random ()">gnutls_session_get_random</a>, function in <a class="link" href="gnutls-gnutls.html" title="gnutls">gnutls</a>
+</dt>
+<dd></dd>
+<dt>
+gnutls_session_get_server_random, function in compat
 </dt>
 <dd></dd>
 <dt>
@@ -8260,6 +8352,10 @@ GNUTLS_SIGN_FLAG_TLS13_OK, macro in algorithms
 </dt>
 <dd></dd>
 <dt>
+<a class="link" href="gnutls-gnutls.html#gnutls-srp-client-credentials-t" title="gnutls_srp_client_credentials_t">gnutls_srp_client_credentials_t</a>, typedef in <a class="link" href="gnutls-gnutls.html" title="gnutls">gnutls</a>
+</dt>
+<dd></dd>
+<dt>
 <a class="link" href="gnutls-gnutls.html#gnutls-srp-free-client-credentials" title="gnutls_srp_free_client_credentials ()">gnutls_srp_free_client_credentials</a>, function in <a class="link" href="gnutls-gnutls.html" title="gnutls">gnutls</a>
 </dt>
 <dd></dd>
@@ -8268,7 +8364,11 @@ GNUTLS_SIGN_FLAG_TLS13_OK, macro in algorithms
 </dt>
 <dd></dd>
 <dt>
-<a class="link" href="gnutls-gnutls.html#gnutls-srp-server-get-username" title="gnutls_srp_server_get_username ()">gnutls_srp_server_get_username</a>, function in <a class="link" href="gnutls-gnutls.html" title="gnutls">gnutls</a>
+<a class="link" href="gnutls-gnutls.html#gnutls-srp-server-credentials-t" title="gnutls_srp_server_credentials_t">gnutls_srp_server_credentials_t</a>, typedef in <a class="link" href="gnutls-gnutls.html" title="gnutls">gnutls</a>
+</dt>
+<dd></dd>
+<dt>
+<a class="link" href="gnutls-gnutls.html#gnutls-srp-server-get-username" title="gnutls_srp_server_get_username ()">gnutls_srp_server_get_username</a>, function in gnutlsxx
 </dt>
 <dd></dd>
 <dt>
@@ -8352,6 +8452,10 @@ gnutls_static_mutex_unlock, macro in locks
 </dt>
 <dd></dd>
 <dt>
+<a class="link" href="gnutls-gnutls.html#gnutls-status-request-ocsp-func" title="gnutls_status_request_ocsp_func ()">gnutls_status_request_ocsp_func</a>, user_function in <a class="link" href="gnutls-gnutls.html" title="gnutls">gnutls</a>
+</dt>
+<dd></dd>
+<dt>
 gnutls_stek_rotation_callback_t, user_function in gnutls_int
 </dt>
 <dd></dd>
@@ -8364,7 +8468,7 @@ gnutls_stek_rotation_callback_t, user_function in gnutls_int
 </dt>
 <dd></dd>
 <dt>
-<a class="link" href="gnutls-gnutls.html#gnutls-strerror" title="gnutls_strerror ()">gnutls_strerror</a>, function in <a class="link" href="gnutls-gnutls.html" title="gnutls">gnutls</a>
+<a class="link" href="gnutls-gnutls.html#gnutls-strerror" title="gnutls_strerror ()">gnutls_strerror</a>, function in gnutlsxx
 </dt>
 <dd></dd>
 <dt>
@@ -8393,6 +8497,10 @@ gnutls_subject_alt_names_t, typedef in x509-ext
 <dd></dd>
 <dt>
 <a class="link" href="gnutls-gnutls.html#gnutls-supplemental-data-format-type-t" title="enum gnutls_supplemental_data_format_type_t">gnutls_supplemental_data_format_type_t</a>, enum in <a class="link" href="gnutls-gnutls.html" title="gnutls">gnutls</a>
+</dt>
+<dd></dd>
+<dt>
+<a class="link" href="gnutls-gnutls.html#gnutls-supplemental-get-name" title="gnutls_supplemental_get_name ()">gnutls_supplemental_get_name</a>, function in <a class="link" href="gnutls-gnutls.html" title="gnutls">gnutls</a>
 </dt>
 <dd></dd>
 <dt>
@@ -8552,7 +8660,7 @@ gnutls_tlsprf_self_test, function in self-test
 </dt>
 <dd></dd>
 <dt>
-<a class="link" href="gnutls-gnutls.html#gnutls-transport-get-ptr" title="gnutls_transport_get_ptr ()">gnutls_transport_get_ptr</a>, function in <a class="link" href="gnutls-gnutls.html" title="gnutls">gnutls</a>
+<a class="link" href="gnutls-gnutls.html#gnutls-transport-get-ptr" title="gnutls_transport_get_ptr ()">gnutls_transport_get_ptr</a>, function in gnutlsxx
 </dt>
 <dd></dd>
 <dt>
@@ -8560,11 +8668,11 @@ gnutls_tlsprf_self_test, function in self-test
 </dt>
 <dd></dd>
 <dt>
-gnutls_transport_is_ktls_enabled, function in socket
+<a class="link" href="gnutls-gnutls.html#gnutls-transport-is-ktls-enabled" title="gnutls_transport_is_ktls_enabled ()">gnutls_transport_is_ktls_enabled</a>, function in <a class="link" href="gnutls-gnutls.html" title="gnutls">gnutls</a>
 </dt>
 <dd></dd>
 <dt>
-gnutls_transport_ktls_enable_flags_t, enum in socket
+<a class="link" href="gnutls-gnutls.html#gnutls-transport-ktls-enable-flags-t" title="enum gnutls_transport_ktls_enable_flags_t">gnutls_transport_ktls_enable_flags_t</a>, enum in <a class="link" href="gnutls-gnutls.html" title="gnutls">gnutls</a>
 </dt>
 <dd></dd>
 <dt>
@@ -10636,23 +10744,11 @@ gost28147_set_param, macro in gost28147
 </dt>
 <dd></dd>
 <dt>
-gostdsa_generate_keypair, macro in ecc-gost-curve
-</dt>
-<dd></dd>
-<dt>
 gostdsa_unmask_key, macro in gostdsa2
 </dt>
 <dd></dd>
 <dt>
 GOST_K, macro in crypto-backend
-</dt>
-<dd></dd>
-<dt>
-gost_point_mul_g, macro in ecc-gost-curve
-</dt>
-<dd></dd>
-<dt>
-gost_point_set, macro in ecc-gost-curve
 </dt>
 <dd></dd>
 <dt>
@@ -10702,6 +10798,10 @@ HANDSHAKE_SERVER_TRAFFIC_LABEL, macro in handshake-defs
 <dd></dd>
 <dt>
 handshake_state_t, enum in gnutls_int
+</dt>
+<dd></dd>
+<dt>
+hash, function in dsa-fips
 </dt>
 <dd></dd>
 <dt>
@@ -10782,6 +10882,10 @@ HASH_OID_STREEBOG_256, macro in x509_int
 <dd></dd>
 <dt>
 HASH_OID_STREEBOG_512, macro in x509_int
+</dt>
+<dd></dd>
+<dt>
+hash_security_level_t, enum in algorithms
 </dt>
 <dd></dd>
 <dt>
@@ -10943,6 +11047,10 @@ import_pkcs3, function in gnutlsxx
 <dd></dd>
 <dt>
 import_raw, function in gnutlsxx
+</dt>
+<dd></dd>
+<dt>
+IMP_BINDER_LABEL, macro in handshake-defs
 </dt>
 <dd></dd>
 <dt>
@@ -11282,7 +11390,7 @@ is_cert_type_enabled, function in cert_types
 </dt>
 <dd></dd>
 <dt>
-is_cipher_algo_allowed, macro in fips
+is_cipher_algo_allowed, function in fips
 </dt>
 <dd></dd>
 <dt>
@@ -11306,7 +11414,7 @@ IS_KTLS_ENABLED, macro in gnutls_int
 </dt>
 <dd></dd>
 <dt>
-is_mac_algo_allowed, macro in fips
+is_mac_algo_allowed, function in fips
 </dt>
 <dd></dd>
 <dt>
@@ -11673,10 +11781,6 @@ MAX_RECORD_SEND_OVERHEAD, macro in gnutls_int
 </dt>
 <dd></dd>
 <dt>
-MAX_RECORD_SEND_SIZE, macro in gnutls_int
-</dt>
-<dd></dd>
-<dt>
 max_record_send_size, function in gnutls_int
 </dt>
 <dd></dd>
@@ -11765,10 +11869,6 @@ MIN_WORD_LENGTH, macro in composition-table
 </dt>
 <dd></dd>
 <dt>
-mode, variable in fips
-</dt>
-<dd></dd>
-<dt>
 MODIFIED, macro in x509_int
 </dt>
 <dd></dd>
@@ -11786,6 +11886,10 @@ mpn_get_base256, function in mpn-base256
 <dd></dd>
 <dt>
 mpn_set_base256, function in mpn-base256
+</dt>
+<dd></dd>
+<dt>
+mpz_seed_sizeinbase_256_u, function in dsa-fips
 </dt>
 <dd></dd>
 <dt>
@@ -11834,14 +11938,6 @@ nettle_block8, macro in block8
 </dt>
 <dd></dd>
 <dt>
-nettle_get_gost_gc256b, macro in ecc-gost-curve
-</dt>
-<dd></dd>
-<dt>
-nettle_get_gost_gc512a, macro in ecc-gost-curve
-</dt>
-<dd></dd>
-<dt>
 nettle_mpz_get_str_256_u_le, macro in bignum-le
 </dt>
 <dd></dd>
@@ -11855,10 +11951,6 @@ nettle_mpz_set_str_256_u_le, macro in bignum-le
 <dd></dd>
 <dt>
 nettle_mpz_sizeinbase_256_u_le, macro in bignum-le
-</dt>
-<dd></dd>
-<dt>
-NETTLE_PURE, macro in ecc-gost-curve
 </dt>
 <dd></dd>
 <dt>
@@ -12113,10 +12205,6 @@ PEM_X509_CERT2, macro in common
 <dd></dd>
 <dt>
 pin_info_st, struct in gnutls_int
-</dt>
-<dd></dd>
-<dt>
-pk, variable in algorithms
 </dt>
 <dd></dd>
 <dt>
@@ -12505,6 +12593,10 @@ release_tpm2_ctx, function in tpm2
 </dt>
 <dd></dd>
 <dt>
+remove_function, function in gnutlsxx
+</dt>
+<dd></dd>
+<dt>
 reset_binders, function in state
 </dt>
 <dd></dd>
@@ -12525,7 +12617,15 @@ ret, variable in u-normalize-internal
 </dt>
 <dd></dd>
 <dt>
+retrieve_function, function in gnutlsxx
+</dt>
+<dd></dd>
+<dt>
 RETURN_DTLS_EAGAIN_OR_TIMEOUT, macro in <a class="link" href="gnutls-dtls.html" title="dtls">dtls</a>
+</dt>
+<dd></dd>
+<dt>
+RETWRAP, function in gnutlsxx
 </dt>
 <dd></dd>
 <dt>
@@ -12589,10 +12689,6 @@ RSHIFT_ALIEN_UINT64, macro in block-internal
 </dt>
 <dd></dd>
 <a name="idxS"></a><h3 class="title">S</h3>
-<dt>
-safe_memset, function in gstr
-</dt>
-<dd></dd>
 <dt>
 safe_renegotiation_t, enum in gnutls_int
 </dt>
@@ -13010,6 +13106,10 @@ STEK_ROTATION_PERIOD_PRODUCT, macro in gnutls_int
 </dt>
 <dd></dd>
 <dt>
+store_function, function in gnutlsxx
+</dt>
+<dd></dd>
+<dt>
 STREEBOG256_BLOCK_SIZE, macro in streebog
 </dt>
 <dd></dd>
@@ -13195,14 +13295,6 @@ TLS_SIGN_AID_UNKNOWN, macro in algorithms
 </dt>
 <dd></dd>
 <dt>
-TMP_ALLOC, macro in nettle-alloca
-</dt>
-<dd></dd>
-<dt>
-TMP_DECL, macro in nettle-alloca
-</dt>
-<dd></dd>
-<dt>
 TOMPZ, macro in gnettle
 </dt>
 <dd></dd>
@@ -13348,10 +13440,6 @@ u16_strcpy, function in unistr.in
 </dt>
 <dd></dd>
 <dt>
-u16_strdup, function in unistr.in
-</dt>
-<dd></dd>
-<dt>
 u16_strmbtouc, function in unistr.in
 </dt>
 <dd></dd>
@@ -13456,10 +13544,6 @@ u32_strcpy, function in unistr.in
 </dt>
 <dd></dd>
 <dt>
-u32_strdup, function in unistr.in
-</dt>
-<dd></dd>
-<dt>
 u32_strmbtouc, function in unistr.in
 </dt>
 <dd></dd>
@@ -13561,10 +13645,6 @@ u8_stpncpy, function in unistr.in
 <dd></dd>
 <dt>
 u8_strcat, function in unistr.in
-</dt>
-<dd></dd>
-<dt>
-u8_strchr, function in unistr.in
 </dt>
 <dd></dd>
 <dt>
@@ -14080,6 +14160,30 @@ UC_PROPERTY_DIACRITIC, variable in unictype.in
 </dt>
 <dd></dd>
 <dt>
+UC_PROPERTY_EMOJI, variable in unictype.in
+</dt>
+<dd></dd>
+<dt>
+UC_PROPERTY_EMOJI_COMPONENT, variable in unictype.in
+</dt>
+<dd></dd>
+<dt>
+UC_PROPERTY_EMOJI_MODIFIER, variable in unictype.in
+</dt>
+<dd></dd>
+<dt>
+UC_PROPERTY_EMOJI_MODIFIER_BASE, variable in unictype.in
+</dt>
+<dd></dd>
+<dt>
+UC_PROPERTY_EMOJI_PRESENTATION, variable in unictype.in
+</dt>
+<dd></dd>
+<dt>
+UC_PROPERTY_EXTENDED_PICTOGRAPHIC, variable in unictype.in
+</dt>
+<dd></dd>
+<dt>
 UC_PROPERTY_EXTENDER, variable in unictype.in
 </dt>
 <dd></dd>
@@ -14237,6 +14341,10 @@ UC_PROPERTY_QUOTATION_MARK, variable in unictype.in
 <dd></dd>
 <dt>
 UC_PROPERTY_RADICAL, variable in unictype.in
+</dt>
+<dd></dd>
+<dt>
+UC_PROPERTY_REGIONAL_INDICATOR, variable in unictype.in
 </dt>
 <dd></dd>
 <dt>

@@ -35,10 +35,10 @@
 /*
  * DTLS sliding window handling
  */
-#define DTLS_EPOCH_SHIFT		(6*CHAR_BIT)
-#define DTLS_SEQ_NUM_MASK		0x0000FFFFFFFFFFFF
+#define DTLS_EPOCH_SHIFT (6 * CHAR_BIT)
+#define DTLS_SEQ_NUM_MASK 0x0000FFFFFFFFFFFF
 
-#define DTLS_EMPTY_BITMAP		(0xFFFFFFFFFFFFFFFFULL)
+#define DTLS_EMPTY_BITMAP (0xFFFFFFFFFFFFFFFFULL)
 
 void _dtls_reset_window(struct record_parameters_st *rp)
 {
@@ -128,7 +128,8 @@ int _dtls_record_check(struct record_parameters_st *rp, uint64_t seq_num)
 			return gnutls_assert_val(-3);
 		} else {
 			/* Within the sliding window, so we remember whether we've seen it or not */
-			uint64_t mask = 1ULL << (rp->dtls_sw_next - seq_num - 2);
+			uint64_t mask = 1ULL
+					<< (rp->dtls_sw_next - seq_num - 2);
 
 			if (!(rp->dtls_sw_bits & mask))
 				return gnutls_assert_val(-3);

@@ -39,13 +39,13 @@ struct aes_ctx {
 	int enc;
 };
 
-static int
-aes_cipher_init(gnutls_cipher_algorithm_t algorithm, void **_ctx, int enc)
+static int aes_cipher_init(gnutls_cipher_algorithm_t algorithm, void **_ctx,
+			   int enc)
 {
 	/* we use key size to distinguish */
-	if (algorithm != GNUTLS_CIPHER_AES_128_CBC
-	    && algorithm != GNUTLS_CIPHER_AES_192_CBC
-	    && algorithm != GNUTLS_CIPHER_AES_256_CBC)
+	if (algorithm != GNUTLS_CIPHER_AES_128_CBC &&
+	    algorithm != GNUTLS_CIPHER_AES_192_CBC &&
+	    algorithm != GNUTLS_CIPHER_AES_256_CBC)
 		return GNUTLS_E_INVALID_REQUEST;
 
 	*_ctx = gnutls_calloc(1, sizeof(struct aes_ctx));
@@ -54,13 +54,13 @@ aes_cipher_init(gnutls_cipher_algorithm_t algorithm, void **_ctx, int enc)
 		return GNUTLS_E_MEMORY_ERROR;
 	}
 
-	((struct aes_ctx *) (*_ctx))->enc = enc;
+	((struct aes_ctx *)(*_ctx))->enc = enc;
 
 	return 0;
 }
 
-static int
-aes_aarch64_cipher_setkey(void *_ctx, const void *userkey, size_t keysize)
+static int aes_aarch64_cipher_setkey(void *_ctx, const void *userkey,
+				     size_t keysize)
 {
 	struct aes_ctx *ctx = _ctx;
 	int ret;
@@ -68,13 +68,11 @@ aes_aarch64_cipher_setkey(void *_ctx, const void *userkey, size_t keysize)
 	CHECK_AES_KEYSIZE(keysize);
 
 	if (ctx->enc)
-		ret =
-		    aes_v8_set_encrypt_key(userkey, keysize * 8,
-					  ALIGN16(&ctx->expanded_key));
+		ret = aes_v8_set_encrypt_key(userkey, keysize * 8,
+					     ALIGN16(&ctx->expanded_key));
 	else
-		ret =
-		    aes_v8_set_decrypt_key(userkey, keysize * 8,
-					  ALIGN16(&ctx->expanded_key));
+		ret = aes_v8_set_decrypt_key(userkey, keysize * 8,
+					     ALIGN16(&ctx->expanded_key));
 
 	if (ret != 0)
 		return gnutls_assert_val(GNUTLS_E_ENCRYPTION_FAILED);
@@ -82,9 +80,8 @@ aes_aarch64_cipher_setkey(void *_ctx, const void *userkey, size_t keysize)
 	return 0;
 }
 
-static int
-aes_aarch64_encrypt(void *_ctx, const void *src, size_t src_size,
-	    void *dst, size_t dst_size)
+static int aes_aarch64_encrypt(void *_ctx, const void *src, size_t src_size,
+			       void *dst, size_t dst_size)
 {
 	struct aes_ctx *ctx = _ctx;
 
@@ -95,13 +92,12 @@ aes_aarch64_encrypt(void *_ctx, const void *src, size_t src_size,
 		return gnutls_assert_val(GNUTLS_E_SHORT_MEMORY_BUFFER);
 
 	aes_v8_cbc_encrypt(src, dst, src_size, ALIGN16(&ctx->expanded_key),
-			  ctx->iv, 1);
+			   ctx->iv, 1);
 	return 0;
 }
 
-static int
-aes_aarch64_decrypt(void *_ctx, const void *src, size_t src_size,
-	    void *dst, size_t dst_size)
+static int aes_aarch64_decrypt(void *_ctx, const void *src, size_t src_size,
+			       void *dst, size_t dst_size)
 {
 	struct aes_ctx *ctx = _ctx;
 
@@ -112,7 +108,7 @@ aes_aarch64_decrypt(void *_ctx, const void *src, size_t src_size,
 		return gnutls_assert_val(GNUTLS_E_SHORT_MEMORY_BUFFER);
 
 	aes_v8_cbc_encrypt(src, dst, src_size, ALIGN16(&ctx->expanded_key),
-			  ctx->iv, 0);
+			   ctx->iv, 0);
 
 	return 0;
 }
@@ -144,4 +140,3 @@ const gnutls_crypto_cipher_st _gnutls_aes_cbc_aarch64 = {
 	.decrypt = aes_aarch64_decrypt,
 	.deinit = aes_deinit,
 };
-

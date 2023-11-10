@@ -16,8 +16,7 @@
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GnuTLS; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
+ * along with GnuTLS.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 #ifdef HAVE_CONFIG_H
@@ -41,7 +40,7 @@ static void tls_log_func(int level, const char *str)
 	fprintf(stderr, "%s|<%d>| %s", side, level, str);
 }
 
-static time_t mytime(time_t * t)
+static time_t mytime(time_t *t)
 {
 	time_t then = 1461671166;
 
@@ -75,13 +74,11 @@ void doit(void)
 
 	/* Init server */
 	gnutls_certificate_allocate_credentials(&serverx509cred);
-	gnutls_certificate_set_x509_key_mem(serverx509cred,
-					    &server_cert, &server_key,
-					    GNUTLS_X509_FMT_PEM);
+	gnutls_certificate_set_x509_key_mem(serverx509cred, &server_cert,
+					    &server_key, GNUTLS_X509_FMT_PEM);
 
 	gnutls_init(&server, GNUTLS_SERVER);
-	gnutls_credentials_set(server, GNUTLS_CRD_CERTIFICATE,
-				serverx509cred);
+	gnutls_credentials_set(server, GNUTLS_CRD_CERTIFICATE, serverx509cred);
 	gnutls_set_default_priority(server);
 	gnutls_transport_set_push_function(server, server_push);
 	gnutls_transport_set_pull_function(server, server_pull);
@@ -92,20 +89,22 @@ void doit(void)
 	if (ret < 0)
 		exit(1);
 
-	ret = gnutls_certificate_set_x509_trust_mem(clientx509cred, &ca_cert, GNUTLS_X509_FMT_PEM);
+	ret = gnutls_certificate_set_x509_trust_mem(clientx509cred, &ca_cert,
+						    GNUTLS_X509_FMT_PEM);
 	if (ret < 0)
 		exit(1);
 
-	ret = gnutls_init(&client, GNUTLS_CLIENT|GNUTLS_ENABLE_FALSE_START);
+	ret = gnutls_init(&client, GNUTLS_CLIENT | GNUTLS_ENABLE_FALSE_START);
 	if (ret < 0)
 		exit(1);
 
 	ret = gnutls_credentials_set(client, GNUTLS_CRD_CERTIFICATE,
-				clientx509cred);
+				     clientx509cred);
 	if (ret < 0)
 		exit(1);
 
-	assert(gnutls_priority_set_direct(client, "NORMAL:-VERS-ALL:+VERS-TLS1.2", NULL)>=0);
+	assert(gnutls_priority_set_direct(
+		       client, "NORMAL:-VERS-ALL:+VERS-TLS1.2", NULL) >= 0);
 	gnutls_transport_set_push_function(client, client_push);
 	gnutls_transport_set_pull_function(client, client_pull);
 	gnutls_transport_set_ptr(client, client);

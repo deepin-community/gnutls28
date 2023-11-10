@@ -52,15 +52,16 @@
 #include "certtool-common.h"
 #include "socket.h"
 
-static const char *obtain_cert(const char *hostname, const char *proto, const char *service,
-				const char *app_proto, unsigned quiet);
+static const char *obtain_cert(const char *hostname, const char *proto,
+			       const char *service, const char *app_proto,
+			       unsigned quiet);
 static void cmd_parser(int argc, char **argv);
-static void dane_info(const char *host, const char *proto,
-		      const char *service, unsigned int ca,
-		      unsigned int domain, common_info_st * cinfo);
+static void dane_info(const char *host, const char *proto, const char *service,
+		      unsigned int ca, unsigned int domain,
+		      common_info_st *cinfo);
 
-static void dane_check(const char *host, const char *proto,
-		       const char *service, common_info_st * cinfo);
+static void dane_check(const char *host, const char *proto, const char *service,
+		       common_info_st *cinfo);
 
 FILE *outfile;
 static const char *outfile_name = NULL;
@@ -92,7 +93,6 @@ int main(int argc, char **argv)
 
 	return 0;
 }
-
 
 static void cmd_parser(int argc, char **argv)
 {
@@ -141,7 +141,7 @@ static void cmd_parser(int argc, char **argv)
 
 	if (HAVE_OPT(DEBUG)) {
 		gnutls_global_set_log_level(OPT_VALUE_DEBUG);
-		printf("Setting log level to %d\n", (int) OPT_VALUE_DEBUG);
+		printf("Setting log level to %d\n", (int)OPT_VALUE_DEBUG);
 	}
 
 	if ((ret = gnutls_global_init()) < 0) {
@@ -172,15 +172,17 @@ static void cmd_parser(int argc, char **argv)
 		snprintf(service, sizeof(service), "%s", OPT_ARG(PORT));
 	} else {
 		if (HAVE_OPT(STARTTLS_PROTO))
-			snprintf(service, sizeof(service), "%s", starttls_proto_to_service(OPT_ARG(STARTTLS_PROTO)));
+			snprintf(service, sizeof(service), "%s",
+				 starttls_proto_to_service(
+					 OPT_ARG(STARTTLS_PROTO)));
 	}
 
 	if (HAVE_OPT(PROTO))
 		proto = OPT_ARG(PROTO);
 
 	if (HAVE_OPT(TLSA_RR))
-		dane_info(OPT_ARG(HOST), proto, service,
-			  HAVE_OPT(CA), ENABLED_OPT(DOMAIN), &cinfo);
+		dane_info(OPT_ARG(HOST), proto, service, HAVE_OPT(CA),
+			  ENABLED_OPT(DOMAIN), &cinfo);
 	else if (HAVE_OPT(CHECK))
 		dane_check(OPT_ARG(CHECK), proto, service, &cinfo);
 	else
@@ -195,8 +197,8 @@ static void cmd_parser(int argc, char **argv)
 }
 
 #define MAX_CLIST_SIZE 32
-static void dane_check(const char *host, const char *proto,
-		       const char *service, common_info_st * cinfo)
+static void dane_check(const char *host, const char *proto, const char *service,
+		       common_info_st *cinfo)
 {
 #ifdef HAVE_DANE
 	dane_state_t s;
@@ -233,16 +235,17 @@ static void dane_check(const char *host, const char *proto,
 		if (HAVE_OPT(STARTTLS_PROTO))
 			app_proto = OPT_ARG(STARTTLS_PROTO);
 
-		cinfo->cert = obtain_cert(host, proto, service, app_proto, HAVE_OPT(QUIET));
+		cinfo->cert = obtain_cert(host, proto, service, app_proto,
+					  HAVE_OPT(QUIET));
 		del = 1;
 	}
 
 	if (!HAVE_OPT(QUIET))
-		fprintf(stderr, "Querying DNS for %s (%s:%d)...\n", host, proto, port);
+		fprintf(stderr, "Querying DNS for %s (%s:%d)...\n", host, proto,
+			port);
 	ret = dane_state_init(&s, flags);
 	if (ret < 0) {
-		fprintf(stderr, "dane_state_init: %s\n",
-			dane_strerror(ret));
+		fprintf(stderr, "dane_state_init: %s\n", dane_strerror(ret));
 		retcode = 1;
 		goto error;
 	}
@@ -259,8 +262,7 @@ static void dane_check(const char *host, const char *proto,
 
 	ret = dane_query_tlsa(s, &q, host, proto, port);
 	if (ret < 0) {
-		fprintf(stderr, "dane_query_tlsa: %s\n",
-			dane_strerror(ret));
+		fprintf(stderr, "dane_query_tlsa: %s\n", dane_strerror(ret));
 		retcode = 1;
 		goto error;
 	}
@@ -273,7 +275,7 @@ static void dane_check(const char *host, const char *proto,
 		int bogus;
 
 		ret = dane_query_to_raw_tlsa(q, &entries, &dane_data,
-			&dane_data_len, &secure, &bogus);
+					     &dane_data_len, &secure, &bogus);
 		if (ret < 0) {
 			fprintf(stderr, "dane_query_to_raw_tlsa: %s\n",
 				dane_strerror(ret));
@@ -281,9 +283,9 @@ static void dane_check(const char *host, const char *proto,
 			goto error;
 		}
 
-		for (i=0;i<entries;i++) {
+		for (i = 0; i < entries; i++) {
 			size_t str_size;
-			t.data = (void*)dane_data[i];
+			t.data = (void *)dane_data[i];
 			t.size = dane_data_len[i];
 
 			str_size = t.size * 2 + 1;
@@ -311,33 +313,24 @@ static void dane_check(const char *host, const char *proto,
 			goto error;
 		}
 
-		ret =
-		    gnutls_x509_crt_list_import2(&clist,
-						 &clist_size,
-						 &file,
-						 cinfo->
-						 incert_format, 0);
+		ret = gnutls_x509_crt_list_import2(&clist, &clist_size, &file,
+						   cinfo->incert_format, 0);
 		if (ret < 0) {
-			fprintf(stderr,
-				"gnutls_x509_crt_list_import2: %s\n",
+			fprintf(stderr, "gnutls_x509_crt_list_import2: %s\n",
 				gnutls_strerror(ret));
 			retcode = 1;
 			goto error;
 		}
 
 		if (clist_size > 0) {
-			for (i = 0; i < MIN(MAX_CLIST_SIZE,clist_size); i++) {
-				ret =
-				    gnutls_x509_crt_export2(clist
-							    [i],
-							    GNUTLS_X509_FMT_DER,
-							    &certs
-							    [i]);
+			for (i = 0; i < MIN(MAX_CLIST_SIZE, clist_size); i++) {
+				ret = gnutls_x509_crt_export2(
+					clist[i], GNUTLS_X509_FMT_DER,
+					&certs[i]);
 				if (ret < 0) {
 					fprintf(stderr,
 						"gnutls_x509_crt_export2: %s\n",
-						gnutls_strerror
-						(ret));
+						gnutls_strerror(ret));
 					retcode = 1;
 					goto error;
 				}
@@ -356,7 +349,7 @@ static void dane_check(const char *host, const char *proto,
 		}
 
 		size = lbuffer_size;
-		ret = gnutls_hex_encode(&data, (void *) lbuffer, &size);
+		ret = gnutls_hex_encode(&data, (void *)lbuffer, &size);
 		if (ret < 0) {
 			fprintf(stderr, "gnutls_hex_encode: %s\n",
 				dane_strerror(ret));
@@ -367,22 +360,27 @@ static void dane_check(const char *host, const char *proto,
 		if (entries > 1 && !HAVE_OPT(QUIET))
 			fprintf(outfile, "\n==== Entry %d ====\n", i + 1);
 
-		fprintf(outfile,
-			"_%u._%s.%s. IN TLSA ( %.2x %.2x %.2x %s )\n",
+		fprintf(outfile, "_%u._%s.%s. IN TLSA ( %.2x %.2x %.2x %s )\n",
 			port, proto, host, usage, type, match, lbuffer);
 
 		if (!HAVE_OPT(QUIET)) {
 			cstr = dane_cert_usage_name(usage);
-			if (cstr == NULL) cstr= "Unknown";
-			fprintf(outfile, "Certificate usage: %s (%.2x)\n", cstr, usage);
+			if (cstr == NULL)
+				cstr = "Unknown";
+			fprintf(outfile, "Certificate usage: %s (%.2x)\n", cstr,
+				usage);
 
 			cstr = dane_cert_type_name(type);
-			if (cstr == NULL) cstr= "Unknown";
-			fprintf(outfile, "Certificate type:  %s (%.2x)\n", cstr, type);
+			if (cstr == NULL)
+				cstr = "Unknown";
+			fprintf(outfile, "Certificate type:  %s (%.2x)\n", cstr,
+				type);
 
 			cstr = dane_match_type_name(match);
-			if (cstr == NULL) cstr= "Unknown";
-			fprintf(outfile, "Contents:	  %s (%.2x)\n", cstr, match);
+			if (cstr == NULL)
+				cstr = "Unknown";
+			fprintf(outfile, "Contents:	  %s (%.2x)\n", cstr,
+				match);
 			fprintf(outfile, "Data:	      %s\n", lbuffer);
 		}
 
@@ -391,23 +389,17 @@ static void dane_check(const char *host, const char *proto,
 			unsigned int status;
 			gnutls_datum_t out;
 
-			ret =
-			    dane_verify_crt(s, certs, clist_size,
-					    GNUTLS_CRT_X509, host,
-					    proto, port, 0, vflags,
-					    &status);
+			ret = dane_verify_crt(s, certs, clist_size,
+					      GNUTLS_CRT_X509, host, proto,
+					      port, 0, vflags, &status);
 			if (ret < 0) {
-				fprintf(stderr,
-					"dane_verify_crt: %s\n",
+				fprintf(stderr, "dane_verify_crt: %s\n",
 					dane_strerror(ret));
 				retcode = 1;
 				goto error;
 			}
 
-			ret =
-			    dane_verification_status_print(status,
-							   &out,
-							   0);
+			ret = dane_verification_status_print(status, &out, 0);
 			if (ret < 0) {
 				fprintf(stderr,
 					"dane_verification_status_print: %s\n",
@@ -417,7 +409,8 @@ static void dane_check(const char *host, const char *proto,
 			}
 
 			if (!HAVE_OPT(QUIET))
-				fprintf(outfile, "\nVerification: %s\n", out.data);
+				fprintf(outfile, "\nVerification: %s\n",
+					out.data);
 			gnutls_free(out.data);
 
 			/* if there is at least one correct accept */
@@ -437,12 +430,10 @@ static void dane_check(const char *host, const char *proto,
 		gnutls_free(clist);
 	}
 
-
-
 	dane_query_deinit(q);
 	dane_state_deinit(s);
 
- error:
+error:
 	if (del != 0 && cinfo->cert) {
 		(void)remove(cinfo->cert);
 	}
@@ -455,9 +446,9 @@ static void dane_check(const char *host, const char *proto,
 #endif
 }
 
-static void dane_info(const char *host, const char *proto,
-		      const char *service, unsigned int ca,
-		      unsigned int domain, common_info_st * cinfo)
+static void dane_info(const char *host, const char *proto, const char *service,
+		      unsigned int ca, unsigned int domain,
+		      common_info_st *cinfo)
 {
 	gnutls_pubkey_t pubkey;
 	gnutls_x509_crt_t crt;
@@ -473,12 +464,11 @@ static void dane_info(const char *host, const char *proto,
 
 	crt = load_cert(0, cinfo);
 	if (crt != NULL && HAVE_OPT(X509)) {
-		selector = 0;	/* X.509 */
+		selector = 0; /* X.509 */
 
 		size = lbuffer_size;
-		ret =
-		    gnutls_x509_crt_export(crt, GNUTLS_X509_FMT_DER,
-					   lbuffer, &size);
+		ret = gnutls_x509_crt_export(crt, GNUTLS_X509_FMT_DER, lbuffer,
+					     &size);
 		if (ret < 0) {
 			fprintf(stderr, "export error: %s\n",
 				gnutls_strerror(ret));
@@ -486,7 +476,7 @@ static void dane_info(const char *host, const char *proto,
 		}
 
 		gnutls_x509_crt_deinit(crt);
-	} else {		/* use public key only */
+	} else { /* use public key only */
 
 		selector = 1;
 
@@ -498,7 +488,6 @@ static void dane_info(const char *host, const char *proto,
 		}
 
 		if (crt != NULL) {
-
 			ret = gnutls_pubkey_import_x509(pubkey, crt, 0);
 			if (ret < 0) {
 				fprintf(stderr, "pubkey_import_x509: %s\n",
@@ -507,10 +496,8 @@ static void dane_info(const char *host, const char *proto,
 			}
 
 			size = lbuffer_size;
-			ret =
-			    gnutls_pubkey_export(pubkey,
-						 GNUTLS_X509_FMT_DER,
-						 lbuffer, &size);
+			ret = gnutls_pubkey_export(pubkey, GNUTLS_X509_FMT_DER,
+						   lbuffer, &size);
 			if (ret < 0) {
 				fprintf(stderr, "pubkey_export: %s\n",
 					gnutls_strerror(ret));
@@ -522,10 +509,8 @@ static void dane_info(const char *host, const char *proto,
 			pubkey = load_pubkey(1, cinfo);
 
 			size = lbuffer_size;
-			ret =
-			    gnutls_pubkey_export(pubkey,
-						 GNUTLS_X509_FMT_DER,
-						 lbuffer, &size);
+			ret = gnutls_pubkey_export(pubkey, GNUTLS_X509_FMT_DER,
+						   lbuffer, &size);
 			if (ret < 0) {
 				fprintf(stderr, "export error: %s\n",
 					gnutls_strerror(ret));
@@ -536,8 +521,8 @@ static void dane_info(const char *host, const char *proto,
 		gnutls_pubkey_deinit(pubkey);
 	}
 
-	if (default_dig != GNUTLS_DIG_SHA256
-	    && default_dig != GNUTLS_DIG_SHA512) {
+	if (default_dig != GNUTLS_DIG_SHA256 &&
+	    default_dig != GNUTLS_DIG_SHA512) {
 		if (default_dig != GNUTLS_DIG_UNKNOWN)
 			fprintf(stderr,
 				"Unsupported digest. Assuming SHA256.\n");
@@ -572,18 +557,15 @@ static void dane_info(const char *host, const char *proto,
 	t.size = gnutls_hash_get_len(default_dig);
 
 	size = lbuffer_size;
-	ret = gnutls_hex_encode(&t, (void *) lbuffer, &size);
+	ret = gnutls_hex_encode(&t, (void *)lbuffer, &size);
 	if (ret < 0) {
-		fprintf(stderr, "hex encode error: %s\n",
-			gnutls_strerror(ret));
+		fprintf(stderr, "hex encode error: %s\n", gnutls_strerror(ret));
 		app_exit(1);
 	}
 
-	fprintf(outfile, "_%u._%s.%s. IN TLSA ( %.2x %.2x %.2x %s )\n",
-		port, proto, host, usage, selector, type, lbuffer);
-
+	fprintf(outfile, "_%u._%s.%s. IN TLSA ( %.2x %.2x %.2x %s )\n", port,
+		proto, host, usage, selector, type, lbuffer);
 }
-
 
 struct priv_st {
 	int fd;
@@ -608,8 +590,9 @@ static int cert_callback(gnutls_session_t session)
 
 	priv = gnutls_session_get_ptr(session);
 
-	for (i=0;i<cert_list_size;i++) {
-		ret = gnutls_pem_base64_encode_alloc("CERTIFICATE", &cert_list[i], &t);
+	for (i = 0; i < cert_list_size; i++) {
+		ret = gnutls_pem_base64_encode_alloc("CERTIFICATE",
+						     &cert_list[i], &t);
 		if (ret < 0) {
 			fprintf(stderr, "error[%d]: %s\n", __LINE__,
 				gnutls_strerror(ret));
@@ -637,7 +620,8 @@ gnutls_session_t init_tls_session(const char *hostname)
 	priv.found = 0;
 	priv.fd = file_fd;
 
-	ret = gnutls_init(&session, (udp?GNUTLS_DATAGRAM:0)|GNUTLS_CLIENT);
+	ret = gnutls_init(&session,
+			  (udp ? GNUTLS_DATAGRAM : 0) | GNUTLS_CLIENT);
 	if (ret < 0) {
 		fprintf(stderr, "error[%d]: %s\n", __LINE__,
 			gnutls_strerror(ret));
@@ -652,29 +636,31 @@ gnutls_session_t init_tls_session(const char *hostname)
 		app_exit(1);
 	}
 
-	if (hostname && is_ip(hostname)==0) {
-		gnutls_server_name_set(session, GNUTLS_NAME_DNS, hostname, strlen(hostname));
+	if (hostname && is_ip(hostname) == 0) {
+		gnutls_server_name_set(session, GNUTLS_NAME_DNS, hostname,
+				       strlen(hostname));
 	}
 	gnutls_credentials_set(session, GNUTLS_CRD_CERTIFICATE, xcred);
 
 	return session;
 }
 
-int do_handshake(socket_st * socket)
+int do_handshake(socket_st *socket)
 {
 	int ret;
 
 	do {
 		ret = gnutls_handshake(socket->session);
-	} while(ret == GNUTLS_E_INTERRUPTED || ret == GNUTLS_E_AGAIN || ret == GNUTLS_E_WARNING_ALERT_RECEIVED);
+	} while (ret == GNUTLS_E_INTERRUPTED || ret == GNUTLS_E_AGAIN ||
+		 ret == GNUTLS_E_WARNING_ALERT_RECEIVED);
 	/* we don't care on the result */
 
 	return 0;
 }
 
-
-static const char *obtain_cert(const char *hostname, const char *proto, const char *service,
-				const char *app_proto, unsigned quiet)
+static const char *obtain_cert(const char *hostname, const char *proto,
+			       const char *service, const char *app_proto,
+			       unsigned quiet)
 {
 	socket_st hd;
 	const char *txt_service;
@@ -707,22 +693,22 @@ static const char *obtain_cert(const char *hostname, const char *proto, const ch
 	if (quiet)
 		str = NULL;
 
-	if (app_proto == NULL) app_proto = txt_service;
+	if (app_proto == NULL)
+		app_proto = txt_service;
 
 	if (udp)
 		socket_flags |= SOCKET_FLAG_UDP;
-	
 
 	umask(066);
 	file_fd = mkstemp(tmpfile);
 	if (file_fd == -1) {
 		int e = errno;
-		fprintf(stderr, "error[%d]: %s\n", __LINE__,
-			strerror(e));
+		fprintf(stderr, "error[%d]: %s\n", __LINE__, strerror(e));
 		app_exit(1);
 	}
 
-	socket_open(&hd, hostname, txt_service, app_proto, socket_flags|SOCKET_FLAG_STARTTLS, str, NULL);
+	socket_open(&hd, hostname, txt_service, app_proto,
+		    socket_flags | SOCKET_FLAG_STARTTLS, str, NULL);
 
 	close(file_fd);
 

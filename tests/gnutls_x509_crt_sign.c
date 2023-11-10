@@ -17,8 +17,7 @@
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GnuTLS; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
+ * along with GnuTLS.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 #ifdef HAVE_CONFIG_H
@@ -51,16 +50,16 @@ static unsigned char saved_crt_pem[] =
 	"MsH9kdwscx1ybGoeRibdngltnwzIjcl5T+D52fADzKHpuvwq6m5qHUz/f/872E3w\n"
 	"AKw9YX7n9316fTydee22/WyNGmP5r6E82Inu6wQpgkrOsgfhs/jNDGEhOw/G1lwZ\n"
 	"dAtaww1V7OEVK1WufVUtQ3rQzxYPcQ==\n"
-        "-----END CERTIFICATE-----\n";
+	"-----END CERTIFICATE-----\n";
 
-const gnutls_datum_t saved_crt = { saved_crt_pem, sizeof(saved_crt_pem)-1 };
+const gnutls_datum_t saved_crt = { saved_crt_pem, sizeof(saved_crt_pem) - 1 };
 
 static void tls_log_func(int level, const char *str)
 {
 	fprintf(stderr, "|<%d>| %s", level, str);
 }
 
-static time_t mytime(time_t * t)
+static time_t mytime(time_t *t)
 {
 	time_t then = 1207000800;
 
@@ -98,7 +97,8 @@ void doit(void)
 	if (ret != 0)
 		fail("gnutls_x509_crt_init\n");
 
-	ret = gnutls_x509_crt_import(crt2, &server_ecc_cert, GNUTLS_X509_FMT_PEM);
+	ret = gnutls_x509_crt_import(crt2, &server_ecc_cert,
+				     GNUTLS_X509_FMT_PEM);
 	if (ret != 0)
 		fail("gnutls_x509_crt_import\n");
 
@@ -141,11 +141,12 @@ void doit(void)
 	if (ret != 0)
 		fail("gnutls_x509_crt_set_key_usage %d\n", ret);
 
-	ret = gnutls_x509_crt_set_dn(crt, "o = none to\\, mention,cn = nikos", &err);
+	ret = gnutls_x509_crt_set_dn(crt, "o = none to\\, mention,cn = nikos",
+				     &err);
 	if (ret < 0) {
-		fail("gnutls_x509_crt_set_dn: %s, %s\n", gnutls_strerror(ret), err);
+		fail("gnutls_x509_crt_set_dn: %s, %s\n", gnutls_strerror(ret),
+		     err);
 	}
-
 
 	ret = gnutls_x509_crt_set_subject_alt_name(crt, GNUTLS_SAN_DNSNAME,
 						   "foo", 3, 1);
@@ -153,18 +154,20 @@ void doit(void)
 		fail("gnutls_x509_crt_set_subject_alt_name\n");
 
 	ret = gnutls_x509_crt_set_subject_alt_name(crt, GNUTLS_SAN_RFC822NAME,
-						   "foo@bar.org", strlen("foo@bar.org"), 1);
+						   "foo@bar.org",
+						   strlen("foo@bar.org"), 1);
 	if (ret != 0)
 		fail("gnutls_x509_crt_set_subject_alt_name\n");
-
 
 	ret = gnutls_x509_crt_set_subject_alt_name(crt, GNUTLS_SAN_IPADDRESS,
 						   "\xc1\x5c\x96\x3", 4, 1);
 	if (ret != 0)
 		fail("gnutls_x509_crt_set_subject_alt_name\n");
 
-	ret = gnutls_x509_crt_set_subject_alt_name(crt, GNUTLS_SAN_IPADDRESS,
-						   "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01", 16, 1);
+	ret = gnutls_x509_crt_set_subject_alt_name(
+		crt, GNUTLS_SAN_IPADDRESS,
+		"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01",
+		16, 1);
 	if (ret != 0)
 		fail("gnutls_x509_crt_set_subject_alt_name\n");
 
@@ -179,10 +182,8 @@ void doit(void)
 		fail("gnutls_x509_crt_get_key_purpose_oid %d\n", ret);
 
 	s = 0;
-	ret =
-	    gnutls_x509_crt_set_key_purpose_oid(crt,
-						GNUTLS_KP_TLS_WWW_SERVER,
-						0);
+	ret = gnutls_x509_crt_set_key_purpose_oid(crt, GNUTLS_KP_TLS_WWW_SERVER,
+						  0);
 	if (ret != 0)
 		fail("gnutls_x509_crt_set_key_purpose_oid %d\n", ret);
 
@@ -192,25 +193,24 @@ void doit(void)
 		fail("gnutls_x509_crt_get_key_purpose_oid %d\n", ret);
 
 	s = 0;
-	ret =
-	    gnutls_x509_crt_set_key_purpose_oid(crt,
-						GNUTLS_KP_TLS_WWW_CLIENT,
-						1);
+	ret = gnutls_x509_crt_set_key_purpose_oid(crt, GNUTLS_KP_TLS_WWW_CLIENT,
+						  1);
 	if (ret != 0)
 		fail("gnutls_x509_crt_set_key_purpose_oid2 %d\n", ret);
 
 	/* in the end this will be ignored as the issuer will be set
 	 * by gnutls_x509_crt_sign2() */
-	ret = gnutls_x509_crt_set_issuer_dn(crt, "cn = my CA, o = big\\, and one", &err);
+	ret = gnutls_x509_crt_set_issuer_dn(
+		crt, "cn = my CA, o = big\\, and one", &err);
 	if (ret < 0) {
-		fail("gnutls_x509_crt_set_issuer_dn: %s, %s\n", gnutls_strerror(ret), err);
+		fail("gnutls_x509_crt_set_issuer_dn: %s, %s\n",
+		     gnutls_strerror(ret), err);
 	}
 
 	/* Sign and finalize the certificate */
 	ret = gnutls_x509_crt_sign(crt, crt, pkey);
 	if (ret < 0)
 		fail("gnutls_x509_crt_sign2: %s\n", gnutls_strerror(ret));
-
 
 	ret = gnutls_x509_crt_print(crt, GNUTLS_CRT_PRINT_FULL, &out);
 	if (ret != 0)
@@ -224,7 +224,9 @@ void doit(void)
 		fail("gnutls_x509_crt_get_raw_dn: %s\n", gnutls_strerror(ret));
 
 	if (out.size != 45 ||
-	    memcmp(out.data, "\x30\x2b\x31\x0e\x30\x0c\x06\x03\x55\x04\x03\x13\x05\x6e\x69\x6b\x6f\x73\x31\x19\x30\x17\x06\x03\x55\x04\x0a\x13\x10\x6e\x6f\x6e\x65\x20\x74\x6f\x2c\x20\x6d\x65\x6e\x74\x69\x6f\x6e", 45) != 0) {
+	    memcmp(out.data,
+		   "\x30\x2b\x31\x0e\x30\x0c\x06\x03\x55\x04\x03\x13\x05\x6e\x69\x6b\x6f\x73\x31\x19\x30\x17\x06\x03\x55\x04\x0a\x13\x10\x6e\x6f\x6e\x65\x20\x74\x6f\x2c\x20\x6d\x65\x6e\x74\x69\x6f\x6e",
+		   45) != 0) {
 		fail("DN comparison failed\n");
 	}
 	gnutls_free(out.data);
@@ -253,7 +255,7 @@ void doit(void)
 	if (debug)
 		fprintf(stderr, "%s\n", out.data);
 	assert(out.size == saved_crt.size);
-	assert(memcmp(out.data, saved_crt.data, out.size)==0);
+	assert(memcmp(out.data, saved_crt.data, out.size) == 0);
 
 	gnutls_free(out.data);
 

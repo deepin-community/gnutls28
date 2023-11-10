@@ -43,19 +43,18 @@ static CK_C_GetMechanismInfo base_C_GetMechanismInfo;
 static CK_FUNCTION_LIST override_funcs;
 
 #ifdef __sun
-# pragma fini(mock_deinit)
-# pragma init(mock_init)
-# define _CONSTRUCTOR
-# define _DESTRUCTOR
+#pragma fini(mock_deinit)
+#pragma init(mock_init)
+#define _CONSTRUCTOR
+#define _DESTRUCTOR
 #else
-# define _CONSTRUCTOR __attribute__((constructor))
-# define _DESTRUCTOR __attribute__((destructor))
+#define _CONSTRUCTOR __attribute__((constructor))
+#define _DESTRUCTOR __attribute__((destructor))
 #endif
 
-static CK_RV
-override_C_GetMechanismInfo(CK_SLOT_ID slot_id,
-			    CK_MECHANISM_TYPE type,
-			    CK_MECHANISM_INFO *info)
+static CK_RV override_C_GetMechanismInfo(CK_SLOT_ID slot_id,
+					 CK_MECHANISM_TYPE type,
+					 CK_MECHANISM_INFO *info)
 {
 	if (type == CKM_RSA_PKCS_PSS)
 		return CKR_MECHANISM_INVALID;
@@ -63,8 +62,7 @@ override_C_GetMechanismInfo(CK_SLOT_ID slot_id,
 	return base_C_GetMechanismInfo(slot_id, type, info);
 }
 
-CK_RV
-C_GetFunctionList(CK_FUNCTION_LIST **function_list)
+CK_RV C_GetFunctionList(CK_FUNCTION_LIST **function_list)
 {
 	CK_C_GetFunctionList func;
 	CK_FUNCTION_LIST *funcs;
@@ -86,13 +84,12 @@ C_GetFunctionList(CK_FUNCTION_LIST **function_list)
 	return CKR_OK;
 }
 
-static _CONSTRUCTOR void
-mock_init(void)
+static _CONSTRUCTOR void mock_init(void)
 {
 	const char *lib;
 
 	/* suppress compiler warning */
-	(void) set_softhsm_conf;
+	(void)set_softhsm_conf;
 
 	lib = softhsm_lib();
 
@@ -101,8 +98,7 @@ mock_init(void)
 		exit(77);
 }
 
-static _DESTRUCTOR void
-mock_deinit(void)
+static _DESTRUCTOR void mock_deinit(void)
 {
 	dlclose(dl);
 }

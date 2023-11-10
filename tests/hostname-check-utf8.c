@@ -16,8 +16,7 @@
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GnuTLS; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
+ * along with GnuTLS.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 #ifdef HAVE_CONFIG_H
@@ -41,7 +40,8 @@
   certificates.
 */
 
-char pem_inv_utf8_dns[] = "\n"
+char pem_inv_utf8_dns[] =
+	"\n"
 	"	Subject Alternative Name (not critical):\n"
 	"			DNSname: γγγ.τόστ.gr\n"
 	"			DNSname: τέστ.gr\n"
@@ -67,7 +67,7 @@ char pem_inv_utf8_dns[] = "\n"
 	"PPFYVMsnY+fuxIsTVErX3bLj6v67Bs3BNzagFUlyJl5rBGwn73UafNWz3BYDyxY=\n"
 	"-----END CERTIFICATE-----\n";
 
-char pem_utf8_dns[] = 
+char pem_utf8_dns[] =
 	"Subject Alternative Name (not critical):\n"
 	"		DNSname: xn--oxaaa.xn--4xabb4a.gr (γγγ.τόστ.gr)\n"
 	"		DNSname: xn--ixa8bbc.gr (τέστ.gr)\n"
@@ -118,7 +118,7 @@ void doit(void)
 
 	if (debug)
 		success("Testing pem_invalid_utf8_dns...\n");
-	data.data = (unsigned char *) pem_inv_utf8_dns;
+	data.data = (unsigned char *)pem_inv_utf8_dns;
 	data.size = strlen(pem_inv_utf8_dns);
 
 	ret = gnutls_x509_crt_import(x509, &data, GNUTLS_X509_FMT_PEM);
@@ -147,7 +147,8 @@ void doit(void)
 
 	ret = gnutls_x509_crt_check_hostname(x509, "www.teχ.gr");
 	if (ret)
-		fail("%d: Invalid hostname incorrectly matches (%d)\n", __LINE__, ret);
+		fail("%d: Invalid hostname incorrectly matches (%d)\n",
+		     __LINE__, ret);
 
 #if IDN2_VERSION_NUMBER >= 0x00160000
 	ret = gnutls_x509_crt_check_hostname(x509, "γΓγ.τόΣτ.gr");
@@ -160,24 +161,27 @@ void doit(void)
 #endif
 	ret = gnutls_x509_crt_check_hostname(x509, "γγγ.τόστ.gr");
 	if (ret)
-		fail("%d: Invalid hostname incorrectly matches (%d)\n", __LINE__, ret);
+		fail("%d: Invalid hostname incorrectly matches (%d)\n",
+		     __LINE__, ret);
 
 	ret = gnutls_x509_crt_check_hostname(x509, "γΓγ.τόΣτ.gr");
 	if (ret)
-		fail("%d: Invalid hostname incorrectly matches (%d)\n", __LINE__, ret);
+		fail("%d: Invalid hostname incorrectly matches (%d)\n",
+		     __LINE__, ret);
 
 	ret = gnutls_x509_crt_check_hostname(x509, "τέστ.gr");
 	if (ret)
-		fail("%d: Invalid hostname incorrectly matches (%d)\n", __LINE__, ret);
+		fail("%d: Invalid hostname incorrectly matches (%d)\n",
+		     __LINE__, ret);
 
 	ret = gnutls_x509_crt_check_hostname(x509, "ΤΈΣΤ.gr");
 	if (ret)
-		fail("%d: Invalid hostname incorrectly matches (%d)\n", __LINE__, ret);
-
+		fail("%d: Invalid hostname incorrectly matches (%d)\n",
+		     __LINE__, ret);
 
 	if (debug)
 		success("Testing pem_utf8_dns...\n");
-	data.data = (unsigned char *) pem_utf8_dns;
+	data.data = (unsigned char *)pem_utf8_dns;
 	data.size = strlen(pem_utf8_dns);
 
 	ret = gnutls_x509_crt_import(x509, &data, GNUTLS_X509_FMT_PEM);
@@ -206,24 +210,29 @@ void doit(void)
 
 	ret = gnutls_x509_crt_check_hostname(x509, "www.teχ.gr");
 	if (!ret)
-		fail("%d: Hostname incorrectly does not match (%d)\n", __LINE__, ret);
+		fail("%d: Hostname incorrectly does not match (%d)\n", __LINE__,
+		     ret);
 
 	ret = gnutls_x509_crt_check_hostname(x509, "γγγ.τόστ.gr");
 	if (!ret)
-		fail("%d: Hostname incorrectly does not match (%d)\n", __LINE__, ret);
+		fail("%d: Hostname incorrectly does not match (%d)\n", __LINE__,
+		     ret);
 
 	ret = gnutls_x509_crt_check_hostname(x509, "τέστ.gr");
 	if (!ret)
-		fail("%d: Hostname incorrectly does not match (%d)\n", __LINE__, ret);
+		fail("%d: Hostname incorrectly does not match (%d)\n", __LINE__,
+		     ret);
 
 #if IDN2_VERSION_NUMBER >= 0x00160000
 	ret = gnutls_x509_crt_check_hostname(x509, "γΓγ.τόΣτ.gr");
 	if (!ret)
-		fail("%d: Hostname incorrectly does not match (%d)\n", __LINE__, ret);
+		fail("%d: Hostname incorrectly does not match (%d)\n", __LINE__,
+		     ret);
 
 	ret = gnutls_x509_crt_check_hostname(x509, "ΤΈΣΤ.gr");
 	if (!ret)
-		fail("%d: Hostname incorrectly does not match (%d)\n", __LINE__, ret);
+		fail("%d: Hostname incorrectly does not match (%d)\n", __LINE__,
+		     ret);
 #endif
 
 	gnutls_x509_crt_deinit(x509);

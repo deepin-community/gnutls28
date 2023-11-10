@@ -43,6 +43,13 @@
 <td class="function_type">const <span class="returnvalue">char</span> *
 </td>
 <td class="function_name">
+<a class="link" href="gnutls-gnutls.html#gnutls-handshake-description-get-name" title="gnutls_handshake_description_get_name ()">gnutls_handshake_description_get_name</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">const <span class="returnvalue">char</span> *
+</td>
+<td class="function_name">
 <a class="link" href="gnutls-gnutls.html#gnutls-pk-algorithm-get-name" title="gnutls_pk_algorithm_get_name ()">gnutls_pk_algorithm_get_name</a> <span class="c_punctuation">()</span>
 </td>
 </tr>
@@ -772,6 +779,13 @@
 </td>
 <td class="function_name">
 <a class="link" href="gnutls-gnutls.html#gnutls-session-get-flags" title="gnutls_session_get_flags ()">gnutls_session_get_flags</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">const <span class="returnvalue">char</span> *
+</td>
+<td class="function_name">
+<a class="link" href="gnutls-gnutls.html#gnutls-supplemental-get-name" title="gnutls_supplemental_get_name ()">gnutls_supplemental_get_name</a> <span class="c_punctuation">()</span>
 </td>
 </tr>
 <tr>
@@ -1688,6 +1702,14 @@
 </tr>
 <tr>
 <td class="function_type">
+<span class="returnvalue">int</span>
+</td>
+<td class="function_name">
+<span class="c_punctuation">(</span><a class="link" href="gnutls-gnutls.html#gnutls-status-request-ocsp-func" title="gnutls_status_request_ocsp_func ()">*gnutls_status_request_ocsp_func</a><span class="c_punctuation">)</span> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
 <span class="returnvalue">void</span>
 </td>
 <td class="function_name">
@@ -2533,6 +2555,22 @@
 <span class="returnvalue">void</span>
 </td>
 <td class="function_name">
+<a class="link" href="gnutls-gnutls.html#gnutls-psk-set-server-credentials-function3" title="gnutls_psk_set_server_credentials_function3 ()">gnutls_psk_set_server_credentials_function3</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">int</span>
+</td>
+<td class="function_name">
+<a class="link" href="gnutls-gnutls.html#gnutls-psk-format-imported-identity" title="gnutls_psk_format_imported_identity ()">gnutls_psk_format_imported_identity</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
 <a class="link" href="gnutls-gnutls.html#gnutls-psk-set-client-credentials-function" title="gnutls_psk_set_client_credentials_function ()">gnutls_psk_set_client_credentials_function</a> <span class="c_punctuation">()</span>
 </td>
 </tr>
@@ -2542,6 +2580,14 @@
 </td>
 <td class="function_name">
 <a class="link" href="gnutls-gnutls.html#gnutls-psk-set-client-credentials-function2" title="gnutls_psk_set_client_credentials_function2 ()">gnutls_psk_set_client_credentials_function2</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="gnutls-gnutls.html#gnutls-psk-set-client-credentials-function3" title="gnutls_psk_set_client_credentials_function3 ()">gnutls_psk_set_client_credentials_function3</a> <span class="c_punctuation">()</span>
 </td>
 </tr>
 <tr>
@@ -3308,6 +3354,14 @@
 <a class="link" href="gnutls-gnutls.html#gnutls-fips140-run-self-tests" title="gnutls_fips140_run_self_tests ()">gnutls_fips140_run_self_tests</a> <span class="c_punctuation">()</span>
 </td>
 </tr>
+<tr>
+<td class="function_type">
+<a class="link" href="gnutls-gnutls.html#gnutls-transport-ktls-enable-flags-t" title="enum gnutls_transport_ktls_enable_flags_t"><span class="returnvalue">gnutls_transport_ktls_enable_flags_t</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="gnutls-gnutls.html#gnutls-transport-is-ktls-enabled" title="gnutls_transport_is_ktls_enabled ()">gnutls_transport_is_ktls_enabled</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
 </tbody>
 </table></div>
 </div>
@@ -3425,7 +3479,7 @@
 </tr>
 <tr>
 <td class="define_keyword">#define</td>
-<td class="function_name"><a class="link" href="gnutls-gnutls.html#GNUTLS-NO-EXTENSIONS:CAPS">GNUTLS_NO_EXTENSIONS</a></td>
+<td class="function_name"><a class="link" href="gnutls-gnutls.html#GNUTLS-NO-DEFAULT-EXTENSIONS:CAPS">GNUTLS_NO_DEFAULT_EXTENSIONS</a></td>
 </tr>
 <tr>
 <td class="define_keyword">#define</td>
@@ -3732,6 +3786,14 @@
 <td class="function_name"><a class="link" href="gnutls-gnutls.html#gnutls-openpgp-keyring-t" title="gnutls_openpgp_keyring_t">gnutls_openpgp_keyring_t</a></td>
 </tr>
 <tr>
+<td class="typedef_keyword">typedef</td>
+<td class="function_name"><a class="link" href="gnutls-gnutls.html#gnutls-certificate-server-credentials" title="gnutls_certificate_server_credentials">gnutls_certificate_server_credentials</a></td>
+</tr>
+<tr>
+<td class="typedef_keyword">typedef</td>
+<td class="function_name"><a class="link" href="gnutls-gnutls.html#gnutls-certificate-client-credentials" title="gnutls_certificate_client_credentials">gnutls_certificate_client_credentials</a></td>
+</tr>
+<tr>
 <td class="datatype_keyword">enum</td>
 <td class="function_name"><a class="link" href="gnutls-gnutls.html#gnutls-certificate-flags" title="enum gnutls_certificate_flags">gnutls_certificate_flags</a></td>
 </tr>
@@ -3752,12 +3814,28 @@
 <td class="function_name"><a class="link" href="gnutls-gnutls.html#GNUTLS-IDNA-FORCE-2008:CAPS" title="GNUTLS_IDNA_FORCE_2008">GNUTLS_IDNA_FORCE_2008</a></td>
 </tr>
 <tr>
+<td class="typedef_keyword">typedef</td>
+<td class="function_name"><a class="link" href="gnutls-gnutls.html#gnutls-srp-server-credentials-t" title="gnutls_srp_server_credentials_t">gnutls_srp_server_credentials_t</a></td>
+</tr>
+<tr>
+<td class="typedef_keyword">typedef</td>
+<td class="function_name"><a class="link" href="gnutls-gnutls.html#gnutls-srp-client-credentials-t" title="gnutls_srp_client_credentials_t">gnutls_srp_client_credentials_t</a></td>
+</tr>
+<tr>
 <td class="define_keyword">#define</td>
 <td class="function_name"><a class="link" href="gnutls-gnutls.html#gnutls-srp-base64-encode-alloc" title="gnutls_srp_base64_encode_alloc">gnutls_srp_base64_encode_alloc</a></td>
 </tr>
 <tr>
 <td class="define_keyword">#define</td>
 <td class="function_name"><a class="link" href="gnutls-gnutls.html#gnutls-srp-base64-decode-alloc" title="gnutls_srp_base64_decode_alloc">gnutls_srp_base64_decode_alloc</a></td>
+</tr>
+<tr>
+<td class="typedef_keyword">typedef</td>
+<td class="function_name"><a class="link" href="gnutls-gnutls.html#gnutls-psk-server-credentials-t" title="gnutls_psk_server_credentials_t">gnutls_psk_server_credentials_t</a></td>
+</tr>
+<tr>
+<td class="typedef_keyword">typedef</td>
+<td class="function_name"><a class="link" href="gnutls-gnutls.html#gnutls-psk-client-credentials-t" title="gnutls_psk_client_credentials_t">gnutls_psk_client_credentials_t</a></td>
 </tr>
 <tr>
 <td class="datatype_keyword">enum</td>
@@ -3918,6 +3996,10 @@
 <tr>
 <td class="datatype_keyword">enum</td>
 <td class="function_name"><a class="link" href="gnutls-gnutls.html#gnutls-fips140-operation-state-t" title="enum gnutls_fips140_operation_state_t">gnutls_fips140_operation_state_t</a></td>
+</tr>
+<tr>
+<td class="datatype_keyword">enum</td>
+<td class="function_name"><a class="link" href="gnutls-gnutls.html#gnutls-transport-ktls-enable-flags-t" title="enum gnutls_transport_ktls_enable_flags_t">gnutls_transport_ktls_enable_flags_t</a></td>
 </tr>
 <tr>
 <td class="define_keyword">#define</td>
@@ -4820,6 +4902,33 @@
 <div class="refsect1">
 <a name="gnutls-gnutls.functions_details"></a><h2>Functions</h2>
 <div class="refsect2">
+<a name="gnutls-handshake-description-get-name"></a><h3>gnutls_handshake_description_get_name ()</h3>
+<pre class="programlisting">const <span class="returnvalue">char</span> *
+gnutls_handshake_description_get_name (<em class="parameter"><code><a class="link" href="gnutls-gnutls.html#gnutls-handshake-description-t" title="enum gnutls_handshake_description_t"><span class="type">gnutls_handshake_description_t</span></a> type</code></em>);</pre>
+<p>Convert a <a class="link" href="gnutls-gnutls.html#gnutls-handshake-description-t" title="enum gnutls_handshake_description_t"><span class="type">gnutls_handshake_description_t</span></a> value to a string.</p>
+<div class="refsect3">
+<a name="gnutls-handshake-description-get-name.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody><tr>
+<td class="parameter_name"><p>type</p></td>
+<td class="parameter_description"><p>is a handshake message description</p></td>
+<td class="parameter_annotations"> </td>
+</tr></tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="gnutls-handshake-description-get-name.returns"></a><h4>Returns</h4>
+<p> a string that contains the name of the specified handshake
+message or <code class="literal">NULL</code>.</p>
+</div>
+</div>
+<hr>
+<div class="refsect2">
 <a name="gnutls-pk-algorithm-get-name"></a><h3>gnutls_pk_algorithm_get_name ()</h3>
 <pre class="programlisting">const <span class="returnvalue">char</span> *
 gnutls_pk_algorithm_get_name (<em class="parameter"><code><a class="link" href="gnutls-gnutls.html#gnutls-pk-algorithm-t" title="enum gnutls_pk_algorithm_t"><span class="type">gnutls_pk_algorithm_t</span></a> algorithm</code></em>);</pre>
@@ -4848,8 +4957,7 @@ key algorithm, or <code class="literal">NULL</code>.</p>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-CURVE-TO-BITS:CAPS"></a><h3>GNUTLS_CURVE_TO_BITS()</h3>
-<pre class="programlisting">#define GNUTLS_CURVE_TO_BITS(curve) (unsigned int)(((unsigned int)1&lt;&lt;31)|((unsigned int)(curve)))
-</pre>
+<pre class="programlisting">#define             GNUTLS_CURVE_TO_BITS(curve)</pre>
 </div>
 <hr>
 <div class="refsect2">
@@ -4869,15 +4977,23 @@ key algorithm, or <code class="literal">NULL</code>.</p>
 <pre class="programlisting"><span class="returnvalue">int</span>
 gnutls_init (<em class="parameter"><code><a class="link" href="gnutls-gnutls.html#gnutls-session-t" title="gnutls_session_t"><span class="type">gnutls_session_t</span></a> *session</code></em>,
              <em class="parameter"><code>unsigned <span class="type">int</span> flags</code></em>);</pre>
-<p>This function initializes the provided session. Every
-session must be initialized before use, and must be deinitialized
-after used by calling <a class="link" href="gnutls-gnutls.html#gnutls-deinit" title="gnutls_deinit ()"><code class="function">gnutls_deinit()</code></a>.</p>
+<p>This function initializes the provided session. Every session must
+be initialized before use, and after successful initialization and
+use must be deinitialized by calling <a class="link" href="gnutls-gnutls.html#gnutls-deinit" title="gnutls_deinit ()"><code class="function">gnutls_deinit()</code></a>.</p>
 <p><em class="parameter"><code>flags</code></em>
  can be any combination of flags from <a class="link" href="gnutls-gnutls.html#gnutls-init-flags-t" title="enum gnutls_init_flags_t"><code class="literal">gnutls_init_flags_t</code></a>.</p>
 <p>Note that since version 3.1.2 this function enables some common
 TLS extensions such as session tickets and OCSP certificate status
-request in client side by default. To prevent that use the <a class="link" href="gnutls-gnutls.html#GNUTLS-NO-EXTENSIONS:CAPS"><code class="literal">GNUTLS_NO_EXTENSIONS</code></a>
+request in client side by default. To prevent that use the <a class="link" href="gnutls-gnutls.html#GNUTLS-NO-DEFAULT-EXTENSIONS:CAPS"><code class="literal">GNUTLS_NO_DEFAULT_EXTENSIONS</code></a>
 flag.</p>
+<p>Note that it is never mandatory to use <a class="link" href="gnutls-gnutls.html#gnutls-deinit" title="gnutls_deinit ()"><code class="function">gnutls_deinit()</code></a> after this
+function fails.  Since gnutls 3.8.0, it is safe to unconditionally
+use <a class="link" href="gnutls-gnutls.html#gnutls-deinit" title="gnutls_deinit ()"><code class="function">gnutls_deinit()</code></a> even after failure regardless of whether the
+memory was initialized prior to <a class="link" href="gnutls-gnutls.html#gnutls-init" title="gnutls_init ()"><code class="function">gnutls_init()</code></a>; however, clients
+wanting to be portable to older versions of the library should
+either skip deinitialization on failure, or pre-initialize the
+memory passed in to <a class="link" href="gnutls-gnutls.html#gnutls-init" title="gnutls_init ()"><code class="function">gnutls_init()</code></a> to all zeroes via <code class="function">memset()</code> or
+similar.</p>
 <div class="refsect3">
 <a name="gnutls-init.parameters"></a><h4>Parameters</h4>
 <div class="informaltable"><table class="informaltable" width="100%" border="0">
@@ -5999,7 +6115,7 @@ gnutls_ecc_curve_set_enabled (<em class="parameter"><code><a class="link" href="
                               <em class="parameter"><code>unsigned <span class="type">int</span> enabled</code></em>);</pre>
 <p>Modify the previous system wide setting that marked <em class="parameter"><code>curve</code></em>
  as
-enabled or disabled.  Calling this fuction is allowed
+enabled or disabled.  Calling this function is allowed
 only if allowlisting mode is set in the configuration file,
 and only if the system-wide TLS priority string
 has not been initialized yet.
@@ -6098,7 +6214,7 @@ gnutls_sign_set_secure_for_certs (<em class="parameter"><code><a class="link" hr
                                   <em class="parameter"><code>unsigned <span class="type">int</span> secure</code></em>);</pre>
 <p>Modify the previous system wide setting that marked <em class="parameter"><code>sign</code></em>
  as secure
-or insecure for the use in certificates.  Calling this fuction is allowed
+or insecure for the use in certificates.  Calling this function is allowed
 only if allowlisting mode is set in the configuration file,
 and only if the system-wide TLS priority string
 has not been initialized yet.
@@ -6186,7 +6302,7 @@ gnutls_protocol_set_enabled (<em class="parameter"><code><a class="link" href="g
                              <em class="parameter"><code>unsigned <span class="type">int</span> enabled</code></em>);</pre>
 <p>Control the previous system-wide setting that marked <em class="parameter"><code>version</code></em>
  as
-enabled or disabled.  Calling this fuction is allowed
+enabled or disabled.  Calling this function is allowed
 only if allowlisting mode is set in the configuration file,
 and only if the system-wide TLS priority string
 has not been initialized yet.
@@ -7032,7 +7148,7 @@ use the <code class="function">sendfile()</code> system call to avoid overhead o
 space and the kernel. Otherwise, this functionality is merely emulated by
 calling <code class="function">read()</code> and <a class="link" href="gnutls-gnutls.html#gnutls-record-send" title="gnutls_record_send ()"><code class="function">gnutls_record_send()</code></a>. If this implementation is
 suboptimal, check whether KTLS is enabled using
-<code class="function">gnutls_transport_is_ktls_enabled()</code>.</p>
+<a class="link" href="gnutls-gnutls.html#gnutls-transport-is-ktls-enabled" title="gnutls_transport_is_ktls_enabled ()"><code class="function">gnutls_transport_is_ktls_enabled()</code></a>.</p>
 <p>If <em class="parameter"><code>offset</code></em>
  is NULL then file offset is incremented by number of bytes send,
 otherwise file offset remains unchanged.</p>
@@ -8565,6 +8681,34 @@ etc.</p>
 </div>
 <hr>
 <div class="refsect2">
+<a name="gnutls-supplemental-get-name"></a><h3>gnutls_supplemental_get_name ()</h3>
+<pre class="programlisting">const <span class="returnvalue">char</span> *
+gnutls_supplemental_get_name (<em class="parameter"><code><a class="link" href="gnutls-gnutls.html#gnutls-supplemental-data-format-type-t" title="enum gnutls_supplemental_data_format_type_t"><span class="type">gnutls_supplemental_data_format_type_t</span></a> type</code></em>);</pre>
+<p>Convert a <a class="link" href="gnutls-gnutls.html#gnutls-supplemental-data-format-type-t" title="enum gnutls_supplemental_data_format_type_t"><span class="type">gnutls_supplemental_data_format_type_t</span></a> value to a
+string.</p>
+<div class="refsect3">
+<a name="gnutls-supplemental-get-name.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody><tr>
+<td class="parameter_name"><p>type</p></td>
+<td class="parameter_description"><p>is a supplemental data format type</p></td>
+<td class="parameter_annotations"> </td>
+</tr></tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="gnutls-supplemental-get-name.returns"></a><h4>Returns</h4>
+<p> a string that contains the name of the specified
+supplemental data format type, or <code class="literal">NULL</code> for unknown types.</p>
+</div>
+</div>
+<hr>
+<div class="refsect2">
 <a name="gnutls-session-ticket-key-generate"></a><h3>gnutls_session_ticket_key_generate ()</h3>
 <pre class="programlisting"><span class="returnvalue">int</span>
 gnutls_session_ticket_key_generate (<em class="parameter"><code><a class="link" href="gnutls-gnutls.html#gnutls-datum-t" title="gnutls_datum_t"><span class="type">gnutls_datum_t</span></a> *key</code></em>);</pre>
@@ -9085,7 +9229,7 @@ for the given session. The list of supported compression methods will be used
 for a) requesting the compression of peer's certificate and b) selecting the
 method to compress the local certificate before sending it to the peer.
 The order of compression methods inside the list does matter as the method
-that appears earlier in the list will be preffered before the later ones.
+that appears earlier in the list will be preferred before the later ones.
 Note that even if you set the list of supported compression methods, the
 compression might not be used if the peer does not support any of your chosen
 compression methods.</p>
@@ -11468,8 +11612,8 @@ until you call <a class="link" href="gnutls-gnutls.html#gnutls-deinit" title="gn
 <span class="type">gnutls_anon_client_credentials_t</span> in case of a client.  In case of
 a server it should be <span class="type">gnutls_anon_server_credentials_t</span>.</p>
 <p>For <a class="link" href="gnutls-gnutls.html#GNUTLS-CRD-SRP:CAPS"><code class="literal">GNUTLS_CRD_SRP</code></a>, <em class="parameter"><code>cred</code></em>
- should be <span class="type">gnutls_srp_client_credentials_t</span>
-in case of a client, and <span class="type">gnutls_srp_server_credentials_t</span>, in case
+ should be <a class="link" href="gnutls-gnutls.html#gnutls-srp-client-credentials-t" title="gnutls_srp_client_credentials_t"><span class="type">gnutls_srp_client_credentials_t</span></a>
+in case of a client, and <a class="link" href="gnutls-gnutls.html#gnutls-srp-server-credentials-t" title="gnutls_srp_server_credentials_t"><span class="type">gnutls_srp_server_credentials_t</span></a>, in case
 of a server.</p>
 <p>For <a class="link" href="gnutls-gnutls.html#GNUTLS-CRD-CERTIFICATE:CAPS"><code class="literal">GNUTLS_CRD_CERTIFICATE</code></a>, <em class="parameter"><code>cred</code></em>
  should be
@@ -11520,8 +11664,8 @@ gnutls_credentials_get (<em class="parameter"><code><a class="link" href="gnutls
 <span class="type">gnutls_anon_client_credentials_t</span> in case of a client.  In case of
 a server it should be <span class="type">gnutls_anon_server_credentials_t</span>.</p>
 <p>For <a class="link" href="gnutls-gnutls.html#GNUTLS-CRD-SRP:CAPS"><code class="literal">GNUTLS_CRD_SRP</code></a>, <em class="parameter"><code>cred</code></em>
- will be <span class="type">gnutls_srp_client_credentials_t</span>
-in case of a client, and <span class="type">gnutls_srp_server_credentials_t</span>, in case
+ will be <a class="link" href="gnutls-gnutls.html#gnutls-srp-client-credentials-t" title="gnutls_srp_client_credentials_t"><span class="type">gnutls_srp_client_credentials_t</span></a>
+in case of a client, and <a class="link" href="gnutls-gnutls.html#gnutls-srp-server-credentials-t" title="gnutls_srp_server_credentials_t"><span class="type">gnutls_srp_server_credentials_t</span></a>, in case
 of a server.</p>
 <p>For <a class="link" href="gnutls-gnutls.html#GNUTLS-CRD-CERTIFICATE:CAPS"><code class="literal">GNUTLS_CRD_CERTIFICATE</code></a>, <em class="parameter"><code>cred</code></em>
  will be
@@ -13264,11 +13408,19 @@ use, and the <em class="parameter"><code>crt_list</code></em>
 </div>
 <hr>
 <div class="refsect2">
+<a name="gnutls-status-request-ocsp-func"></a><h3>gnutls_status_request_ocsp_func ()</h3>
+<pre class="programlisting"><span class="returnvalue">int</span>
+<span class="c_punctuation">(</span>*gnutls_status_request_ocsp_func<span class="c_punctuation">)</span> (<em class="parameter"><code><a class="link" href="gnutls-gnutls.html#gnutls-session-t" title="gnutls_session_t"><span class="type">gnutls_session_t</span></a> session</code></em>,
+                                    <em class="parameter"><code><span class="type">void</span> *ptr</code></em>,
+                                    <em class="parameter"><code><a class="link" href="gnutls-gnutls.html#gnutls-datum-t" title="gnutls_datum_t"><span class="type">gnutls_datum_t</span></a> *ocsp_response</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
 <a name="gnutls-certificate-set-ocsp-status-request-function"></a><h3>gnutls_certificate_set_ocsp_status_request_function ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>
 gnutls_certificate_set_ocsp_status_request_function
                                (<em class="parameter"><code><span class="type">gnutls_certificate_credentials_t</span> res</code></em>,
-                                <em class="parameter"><code><span class="type">gnutls_status_request_ocsp_func</span> ocsp_func</code></em>,
+                                <em class="parameter"><code><a class="link" href="gnutls-gnutls.html#gnutls-status-request-ocsp-func" title="gnutls_status_request_ocsp_func ()"><span class="type">gnutls_status_request_ocsp_func</span></a> ocsp_func</code></em>,
                                 <em class="parameter"><code><span class="type">void</span> *ptr</code></em>);</pre>
 <p>This function is to be used by server to register a callback to
 handle OCSP status requests from the client.  The callback will be
@@ -13321,7 +13473,7 @@ using <a class="link" href="gnutls-gnutls.html#gnutls-certificate-set-ocsp-statu
 gnutls_certificate_set_ocsp_status_request_function2
                                (<em class="parameter"><code><span class="type">gnutls_certificate_credentials_t</span> res</code></em>,
                                 <em class="parameter"><code><span class="type">unsigned </span> idx</code></em>,
-                                <em class="parameter"><code><span class="type">gnutls_status_request_ocsp_func</span> ocsp_func</code></em>,
+                                <em class="parameter"><code><a class="link" href="gnutls-gnutls.html#gnutls-status-request-ocsp-func" title="gnutls_status_request_ocsp_func ()"><span class="type">gnutls_status_request_ocsp_func</span></a> ocsp_func</code></em>,
                                 <em class="parameter"><code><span class="type">void</span> *ptr</code></em>);</pre>
 <p>This function is to be used by server to register a callback to
 provide OCSP status requests that correspond to the indexed certificate chain
@@ -14286,7 +14438,7 @@ as the standard function.</p>
 <hr>
 <div class="refsect2">
 <a name="gnutls-free"></a><h3>gnutls_free()</h3>
-<pre class="programlisting">#define gnutls_free(a) gnutls_free((void *) (a)), a=NULL
+<pre class="programlisting">#define gnutls_free(a) gnutls_free((void *)(a)), a = NULL
 </pre>
 <p>This function will free data pointed by ptr.</p>
 <p>The deallocation function used is the one set by
@@ -15987,7 +16139,7 @@ empty string is provided as input.</p>
 <div class="refsect2">
 <a name="gnutls-srp-free-client-credentials"></a><h3>gnutls_srp_free_client_credentials ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>
-gnutls_srp_free_client_credentials (<em class="parameter"><code><span class="type">gnutls_srp_client_credentials_t</span> sc</code></em>);</pre>
+gnutls_srp_free_client_credentials (<em class="parameter"><code><a class="link" href="gnutls-gnutls.html#gnutls-srp-client-credentials-t" title="gnutls_srp_client_credentials_t"><span class="type">gnutls_srp_client_credentials_t</span></a> sc</code></em>);</pre>
 <p>Free a gnutls_srp_client_credentials_t structure.</p>
 <div class="refsect3">
 <a name="gnutls-srp-free-client-credentials.parameters"></a><h4>Parameters</h4>
@@ -15999,7 +16151,7 @@ gnutls_srp_free_client_credentials (<em class="parameter"><code><span class="typ
 </colgroup>
 <tbody><tr>
 <td class="parameter_name"><p>sc</p></td>
-<td class="parameter_description"><p>is a <span class="type">gnutls_srp_client_credentials_t</span> type.</p></td>
+<td class="parameter_description"><p>is a <a class="link" href="gnutls-gnutls.html#gnutls-srp-client-credentials-t" title="gnutls_srp_client_credentials_t"><span class="type">gnutls_srp_client_credentials_t</span></a> type.</p></td>
 <td class="parameter_annotations"> </td>
 </tr></tbody>
 </table></div>
@@ -16010,7 +16162,7 @@ gnutls_srp_free_client_credentials (<em class="parameter"><code><span class="typ
 <a name="gnutls-srp-allocate-client-credentials"></a><h3>gnutls_srp_allocate_client_credentials ()</h3>
 <pre class="programlisting"><span class="returnvalue">int</span>
 gnutls_srp_allocate_client_credentials
-                               (<em class="parameter"><code><span class="type">gnutls_srp_client_credentials_t</span> *sc</code></em>);</pre>
+                               (<em class="parameter"><code><a class="link" href="gnutls-gnutls.html#gnutls-srp-client-credentials-t" title="gnutls_srp_client_credentials_t"><span class="type">gnutls_srp_client_credentials_t</span></a> *sc</code></em>);</pre>
 <p>Allocate a gnutls_srp_client_credentials_t structure.</p>
 <div class="refsect3">
 <a name="gnutls-srp-allocate-client-credentials.parameters"></a><h4>Parameters</h4>
@@ -16022,7 +16174,7 @@ gnutls_srp_allocate_client_credentials
 </colgroup>
 <tbody><tr>
 <td class="parameter_name"><p>sc</p></td>
-<td class="parameter_description"><p>is a pointer to a <span class="type">gnutls_srp_server_credentials_t</span> type.</p></td>
+<td class="parameter_description"><p>is a pointer to a <a class="link" href="gnutls-gnutls.html#gnutls-srp-server-credentials-t" title="gnutls_srp_server_credentials_t"><span class="type">gnutls_srp_server_credentials_t</span></a> type.</p></td>
 <td class="parameter_annotations"> </td>
 </tr></tbody>
 </table></div>
@@ -16037,11 +16189,11 @@ error code.</p>
 <div class="refsect2">
 <a name="gnutls-srp-set-client-credentials"></a><h3>gnutls_srp_set_client_credentials ()</h3>
 <pre class="programlisting"><span class="returnvalue">int</span>
-gnutls_srp_set_client_credentials (<em class="parameter"><code><span class="type">gnutls_srp_client_credentials_t</span> res</code></em>,
+gnutls_srp_set_client_credentials (<em class="parameter"><code><a class="link" href="gnutls-gnutls.html#gnutls-srp-client-credentials-t" title="gnutls_srp_client_credentials_t"><span class="type">gnutls_srp_client_credentials_t</span></a> res</code></em>,
                                    <em class="parameter"><code>const <span class="type">char</span> *username</code></em>,
                                    <em class="parameter"><code>const <span class="type">char</span> *password</code></em>);</pre>
 <p>This function sets the username and password, in a
-<span class="type">gnutls_srp_client_credentials_t</span> type.  Those will be used in
+<a class="link" href="gnutls-gnutls.html#gnutls-srp-client-credentials-t" title="gnutls_srp_client_credentials_t"><span class="type">gnutls_srp_client_credentials_t</span></a> type.  Those will be used in
 SRP authentication.  <em class="parameter"><code>username</code></em>
  should be an ASCII string or UTF-8
 string. In case of a UTF-8 string it is recommended to be following
@@ -16058,7 +16210,7 @@ be in ASCII format, or normalized using <a class="link" href="gnutls-gnutls.html
 <tbody>
 <tr>
 <td class="parameter_name"><p>res</p></td>
-<td class="parameter_description"><p>is a <span class="type">gnutls_srp_client_credentials_t</span> type.</p></td>
+<td class="parameter_description"><p>is a <a class="link" href="gnutls-gnutls.html#gnutls-srp-client-credentials-t" title="gnutls_srp_client_credentials_t"><span class="type">gnutls_srp_client_credentials_t</span></a> type.</p></td>
 <td class="parameter_annotations"> </td>
 </tr>
 <tr>
@@ -16084,7 +16236,7 @@ error code.</p>
 <div class="refsect2">
 <a name="gnutls-srp-free-server-credentials"></a><h3>gnutls_srp_free_server_credentials ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>
-gnutls_srp_free_server_credentials (<em class="parameter"><code><span class="type">gnutls_srp_server_credentials_t</span> sc</code></em>);</pre>
+gnutls_srp_free_server_credentials (<em class="parameter"><code><a class="link" href="gnutls-gnutls.html#gnutls-srp-server-credentials-t" title="gnutls_srp_server_credentials_t"><span class="type">gnutls_srp_server_credentials_t</span></a> sc</code></em>);</pre>
 <p>Free a gnutls_srp_server_credentials_t structure.</p>
 <div class="refsect3">
 <a name="gnutls-srp-free-server-credentials.parameters"></a><h4>Parameters</h4>
@@ -16096,7 +16248,7 @@ gnutls_srp_free_server_credentials (<em class="parameter"><code><span class="typ
 </colgroup>
 <tbody><tr>
 <td class="parameter_name"><p>sc</p></td>
-<td class="parameter_description"><p>is a <span class="type">gnutls_srp_server_credentials_t</span> type.</p></td>
+<td class="parameter_description"><p>is a <a class="link" href="gnutls-gnutls.html#gnutls-srp-server-credentials-t" title="gnutls_srp_server_credentials_t"><span class="type">gnutls_srp_server_credentials_t</span></a> type.</p></td>
 <td class="parameter_annotations"> </td>
 </tr></tbody>
 </table></div>
@@ -16107,7 +16259,7 @@ gnutls_srp_free_server_credentials (<em class="parameter"><code><span class="typ
 <a name="gnutls-srp-allocate-server-credentials"></a><h3>gnutls_srp_allocate_server_credentials ()</h3>
 <pre class="programlisting"><span class="returnvalue">int</span>
 gnutls_srp_allocate_server_credentials
-                               (<em class="parameter"><code><span class="type">gnutls_srp_server_credentials_t</span> *sc</code></em>);</pre>
+                               (<em class="parameter"><code><a class="link" href="gnutls-gnutls.html#gnutls-srp-server-credentials-t" title="gnutls_srp_server_credentials_t"><span class="type">gnutls_srp_server_credentials_t</span></a> *sc</code></em>);</pre>
 <p>Allocate a gnutls_srp_server_credentials_t structure.</p>
 <div class="refsect3">
 <a name="gnutls-srp-allocate-server-credentials.parameters"></a><h4>Parameters</h4>
@@ -16119,7 +16271,7 @@ gnutls_srp_allocate_server_credentials
 </colgroup>
 <tbody><tr>
 <td class="parameter_name"><p>sc</p></td>
-<td class="parameter_description"><p>is a pointer to a <span class="type">gnutls_srp_server_credentials_t</span> type.</p></td>
+<td class="parameter_description"><p>is a pointer to a <a class="link" href="gnutls-gnutls.html#gnutls-srp-server-credentials-t" title="gnutls_srp_server_credentials_t"><span class="type">gnutls_srp_server_credentials_t</span></a> type.</p></td>
 <td class="parameter_annotations"> </td>
 </tr></tbody>
 </table></div>
@@ -16135,11 +16287,11 @@ error code.</p>
 <a name="gnutls-srp-set-server-credentials-file"></a><h3>gnutls_srp_set_server_credentials_file ()</h3>
 <pre class="programlisting"><span class="returnvalue">int</span>
 gnutls_srp_set_server_credentials_file
-                               (<em class="parameter"><code><span class="type">gnutls_srp_server_credentials_t</span> res</code></em>,
+                               (<em class="parameter"><code><a class="link" href="gnutls-gnutls.html#gnutls-srp-server-credentials-t" title="gnutls_srp_server_credentials_t"><span class="type">gnutls_srp_server_credentials_t</span></a> res</code></em>,
                                 <em class="parameter"><code>const <span class="type">char</span> *password_file</code></em>,
                                 <em class="parameter"><code>const <span class="type">char</span> *password_conf_file</code></em>);</pre>
 <p>This function sets the password files, in a
-<span class="type">gnutls_srp_server_credentials_t</span> type.  Those password files
+<a class="link" href="gnutls-gnutls.html#gnutls-srp-server-credentials-t" title="gnutls_srp_server_credentials_t"><span class="type">gnutls_srp_server_credentials_t</span></a> type.  Those password files
 hold usernames and verifiers and will be used for SRP
 authentication.</p>
 <div class="refsect3">
@@ -16153,7 +16305,7 @@ authentication.</p>
 <tbody>
 <tr>
 <td class="parameter_name"><p>res</p></td>
-<td class="parameter_description"><p>is a <span class="type">gnutls_srp_server_credentials_t</span> type.</p></td>
+<td class="parameter_description"><p>is a <a class="link" href="gnutls-gnutls.html#gnutls-srp-server-credentials-t" title="gnutls_srp_server_credentials_t"><span class="type">gnutls_srp_server_credentials_t</span></a> type.</p></td>
 <td class="parameter_annotations"> </td>
 </tr>
 <tr>
@@ -16312,7 +16464,7 @@ error code.</p>
 <a name="gnutls-srp-set-server-credentials-function"></a><h3>gnutls_srp_set_server_credentials_function ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>
 gnutls_srp_set_server_credentials_function
-                               (<em class="parameter"><code><span class="type">gnutls_srp_server_credentials_t</span> cred</code></em>,
+                               (<em class="parameter"><code><a class="link" href="gnutls-gnutls.html#gnutls-srp-server-credentials-t" title="gnutls_srp_server_credentials_t"><span class="type">gnutls_srp_server_credentials_t</span></a> cred</code></em>,
                                 <em class="parameter"><code><span class="type">gnutls_srp_server_credentials_function</span> *func</code></em>);</pre>
 <p>This function can be used to set a callback to retrieve the user's
 SRP credentials.  The callback's function form is:</p>
@@ -16355,7 +16507,7 @@ The callback function should return 0 on success, while
 <tbody>
 <tr>
 <td class="parameter_name"><p>cred</p></td>
-<td class="parameter_description"><p>is a <span class="type">gnutls_srp_server_credentials_t</span> type.</p></td>
+<td class="parameter_description"><p>is a <a class="link" href="gnutls-gnutls.html#gnutls-srp-server-credentials-t" title="gnutls_srp_server_credentials_t"><span class="type">gnutls_srp_server_credentials_t</span></a> type.</p></td>
 <td class="parameter_annotations"> </td>
 </tr>
 <tr>
@@ -16372,7 +16524,7 @@ The callback function should return 0 on success, while
 <a name="gnutls-srp-set-client-credentials-function"></a><h3>gnutls_srp_set_client_credentials_function ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>
 gnutls_srp_set_client_credentials_function
-                               (<em class="parameter"><code><span class="type">gnutls_srp_client_credentials_t</span> cred</code></em>,
+                               (<em class="parameter"><code><a class="link" href="gnutls-gnutls.html#gnutls-srp-client-credentials-t" title="gnutls_srp_client_credentials_t"><span class="type">gnutls_srp_client_credentials_t</span></a> cred</code></em>,
                                 <em class="parameter"><code><span class="type">gnutls_srp_client_credentials_function</span> *func</code></em>);</pre>
 <p>This function can be used to set a callback to retrieve the
 username and password for client SRP authentication.  The
@@ -16404,7 +16556,7 @@ time called, since the handshake procedure will be aborted.</p>
 <tbody>
 <tr>
 <td class="parameter_name"><p>cred</p></td>
-<td class="parameter_description"><p>is a <span class="type">gnutls_srp_server_credentials_t</span> type.</p></td>
+<td class="parameter_description"><p>is a <a class="link" href="gnutls-gnutls.html#gnutls-srp-server-credentials-t" title="gnutls_srp_server_credentials_t"><span class="type">gnutls_srp_server_credentials_t</span></a> type.</p></td>
 <td class="parameter_annotations"> </td>
 </tr>
 <tr>
@@ -16591,7 +16743,7 @@ do not use it for non-SRP purposes.</p>
 <div class="refsect2">
 <a name="gnutls-srp-set-server-fake-salt-seed"></a><h3>gnutls_srp_set_server_fake_salt_seed ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>
-gnutls_srp_set_server_fake_salt_seed (<em class="parameter"><code><span class="type">gnutls_srp_server_credentials_t</span> sc</code></em>,
+gnutls_srp_set_server_fake_salt_seed (<em class="parameter"><code><a class="link" href="gnutls-gnutls.html#gnutls-srp-server-credentials-t" title="gnutls_srp_server_credentials_t"><span class="type">gnutls_srp_server_credentials_t</span></a> sc</code></em>,
                                       <em class="parameter"><code>const <a class="link" href="gnutls-gnutls.html#gnutls-datum-t" title="gnutls_datum_t"><span class="type">gnutls_datum_t</span></a> *seed</code></em>,
                                       <em class="parameter"><code>unsigned <span class="type">int</span> salt_length</code></em>);</pre>
 <p>This function sets the seed that is used to generate salts for
@@ -16609,7 +16761,7 @@ This seed cannot be used to reveal application data or passwords.</p>
  should represent the salt length your application uses.
 Generating fake salts longer than 20 bytes is not supported.</p>
 <p>By default the seed is a random value, different each time a
-<span class="type">gnutls_srp_server_credentials_t</span> is allocated and fake salts are
+<a class="link" href="gnutls-gnutls.html#gnutls-srp-server-credentials-t" title="gnutls_srp_server_credentials_t"><span class="type">gnutls_srp_server_credentials_t</span></a> is allocated and fake salts are
 16 bytes long.</p>
 <div class="refsect3">
 <a name="gnutls-srp-set-server-fake-salt-seed.parameters"></a><h4>Parameters</h4>
@@ -16622,7 +16774,7 @@ Generating fake salts longer than 20 bytes is not supported.</p>
 <tbody>
 <tr>
 <td class="parameter_name"><p>cred</p></td>
-<td class="parameter_description"><p>is a <span class="type">gnutls_srp_server_credentials_t</span> type</p></td>
+<td class="parameter_description"><p>is a <a class="link" href="gnutls-gnutls.html#gnutls-srp-server-credentials-t" title="gnutls_srp_server_credentials_t"><span class="type">gnutls_srp_server_credentials_t</span></a> type</p></td>
 <td class="parameter_annotations"> </td>
 </tr>
 <tr>
@@ -16645,7 +16797,7 @@ returns; size of the seed must be greater than zero</p></td>
 <div class="refsect2">
 <a name="gnutls-psk-free-client-credentials"></a><h3>gnutls_psk_free_client_credentials ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>
-gnutls_psk_free_client_credentials (<em class="parameter"><code><span class="type">gnutls_psk_client_credentials_t</span> sc</code></em>);</pre>
+gnutls_psk_free_client_credentials (<em class="parameter"><code><a class="link" href="gnutls-gnutls.html#gnutls-psk-client-credentials-t" title="gnutls_psk_client_credentials_t"><span class="type">gnutls_psk_client_credentials_t</span></a> sc</code></em>);</pre>
 <p>Free a gnutls_psk_client_credentials_t structure.</p>
 <div class="refsect3">
 <a name="gnutls-psk-free-client-credentials.parameters"></a><h4>Parameters</h4>
@@ -16657,7 +16809,7 @@ gnutls_psk_free_client_credentials (<em class="parameter"><code><span class="typ
 </colgroup>
 <tbody><tr>
 <td class="parameter_name"><p>sc</p></td>
-<td class="parameter_description"><p>is a <span class="type">gnutls_psk_client_credentials_t</span> type.</p></td>
+<td class="parameter_description"><p>is a <a class="link" href="gnutls-gnutls.html#gnutls-psk-client-credentials-t" title="gnutls_psk_client_credentials_t"><span class="type">gnutls_psk_client_credentials_t</span></a> type.</p></td>
 <td class="parameter_annotations"> </td>
 </tr></tbody>
 </table></div>
@@ -16668,7 +16820,7 @@ gnutls_psk_free_client_credentials (<em class="parameter"><code><span class="typ
 <a name="gnutls-psk-allocate-client-credentials"></a><h3>gnutls_psk_allocate_client_credentials ()</h3>
 <pre class="programlisting"><span class="returnvalue">int</span>
 gnutls_psk_allocate_client_credentials
-                               (<em class="parameter"><code><span class="type">gnutls_psk_client_credentials_t</span> *sc</code></em>);</pre>
+                               (<em class="parameter"><code><a class="link" href="gnutls-gnutls.html#gnutls-psk-client-credentials-t" title="gnutls_psk_client_credentials_t"><span class="type">gnutls_psk_client_credentials_t</span></a> *sc</code></em>);</pre>
 <p>Allocate a gnutls_psk_client_credentials_t structure.</p>
 <div class="refsect3">
 <a name="gnutls-psk-allocate-client-credentials.parameters"></a><h4>Parameters</h4>
@@ -16680,7 +16832,7 @@ gnutls_psk_allocate_client_credentials
 </colgroup>
 <tbody><tr>
 <td class="parameter_name"><p>sc</p></td>
-<td class="parameter_description"><p>is a pointer to a <span class="type">gnutls_psk_server_credentials_t</span> type.</p></td>
+<td class="parameter_description"><p>is a pointer to a <a class="link" href="gnutls-gnutls.html#gnutls-psk-server-credentials-t" title="gnutls_psk_server_credentials_t"><span class="type">gnutls_psk_server_credentials_t</span></a> type.</p></td>
 <td class="parameter_annotations"> </td>
 </tr></tbody>
 </table></div>
@@ -16695,7 +16847,7 @@ an error code is returned.</p>
 <div class="refsect2">
 <a name="gnutls-psk-set-client-credentials"></a><h3>gnutls_psk_set_client_credentials ()</h3>
 <pre class="programlisting"><span class="returnvalue">int</span>
-gnutls_psk_set_client_credentials (<em class="parameter"><code><span class="type">gnutls_psk_client_credentials_t</span> res</code></em>,
+gnutls_psk_set_client_credentials (<em class="parameter"><code><a class="link" href="gnutls-gnutls.html#gnutls-psk-client-credentials-t" title="gnutls_psk_client_credentials_t"><span class="type">gnutls_psk_client_credentials_t</span></a> res</code></em>,
                                    <em class="parameter"><code>const <span class="type">char</span> *username</code></em>,
                                    <em class="parameter"><code>const <a class="link" href="gnutls-gnutls.html#gnutls-datum-t" title="gnutls_datum_t"><span class="type">gnutls_datum_t</span></a> *key</code></em>,
                                    <em class="parameter"><code><a class="link" href="gnutls-gnutls.html#gnutls-psk-key-flags" title="enum gnutls_psk_key_flags"><span class="type">gnutls_psk_key_flags</span></a> flags</code></em>);</pre>
@@ -16717,7 +16869,7 @@ in raw byte format or in Hex format (without the 0x prefix).</p>
 <tbody>
 <tr>
 <td class="parameter_name"><p>res</p></td>
-<td class="parameter_description"><p>is a <span class="type">gnutls_psk_client_credentials_t</span> type.</p></td>
+<td class="parameter_description"><p>is a <a class="link" href="gnutls-gnutls.html#gnutls-psk-client-credentials-t" title="gnutls_psk_client_credentials_t"><span class="type">gnutls_psk_client_credentials_t</span></a> type.</p></td>
 <td class="parameter_annotations"> </td>
 </tr>
 <tr>
@@ -16749,7 +16901,7 @@ an error code is returned.</p>
 <div class="refsect2">
 <a name="gnutls-psk-set-client-credentials2"></a><h3>gnutls_psk_set_client_credentials2 ()</h3>
 <pre class="programlisting"><span class="returnvalue">int</span>
-gnutls_psk_set_client_credentials2 (<em class="parameter"><code><span class="type">gnutls_psk_client_credentials_t</span> res</code></em>,
+gnutls_psk_set_client_credentials2 (<em class="parameter"><code><a class="link" href="gnutls-gnutls.html#gnutls-psk-client-credentials-t" title="gnutls_psk_client_credentials_t"><span class="type">gnutls_psk_client_credentials_t</span></a> res</code></em>,
                                     <em class="parameter"><code>const <a class="link" href="gnutls-gnutls.html#gnutls-datum-t" title="gnutls_datum_t"><span class="type">gnutls_datum_t</span></a> *username</code></em>,
                                     <em class="parameter"><code>const <a class="link" href="gnutls-gnutls.html#gnutls-datum-t" title="gnutls_datum_t"><span class="type">gnutls_datum_t</span></a> *key</code></em>,
                                     <em class="parameter"><code><a class="link" href="gnutls-gnutls.html#gnutls-psk-key-flags" title="enum gnutls_psk_key_flags"><span class="type">gnutls_psk_key_flags</span></a> flags</code></em>);</pre>
@@ -16766,7 +16918,7 @@ except that it allows a non-null-terminated username to be introduced.</p>
 <tbody>
 <tr>
 <td class="parameter_name"><p>res</p></td>
-<td class="parameter_description"><p>is a <span class="type">gnutls_psk_client_credentials_t</span> type.</p></td>
+<td class="parameter_description"><p>is a <a class="link" href="gnutls-gnutls.html#gnutls-psk-client-credentials-t" title="gnutls_psk_client_credentials_t"><span class="type">gnutls_psk_client_credentials_t</span></a> type.</p></td>
 <td class="parameter_annotations"> </td>
 </tr>
 <tr>
@@ -16798,7 +16950,7 @@ an error code is returned.</p>
 <div class="refsect2">
 <a name="gnutls-psk-free-server-credentials"></a><h3>gnutls_psk_free_server_credentials ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>
-gnutls_psk_free_server_credentials (<em class="parameter"><code><span class="type">gnutls_psk_server_credentials_t</span> sc</code></em>);</pre>
+gnutls_psk_free_server_credentials (<em class="parameter"><code><a class="link" href="gnutls-gnutls.html#gnutls-psk-server-credentials-t" title="gnutls_psk_server_credentials_t"><span class="type">gnutls_psk_server_credentials_t</span></a> sc</code></em>);</pre>
 <p>Free a gnutls_psk_server_credentials_t structure.</p>
 <div class="refsect3">
 <a name="gnutls-psk-free-server-credentials.parameters"></a><h4>Parameters</h4>
@@ -16810,7 +16962,7 @@ gnutls_psk_free_server_credentials (<em class="parameter"><code><span class="typ
 </colgroup>
 <tbody><tr>
 <td class="parameter_name"><p>sc</p></td>
-<td class="parameter_description"><p>is a <span class="type">gnutls_psk_server_credentials_t</span> type.</p></td>
+<td class="parameter_description"><p>is a <a class="link" href="gnutls-gnutls.html#gnutls-psk-server-credentials-t" title="gnutls_psk_server_credentials_t"><span class="type">gnutls_psk_server_credentials_t</span></a> type.</p></td>
 <td class="parameter_annotations"> </td>
 </tr></tbody>
 </table></div>
@@ -16821,7 +16973,7 @@ gnutls_psk_free_server_credentials (<em class="parameter"><code><span class="typ
 <a name="gnutls-psk-allocate-server-credentials"></a><h3>gnutls_psk_allocate_server_credentials ()</h3>
 <pre class="programlisting"><span class="returnvalue">int</span>
 gnutls_psk_allocate_server_credentials
-                               (<em class="parameter"><code><span class="type">gnutls_psk_server_credentials_t</span> *sc</code></em>);</pre>
+                               (<em class="parameter"><code><a class="link" href="gnutls-gnutls.html#gnutls-psk-server-credentials-t" title="gnutls_psk_server_credentials_t"><span class="type">gnutls_psk_server_credentials_t</span></a> *sc</code></em>);</pre>
 <p>Allocate a gnutls_psk_server_credentials_t structure.</p>
 <div class="refsect3">
 <a name="gnutls-psk-allocate-server-credentials.parameters"></a><h4>Parameters</h4>
@@ -16833,7 +16985,7 @@ gnutls_psk_allocate_server_credentials
 </colgroup>
 <tbody><tr>
 <td class="parameter_name"><p>sc</p></td>
-<td class="parameter_description"><p>is a pointer to a <span class="type">gnutls_psk_server_credentials_t</span> type.</p></td>
+<td class="parameter_description"><p>is a pointer to a <a class="link" href="gnutls-gnutls.html#gnutls-psk-server-credentials-t" title="gnutls_psk_server_credentials_t"><span class="type">gnutls_psk_server_credentials_t</span></a> type.</p></td>
 <td class="parameter_annotations"> </td>
 </tr></tbody>
 </table></div>
@@ -16849,10 +17001,10 @@ an error code is returned.</p>
 <a name="gnutls-psk-set-server-credentials-file"></a><h3>gnutls_psk_set_server_credentials_file ()</h3>
 <pre class="programlisting"><span class="returnvalue">int</span>
 gnutls_psk_set_server_credentials_file
-                               (<em class="parameter"><code><span class="type">gnutls_psk_server_credentials_t</span> res</code></em>,
+                               (<em class="parameter"><code><a class="link" href="gnutls-gnutls.html#gnutls-psk-server-credentials-t" title="gnutls_psk_server_credentials_t"><span class="type">gnutls_psk_server_credentials_t</span></a> res</code></em>,
                                 <em class="parameter"><code>const <span class="type">char</span> *password_file</code></em>);</pre>
 <p>This function sets the password file, in a
-<span class="type">gnutls_psk_server_credentials_t</span> type.  This password file
+<a class="link" href="gnutls-gnutls.html#gnutls-psk-server-credentials-t" title="gnutls_psk_server_credentials_t"><span class="type">gnutls_psk_server_credentials_t</span></a> type.  This password file
 holds usernames and keys and will be used for PSK authentication.</p>
 <p>Each entry in the file consists of a username, followed by a colon
 (':') and a hex-encoded key.  If the username contains a colon or
@@ -16869,7 +17021,7 @@ any other special character, it can be hex-encoded preceded by a
 <tbody>
 <tr>
 <td class="parameter_name"><p>res</p></td>
-<td class="parameter_description"><p>is a <span class="type">gnutls_psk_server_credentials_t</span> type.</p></td>
+<td class="parameter_description"><p>is a <a class="link" href="gnutls-gnutls.html#gnutls-psk-server-credentials-t" title="gnutls_psk_server_credentials_t"><span class="type">gnutls_psk_server_credentials_t</span></a> type.</p></td>
 <td class="parameter_annotations"> </td>
 </tr>
 <tr>
@@ -16891,10 +17043,10 @@ an error code is returned.</p>
 <a name="gnutls-psk-set-server-credentials-hint"></a><h3>gnutls_psk_set_server_credentials_hint ()</h3>
 <pre class="programlisting"><span class="returnvalue">int</span>
 gnutls_psk_set_server_credentials_hint
-                               (<em class="parameter"><code><span class="type">gnutls_psk_server_credentials_t</span> res</code></em>,
+                               (<em class="parameter"><code><a class="link" href="gnutls-gnutls.html#gnutls-psk-server-credentials-t" title="gnutls_psk_server_credentials_t"><span class="type">gnutls_psk_server_credentials_t</span></a> res</code></em>,
                                 <em class="parameter"><code>const <span class="type">char</span> *hint</code></em>);</pre>
 <p>This function sets the identity hint, in a
-<span class="type">gnutls_psk_server_credentials_t</span> type.  This hint is sent to
+<a class="link" href="gnutls-gnutls.html#gnutls-psk-server-credentials-t" title="gnutls_psk_server_credentials_t"><span class="type">gnutls_psk_server_credentials_t</span></a> type.  This hint is sent to
 the client to help it chose a good PSK credential (i.e., username
 and password).</p>
 <div class="refsect3">
@@ -16908,7 +17060,7 @@ and password).</p>
 <tbody>
 <tr>
 <td class="parameter_name"><p>res</p></td>
-<td class="parameter_description"><p>is a <span class="type">gnutls_psk_server_credentials_t</span> type.</p></td>
+<td class="parameter_description"><p>is a <a class="link" href="gnutls-gnutls.html#gnutls-psk-server-credentials-t" title="gnutls_psk_server_credentials_t"><span class="type">gnutls_psk_server_credentials_t</span></a> type.</p></td>
 <td class="parameter_annotations"> </td>
 </tr>
 <tr>
@@ -17033,7 +17185,7 @@ if TLS 1.3 has been negotiated.</p>
 <a name="gnutls-psk-set-server-credentials-function"></a><h3>gnutls_psk_set_server_credentials_function ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>
 gnutls_psk_set_server_credentials_function
-                               (<em class="parameter"><code><span class="type">gnutls_psk_server_credentials_t</span> cred</code></em>,
+                               (<em class="parameter"><code><a class="link" href="gnutls-gnutls.html#gnutls-psk-server-credentials-t" title="gnutls_psk_server_credentials_t"><span class="type">gnutls_psk_server_credentials_t</span></a> cred</code></em>,
                                 <em class="parameter"><code><span class="type">gnutls_psk_server_credentials_function</span> *func</code></em>);</pre>
 <p>This function can be used to set a callback to retrieve the user's PSK credentials.
 The callback's function form is:
@@ -17059,7 +17211,7 @@ an error.</p>
 <tbody>
 <tr>
 <td class="parameter_name"><p>cred</p></td>
-<td class="parameter_description"><p>is a <span class="type">gnutls_psk_server_credentials_t</span> type.</p></td>
+<td class="parameter_description"><p>is a <a class="link" href="gnutls-gnutls.html#gnutls-psk-server-credentials-t" title="gnutls_psk_server_credentials_t"><span class="type">gnutls_psk_server_credentials_t</span></a> type.</p></td>
 <td class="parameter_annotations"> </td>
 </tr>
 <tr>
@@ -17076,7 +17228,7 @@ an error.</p>
 <a name="gnutls-psk-set-server-credentials-function2"></a><h3>gnutls_psk_set_server_credentials_function2 ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>
 gnutls_psk_set_server_credentials_function2
-                               (<em class="parameter"><code><span class="type">gnutls_psk_server_credentials_t</span> cred</code></em>,
+                               (<em class="parameter"><code><a class="link" href="gnutls-gnutls.html#gnutls-psk-server-credentials-t" title="gnutls_psk_server_credentials_t"><span class="type">gnutls_psk_server_credentials_t</span></a> cred</code></em>,
                                 <em class="parameter"><code><span class="type">gnutls_psk_server_credentials_function2</span> *func</code></em>);</pre>
 <p>This function can be used to set a callback to retrieve the user's PSK credentials.
 The callback's function form is:
@@ -17104,7 +17256,7 @@ an error.</p>
 <tbody>
 <tr>
 <td class="parameter_name"><p>cred</p></td>
-<td class="parameter_description"><p>is a <span class="type">gnutls_psk_server_credentials_t</span> type.</p></td>
+<td class="parameter_description"><p>is a <a class="link" href="gnutls-gnutls.html#gnutls-psk-server-credentials-t" title="gnutls_psk_server_credentials_t"><span class="type">gnutls_psk_server_credentials_t</span></a> type.</p></td>
 <td class="parameter_annotations"> </td>
 </tr>
 <tr>
@@ -17118,10 +17270,117 @@ an error.</p>
 </div>
 <hr>
 <div class="refsect2">
+<a name="gnutls-psk-set-server-credentials-function3"></a><h3>gnutls_psk_set_server_credentials_function3 ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+gnutls_psk_set_server_credentials_function3
+                               (<em class="parameter"><code><a class="link" href="gnutls-gnutls.html#gnutls-psk-server-credentials-t" title="gnutls_psk_server_credentials_t"><span class="type">gnutls_psk_server_credentials_t</span></a> cred</code></em>,
+                                <em class="parameter"><code><span class="type">gnutls_psk_server_credentials_function3</span> *func</code></em>);</pre>
+<p>This function can be used to set a callback to retrieve the user's PSK credentials.
+The callback's function form is:
+int (*callback)(gnutls_session_t, const gnutls_datum_t* username,
+ gnutls_datum_t* key, gnutls_psk_key_flags *flags);</p>
+<p>This callback function has the same semantics as that of
+<a class="link" href="gnutls-gnutls.html#gnutls-psk-set-server-credentials-function2" title="gnutls_psk_set_server_credentials_function2 ()"><code class="function">gnutls_psk_set_server_credentials_function2()</code></a>, but it returns flags
+associated with the key.  The callback may import external PSK
+using the method described in RFC 9258 by using
+<a class="link" href="gnutls-gnutls.html#gnutls-psk-format-imported-identity" title="gnutls_psk_format_imported_identity ()"><code class="function">gnutls_psk_format_imported_identity()</code></a>.</p>
+<p><em class="parameter"><code>username</code></em>
+ contains the actual username.
+The <em class="parameter"><code>key</code></em>
+ must be filled in using the <code class="function">gnutls_malloc()</code>.</p>
+<p>In case the callback returned a negative number then gnutls will
+assume that the username does not exist.</p>
+<p>The callback function will only be called once per handshake.  The
+callback function should return 0 on success, while -1 indicates
+an error.</p>
+<div class="refsect3">
+<a name="gnutls-psk-set-server-credentials-function3.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>cred</p></td>
+<td class="parameter_description"><p>is a <a class="link" href="gnutls-gnutls.html#gnutls-psk-server-credentials-t" title="gnutls_psk_server_credentials_t"><span class="type">gnutls_psk_server_credentials_t</span></a> type.</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>func</p></td>
+<td class="parameter_description"><p>is the callback function</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gnutls-psk-format-imported-identity"></a><h3>gnutls_psk_format_imported_identity ()</h3>
+<pre class="programlisting"><span class="returnvalue">int</span>
+gnutls_psk_format_imported_identity (<em class="parameter"><code>const <a class="link" href="gnutls-gnutls.html#gnutls-datum-t" title="gnutls_datum_t"><span class="type">gnutls_datum_t</span></a> *identity</code></em>,
+                                     <em class="parameter"><code>const <a class="link" href="gnutls-gnutls.html#gnutls-datum-t" title="gnutls_datum_t"><span class="type">gnutls_datum_t</span></a> *context</code></em>,
+                                     <em class="parameter"><code><a class="link" href="gnutls-gnutls.html#gnutls-protocol-t" title="enum gnutls_protocol_t"><span class="type">gnutls_protocol_t</span></a> version</code></em>,
+                                     <em class="parameter"><code><a class="link" href="gnutls-gnutls.html#gnutls-digest-algorithm-t" title="enum gnutls_digest_algorithm_t"><span class="type">gnutls_digest_algorithm_t</span></a> hash</code></em>,
+                                     <em class="parameter"><code><a class="link" href="gnutls-gnutls.html#gnutls-datum-t" title="gnutls_datum_t"><span class="type">gnutls_datum_t</span></a> *imported_identity</code></em>);</pre>
+<p>This formats an external PSK identity <em class="parameter"><code>identity</code></em>
+ into an imported
+form, described in RFC 9258 as ImportedIdentity.</p>
+<p>Upon success, the data field of <em class="parameter"><code>imported_identity</code></em>
+ is allocated
+using <code class="function">gnutls_malloc()</code> and the caller must free the memory after
+use.</p>
+<div class="refsect3">
+<a name="gnutls-psk-format-imported-identity.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>identity</p></td>
+<td class="parameter_description"><p>external identity</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>context</p></td>
+<td class="parameter_description"><p>optional contextual information</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>version</p></td>
+<td class="parameter_description"><p>protocol version to which the PSK is imported</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>hash</p></td>
+<td class="parameter_description"><p>hash algorithm used for KDF</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>imported_identity</p></td>
+<td class="parameter_description"><p>where the imported identity is stored</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="gnutls-psk-format-imported-identity.returns"></a><h4>Returns</h4>
+<p> <a class="link" href="gnutls-gnutls.html#GNUTLS-E-SUCCESS:CAPS" title="GNUTLS_E_SUCCESS"><code class="literal">GNUTLS_E_SUCCESS</code></a> (0) on success, otherwise a negative error code.</p>
+</div>
+<p class="since">Since: 3.8.1</p>
+</div>
+<hr>
+<div class="refsect2">
 <a name="gnutls-psk-set-client-credentials-function"></a><h3>gnutls_psk_set_client_credentials_function ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>
 gnutls_psk_set_client_credentials_function
-                               (<em class="parameter"><code><span class="type">gnutls_psk_client_credentials_t</span> cred</code></em>,
+                               (<em class="parameter"><code><a class="link" href="gnutls-gnutls.html#gnutls-psk-client-credentials-t" title="gnutls_psk_client_credentials_t"><span class="type">gnutls_psk_client_credentials_t</span></a> cred</code></em>,
                                 <em class="parameter"><code><span class="type">gnutls_psk_client_credentials_function</span> *func</code></em>);</pre>
 <p>This function can be used to set a callback to retrieve the username and
 password for client PSK authentication.
@@ -17149,7 +17408,7 @@ the PRECIS framework for usernames (rfc8265).</p>
 <tbody>
 <tr>
 <td class="parameter_name"><p>cred</p></td>
-<td class="parameter_description"><p>is a <span class="type">gnutls_psk_server_credentials_t</span> type.</p></td>
+<td class="parameter_description"><p>is a <a class="link" href="gnutls-gnutls.html#gnutls-psk-server-credentials-t" title="gnutls_psk_server_credentials_t"><span class="type">gnutls_psk_server_credentials_t</span></a> type.</p></td>
 <td class="parameter_annotations"> </td>
 </tr>
 <tr>
@@ -17166,7 +17425,7 @@ the PRECIS framework for usernames (rfc8265).</p>
 <a name="gnutls-psk-set-client-credentials-function2"></a><h3>gnutls_psk_set_client_credentials_function2 ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>
 gnutls_psk_set_client_credentials_function2
-                               (<em class="parameter"><code><span class="type">gnutls_psk_client_credentials_t</span> cred</code></em>,
+                               (<em class="parameter"><code><a class="link" href="gnutls-gnutls.html#gnutls-psk-client-credentials-t" title="gnutls_psk_client_credentials_t"><span class="type">gnutls_psk_client_credentials_t</span></a> cred</code></em>,
                                 <em class="parameter"><code><span class="type">gnutls_psk_client_credentials_function2</span> *func</code></em>);</pre>
 <p>This function can be used to set a callback to retrieve the username and
 password for client PSK authentication.
@@ -17196,7 +17455,58 @@ the PRECIS framework for usernames (rfc8265).</p>
 <tbody>
 <tr>
 <td class="parameter_name"><p>cred</p></td>
-<td class="parameter_description"><p>is a <span class="type">gnutls_psk_server_credentials_t</span> type.</p></td>
+<td class="parameter_description"><p>is a <a class="link" href="gnutls-gnutls.html#gnutls-psk-server-credentials-t" title="gnutls_psk_server_credentials_t"><span class="type">gnutls_psk_server_credentials_t</span></a> type.</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>func</p></td>
+<td class="parameter_description"><p>is the callback function</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gnutls-psk-set-client-credentials-function3"></a><h3>gnutls_psk_set_client_credentials_function3 ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+gnutls_psk_set_client_credentials_function3
+                               (<em class="parameter"><code><a class="link" href="gnutls-gnutls.html#gnutls-psk-client-credentials-t" title="gnutls_psk_client_credentials_t"><span class="type">gnutls_psk_client_credentials_t</span></a> cred</code></em>,
+                                <em class="parameter"><code><span class="type">gnutls_psk_client_credentials_function3</span> *func</code></em>);</pre>
+<p>This function can be used to set a callback to retrieve the username and
+password for client PSK authentication.
+The callback's function form is:
+int (*callback)(gnutls_session_t, gnutls_datum_t* username,
+ gnutls_datum_t* key, gnutls_datum_t* context, gnutls_psk_key_flags *flags);</p>
+<p>This callback function has the same semantics as that of
+<a class="link" href="gnutls-gnutls.html#gnutls-psk-set-client-credentials-function2" title="gnutls_psk_set_client_credentials_function2 ()"><code class="function">gnutls_psk_set_client_credentials_function2()</code></a>, but it returns flags
+associated with the key.  The callback may import external PSK
+using the method described in RFC 9258 by using
+<a class="link" href="gnutls-gnutls.html#gnutls-psk-format-imported-identity" title="gnutls_psk_format_imported_identity ()"><code class="function">gnutls_psk_format_imported_identity()</code></a>.</p>
+<p>The data field of <em class="parameter"><code>username</code></em>
+, <em class="parameter"><code>key</code></em>
+, and <em class="parameter"><code>context</code></em>
+ must be allocated
+using <code class="function">gnutls_malloc()</code>.  The <em class="parameter"><code>username</code></em>
+ should be an ASCII string or
+UTF-8 string. In case of a UTF-8 string it is recommended to be
+following the PRECIS framework for usernames (rfc8265).</p>
+<p>The callback function will be called once per handshake.</p>
+<p>The callback function should return 0 on success.
+-1 indicates an error.</p>
+<div class="refsect3">
+<a name="gnutls-psk-set-client-credentials-function3.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>cred</p></td>
+<td class="parameter_description"><p>is a <a class="link" href="gnutls-gnutls.html#gnutls-psk-server-credentials-t" title="gnutls_psk_server_credentials_t"><span class="type">gnutls_psk_server_credentials_t</span></a> type.</p></td>
 <td class="parameter_annotations"> </td>
 </tr>
 <tr>
@@ -17372,7 +17682,7 @@ encoding used by PSK password files.</p>
 <div class="refsect2">
 <a name="gnutls-psk-set-server-dh-params"></a><h3>gnutls_psk_set_server_dh_params ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>
-gnutls_psk_set_server_dh_params (<em class="parameter"><code><span class="type">gnutls_psk_server_credentials_t</span> res</code></em>,
+gnutls_psk_set_server_dh_params (<em class="parameter"><code><a class="link" href="gnutls-gnutls.html#gnutls-psk-server-credentials-t" title="gnutls_psk_server_credentials_t"><span class="type">gnutls_psk_server_credentials_t</span></a> res</code></em>,
                                  <em class="parameter"><code><a class="link" href="gnutls-gnutls.html#gnutls-dh-params-t" title="gnutls_dh_params_t"><span class="type">gnutls_dh_params_t</span></a> dh_params</code></em>);</pre>
 <div class="warning">
 <p><code class="literal">gnutls_psk_set_server_dh_params</code> is deprecated and should not be used in newly-written code.</p>
@@ -17410,7 +17720,7 @@ Diffie-Hellman exchange with PSK cipher suites.</p>
 <div class="refsect2">
 <a name="gnutls-psk-set-server-known-dh-params"></a><h3>gnutls_psk_set_server_known_dh_params ()</h3>
 <pre class="programlisting"><span class="returnvalue">int</span>
-gnutls_psk_set_server_known_dh_params (<em class="parameter"><code><span class="type">gnutls_psk_server_credentials_t</span> res</code></em>,
+gnutls_psk_set_server_known_dh_params (<em class="parameter"><code><a class="link" href="gnutls-gnutls.html#gnutls-psk-server-credentials-t" title="gnutls_psk_server_credentials_t"><span class="type">gnutls_psk_server_credentials_t</span></a> res</code></em>,
                                        <em class="parameter"><code><a class="link" href="gnutls-gnutls.html#gnutls-sec-param-t" title="enum gnutls_sec_param_t"><span class="type">gnutls_sec_param_t</span></a> sec_param</code></em>);</pre>
 <div class="warning">
 <p><code class="literal">gnutls_psk_set_server_known_dh_params</code> is deprecated and should not be used in newly-written code.</p>
@@ -17455,7 +17765,7 @@ negative error value.</p>
 <div class="refsect2">
 <a name="gnutls-psk-set-server-params-function"></a><h3>gnutls_psk_set_server_params_function ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>
-gnutls_psk_set_server_params_function (<em class="parameter"><code><span class="type">gnutls_psk_server_credentials_t</span> res</code></em>,
+gnutls_psk_set_server_params_function (<em class="parameter"><code><a class="link" href="gnutls-gnutls.html#gnutls-psk-server-credentials-t" title="gnutls_psk_server_credentials_t"><span class="type">gnutls_psk_server_credentials_t</span></a> res</code></em>,
                                        <em class="parameter"><code><span class="type">gnutls_params_function</span> *func</code></em>);</pre>
 <div class="warning">
 <p><code class="literal">gnutls_psk_set_server_params_function</code> is deprecated and should not be used in newly-written code.</p>
@@ -18666,7 +18976,7 @@ The callback should return <a class="link" href="gnutls-gnutls.html#GNUTLS-E-SUC
 <div class="refsect2">
 <a name="gnutls-psk-set-params-function"></a><h3>gnutls_psk_set_params_function ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>
-gnutls_psk_set_params_function (<em class="parameter"><code><span class="type">gnutls_psk_server_credentials_t</span> res</code></em>,
+gnutls_psk_set_params_function (<em class="parameter"><code><a class="link" href="gnutls-gnutls.html#gnutls-psk-server-credentials-t" title="gnutls_psk_server_credentials_t"><span class="type">gnutls_psk_server_credentials_t</span></a> res</code></em>,
                                 <em class="parameter"><code><span class="type">gnutls_params_function</span> *func</code></em>);</pre>
 <div class="warning">
 <p><code class="literal">gnutls_psk_set_params_function</code> is deprecated and should not be used in newly-written code.</p>
@@ -20751,12 +21061,39 @@ unusable.  This function is not thread-safe.</p>
 </div>
 <p class="since">Since: 3.7.7</p>
 </div>
+<hr>
+<div class="refsect2">
+<a name="gnutls-transport-is-ktls-enabled"></a><h3>gnutls_transport_is_ktls_enabled ()</h3>
+<pre class="programlisting"><a class="link" href="gnutls-gnutls.html#gnutls-transport-ktls-enable-flags-t" title="enum gnutls_transport_ktls_enable_flags_t"><span class="returnvalue">gnutls_transport_ktls_enable_flags_t</span></a>
+gnutls_transport_is_ktls_enabled (<em class="parameter"><code><a class="link" href="gnutls-gnutls.html#gnutls-session-t" title="gnutls_session_t"><span class="type">gnutls_session_t</span></a> session</code></em>);</pre>
+<p>Checks if KTLS is now enabled and was properly inicialized.</p>
+<div class="refsect3">
+<a name="gnutls-transport-is-ktls-enabled.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody><tr>
+<td class="parameter_name"><p>session</p></td>
+<td class="parameter_description"><p>is a <a class="link" href="gnutls-gnutls.html#gnutls-session-t" title="gnutls_session_t"><span class="type">gnutls_session_t</span></a> type.</p></td>
+<td class="parameter_annotations"> </td>
+</tr></tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="gnutls-transport-is-ktls-enabled.returns"></a><h4>Returns</h4>
+<p> <a class="link" href="gnutls-gnutls.html#GNUTLS-KTLS-RECV:CAPS"><code class="literal">GNUTLS_KTLS_RECV</code></a>, <a class="link" href="gnutls-gnutls.html#GNUTLS-KTLS-SEND:CAPS"><code class="literal">GNUTLS_KTLS_SEND</code></a>, <a class="link" href="gnutls-gnutls.html#GNUTLS-KTLS-DUPLEX:CAPS"><code class="literal">GNUTLS_KTLS_DUPLEX</code></a>, otherwise 0</p>
+</div>
+<p class="since">Since: 3.7.3</p>
+</div>
 </div>
 <div class="refsect1">
 <a name="gnutls-gnutls.other_details"></a><h2>Types and Values</h2>
 <div class="refsect2">
 <a name="GNUTLS-VERSION:CAPS"></a><h3>GNUTLS_VERSION</h3>
-<pre class="programlisting">#define GNUTLS_VERSION "3.7.9"
+<pre class="programlisting">#define GNUTLS_VERSION "3.8.1"
 </pre>
 </div>
 <hr>
@@ -20768,19 +21105,19 @@ unusable.  This function is not thread-safe.</p>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-VERSION-MINOR:CAPS"></a><h3>GNUTLS_VERSION_MINOR</h3>
-<pre class="programlisting">#define GNUTLS_VERSION_MINOR 7
+<pre class="programlisting">#define GNUTLS_VERSION_MINOR 8
 </pre>
 </div>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-VERSION-PATCH:CAPS"></a><h3>GNUTLS_VERSION_PATCH</h3>
-<pre class="programlisting">#define GNUTLS_VERSION_PATCH 9
+<pre class="programlisting">#define GNUTLS_VERSION_PATCH 1
 </pre>
 </div>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-VERSION-NUMBER:CAPS"></a><h3>GNUTLS_VERSION_NUMBER</h3>
-<pre class="programlisting">#define GNUTLS_VERSION_NUMBER 0x030709
+<pre class="programlisting">#define GNUTLS_VERSION_NUMBER 0x030801
 </pre>
 </div>
 <hr>
@@ -21908,8 +22245,8 @@ algorithms.</p>
 : Connection should not block. Since 3.0.0.
 <em class="parameter"><code>GNUTLS_NO_SIGNAL</code></em>
 : In systems where SIGPIPE is delivered on send, it will be disabled. That flag has effect in systems which support the MSG_NOSIGNAL sockets flag (since 3.4.2).
-<em class="parameter"><code>GNUTLS_NO_EXTENSIONS</code></em>
-: Do not enable any TLS extensions by default (since 3.1.2). As TLS 1.2 and later require extensions this option is considered obsolete and should not be used.
+<em class="parameter"><code>GNUTLS_NO_DEFAULT_EXTENSIONS</code></em>
+: Do not enable any TLS extensions by default such as session tickets and OCSP certificate status request (since 3.1.2). As TLS 1.2 and later require extensions this option is considered obsolete and should not be used.
 <em class="parameter"><code>GNUTLS_NO_REPLAY_PROTECTION</code></em>
 : Disable any replay protection in DTLS. This must only be used if  replay protection is achieved using other means. Since 3.2.2.
 <em class="parameter"><code>GNUTLS_ALLOW_ID_CHANGE</code></em>
@@ -21971,7 +22308,10 @@ algorithms.</p>
 : Under TLS1.3 disable auto-sending of
    session tickets during the handshake.
 <em class="parameter"><code>GNUTLS_NO_END_OF_EARLY_DATA</code></em>
-: Under TLS1.3 suppress sending EndOfEarlyData message. Since 3.7.2.</p>
+: Under TLS1.3 suppress sending EndOfEarlyData message. Since 3.7.2.
+<em class="parameter"><code>GNUTLS_NO_STATUS_REQUEST</code></em>
+: Prevents client from including the "status_request" TLS extension
+   in the client hello, thus disabling the receival of certificate status information. Since 3.8.0.</p>
 <p>Enumeration of different flags for <a class="link" href="gnutls-gnutls.html#gnutls-init" title="gnutls_init ()"><code class="function">gnutls_init()</code></a> function. All the flags
 can be combined except <em class="parameter"><code>GNUTLS_SERVER</code></em>
  and <em class="parameter"><code>GNUTLS_CLIENT</code></em>
@@ -22010,7 +22350,7 @@ would support the generated key.</p>
 <td> </td>
 </tr>
 <tr>
-<td class="enum_member_name"><p><a name="GNUTLS-NO-EXTENSIONS:CAPS"></a>GNUTLS_NO_EXTENSIONS</p></td>
+<td class="enum_member_name"><p><a name="GNUTLS-NO-DEFAULT-EXTENSIONS:CAPS"></a>GNUTLS_NO_DEFAULT_EXTENSIONS</p></td>
 <td> </td>
 <td> </td>
 </tr>
@@ -22109,6 +22449,11 @@ would support the generated key.</p>
 <td> </td>
 <td> </td>
 </tr>
+<tr>
+<td class="enum_member_name"><p><a name="GNUTLS-NO-STATUS-REQUEST:CAPS"></a>GNUTLS_NO_STATUS_REQUEST</p></td>
+<td> </td>
+<td> </td>
+</tr>
 </tbody>
 </table></div>
 </div>
@@ -22122,61 +22467,61 @@ would support the generated key.</p>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-CLIENT:CAPS"></a><h3>GNUTLS_CLIENT</h3>
-<pre class="programlisting">#define GNUTLS_CLIENT (1&lt;&lt;1)
+<pre class="programlisting">#define GNUTLS_CLIENT (1 &lt;&lt; 1)
 </pre>
 </div>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-DATAGRAM:CAPS"></a><h3>GNUTLS_DATAGRAM</h3>
-<pre class="programlisting">#define GNUTLS_DATAGRAM (1&lt;&lt;2)
+<pre class="programlisting">#define GNUTLS_DATAGRAM (1 &lt;&lt; 2)
 </pre>
 </div>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-NONBLOCK:CAPS"></a><h3>GNUTLS_NONBLOCK</h3>
-<pre class="programlisting">#define GNUTLS_NONBLOCK (1&lt;&lt;3)
+<pre class="programlisting">#define GNUTLS_NONBLOCK (1 &lt;&lt; 3)
 </pre>
 </div>
 <hr>
 <div class="refsect2">
-<a name="GNUTLS-NO-EXTENSIONS:CAPS"></a><h3>GNUTLS_NO_EXTENSIONS</h3>
-<pre class="programlisting">#define GNUTLS_NO_EXTENSIONS (1&lt;&lt;4)
+<a name="GNUTLS-NO-DEFAULT-EXTENSIONS:CAPS"></a><h3>GNUTLS_NO_DEFAULT_EXTENSIONS</h3>
+<pre class="programlisting">#define GNUTLS_NO_DEFAULT_EXTENSIONS (1 &lt;&lt; 4)
 </pre>
 </div>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-NO-REPLAY-PROTECTION:CAPS"></a><h3>GNUTLS_NO_REPLAY_PROTECTION</h3>
-<pre class="programlisting">#define GNUTLS_NO_REPLAY_PROTECTION (1&lt;&lt;5)
+<pre class="programlisting">#define GNUTLS_NO_REPLAY_PROTECTION (1 &lt;&lt; 5)
 </pre>
 </div>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-NO-SIGNAL:CAPS"></a><h3>GNUTLS_NO_SIGNAL</h3>
-<pre class="programlisting">#define GNUTLS_NO_SIGNAL (1&lt;&lt;6)
+<pre class="programlisting">#define GNUTLS_NO_SIGNAL (1 &lt;&lt; 6)
 </pre>
 </div>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-ALLOW-ID-CHANGE:CAPS"></a><h3>GNUTLS_ALLOW_ID_CHANGE</h3>
-<pre class="programlisting">#define GNUTLS_ALLOW_ID_CHANGE (1&lt;&lt;7)
+<pre class="programlisting">#define GNUTLS_ALLOW_ID_CHANGE (1 &lt;&lt; 7)
 </pre>
 </div>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-ENABLE-FALSE-START:CAPS"></a><h3>GNUTLS_ENABLE_FALSE_START</h3>
-<pre class="programlisting">#define GNUTLS_ENABLE_FALSE_START (1&lt;&lt;8)
+<pre class="programlisting">#define GNUTLS_ENABLE_FALSE_START (1 &lt;&lt; 8)
 </pre>
 </div>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-FORCE-CLIENT-CERT:CAPS"></a><h3>GNUTLS_FORCE_CLIENT_CERT</h3>
-<pre class="programlisting">#define GNUTLS_FORCE_CLIENT_CERT (1&lt;&lt;9)
+<pre class="programlisting">#define GNUTLS_FORCE_CLIENT_CERT (1 &lt;&lt; 9)
 </pre>
 </div>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-NO-TICKETS:CAPS"></a><h3>GNUTLS_NO_TICKETS</h3>
-<pre class="programlisting">#define GNUTLS_NO_TICKETS (1&lt;&lt;10)
+<pre class="programlisting">#define GNUTLS_NO_TICKETS (1 &lt;&lt; 10)
 </pre>
 </div>
 <hr>
@@ -24367,13 +24712,13 @@ as specified in draft-vanrein-tls-symmetry-02.</p>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-HB-PEER-NOT-ALLOWED-TO-SEND:CAPS"></a><h3>GNUTLS_HB_PEER_NOT_ALLOWED_TO_SEND</h3>
-<pre class="programlisting">#define GNUTLS_HB_PEER_NOT_ALLOWED_TO_SEND (1&lt;&lt;1)
+<pre class="programlisting">#define GNUTLS_HB_PEER_NOT_ALLOWED_TO_SEND (1 &lt;&lt; 1)
 </pre>
 </div>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-HB-LOCAL-ALLOWED-TO-SEND:CAPS"></a><h3>GNUTLS_HB_LOCAL_ALLOWED_TO_SEND</h3>
-<pre class="programlisting">#define GNUTLS_HB_LOCAL_ALLOWED_TO_SEND (1&lt;&lt;2)
+<pre class="programlisting">#define GNUTLS_HB_LOCAL_ALLOWED_TO_SEND (1 &lt;&lt; 2)
 </pre>
 </div>
 <hr>
@@ -24547,6 +24892,20 @@ as specified in draft-vanrein-tls-symmetry-02.</p>
 </td>
 <td class="enum_member_annotations"> </td>
 </tr>
+<tr>
+<td class="enum_member_name"><p><a name="GNUTLS-SRTP-AEAD-AES-128-GCM:CAPS"></a>GNUTLS_SRTP_AEAD_AES_128_GCM</p></td>
+<td class="enum_member_description">
+<p>128 bit AES with GCM</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="GNUTLS-SRTP-AEAD-AES-256-GCM:CAPS"></a>GNUTLS_SRTP_AEAD_AES_256_GCM</p></td>
+<td class="enum_member_description">
+<p>256 bit AES with GCM</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
 </tbody>
 </table></div>
 </div>
@@ -24710,13 +25069,12 @@ against the IPAddress Alternative name; option available since 3.6.0.</p>
 <hr>
 <div class="refsect2">
 <a name="gnutls-handshake-post-client-hello-func"></a><h3>gnutls_handshake_post_client_hello_func</h3>
-<pre class="programlisting">#define gnutls_handshake_post_client_hello_func gnutls_handshake_simple_hook_func
-</pre>
+<pre class="programlisting">#define             gnutls_handshake_post_client_hello_func</pre>
 </div>
 <hr>
 <div class="refsect2">
 <a name="gnutls-cred-set"></a><h3>gnutls_cred_set</h3>
-<pre class="programlisting">#define gnutls_cred_set gnutls_credentials_set
+<pre class="programlisting">#define gnutls_cred_set gnutls_credentials_set
 </pre>
 </div>
 <hr>
@@ -24759,6 +25117,18 @@ against the IPAddress Alternative name; option available since 3.6.0.</p>
 <div class="refsect2">
 <a name="gnutls-openpgp-keyring-t"></a><h3>gnutls_openpgp_keyring_t</h3>
 <pre class="programlisting">typedef struct gnutls_openpgp_keyring_int *gnutls_openpgp_keyring_t;
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gnutls-certificate-server-credentials"></a><h3>gnutls_certificate_server_credentials</h3>
+<pre class="programlisting">typedef gnutls_certificate_credentials_t gnutls_certificate_server_credentials;
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gnutls-certificate-client-credentials"></a><h3>gnutls_certificate_client_credentials</h3>
+<pre class="programlisting">typedef gnutls_certificate_credentials_t gnutls_certificate_client_credentials;
 </pre>
 </div>
 <hr>
@@ -24850,7 +25220,19 @@ When used, it requires CAs to be added before CRLs.</p>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-IDNA-FORCE-2008:CAPS"></a><h3>GNUTLS_IDNA_FORCE_2008</h3>
-<pre class="programlisting">#define GNUTLS_IDNA_FORCE_2008 (1&lt;&lt;1)
+<pre class="programlisting">#define GNUTLS_IDNA_FORCE_2008 (1 &lt;&lt; 1)
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gnutls-srp-server-credentials-t"></a><h3>gnutls_srp_server_credentials_t</h3>
+<pre class="programlisting">typedef struct gnutls_srp_server_credentials_st *gnutls_srp_server_credentials_t;
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gnutls-srp-client-credentials-t"></a><h3>gnutls_srp_client_credentials_t</h3>
+<pre class="programlisting">typedef struct gnutls_srp_client_credentials_st *gnutls_srp_client_credentials_t;
 </pre>
 </div>
 <hr>
@@ -24863,6 +25245,18 @@ When used, it requires CAs to be added before CRLs.</p>
 <div class="refsect2">
 <a name="gnutls-srp-base64-decode-alloc"></a><h3>gnutls_srp_base64_decode_alloc</h3>
 <pre class="programlisting">#define gnutls_srp_base64_decode_alloc gnutls_srp_base64_decode2
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gnutls-psk-server-credentials-t"></a><h3>gnutls_psk_server_credentials_t</h3>
+<pre class="programlisting">typedef struct gnutls_psk_server_credentials_st *gnutls_psk_server_credentials_t;
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gnutls-psk-client-credentials-t"></a><h3>gnutls_psk_client_credentials_t</h3>
+<pre class="programlisting">typedef struct gnutls_psk_client_credentials_st *gnutls_psk_client_credentials_t;
 </pre>
 </div>
 <hr>
@@ -24889,6 +25283,13 @@ When used, it requires CAs to be added before CRLs.</p>
 <td class="enum_member_name"><p><a name="GNUTLS-PSK-KEY-HEX:CAPS"></a>GNUTLS_PSK_KEY_HEX</p></td>
 <td class="enum_member_description">
 <p>PSK-key in hex format.</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="GNUTLS-PSK-KEY-EXT:CAPS"></a>GNUTLS_PSK_KEY_EXT</p></td>
+<td class="enum_member_description">
+<p>PSK-key is external and to be imported.</p>
 </td>
 <td class="enum_member_annotations"> </td>
 </tr>
@@ -25062,7 +25463,7 @@ When used, it requires CAs to be added before CRLs.</p>
 		gnutls_x509_crt_t *x509;
 		gnutls_openpgp_crt_t pgp;
 	} cert;
-	unsigned int ncerts; /* one for pgp keys */
+	unsigned int ncerts; /* one for pgp keys */
 
 	union {
 		gnutls_x509_privkey_t x509;
@@ -25070,7 +25471,7 @@ When used, it requires CAs to be added before CRLs.</p>
 		gnutls_pkcs11_privkey_t pkcs11;
 	} key;
 
-	unsigned int deinit_all; /* if non zero all keys will be deinited */
+	unsigned int deinit_all; /* if non zero all keys will be deinited */
 } gnutls_retr2_st;
 </pre>
 </div>
@@ -25089,55 +25490,55 @@ When used, it requires CAs to be added before CRLs.</p>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-KEY-DIGITAL-SIGNATURE:CAPS"></a><h3>GNUTLS_KEY_DIGITAL_SIGNATURE</h3>
-<pre class="programlisting">#define GNUTLS_KEY_DIGITAL_SIGNATURE 128
+<pre class="programlisting">#define GNUTLS_KEY_DIGITAL_SIGNATURE 128
 </pre>
 </div>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-KEY-NON-REPUDIATION:CAPS"></a><h3>GNUTLS_KEY_NON_REPUDIATION</h3>
-<pre class="programlisting">#define GNUTLS_KEY_NON_REPUDIATION 64
+<pre class="programlisting">#define GNUTLS_KEY_NON_REPUDIATION 64
 </pre>
 </div>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-KEY-KEY-ENCIPHERMENT:CAPS"></a><h3>GNUTLS_KEY_KEY_ENCIPHERMENT</h3>
-<pre class="programlisting">#define GNUTLS_KEY_KEY_ENCIPHERMENT 32
+<pre class="programlisting">#define GNUTLS_KEY_KEY_ENCIPHERMENT 32
 </pre>
 </div>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-KEY-DATA-ENCIPHERMENT:CAPS"></a><h3>GNUTLS_KEY_DATA_ENCIPHERMENT</h3>
-<pre class="programlisting">#define GNUTLS_KEY_DATA_ENCIPHERMENT 16
+<pre class="programlisting">#define GNUTLS_KEY_DATA_ENCIPHERMENT 16
 </pre>
 </div>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-KEY-KEY-AGREEMENT:CAPS"></a><h3>GNUTLS_KEY_KEY_AGREEMENT</h3>
-<pre class="programlisting">#define GNUTLS_KEY_KEY_AGREEMENT 8
+<pre class="programlisting">#define GNUTLS_KEY_KEY_AGREEMENT 8
 </pre>
 </div>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-KEY-KEY-CERT-SIGN:CAPS"></a><h3>GNUTLS_KEY_KEY_CERT_SIGN</h3>
-<pre class="programlisting">#define GNUTLS_KEY_KEY_CERT_SIGN 4
+<pre class="programlisting">#define GNUTLS_KEY_KEY_CERT_SIGN 4
 </pre>
 </div>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-KEY-CRL-SIGN:CAPS"></a><h3>GNUTLS_KEY_CRL_SIGN</h3>
-<pre class="programlisting">#define GNUTLS_KEY_CRL_SIGN		2
+<pre class="programlisting">#define GNUTLS_KEY_CRL_SIGN 2
 </pre>
 </div>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-KEY-ENCIPHER-ONLY:CAPS"></a><h3>GNUTLS_KEY_ENCIPHER_ONLY</h3>
-<pre class="programlisting">#define GNUTLS_KEY_ENCIPHER_ONLY 1
+<pre class="programlisting">#define GNUTLS_KEY_ENCIPHER_ONLY 1
 </pre>
 </div>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-KEY-DECIPHER-ONLY:CAPS"></a><h3>GNUTLS_KEY_DECIPHER_ONLY</h3>
-<pre class="programlisting">#define GNUTLS_KEY_DECIPHER_ONLY 32768
+<pre class="programlisting">#define GNUTLS_KEY_DECIPHER_ONLY 32768
 </pre>
 </div>
 <hr>
@@ -25232,7 +25633,7 @@ When used, it requires CAs to be added before CRLs.</p>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-PKCS11-PIN-COUNT-LOW:CAPS"></a><h3>GNUTLS_PKCS11_PIN_COUNT_LOW</h3>
-<pre class="programlisting">#define GNUTLS_PKCS11_PIN_COUNT_LOW  GNUTLS_PIN_COUNT_LOW
+<pre class="programlisting">#define GNUTLS_PKCS11_PIN_COUNT_LOW GNUTLS_PIN_COUNT_LOW
 </pre>
 </div>
 <hr>
@@ -25274,7 +25675,7 @@ When used, it requires CAs to be added before CRLs.</p>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-EXT-RAW-FLAG-DTLS-CLIENT-HELLO:CAPS"></a><h3>GNUTLS_EXT_RAW_FLAG_DTLS_CLIENT_HELLO</h3>
-<pre class="programlisting">#define GNUTLS_EXT_RAW_FLAG_DTLS_CLIENT_HELLO (1&lt;&lt;1)
+<pre class="programlisting">#define GNUTLS_EXT_RAW_FLAG_DTLS_CLIENT_HELLO (1 &lt;&lt; 1)
 </pre>
 </div>
 <hr>
@@ -25605,6 +26006,46 @@ transition to <a class="link" href="gnutls-gnutls.html#GNUTLS-FIPS140-OP-NOT-APP
 </div>
 <hr>
 <div class="refsect2">
+<a name="gnutls-transport-ktls-enable-flags-t"></a><h3>enum gnutls_transport_ktls_enable_flags_t</h3>
+<p>Flag enumeration of ktls enable status for recv and send functions.
+This is used by <a class="link" href="gnutls-gnutls.html#gnutls-transport-is-ktls-enabled" title="gnutls_transport_is_ktls_enabled ()"><code class="function">gnutls_transport_is_ktls_enabled()</code></a>.</p>
+<div class="refsect3">
+<a name="gnutls-transport-ktls-enable-flags-t.members"></a><h4>Members</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="300px" class="enum_members_name">
+<col class="enum_members_description">
+<col width="200px" class="enum_members_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="enum_member_name"><p><a name="GNUTLS-KTLS-RECV:CAPS"></a>GNUTLS_KTLS_RECV</p></td>
+<td class="enum_member_description">
+<p>ktls enabled for recv function.</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="GNUTLS-KTLS-SEND:CAPS"></a>GNUTLS_KTLS_SEND</p></td>
+<td class="enum_member_description">
+<p>ktls enabled for send function.</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="GNUTLS-KTLS-DUPLEX:CAPS"></a>GNUTLS_KTLS_DUPLEX</p></td>
+<td class="enum_member_description">
+<p>ktls enabled for both recv and send functions.</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<p class="since">Since: 3.7.3</p>
+</div>
+<hr>
+<div class="refsect2">
 <a name="GNUTLS-E-SUCCESS:CAPS"></a><h3>GNUTLS_E_SUCCESS</h3>
 <pre class="programlisting">#define GNUTLS_E_SUCCESS 0
 </pre>
@@ -25612,25 +26053,25 @@ transition to <a class="link" href="gnutls-gnutls.html#GNUTLS-FIPS140-OP-NOT-APP
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-E-UNKNOWN-COMPRESSION-ALGORITHM:CAPS"></a><h3>GNUTLS_E_UNKNOWN_COMPRESSION_ALGORITHM</h3>
-<pre class="programlisting">#define GNUTLS_E_UNKNOWN_COMPRESSION_ALGORITHM -3
+<pre class="programlisting">#define GNUTLS_E_UNKNOWN_COMPRESSION_ALGORITHM -3
 </pre>
 </div>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-E-UNKNOWN-CIPHER-TYPE:CAPS"></a><h3>GNUTLS_E_UNKNOWN_CIPHER_TYPE</h3>
-<pre class="programlisting">#define GNUTLS_E_UNKNOWN_CIPHER_TYPE -6
+<pre class="programlisting">#define GNUTLS_E_UNKNOWN_CIPHER_TYPE -6
 </pre>
 </div>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-E-LARGE-PACKET:CAPS"></a><h3>GNUTLS_E_LARGE_PACKET</h3>
-<pre class="programlisting">#define GNUTLS_E_LARGE_PACKET -7
+<pre class="programlisting">#define GNUTLS_E_LARGE_PACKET -7
 </pre>
 </div>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-E-UNSUPPORTED-VERSION-PACKET:CAPS"></a><h3>GNUTLS_E_UNSUPPORTED_VERSION_PACKET</h3>
-<pre class="programlisting">#define GNUTLS_E_UNSUPPORTED_VERSION_PACKET -8 /* GNUTLS_A_PROTOCOL_VERSION */
+<pre class="programlisting">#define GNUTLS_E_UNSUPPORTED_VERSION_PACKET -8 /* GNUTLS_A_PROTOCOL_VERSION */
 </pre>
 </div>
 <hr>
@@ -25642,7 +26083,7 @@ transition to <a class="link" href="gnutls-gnutls.html#GNUTLS-FIPS140-OP-NOT-APP
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-E-UNEXPECTED-PACKET-LENGTH:CAPS"></a><h3>GNUTLS_E_UNEXPECTED_PACKET_LENGTH</h3>
-<pre class="programlisting">#define GNUTLS_E_UNEXPECTED_PACKET_LENGTH -9 /* GNUTLS_A_DECODE_ERROR */
+<pre class="programlisting">#define GNUTLS_E_UNEXPECTED_PACKET_LENGTH -9 /* GNUTLS_A_DECODE_ERROR */
 </pre>
 </div>
 <hr>
@@ -25660,7 +26101,7 @@ transition to <a class="link" href="gnutls-gnutls.html#GNUTLS-FIPS140-OP-NOT-APP
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-E-UNEXPECTED-PACKET:CAPS"></a><h3>GNUTLS_E_UNEXPECTED_PACKET</h3>
-<pre class="programlisting">#define GNUTLS_E_UNEXPECTED_PACKET -15 /* GNUTLS_A_UNEXPECTED_MESSAGE */
+<pre class="programlisting">#define GNUTLS_E_UNEXPECTED_PACKET -15 /* GNUTLS_A_UNEXPECTED_MESSAGE */
 </pre>
 </div>
 <hr>
@@ -25684,26 +26125,25 @@ transition to <a class="link" href="gnutls-gnutls.html#GNUTLS-FIPS140-OP-NOT-APP
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-E-UNKNOWN-CIPHER-SUITE:CAPS"></a><h3>GNUTLS_E_UNKNOWN_CIPHER_SUITE</h3>
-<pre class="programlisting">#define GNUTLS_E_UNKNOWN_CIPHER_SUITE -21 /* GNUTLS_A_HANDSHAKE_FAILURE */
+<pre class="programlisting">#define GNUTLS_E_UNKNOWN_CIPHER_SUITE -21
 </pre>
 </div>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-E-UNWANTED-ALGORITHM:CAPS"></a><h3>GNUTLS_E_UNWANTED_ALGORITHM</h3>
-<pre class="programlisting">#define GNUTLS_E_UNWANTED_ALGORITHM -22
+<pre class="programlisting">#define GNUTLS_E_UNWANTED_ALGORITHM -22
 </pre>
 </div>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-E-MPI-SCAN-FAILED:CAPS"></a><h3>GNUTLS_E_MPI_SCAN_FAILED</h3>
-<pre class="programlisting">#define GNUTLS_E_MPI_SCAN_FAILED -23
+<pre class="programlisting">#define GNUTLS_E_MPI_SCAN_FAILED -23
 </pre>
 </div>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-E-DECRYPTION-FAILED:CAPS"></a><h3>GNUTLS_E_DECRYPTION_FAILED</h3>
-<pre class="programlisting">#define GNUTLS_E_DECRYPTION_FAILED -24 /* GNUTLS_A_DECRYPTION_FAILED, GNUTLS_A_BAD_RECORD_MAC */
-</pre>
+<pre class="programlisting">#define             GNUTLS_E_DECRYPTION_FAILED</pre>
 </div>
 <hr>
 <div class="refsect2">
@@ -25714,7 +26154,7 @@ transition to <a class="link" href="gnutls-gnutls.html#GNUTLS-FIPS140-OP-NOT-APP
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-E-DECOMPRESSION-FAILED:CAPS"></a><h3>GNUTLS_E_DECOMPRESSION_FAILED</h3>
-<pre class="programlisting">#define GNUTLS_E_DECOMPRESSION_FAILED -26 /* GNUTLS_A_DECOMPRESSION_FAILURE */
+<pre class="programlisting">#define GNUTLS_E_DECOMPRESSION_FAILED -26 /* GNUTLS_A_DECOMPRESSION_FAILURE */
 </pre>
 </div>
 <hr>
@@ -25762,8 +26202,7 @@ transition to <a class="link" href="gnutls-gnutls.html#GNUTLS-FIPS140-OP-NOT-APP
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-E-INSUFICIENT-CREDENTIALS:CAPS"></a><h3>GNUTLS_E_INSUFICIENT_CREDENTIALS</h3>
-<pre class="programlisting">#define GNUTLS_E_INSUFICIENT_CREDENTIALS GNUTLS_E_INSUFFICIENT_CREDENTIALS /* for backwards compatibility only */
-</pre>
+<pre class="programlisting">#define             GNUTLS_E_INSUFICIENT_CREDENTIALS</pre>
 </div>
 <hr>
 <div class="refsect2">
@@ -25774,8 +26213,7 @@ transition to <a class="link" href="gnutls-gnutls.html#GNUTLS-FIPS140-OP-NOT-APP
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-E-INSUFICIENT-CRED:CAPS"></a><h3>GNUTLS_E_INSUFICIENT_CRED</h3>
-<pre class="programlisting">#define GNUTLS_E_INSUFICIENT_CRED GNUTLS_E_INSUFFICIENT_CREDENTIALS /* for backwards compatibility only */
-</pre>
+<pre class="programlisting">#define             GNUTLS_E_INSUFICIENT_CRED</pre>
 </div>
 <hr>
 <div class="refsect2">
@@ -25792,13 +26230,13 @@ transition to <a class="link" href="gnutls-gnutls.html#GNUTLS-FIPS140-OP-NOT-APP
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-E-MPI-PRINT-FAILED:CAPS"></a><h3>GNUTLS_E_MPI_PRINT_FAILED</h3>
-<pre class="programlisting">#define GNUTLS_E_MPI_PRINT_FAILED -35
+<pre class="programlisting">#define GNUTLS_E_MPI_PRINT_FAILED -35
 </pre>
 </div>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-E-REHANDSHAKE:CAPS"></a><h3>GNUTLS_E_REHANDSHAKE</h3>
-<pre class="programlisting">#define GNUTLS_E_REHANDSHAKE -37 /* GNUTLS_A_NO_RENEGOTIATION */
+<pre class="programlisting">#define GNUTLS_E_REHANDSHAKE -37 /* GNUTLS_A_NO_RENEGOTIATION */
 </pre>
 </div>
 <hr>
@@ -25852,7 +26290,7 @@ transition to <a class="link" href="gnutls-gnutls.html#GNUTLS-FIPS140-OP-NOT-APP
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-E-NO-CERTIFICATE-FOUND:CAPS"></a><h3>GNUTLS_E_NO_CERTIFICATE_FOUND</h3>
-<pre class="programlisting">#define GNUTLS_E_NO_CERTIFICATE_FOUND -49 /* GNUTLS_A_BAD_CERTIFICATE */
+<pre class="programlisting">#define GNUTLS_E_NO_CERTIFICATE_FOUND -49 /* GNUTLS_A_BAD_CERTIFICATE */
 </pre>
 </div>
 <hr>
@@ -25888,7 +26326,7 @@ transition to <a class="link" href="gnutls-gnutls.html#GNUTLS-FIPS140-OP-NOT-APP
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-E-RECEIVED-ILLEGAL-PARAMETER:CAPS"></a><h3>GNUTLS_E_RECEIVED_ILLEGAL_PARAMETER</h3>
-<pre class="programlisting">#define GNUTLS_E_RECEIVED_ILLEGAL_PARAMETER -55 /* GNUTLS_A_ILLEGAL_PARAMETER */
+<pre class="programlisting">#define GNUTLS_E_RECEIVED_ILLEGAL_PARAMETER -55 /* GNUTLS_A_ILLEGAL_PARAMETER */
 </pre>
 </div>
 <hr>
@@ -26104,8 +26542,7 @@ transition to <a class="link" href="gnutls-gnutls.html#GNUTLS-FIPS140-OP-NOT-APP
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-E-UNSUPPORTED-CERTIFICATE-TYPE:CAPS"></a><h3>GNUTLS_E_UNSUPPORTED_CERTIFICATE_TYPE</h3>
-<pre class="programlisting">#define GNUTLS_E_UNSUPPORTED_CERTIFICATE_TYPE -61 /* GNUTLS_A_UNSUPPORTED_CERTIFICATE */
-</pre>
+<pre class="programlisting">#define             GNUTLS_E_UNSUPPORTED_CERTIFICATE_TYPE</pre>
 </div>
 <hr>
 <div class="refsect2">
@@ -26152,7 +26589,7 @@ transition to <a class="link" href="gnutls-gnutls.html#GNUTLS-FIPS140-OP-NOT-APP
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-E-MAC-VERIFY-FAILED:CAPS"></a><h3>GNUTLS_E_MAC_VERIFY_FAILED</h3>
-<pre class="programlisting">#define GNUTLS_E_MAC_VERIFY_FAILED -100 /* for PKCS #12 MAC */
+<pre class="programlisting">#define GNUTLS_E_MAC_VERIFY_FAILED -100 /* for PKCS #12 MAC */
 </pre>
 </div>
 <hr>
@@ -26230,7 +26667,7 @@ transition to <a class="link" href="gnutls-gnutls.html#GNUTLS-FIPS140-OP-NOT-APP
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-E-INCOMPATIBLE-GCRYPT-LIBRARY:CAPS"></a><h3>GNUTLS_E_INCOMPATIBLE_GCRYPT_LIBRARY</h3>
-<pre class="programlisting">#define GNUTLS_E_INCOMPATIBLE_GCRYPT_LIBRARY -202 /* obsolete */
+<pre class="programlisting">#define GNUTLS_E_INCOMPATIBLE_GCRYPT_LIBRARY -202 /* obsolete */
 </pre>
 </div>
 <hr>
@@ -26608,8 +27045,7 @@ transition to <a class="link" href="gnutls-gnutls.html#GNUTLS-FIPS140-OP-NOT-APP
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-E-INAPPROPRIATE-FALLBACK:CAPS"></a><h3>GNUTLS_E_INAPPROPRIATE_FALLBACK</h3>
-<pre class="programlisting">#define GNUTLS_E_INAPPROPRIATE_FALLBACK -347 /*GNUTLS_A_INAPPROPRIATE_FALLBACK*/
-</pre>
+<pre class="programlisting">#define             GNUTLS_E_INAPPROPRIATE_FALLBACK</pre>
 </div>
 <hr>
 <div class="refsect2">
@@ -26626,7 +27062,7 @@ transition to <a class="link" href="gnutls-gnutls.html#GNUTLS-FIPS140-OP-NOT-APP
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-E-UNEXPECTED-EXTENSIONS-LENGTH:CAPS"></a><h3>GNUTLS_E_UNEXPECTED_EXTENSIONS_LENGTH</h3>
-<pre class="programlisting">#define GNUTLS_E_UNEXPECTED_EXTENSIONS_LENGTH -350 /*GNUTLS_A_DECODE_ERROR*/
+<pre class="programlisting">#define GNUTLS_E_UNEXPECTED_EXTENSIONS_LENGTH -350 /*GNUTLS_A_DECODE_ERROR */
 </pre>
 </div>
 <hr>
@@ -26740,7 +27176,7 @@ transition to <a class="link" href="gnutls-gnutls.html#GNUTLS-FIPS140-OP-NOT-APP
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-E-RECORD-OVERFLOW:CAPS"></a><h3>GNUTLS_E_RECORD_OVERFLOW</h3>
-<pre class="programlisting">#define GNUTLS_E_RECORD_OVERFLOW -417 /* GNUTLS_A_RECORD_OVERFLOW */
+<pre class="programlisting">#define GNUTLS_E_RECORD_OVERFLOW -417 /* GNUTLS_A_RECORD_OVERFLOW */
 </pre>
 </div>
 <hr>
@@ -26889,7 +27325,7 @@ transition to <a class="link" href="gnutls-gnutls.html#GNUTLS-FIPS140-OP-NOT-APP
 	char *url;
 
 	struct pkcs11_session_info sinfo;
-	ck_object_handle_t ref; /* the key in the session */
+	ck_object_handle_t ref; /* the key in the session */
 	unsigned reauth; /* whether we need to login on each operation */
 
 	void *mutex; /* lock for operations requiring co-ordination */
@@ -26927,10 +27363,14 @@ transition to <a class="link" href="gnutls-gnutls.html#GNUTLS-FIPS140-OP-NOT-APP
 	/* to disable record padding */
 	bool no_extensions;
 
+	/* to disable extensions shuffling */
+	bool no_shuffle_extensions;
+
 	safe_renegotiation_t sr;
 	bool min_record_version;
 	bool server_precedence;
 	bool allow_server_key_usage_violation; /* for test suite purposes only */
+	bool no_status_request;
 	bool no_tickets;
 	bool no_tickets_tls12;
 	bool have_cbc;
@@ -26938,6 +27378,7 @@ transition to <a class="link" href="gnutls-gnutls.html#GNUTLS-FIPS140-OP-NOT-APP
 	bool force_etm;
 	unsigned int additional_verify_flags;
 	bool tls13_compat_mode;
+	ext_master_secret_t force_ext_master_secret;
 
 	/* TLS_FALLBACK_SCSV */
 	bool fallback;
@@ -26957,7 +27398,7 @@ transition to <a class="link" href="gnutls-gnutls.html#GNUTLS-FIPS140-OP-NOT-APP
 	bool _allow_key_usage_violation;
 	bool _allow_wrong_pms;
 	bool _dumbfw;
-	unsigned int _dh_prime_bits; /* old (deprecated) variable */
+	unsigned int _dh_prime_bits; /* old (deprecated) variable */
 
 	DEF_ATOMIC_INT(usage_cnt);
 };
@@ -26998,7 +27439,7 @@ transition to <a class="link" href="gnutls-gnutls.html#GNUTLS-FIPS140-OP-NOT-APP
 <div class="refsect2">
 <a name="gnutls-pubkey-st"></a><h3>struct gnutls_pubkey_st</h3>
 <pre class="programlisting">struct gnutls_pubkey_st {
-	unsigned int bits; /* an indication of the security parameter */
+	unsigned int bits; /* an indication of the security parameter */
 
 	/* the size of params depends on the public
 	 * key algorithm
@@ -27011,7 +27452,7 @@ transition to <a class="link" href="gnutls-gnutls.html#GNUTLS-FIPS140-OP-NOT-APP
 	 */
 	gnutls_pk_params_st params;
 
-	unsigned int key_usage; /* bits from GNUTLS_KEY_* */
+	unsigned int key_usage; /* bits from GNUTLS_KEY_* */
 
 	struct pin_info_st pin;
 };

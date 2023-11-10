@@ -1458,7 +1458,7 @@ gnutls_pkcs11_crt_is_known (<em class="parameter"><code>const <span class="type"
 in the specified token. This is useful in combination with 
 <a class="link" href="gnutls-pkcs11.html#GNUTLS-PKCS11-OBJ-FLAG-RETRIEVE-TRUSTED:CAPS"><code class="literal">GNUTLS_PKCS11_OBJ_FLAG_RETRIEVE_TRUSTED</code></a> or
 <a class="link" href="gnutls-pkcs11.html#GNUTLS-PKCS11-OBJ-FLAG-RETRIEVE-DISTRUSTED:CAPS"><code class="literal">GNUTLS_PKCS11_OBJ_FLAG_RETRIEVE_DISTRUSTED</code></a>,
-to check whether a CA is present or a certificate is blacklisted in
+to check whether a CA is present or a certificate is distrusted in
 a trust PKCS <span class="type">11</span> module.</p>
 <p>This function can be used with a <em class="parameter"><code>url</code></em>
  of "pkcs11:", and in that case all modules
@@ -2578,14 +2578,12 @@ gnutls_pkcs11_token_get_flags (<em class="parameter"><code>const <span class="ty
 <hr>
 <div class="refsect2">
 <a name="gnutls-pkcs11-obj-list-import-url"></a><h3>gnutls_pkcs11_obj_list_import_url()</h3>
-<pre class="programlisting">#define gnutls_pkcs11_obj_list_import_url(p_list, n_list, url, attrs, flags) gnutls_pkcs11_obj_list_import_url3(p_list, n_list, url, attrs|flags)
-</pre>
+<pre class="programlisting">#define             gnutls_pkcs11_obj_list_import_url(p_list, n_list, url, attrs, flags)</pre>
 </div>
 <hr>
 <div class="refsect2">
 <a name="gnutls-pkcs11-obj-list-import-url2"></a><h3>gnutls_pkcs11_obj_list_import_url2()</h3>
-<pre class="programlisting">#define gnutls_pkcs11_obj_list_import_url2(p_list, n_list, url, attrs, flags) gnutls_pkcs11_obj_list_import_url4(p_list, n_list, url, attrs|flags)
-</pre>
+<pre class="programlisting">#define             gnutls_pkcs11_obj_list_import_url2(p_list, n_list, url, attrs, flags)</pre>
 </div>
 <hr>
 <div class="refsect2">
@@ -2916,7 +2914,7 @@ needs to be deallocated using <a class="link" href="gnutls-gnutls.html#gnutls-fr
 <pre class="programlisting"><span class="returnvalue">int</span>
 gnutls_x509_crt_list_import_pkcs11 (<em class="parameter"><code><a class="link" href="gnutls-gnutls.html#gnutls-x509-crt-t" title="gnutls_x509_crt_t"><span class="type">gnutls_x509_crt_t</span></a> *certs</code></em>,
                                     <em class="parameter"><code>unsigned <span class="type">int</span> cert_max</code></em>,
-                                    <em class="parameter"><code><a class="link" href="gnutls-pkcs11.html#gnutls-pkcs11-obj-t" title="gnutls_pkcs11_obj_t"><span class="type">gnutls_pkcs11_obj_t</span></a> * const objs</code></em>,
+                                    <em class="parameter"><code><a class="link" href="gnutls-pkcs11.html#gnutls-pkcs11-obj-t" title="gnutls_pkcs11_obj_t"><span class="type">gnutls_pkcs11_obj_t</span></a> *const objs</code></em>,
                                     <em class="parameter"><code>unsigned <span class="type">int</span> flags</code></em>);</pre>
 <p>This function will import a PKCS 11 certificate list to a list of 
 <a class="link" href="gnutls-gnutls.html#gnutls-x509-crt-t" title="gnutls_x509_crt_t"><span class="type">gnutls_x509_crt_t</span></a> type. These must not be initialized.</p>
@@ -3553,20 +3551,18 @@ negative error value.</p>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-PKCS11-FLAG-MANUAL:CAPS"></a><h3>GNUTLS_PKCS11_FLAG_MANUAL</h3>
-<pre class="programlisting">#define GNUTLS_PKCS11_FLAG_MANUAL 0 /* Manual loading of libraries */
+<pre class="programlisting">#define GNUTLS_PKCS11_FLAG_MANUAL 0 /* Manual loading of libraries */
 </pre>
 </div>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-PKCS11-FLAG-AUTO:CAPS"></a><h3>GNUTLS_PKCS11_FLAG_AUTO</h3>
-<pre class="programlisting">#define GNUTLS_PKCS11_FLAG_AUTO 1 /* Automatically load libraries by reading /etc/gnutls/pkcs11.conf */
-</pre>
+<pre class="programlisting">#define             GNUTLS_PKCS11_FLAG_AUTO</pre>
 </div>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-PKCS11-FLAG-AUTO-TRUSTED:CAPS"></a><h3>GNUTLS_PKCS11_FLAG_AUTO_TRUSTED</h3>
-<pre class="programlisting">#define GNUTLS_PKCS11_FLAG_AUTO_TRUSTED (1&lt;&lt;1) /* Automatically load trusted libraries by reading /etc/gnutls/pkcs11.conf */
-</pre>
+<pre class="programlisting">#define             GNUTLS_PKCS11_FLAG_AUTO_TRUSTED</pre>
 </div>
 <hr>
 <div class="refsect2">
@@ -3913,20 +3909,17 @@ In <a class="link" href="gnutls-pkcs11.html#gnutls-pkcs11-crt-is-known" title="g
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-PKCS11-OBJ-ATTR-CRT-TRUSTED:CAPS"></a><h3>GNUTLS_PKCS11_OBJ_ATTR_CRT_TRUSTED</h3>
-<pre class="programlisting">#define GNUTLS_PKCS11_OBJ_ATTR_CRT_TRUSTED (GNUTLS_PKCS11_OBJ_FLAG_CRT|GNUTLS_PKCS11_OBJ_FLAG_MARK_TRUSTED)
-</pre>
+<pre class="programlisting">#define             GNUTLS_PKCS11_OBJ_ATTR_CRT_TRUSTED</pre>
 </div>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-PKCS11-OBJ-ATTR-CRT-WITH-PRIVKEY:CAPS"></a><h3>GNUTLS_PKCS11_OBJ_ATTR_CRT_WITH_PRIVKEY</h3>
-<pre class="programlisting">#define GNUTLS_PKCS11_OBJ_ATTR_CRT_WITH_PRIVKEY (GNUTLS_PKCS11_OBJ_FLAG_CRT|GNUTLS_PKCS11_OBJ_FLAG_WITH_PRIVKEY)
-</pre>
+<pre class="programlisting">#define             GNUTLS_PKCS11_OBJ_ATTR_CRT_WITH_PRIVKEY</pre>
 </div>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-PKCS11-OBJ-ATTR-CRT-TRUSTED-CA:CAPS"></a><h3>GNUTLS_PKCS11_OBJ_ATTR_CRT_TRUSTED_CA</h3>
-<pre class="programlisting">#define GNUTLS_PKCS11_OBJ_ATTR_CRT_TRUSTED_CA (GNUTLS_PKCS11_OBJ_FLAG_CRT|GNUTLS_PKCS11_OBJ_FLAG_MARK_CA|GNUTLS_PKCS11_OBJ_FLAG_MARK_TRUSTED)
-</pre>
+<pre class="programlisting">#define             GNUTLS_PKCS11_OBJ_ATTR_CRT_TRUSTED_CA</pre>
 </div>
 <hr>
 <div class="refsect2">
@@ -4068,79 +4061,74 @@ unavailable for providers which were manually loaded.</p>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-PKCS11-TOKEN-TRUSTED:CAPS"></a><h3>GNUTLS_PKCS11_TOKEN_TRUSTED</h3>
-<pre class="programlisting">#define GNUTLS_PKCS11_TOKEN_TRUSTED (1&lt;&lt;1) /* p11-kit trusted */
+<pre class="programlisting">#define GNUTLS_PKCS11_TOKEN_TRUSTED (1 &lt;&lt; 1) /* p11-kit trusted */
 </pre>
 </div>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-PKCS11-TOKEN-RNG:CAPS"></a><h3>GNUTLS_PKCS11_TOKEN_RNG</h3>
-<pre class="programlisting">#define GNUTLS_PKCS11_TOKEN_RNG (1&lt;&lt;2) /* CKF_RNG */
+<pre class="programlisting">#define GNUTLS_PKCS11_TOKEN_RNG (1 &lt;&lt; 2) /* CKF_RNG */
 </pre>
 </div>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-PKCS11-TOKEN-LOGIN-REQUIRED:CAPS"></a><h3>GNUTLS_PKCS11_TOKEN_LOGIN_REQUIRED</h3>
-<pre class="programlisting">#define GNUTLS_PKCS11_TOKEN_LOGIN_REQUIRED (1&lt;&lt;3) /* CKF_LOGIN_REQUIRED */
+<pre class="programlisting">#define GNUTLS_PKCS11_TOKEN_LOGIN_REQUIRED (1 &lt;&lt; 3) /* CKF_LOGIN_REQUIRED */
 </pre>
 </div>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-PKCS11-TOKEN-PROTECTED-AUTHENTICATION-PATH:CAPS"></a><h3>GNUTLS_PKCS11_TOKEN_PROTECTED_AUTHENTICATION_PATH</h3>
-<pre class="programlisting">#define GNUTLS_PKCS11_TOKEN_PROTECTED_AUTHENTICATION_PATH (1&lt;&lt;4) /* CKF_PROTECTED_AUTHENTICATION_PATH */
-</pre>
+<pre class="programlisting">#define             GNUTLS_PKCS11_TOKEN_PROTECTED_AUTHENTICATION_PATH</pre>
 </div>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-PKCS11-TOKEN-INITIALIZED:CAPS"></a><h3>GNUTLS_PKCS11_TOKEN_INITIALIZED</h3>
-<pre class="programlisting">#define GNUTLS_PKCS11_TOKEN_INITIALIZED (1&lt;&lt;5) /* CKF_TOKEN_INITIALIZED */
+<pre class="programlisting">#define GNUTLS_PKCS11_TOKEN_INITIALIZED (1 &lt;&lt; 5) /* CKF_TOKEN_INITIALIZED */
 </pre>
 </div>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-PKCS11-TOKEN-USER-PIN-COUNT-LOW:CAPS"></a><h3>GNUTLS_PKCS11_TOKEN_USER_PIN_COUNT_LOW</h3>
-<pre class="programlisting">#define GNUTLS_PKCS11_TOKEN_USER_PIN_COUNT_LOW (1&lt;&lt;6) /* CKF_USER_PIN_COUNT_LOW */
-</pre>
+<pre class="programlisting">#define             GNUTLS_PKCS11_TOKEN_USER_PIN_COUNT_LOW</pre>
 </div>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-PKCS11-TOKEN-USER-PIN-FINAL-TRY:CAPS"></a><h3>GNUTLS_PKCS11_TOKEN_USER_PIN_FINAL_TRY</h3>
-<pre class="programlisting">#define GNUTLS_PKCS11_TOKEN_USER_PIN_FINAL_TRY (1&lt;&lt;7) /* CKF_USER_PIN_FINAL_TRY */
-</pre>
+<pre class="programlisting">#define             GNUTLS_PKCS11_TOKEN_USER_PIN_FINAL_TRY</pre>
 </div>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-PKCS11-TOKEN-USER-PIN-LOCKED:CAPS"></a><h3>GNUTLS_PKCS11_TOKEN_USER_PIN_LOCKED</h3>
-<pre class="programlisting">#define GNUTLS_PKCS11_TOKEN_USER_PIN_LOCKED (1&lt;&lt;8) /* CKF_USER_PIN_LOCKED */
+<pre class="programlisting">#define GNUTLS_PKCS11_TOKEN_USER_PIN_LOCKED (1 &lt;&lt; 8) /* CKF_USER_PIN_LOCKED */
 </pre>
 </div>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-PKCS11-TOKEN-SO-PIN-COUNT-LOW:CAPS"></a><h3>GNUTLS_PKCS11_TOKEN_SO_PIN_COUNT_LOW</h3>
-<pre class="programlisting">#define GNUTLS_PKCS11_TOKEN_SO_PIN_COUNT_LOW (1&lt;&lt;9) /* CKF_SO_PIN_COUNT_LOW */
+<pre class="programlisting">#define GNUTLS_PKCS11_TOKEN_SO_PIN_COUNT_LOW (1 &lt;&lt; 9) /* CKF_SO_PIN_COUNT_LOW */
 </pre>
 </div>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-PKCS11-TOKEN-SO-PIN-FINAL-TRY:CAPS"></a><h3>GNUTLS_PKCS11_TOKEN_SO_PIN_FINAL_TRY</h3>
-<pre class="programlisting">#define GNUTLS_PKCS11_TOKEN_SO_PIN_FINAL_TRY (1&lt;&lt;10) /* CKF_SO_PIN_FINAL_TRY */
-</pre>
+<pre class="programlisting">#define             GNUTLS_PKCS11_TOKEN_SO_PIN_FINAL_TRY</pre>
 </div>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-PKCS11-TOKEN-SO-PIN-LOCKED:CAPS"></a><h3>GNUTLS_PKCS11_TOKEN_SO_PIN_LOCKED</h3>
-<pre class="programlisting">#define GNUTLS_PKCS11_TOKEN_SO_PIN_LOCKED (1&lt;&lt;11) /* CKF_SO_PIN_LOCKED */
+<pre class="programlisting">#define GNUTLS_PKCS11_TOKEN_SO_PIN_LOCKED (1 &lt;&lt; 11) /* CKF_SO_PIN_LOCKED */
 </pre>
 </div>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-PKCS11-TOKEN-USER-PIN-INITIALIZED:CAPS"></a><h3>GNUTLS_PKCS11_TOKEN_USER_PIN_INITIALIZED</h3>
-<pre class="programlisting">#define GNUTLS_PKCS11_TOKEN_USER_PIN_INITIALIZED (1&lt;&lt;12) /* CKF_USER_PIN_INITIALIZED */
-</pre>
+<pre class="programlisting">#define             GNUTLS_PKCS11_TOKEN_USER_PIN_INITIALIZED</pre>
 </div>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-PKCS11-TOKEN-ERROR-STATE:CAPS"></a><h3>GNUTLS_PKCS11_TOKEN_ERROR_STATE</h3>
-<pre class="programlisting">#define GNUTLS_PKCS11_TOKEN_ERROR_STATE (1&lt;&lt;13) /* CKF_ERROR_STATE */
+<pre class="programlisting">#define GNUTLS_PKCS11_TOKEN_ERROR_STATE (1 &lt;&lt; 13) /* CKF_ERROR_STATE */
 </pre>
 </div>
 <hr>

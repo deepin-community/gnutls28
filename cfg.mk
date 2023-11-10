@@ -15,8 +15,7 @@
 # General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this file; if not, write to the Free Software Foundation,
-# Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+# along with this file.  If not, see <https://www.gnu.org/licenses/>.
 
 WFLAGS ?= --enable-gcc-warnings
 ADDFLAGS ?=
@@ -25,28 +24,28 @@ PACKAGE ?= gnutls
 
 .PHONY: config glimport
 
-INDENT_SOURCES = `find . -name \*.[ch] -o -name gnutls.h.in | grep -v -e ^./build-aux/ -e ^./lib/minitasn1/ -e ^./lib/build-aux/ -e ^./gl/ -e -args.[ch] -e asn1_tab.c -e ^./tests/suite/`
+INDENT_SOURCES = `find . -name \*.[ch] -o -name gnutls.h.in | grep -v -e ^./build-aux/ -e ^./config.h -e ^./devel/ -e ^./gnulib -e ^./lib/minitasn1/ -e ^./lib/includes/gnutls/gnutls.h -e ^./lib/nettle/backport/ -e ^./lib/priority_options.h -e ^./lib/unistring/ -e ^./lib/x509/supported_exts.h -e ^./lib/build-aux/ -e ^./gl/ -e ^./src/gl/ -e ^./src/.*-options.[ch] -e -args.[ch] -e asn1_tab.c -e ^./tests/suite/`
 
 ifeq ($(.DEFAULT_GOAL),abort-due-to-no-makefile)
 .DEFAULT_GOAL := bootstrap
 endif
 
-local-checks-to-skip = sc_GPL_version sc_bindtextdomain			\
-	sc_immutable_NEWS sc_program_name sc_prohibit_atoi_atof		\
-	sc_prohibit_always_true_header_tests                            \
-	sc_prohibit_empty_lines_at_EOF sc_prohibit_hash_without_use	\
-	sc_prohibit_gnu_make_extensions                                 \
-	sc_prohibit_have_config_h sc_prohibit_magic_number_exit		\
-	sc_prohibit_strcmp sc_require_config_h				\
-	sc_require_config_h_first sc_texinfo_acronym sc_trailing_blank	\
-	sc_unmarked_diagnostics sc_useless_cpp_parens			\
+local-checks-to-skip = sc_GPL_version sc_bindtextdomain			  \
+	sc_immutable_NEWS sc_indent sc_program_name sc_prohibit_atoi_atof \
+	sc_prohibit_always_true_header_tests				  \
+	sc_prohibit_empty_lines_at_EOF sc_prohibit_hash_without_use	  \
+	sc_prohibit_gnu_make_extensions					  \
+	sc_prohibit_have_config_h sc_prohibit_magic_number_exit		  \
+	sc_prohibit_strcmp sc_require_config_h				  \
+	sc_require_config_h_first sc_texinfo_acronym sc_trailing_blank	  \
+	sc_unmarked_diagnostics sc_useless_cpp_parens			  \
 	sc_two_space_separator_in_usage
 
 VC_LIST_ALWAYS_EXCLUDE_REGEX = ^maint.mk|gtk-doc.make|m4/pkg|doc/fdl-1.3.texi|src/.*\.bak|src/crywrap/|(devel/perlasm/|lib/accelerated/x86/|build-aux/|gl/|tests/suite/ecore/|doc/protocol/).*$$
 
 # Explicit syntax-check exceptions.
 exclude_file_name_regexp--sc_copyright_check = ^./gnulib/.*$$
-exclude_file_name_regexp--sc_error_message_uppercase = ^doc/examples/ex-cxx.cpp|guile/src/core.c|src/certtool.c|src/ocsptool.c|src/crywrap/crywrap.c|tests/pkcs12_encode.c$$
+exclude_file_name_regexp--sc_error_message_uppercase = ^doc/examples/ex-cxx.cpp|src/certtool.c|src/ocsptool.c|src/crywrap/crywrap.c|tests/pkcs12_encode.c$$
 exclude_file_name_regexp--sc_file_system = ^doc/doxygen/Doxyfile
 exclude_file_name_regexp--sc_prohibit_cvs_keyword = ^lib/nettle/.*$$
 exclude_file_name_regexp--sc_prohibit_undesirable_word_seq = ^tests/nist-pkits/gnutls-nist-tests.html$$
@@ -58,6 +57,27 @@ exclude_file_name_regexp--sc_prohibit_stddef_without_use='u*-normalize.c'
 exclude_file_name_regexp--sc_prohibit_strncpy='unistr.in.h'
 exclude_file_name_regexp--sc_prohibit_strncpy='lib/inih/ini.c'
 gl_public_submodule_commit =
+
+# Indentation
+
+exclude_file_name_regexp--clang_format ?= $(exclude_file_name_regexp--sc_clang_format)
+
+.PHONY: clang-format
+clang-format:
+	$(AM_V_GEN)clang-format -i $(INDENT_SOURCES)
+
+sc_clang_format:
+	@if ! clang-format --version 2>&1 >/dev/null; then		     \
+	    echo 1>&2 '$(ME): sc_clang_format: clang-format is missing';     \
+	else								     \
+	  fail=0; files="$(INDENT_SOURCES)";				     \
+	  for f in $$files; do						     \
+	    clang-format --dry-run --Werror "$$f" || fail=1;		     \
+	  done;								     \
+	  test $$fail = 1 &&						     \
+	    { echo 1>&2 '$(ME): code format error, try "make clang-format"'; \
+	      exit 1; } || :;						     \
+	fi
 
 autoreconf:
 	./bootstrap
@@ -80,8 +100,15 @@ glimport:
 # Update Copyright year in tools and docs
 
 update-copyright-year:
-	$(AM_V_at)$(SED) -i "s/\"2000-[0-9]\{4,\}\"/\"2000-`date +%Y`\"/g" src/args-std.def.in
 	$(AM_V_at)$(SED) -i "s/ 2001-[0-9]\{4,\} / 2001-`date +%Y` /g" doc/gnutls.texi
+	$(AM_V_at)$(SED) -i \
+		-e "s/ 2001-[0-9]\{4,\} / 2001-`date +%Y` /g" \
+		-e "s/ 2020-[0-9]\{4,\} / 2020-`date +%Y` /g" \
+		doc/manpages/Makefile.am
+	$(AM_V_at)$(SED) -i \
+		-e "s/ 2000-[0-9]\{4,\} / 2000-`date +%Y` /g" \
+		doc/Makefile.am \
+		src/Makefile.am
 
 # Code Coverage
 
@@ -126,9 +153,6 @@ web:
 	sed 's/\@VERSION\@/$(VERSION)/g' -i $(htmldir)/manual/html_node/*.html $(htmldir)/manual/gnutls.html
 	-cd doc && $(MAKE) gnutls.epub && cp gnutls.epub ../$(htmldir)/manual/
 	cd doc/latex && $(MAKE) gnutls.pdf && cp gnutls.pdf ../../$(htmldir)/manual/
-	$(MAKE) -C doc gnutls-guile.html gnutls-guile.pdf
-	cd doc && makeinfo --html --split=node -o ../$(htmldir)/manual/gnutls-guile/ --css-include=./texinfo.css gnutls-guile.texi
-	cd doc && cp gnutls-guile.pdf gnutls-guile.html ../$(htmldir)/manual/
 	-cp -v doc/reference/html/*.html doc/reference/html/*.png doc/reference/html/*.devhelp* doc/reference/html/*.css $(htmldir)/reference/
 
 ASM_SOURCES_XXX := \

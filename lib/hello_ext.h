@@ -33,9 +33,9 @@
 int _gnutls_parse_hello_extensions(gnutls_session_t session,
 				   gnutls_ext_flags_t msg,
 				   gnutls_ext_parse_type_t parse_type,
-				   const uint8_t * data, int data_size);
+				   const uint8_t *data, int data_size);
 int _gnutls_gen_hello_extensions(gnutls_session_t session,
-				 gnutls_buffer_st * extdata,
+				 gnutls_buffer_st *extdata,
 				 gnutls_ext_flags_t msg,
 				 gnutls_ext_parse_type_t);
 int _gnutls_hello_ext_init(void);
@@ -45,22 +45,24 @@ void _gnutls_hello_ext_priv_deinit(gnutls_session_t session);
 
 /* functions to be used by extensions internally
  */
-void _gnutls_hello_ext_unset_priv(gnutls_session_t session,
-				    extensions_t ext);
+void _gnutls_hello_ext_unset_priv(gnutls_session_t session, extensions_t ext);
 void _gnutls_hello_ext_set_priv(gnutls_session_t session, extensions_t ext,
-				  gnutls_ext_priv_data_t);
+				gnutls_ext_priv_data_t);
 int _gnutls_hello_ext_get_priv(gnutls_session_t session, extensions_t ext,
-				 gnutls_ext_priv_data_t *);
+			       gnutls_ext_priv_data_t *);
 int _gnutls_hello_ext_get_resumed_priv(gnutls_session_t session,
-					 extensions_t ext,
-					 gnutls_ext_priv_data_t * data);
+				       extensions_t ext,
+				       gnutls_ext_priv_data_t *data);
 
-#define GNUTLS_EXT_FLAG_MSG_MASK (GNUTLS_EXT_FLAG_CLIENT_HELLO | GNUTLS_EXT_FLAG_TLS12_SERVER_HELLO| \
-		 GNUTLS_EXT_FLAG_TLS13_SERVER_HELLO | GNUTLS_EXT_FLAG_EE | GNUTLS_EXT_FLAG_HRR)
+#define GNUTLS_EXT_FLAG_MSG_MASK                                             \
+	(GNUTLS_EXT_FLAG_CLIENT_HELLO | GNUTLS_EXT_FLAG_TLS12_SERVER_HELLO | \
+	 GNUTLS_EXT_FLAG_TLS13_SERVER_HELLO | GNUTLS_EXT_FLAG_EE |           \
+	 GNUTLS_EXT_FLAG_HRR)
 
 /* these flags can only be set in the extensions, but cannot be requested;
  * they are handled internally by the hello parsing/generating functions. */
-#define GNUTLS_EXT_FLAG_SET_ONLY_FLAGS_MASK ~(GNUTLS_EXT_FLAG_DTLS | GNUTLS_EXT_FLAG_TLS)
+#define GNUTLS_EXT_FLAG_SET_ONLY_FLAGS_MASK \
+	~(GNUTLS_EXT_FLAG_DTLS | GNUTLS_EXT_FLAG_TLS)
 
 /* obtain the message this extension was received at */
 inline static gnutls_ext_flags_t _gnutls_ext_get_msg(gnutls_session_t session)
@@ -68,13 +70,14 @@ inline static gnutls_ext_flags_t _gnutls_ext_get_msg(gnutls_session_t session)
 	return session->internals.ext_msg & GNUTLS_EXT_FLAG_MSG_MASK;
 }
 
-inline static void _gnutls_ext_set_msg(gnutls_session_t session, gnutls_ext_flags_t msg)
+inline static void _gnutls_ext_set_msg(gnutls_session_t session,
+				       gnutls_ext_flags_t msg)
 {
 	session->internals.ext_msg = msg;
 }
 
 inline static void _gnutls_ext_set_extensions_offset(gnutls_session_t session,
-		int offset)
+						     int offset)
 {
 	session->internals.extensions_offset = offset;
 }
@@ -90,27 +93,27 @@ unsigned _gnutls_ext_get_full_client_hello(gnutls_session_t session,
 					   gnutls_datum_t *datum);
 
 /* for session packing */
-int _gnutls_hello_ext_pack(gnutls_session_t session, gnutls_buffer_st * packed);
+int _gnutls_hello_ext_pack(gnutls_session_t session, gnutls_buffer_st *packed);
 int _gnutls_hello_ext_unpack(gnutls_session_t session,
-		       gnutls_buffer_st * packed);
+			     gnutls_buffer_st *packed);
 
 inline static const char *ext_msg_validity_to_str(gnutls_ext_flags_t msg)
 {
 	msg &= GNUTLS_EXT_FLAG_MSG_MASK;
 
-	switch(msg) {
-		case GNUTLS_EXT_FLAG_CLIENT_HELLO:
-			return "client hello";
-		case GNUTLS_EXT_FLAG_TLS12_SERVER_HELLO:
-			return "TLS 1.2 server hello";
-		case GNUTLS_EXT_FLAG_TLS13_SERVER_HELLO:
-			return "TLS 1.3 server hello";
-		case GNUTLS_EXT_FLAG_EE:
-			return "encrypted extensions";
-		case GNUTLS_EXT_FLAG_HRR:
-			return "hello retry request";
-		default:
-			return "(unknown)";
+	switch (msg) {
+	case GNUTLS_EXT_FLAG_CLIENT_HELLO:
+		return "client hello";
+	case GNUTLS_EXT_FLAG_TLS12_SERVER_HELLO:
+		return "TLS 1.2 server hello";
+	case GNUTLS_EXT_FLAG_TLS13_SERVER_HELLO:
+		return "TLS 1.3 server hello";
+	case GNUTLS_EXT_FLAG_EE:
+		return "encrypted extensions";
+	case GNUTLS_EXT_FLAG_HRR:
+		return "hello retry request";
+	default:
+		return "(unknown)";
 	}
 }
 
@@ -138,11 +141,13 @@ typedef struct hello_ext_entry_st {
 	 */
 	gnutls_ext_send_func send_func;
 
-	gnutls_ext_deinit_data_func deinit_func;	/* this will be called to deinitialize
+	gnutls_ext_deinit_data_func
+		deinit_func; /* this will be called to deinitialize
 							 * internal data
 							 */
-	gnutls_ext_pack_func pack_func;	/* packs internal data to machine independent format */
-	gnutls_ext_unpack_func unpack_func;	/* unpacks internal data */
+	gnutls_ext_pack_func
+		pack_func; /* packs internal data to machine independent format */
+	gnutls_ext_unpack_func unpack_func; /* unpacks internal data */
 
 	/* non-zero if that extension cannot be overridden by the applications.
 	 * That should be set to extensions which allocate data early, e.g., on
@@ -157,8 +162,8 @@ typedef struct hello_ext_entry_st {
  *
  * It returns non-zero for true, otherwise zero.
  */
-inline static unsigned
-_gnutls_hello_ext_is_present(gnutls_session_t session, extensions_t id)
+inline static unsigned _gnutls_hello_ext_is_present(gnutls_session_t session,
+						    extensions_t id)
 {
 	if (session->internals.used_exts & ((ext_track_t)1 << id))
 		return 1;
@@ -175,13 +180,12 @@ _gnutls_hello_ext_is_present(gnutls_session_t session, extensions_t id)
  *
  * Returns zero if failed, non-zero on success.
  */
-inline static
-unsigned _gnutls_hello_ext_save(gnutls_session_t session,
-				extensions_t id,
-				unsigned check_dup)
+inline static unsigned _gnutls_hello_ext_save(gnutls_session_t session,
+					      extensions_t id,
+					      unsigned check_dup)
 {
 	if (check_dup && _gnutls_hello_ext_is_present(session, id)) {
-			return 0;
+		return 0;
 	}
 
 	session->internals.used_exts |= ((ext_track_t)1 << id);
@@ -189,8 +193,7 @@ unsigned _gnutls_hello_ext_save(gnutls_session_t session,
 	return 1;
 }
 
-inline static
-void _gnutls_hello_ext_save_sr(gnutls_session_t session)
+inline static void _gnutls_hello_ext_save_sr(gnutls_session_t session)
 {
 	_gnutls_hello_ext_save(session, GNUTLS_EXTENSION_SAFE_RENEGOTIATION, 1);
 }

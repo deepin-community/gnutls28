@@ -18,8 +18,7 @@
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GnuTLS; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
+ * along with GnuTLS.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 /* Parts copied from pskself.c. */
@@ -73,7 +72,7 @@ static void client(int sd, const char *prio, unsigned exp_hint)
 	char buffer[MAX_BUF + 1];
 	gnutls_psk_client_credentials_t pskcred;
 	/* Need to enable anonymous KX specifically. */
-	const gnutls_datum_t key = { (void *) "DEADBEEF", 8 };
+	const gnutls_datum_t key = { (void *)"DEADBEEF", 8 };
 	gnutls_datum_t user;
 	const char *hint;
 
@@ -93,7 +92,7 @@ static void client(int sd, const char *prio, unsigned exp_hint)
 
 	gnutls_psk_allocate_client_credentials(&pskcred);
 	ret = gnutls_psk_set_client_credentials2(pskcred, &user, &key,
-					  GNUTLS_PSK_KEY_HEX);
+						 GNUTLS_PSK_KEY_HEX);
 	if (ret < 0) {
 		fail("client: Could not set PSK\n");
 		gnutls_perror(ret);
@@ -130,7 +129,8 @@ static void client(int sd, const char *prio, unsigned exp_hint)
 	if (exp_hint) {
 		hint = gnutls_psk_client_get_hint(session);
 		if (hint == NULL || strcmp(hint, "hint") != 0) {
-			fail("client: hint is not the expected: %s\n", gnutls_psk_client_get_hint(session));
+			fail("client: hint is not the expected: %s\n",
+			     gnutls_psk_client_get_hint(session));
 			goto end;
 		}
 	}
@@ -140,8 +140,7 @@ static void client(int sd, const char *prio, unsigned exp_hint)
 	ret = gnutls_record_recv(session, buffer, MAX_BUF);
 	if (ret == 0) {
 		if (debug)
-			success
-			    ("client: Peer has closed the TLS connection\n");
+			success("client: Peer has closed the TLS connection\n");
 		goto end;
 	} else if (ret < 0) {
 		fail("client: Error: %s\n", gnutls_strerror(ret));
@@ -158,7 +157,7 @@ static void client(int sd, const char *prio, unsigned exp_hint)
 
 	gnutls_bye(session, GNUTLS_SHUT_RDWR);
 
-      end:
+end:
 
 	close(sd);
 
@@ -177,9 +176,8 @@ static void client(int sd, const char *prio, unsigned exp_hint)
 
 /* These are global */
 
-static int
-pskfunc(gnutls_session_t session, const gnutls_datum_t *username,
-	gnutls_datum_t * key)
+static int pskfunc(gnutls_session_t session, const gnutls_datum_t *username,
+		   gnutls_datum_t *key)
 {
 	if (debug)
 		printf("psk: Got username with length %d\n", username->size);
@@ -194,14 +192,14 @@ pskfunc(gnutls_session_t session, const gnutls_datum_t *username,
 	return 0;
 }
 
-
 static void server(int sd, const char *prio)
 {
 	gnutls_psk_server_credentials_t server_pskcred;
 	int ret;
 	gnutls_session_t session;
 	gnutls_datum_t psk_username;
-	char buffer[MAX_BUF + 1], expected_psk_username[] = { 0xDE, 0xAD, 0xBE, 0xEF };
+	char buffer[MAX_BUF + 1],
+		expected_psk_username[] = { 0xDE, 0xAD, 0xBE, 0xEF };
 
 	/* this must be called once in the program
 	 */
@@ -211,7 +209,6 @@ static void server(int sd, const char *prio)
 		gnutls_global_set_log_level(4711);
 
 	side = "server";
-
 
 	gnutls_psk_allocate_server_credentials(&server_pskcred);
 	gnutls_psk_set_server_credentials_hint(server_pskcred, "hint");
@@ -244,7 +241,8 @@ static void server(int sd, const char *prio)
 		if (gnutls_psk_server_get_username2(session, &psk_username) < 0)
 			fail("server: Could not get PSK username\n");
 
-		if (psk_username.size != 4 || memcmp(psk_username.data, expected_psk_username, 4))
+		if (psk_username.size != 4 ||
+		    memcmp(psk_username.data, expected_psk_username, 4))
 			fail("server: Unexpected PSK username\n");
 
 		success("server: PSK username length: %d\n", psk_username.size);
@@ -263,13 +261,13 @@ static void server(int sd, const char *prio)
 				success("server: Peer has closed the GnuTLS connection\n");
 			break;
 		} else if (ret < 0) {
-			fail("server: Received corrupted data(%d). Closing...\n", ret);
+			fail("server: Received corrupted data(%d). Closing...\n",
+			     ret);
 			break;
 		} else if (ret > 0) {
 			/* echo data back to the client
 			 */
-			gnutls_record_send(session, buffer,
-					   strlen(buffer));
+			gnutls_record_send(session, buffer, strlen(buffer));
 		}
 	}
 	/* do not wait for the peer to close the connection.
@@ -287,8 +285,7 @@ static void server(int sd, const char *prio)
 		success("server: finished\n");
 }
 
-static
-void run_test(const char *prio, unsigned exp_hint)
+static void run_test(const char *prio, unsigned exp_hint)
 {
 	pid_t child;
 	int err;
@@ -331,11 +328,19 @@ void doit(void)
 	run_test("NORMAL:-VERS-ALL:+VERS-TLS1.2:-KX-ALL:+DHE-PSK", 1);
 
 	run_test("NORMAL:-VERS-ALL:+VERS-TLS1.2:+PSK", 0);
-	run_test("NORMAL:-VERS-ALL:+VERS-TLS1.2:-GROUP-ALL:+GROUP-FFDHE2048:+DHE-PSK", 0);
-	run_test("NORMAL:-VERS-ALL:+VERS-TLS1.2:-GROUP-ALL:+GROUP-SECP256R1:+ECDHE-PSK", 0);
+	run_test(
+		"NORMAL:-VERS-ALL:+VERS-TLS1.2:-GROUP-ALL:+GROUP-FFDHE2048:+DHE-PSK",
+		0);
+	run_test(
+		"NORMAL:-VERS-ALL:+VERS-TLS1.2:-GROUP-ALL:+GROUP-SECP256R1:+ECDHE-PSK",
+		0);
 	run_test("NORMAL:-VERS-ALL:+VERS-TLS1.3:+PSK", 0);
-	run_test("NORMAL:-VERS-ALL:+VERS-TLS1.3:-GROUP-ALL:+GROUP-FFDHE2048:+DHE-PSK", 0);
-	run_test("NORMAL:-VERS-ALL:+VERS-TLS1.3:-GROUP-ALL:+GROUP-SECP256R1:+ECDHE-PSK", 0);
+	run_test(
+		"NORMAL:-VERS-ALL:+VERS-TLS1.3:-GROUP-ALL:+GROUP-FFDHE2048:+DHE-PSK",
+		0);
+	run_test(
+		"NORMAL:-VERS-ALL:+VERS-TLS1.3:-GROUP-ALL:+GROUP-SECP256R1:+ECDHE-PSK",
+		0);
 	/* the following should work once we support PSK without DH */
 	run_test("NORMAL:-VERS-ALL:+VERS-TLS1.3:-GROUP-ALL:+PSK", 0);
 
@@ -344,4 +349,4 @@ void doit(void)
 	run_test("NORMAL:-KX-ALL:+DHE-PSK", 0);
 }
 
-#endif				/* _WIN32 */
+#endif /* _WIN32 */

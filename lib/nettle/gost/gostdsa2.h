@@ -38,7 +38,7 @@
 #include <nettle/ecc.h>
 
 #if HAVE_CONFIG_H
-# include "config.h"
+#include "config.h"
 #endif
 
 #ifdef __cplusplus
@@ -48,12 +48,9 @@ extern "C" {
 /* Name mangling */
 #define gostdsa_unmask_key _gnutls_gostdsa_unmask_key
 
-int
-gostdsa_unmask_key (const struct ecc_curve *ecc,
-		    mpz_t key);
+int gostdsa_unmask_key(const struct ecc_curve *ecc, mpz_t key);
 
 #ifdef __cplusplus
 }
 #endif
-
 #endif /* GNUTLS_LIB_NETTLE_GOST_GOSTDSA2_H */

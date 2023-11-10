@@ -16,8 +16,7 @@
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GnuTLS; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
+ * along with GnuTLS.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 #ifdef HAVE_CONFIG_H
@@ -29,7 +28,7 @@
 
 #if defined(_WIN32)
 
-int main()
+int main(void)
 {
 	exit(77);
 }
@@ -66,7 +65,6 @@ static void client_log_func(int level, const char *str)
 	fprintf(stderr, "client|<%d>| %s", level, str);
 }
 
-
 #define MAX_BUF 1024
 
 static void client(int fd, unsigned test)
@@ -95,7 +93,9 @@ static void client(int fd, unsigned test)
 	gnutls_handshake_set_timeout(session, get_timeout());
 
 	/* Use default priorities */
-	gnutls_priority_set_direct(session, "NORMAL:-VERS-TLS-ALL:+VERS-TLS1.1:+VERS-TLS1.2", NULL);
+	gnutls_priority_set_direct(
+		session, "NORMAL:-VERS-TLS-ALL:+VERS-TLS1.1:+VERS-TLS1.2",
+		NULL);
 
 	/* put the anonymous credentials to the current session
 	 */
@@ -108,8 +108,7 @@ static void client(int fd, unsigned test)
 	 */
 	do {
 		ret = gnutls_handshake(session);
-	}
-	while (ret < 0 && gnutls_error_is_fatal(ret) == 0);
+	} while (ret < 0 && gnutls_error_is_fatal(ret) == 0);
 
 	if (ret < 0) {
 		fail("client: Handshake failed\n");
@@ -122,8 +121,8 @@ static void client(int fd, unsigned test)
 
 	if (debug)
 		success("client: TLS version is: %s\n",
-			gnutls_protocol_get_name
-			(gnutls_protocol_get_version(session)));
+			gnutls_protocol_get_name(
+				gnutls_protocol_get_version(session)));
 
 	if (debug)
 		success("client: test %d\n", test);
@@ -138,21 +137,19 @@ static void client(int fd, unsigned test)
 
 		do {
 			do {
-				ret =
-				    gnutls_record_recv(session, buffer,
-							MAX_BUF);
-			} while (ret == GNUTLS_E_AGAIN
-				 || ret == GNUTLS_E_INTERRUPTED);
+				ret = gnutls_record_recv(session, buffer,
+							 MAX_BUF);
+			} while (ret == GNUTLS_E_AGAIN ||
+				 ret == GNUTLS_E_INTERRUPTED);
 		} while (ret > 0);
 
 	} else {
 		do {
 			do {
-				ret =
-				    gnutls_record_recv(session, buffer,
-							MAX_BUF);
-			} while (ret == GNUTLS_E_AGAIN
-				 || ret == GNUTLS_E_INTERRUPTED);
+				ret = gnutls_record_recv(session, buffer,
+							 MAX_BUF);
+			} while (ret == GNUTLS_E_AGAIN ||
+				 ret == GNUTLS_E_INTERRUPTED);
 		} while (ret > 0);
 
 		if (ret != GNUTLS_E_REHANDSHAKE) {
@@ -162,8 +159,8 @@ static void client(int fd, unsigned test)
 		}
 
 		do {
-			ret =
-			    gnutls_record_send(session, buffer, sizeof(buffer));
+			ret = gnutls_record_send(session, buffer,
+						 sizeof(buffer));
 		} while (ret == GNUTLS_E_AGAIN || ret == GNUTLS_E_INTERRUPTED);
 
 		if (ret < 0) {
@@ -173,8 +170,8 @@ static void client(int fd, unsigned test)
 		}
 
 		do {
-			ret =
-			    gnutls_record_send(session, buffer, sizeof(buffer));
+			ret = gnutls_record_send(session, buffer,
+						 sizeof(buffer));
 		} while (ret == GNUTLS_E_AGAIN || ret == GNUTLS_E_INTERRUPTED);
 
 		if (ret < 0) {
@@ -182,7 +179,6 @@ static void client(int fd, unsigned test)
 			     (int)sizeof(buffer), gnutls_strerror(ret));
 			exit(1);
 		}
-
 	}
 
 	gnutls_bye(session, GNUTLS_SHUT_WR);
@@ -237,7 +233,9 @@ static void server(int fd, unsigned test)
 	/* avoid calling all the priority functions, since the defaults
 	 * are adequate.
 	 */
-	gnutls_priority_set_direct(session, "NORMAL:-VERS-TLS-ALL:+VERS-TLS1.1:+VERS-TLS1.2", NULL);
+	gnutls_priority_set_direct(
+		session, "NORMAL:-VERS-TLS-ALL:+VERS-TLS1.1:+VERS-TLS1.2",
+		NULL);
 
 	gnutls_credentials_set(session, GNUTLS_CRD_ANON, anoncred);
 	gnutls_credentials_set(session, GNUTLS_CRD_CERTIFICATE, x509_cred);
@@ -246,8 +244,7 @@ static void server(int fd, unsigned test)
 
 	do {
 		ret = gnutls_handshake(session);
-	}
-	while (ret < 0 && gnutls_error_is_fatal(ret) == 0);
+	} while (ret < 0 && gnutls_error_is_fatal(ret) == 0);
 	if (ret < 0) {
 		close(fd);
 		gnutls_deinit(session);
@@ -260,31 +257,30 @@ static void server(int fd, unsigned test)
 
 	if (debug)
 		success("server: TLS version is: %s\n",
-			gnutls_protocol_get_name
-			(gnutls_protocol_get_version(session)));
+			gnutls_protocol_get_name(
+				gnutls_protocol_get_version(session)));
 
 	if (debug)
 		success("server: test %d\n", test);
 
 	if (test != 0) {
-
 		do {
 			do {
-				ret =
-				    gnutls_record_recv(session, buffer,
-							MAX_BUF);
-			} while (ret == GNUTLS_E_AGAIN
-				 || ret == GNUTLS_E_INTERRUPTED);
+				ret = gnutls_record_recv(session, buffer,
+							 MAX_BUF);
+			} while (ret == GNUTLS_E_AGAIN ||
+				 ret == GNUTLS_E_INTERRUPTED);
 		} while (ret > 0);
 
 		if (ret != GNUTLS_E_REHANDSHAKE) {
-			fail("server: Error receiving client handshake request: %s\n", gnutls_strerror(ret));
+			fail("server: Error receiving client handshake request: %s\n",
+			     gnutls_strerror(ret));
 			terminate();
 		}
 
 		do {
-			ret =
-			    gnutls_record_send(session, buffer, sizeof(buffer));
+			ret = gnutls_record_send(session, buffer,
+						 sizeof(buffer));
 		} while (ret == GNUTLS_E_AGAIN || ret == GNUTLS_E_INTERRUPTED);
 
 		if (ret < 0) {
@@ -310,7 +306,8 @@ static void server(int fd, unsigned test)
 		ret = gnutls_handshake(session);
 
 		if (ret != GNUTLS_E_GOT_APPLICATION_DATA) {
-			fail("server: didn't receive GNUTLS_E_GOT_APPLICATION_DATA: %s\n", gnutls_strerror(ret));
+			fail("server: didn't receive GNUTLS_E_GOT_APPLICATION_DATA: %s\n",
+			     gnutls_strerror(ret));
 			terminate();
 		}
 
@@ -320,11 +317,10 @@ static void server(int fd, unsigned test)
 
 		do {
 			do {
-				ret =
-				    gnutls_record_recv(session, buffer,
-							MAX_BUF);
-			} while (ret == GNUTLS_E_AGAIN
-				 || ret == GNUTLS_E_INTERRUPTED);
+				ret = gnutls_record_recv(session, buffer,
+							 MAX_BUF);
+			} while (ret == GNUTLS_E_AGAIN ||
+				 ret == GNUTLS_E_INTERRUPTED);
 		} while (ret > 0);
 
 		if (debug)
@@ -336,7 +332,6 @@ static void server(int fd, unsigned test)
 			     gnutls_strerror(ret));
 			terminate();
 		}
-
 	}
 
 	/* do not wait for the peer to close the connection.
@@ -401,4 +396,4 @@ void doit(void)
 	start(1);
 }
 
-#endif				/* _WIN32 */
+#endif /* _WIN32 */

@@ -33,20 +33,16 @@ int _gnutls13_send_early_data(gnutls_session_t session)
 		return 0;
 
 	while (session->internals.early_data_presend_buffer.length > 0) {
-		ret =
-			gnutls_record_send(session,
-					   session->internals.
-					   early_data_presend_buffer.data,
-					   session->internals.
-					   early_data_presend_buffer.
-					   length);
+		ret = gnutls_record_send(
+			session,
+			session->internals.early_data_presend_buffer.data,
+			session->internals.early_data_presend_buffer.length);
 		if (ret < 0)
 			return gnutls_assert_val(ret);
 
 		session->internals.early_data_presend_buffer.data += ret;
 		session->internals.early_data_presend_buffer.length -= ret;
 	}
-
 
 	return 0;
 }
@@ -73,7 +69,8 @@ int _gnutls13_send_end_of_early_data(gnutls_session_t session, unsigned again)
 		bufel = _gnutls_buffer_to_mbuffer(&buf);
 	}
 
-	return _gnutls_send_handshake(session, bufel, GNUTLS_HANDSHAKE_END_OF_EARLY_DATA);
+	return _gnutls_send_handshake(session, bufel,
+				      GNUTLS_HANDSHAKE_END_OF_EARLY_DATA);
 }
 
 int _gnutls13_recv_end_of_early_data(gnutls_session_t session)
@@ -86,7 +83,8 @@ int _gnutls13_recv_end_of_early_data(gnutls_session_t session)
 		return 0;
 
 	if (!(session->internals.flags & GNUTLS_NO_END_OF_EARLY_DATA)) {
-		ret = _gnutls_recv_handshake(session, GNUTLS_HANDSHAKE_END_OF_EARLY_DATA, 0, &buf);
+		ret = _gnutls_recv_handshake(
+			session, GNUTLS_HANDSHAKE_END_OF_EARLY_DATA, 0, &buf);
 		if (ret < 0)
 			return gnutls_assert_val(ret);
 

@@ -1,17 +1,17 @@
 /* A POSIX <locale.h>.
-   Copyright (C) 2007-2021 Free Software Foundation, Inc.
+   Copyright (C) 2007-2023 Free Software Foundation, Inc.
 
-   This program is free software: you can redistribute it and/or modify
-   it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 3 of the License, or
-   (at your option) any later version.
+   This file is free software: you can redistribute it and/or modify
+   it under the terms of the GNU Lesser General Public License as
+   published by the Free Software Foundation; either version 2.1 of the
+   License, or (at your option) any later version.
 
-   This program is distributed in the hope that it will be useful,
+   This file is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   GNU General Public License for more details.
+   GNU Lesser General Public License for more details.
 
-   You should have received a copy of the GNU General Public License
+   You should have received a copy of the GNU Lesser General Public License
    along with this program.  If not, see <https://www.gnu.org/licenses/>.  */
 
 #if __GNUC__ >= 3
@@ -229,7 +229,7 @@ _GL_CXXALIAS_SYS (newlocale, locale_t,
                   (int category_mask, const char *name, locale_t base));
 #  endif
 # endif
-# if @HAVE_NEWLOCALE@
+# if __GLIBC__ >= 2 && @HAVE_NEWLOCALE@
 _GL_CXXALIASWARN (newlocale);
 # endif
 # if @HAVE_NEWLOCALE@ || @REPLACE_NEWLOCALE@
@@ -258,7 +258,7 @@ _GL_CXXALIAS_RPL (duplocale, locale_t, (locale_t locale));
 _GL_CXXALIAS_SYS (duplocale, locale_t, (locale_t locale));
 #  endif
 # endif
-# if @HAVE_DUPLOCALE@
+# if __GLIBC__ >= 2 && @HAVE_DUPLOCALE@
 _GL_CXXALIASWARN (duplocale);
 # endif
 # if @HAVE_DUPLOCALE@ || @REPLACE_DUPLOCALE@
@@ -290,7 +290,7 @@ _GL_CXXALIAS_RPL (freelocale, void, (locale_t locale));
 _GL_CXXALIAS_SYS_CAST (freelocale, void, (locale_t locale));
 #  endif
 # endif
-# if @HAVE_FREELOCALE@
+# if __GLIBC__ >= 2 && @HAVE_FREELOCALE@
 _GL_CXXALIASWARN (freelocale);
 # endif
 #elif defined GNULIB_POSIXCHECK

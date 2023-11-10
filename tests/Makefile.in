@@ -34,7 +34,6 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>
 #
 
-
 VPATH = @srcdir@
 am__is_gnu_make = { \
   if test -z '$(MAKELEVEL)'; then \
@@ -120,7 +119,8 @@ host_triplet = @host@
 @HAVE_CMOCKA_TRUE@	eagain-auto-auth
 
 @ENABLE_PKCS11_TRUE@@WINDOWS_FALSE@am__append_8 = libpkcs11mock1.la \
-@ENABLE_PKCS11_TRUE@@WINDOWS_FALSE@	libpkcs11mock2.la
+@ENABLE_PKCS11_TRUE@@WINDOWS_FALSE@	libpkcs11mock2.la \
+@ENABLE_PKCS11_TRUE@@WINDOWS_FALSE@	libpkcs11mock3.la
 @ENABLE_PKCS11_FALSE@pkcs11_cert_import_url_exts_DEPENDENCIES =  \
 @ENABLE_PKCS11_FALSE@	$(COMMON_GNUTLS_LDADD) libutils.la \
 @ENABLE_PKCS11_FALSE@	$(am__DEPENDENCIES_2)
@@ -167,11 +167,11 @@ host_triplet = @host@
 @HAVE_FORK_TRUE@	resume-with-record-size-limit
 
 @ENABLE_PKCS11_TRUE@@WINDOWS_FALSE@am__append_15 = tls13/post-handshake-with-cert-pkcs11 pkcs11/tls-neg-pkcs11-no-key \
-@ENABLE_PKCS11_TRUE@@WINDOWS_FALSE@	global-init-override
+@ENABLE_PKCS11_TRUE@@WINDOWS_FALSE@	global-init-override pkcs11/distrust-after
 
 @ENABLE_TPM2_TRUE@am__append_16 = tpm2.sh
-@ENABLE_KTLS_TRUE@am__append_17 = gnutls_ktls
-@ENABLE_KTLS_TRUE@am__append_18 = ktls.sh
+@ENABLE_KTLS_TRUE@am__append_17 = gnutls_ktls ktls_keyupdate
+@ENABLE_KTLS_TRUE@am__append_18 = ktls.sh ktls_keyupdate.sh
 
 #
 # List of tests not available/functional under windows
@@ -226,14 +226,12 @@ host_triplet = @host@
 @WINDOWS_TRUE@am__append_29 = WINDOWS=1
 @WINDOWS_TRUE@am__append_30 = win32-certopenstore
 @ENABLE_CXX_TRUE@@HAVE_CMOCKA_TRUE@am__append_31 = sanity-cpp
-@WINDOWS_FALSE@am__append_32 = datefudge-check
-@WINDOWS_FALSE@noinst_PROGRAMS = datefudge-check$(EXEEXT)
-check_PROGRAMS = $(am__EXEEXT_2) $(am__EXEEXT_15) $(am__EXEEXT_21)
+check_PROGRAMS = $(am__EXEEXT_2) $(am__EXEEXT_15) $(am__EXEEXT_20)
 TESTS = $(am__EXEEXT_2) $(am__EXEEXT_15) $(dist_check_SCRIPTS)
-@ENABLE_SSL3_TRUE@am__append_33 = ENABLE_SSL3=1
-@ENABLE_SSL3_FALSE@am__append_34 = ENABLE_SSL3=0
-@ENABLE_GOST_TRUE@am__append_35 = ENABLE_GOST=1
-@ENABLE_GOST_FALSE@am__append_36 = ENABLE_GOST=0
+@ENABLE_SSL3_TRUE@am__append_32 = ENABLE_SSL3=1
+@ENABLE_SSL3_FALSE@am__append_33 = ENABLE_SSL3=0
+@ENABLE_GOST_TRUE@am__append_34 = ENABLE_GOST=1
+@ENABLE_GOST_FALSE@am__append_35 = ENABLE_GOST=0
 subdir = tests
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/lib/unistring/m4/gnulib-comp.m4 \
@@ -247,6 +245,7 @@ am__aclocal_m4_deps = $(top_srcdir)/lib/unistring/m4/gnulib-comp.m4 \
 	$(top_srcdir)/src/gl/m4/ctype_h.m4 \
 	$(top_srcdir)/src/gl/m4/environ.m4 \
 	$(top_srcdir)/src/gl/m4/error.m4 \
+	$(top_srcdir)/src/gl/m4/error_h.m4 \
 	$(top_srcdir)/src/gl/m4/fdopen.m4 \
 	$(top_srcdir)/src/gl/m4/flexmember.m4 \
 	$(top_srcdir)/src/gl/m4/fpending.m4 \
@@ -273,13 +272,13 @@ am__aclocal_m4_deps = $(top_srcdir)/lib/unistring/m4/gnulib-comp.m4 \
 	$(top_srcdir)/src/gl/m4/locale-zh.m4 \
 	$(top_srcdir)/src/gl/m4/locale_h.m4 \
 	$(top_srcdir)/src/gl/m4/localename.m4 \
-	$(top_srcdir)/src/gl/m4/lstat.m4 \
 	$(top_srcdir)/src/gl/m4/mktime.m4 \
 	$(top_srcdir)/src/gl/m4/nanosleep.m4 \
 	$(top_srcdir)/src/gl/m4/nstrftime.m4 \
 	$(top_srcdir)/src/gl/m4/parse-datetime.m4 \
 	$(top_srcdir)/src/gl/m4/perror.m4 \
 	$(top_srcdir)/src/gl/m4/pipe.m4 \
+	$(top_srcdir)/src/gl/m4/pselect.m4 \
 	$(top_srcdir)/src/gl/m4/pthread-thread.m4 \
 	$(top_srcdir)/src/gl/m4/pthread_h.m4 \
 	$(top_srcdir)/src/gl/m4/pthread_sigmask.m4 \
@@ -294,7 +293,6 @@ am__aclocal_m4_deps = $(top_srcdir)/lib/unistring/m4/gnulib-comp.m4 \
 	$(top_srcdir)/src/gl/m4/setenv.m4 \
 	$(top_srcdir)/src/gl/m4/setlocale.m4 \
 	$(top_srcdir)/src/gl/m4/setlocale_null.m4 \
-	$(top_srcdir)/src/gl/m4/sigaction.m4 \
 	$(top_srcdir)/src/gl/m4/signal_h.m4 \
 	$(top_srcdir)/src/gl/m4/signalblocking.m4 \
 	$(top_srcdir)/src/gl/m4/sleep.m4 \
@@ -305,6 +303,7 @@ am__aclocal_m4_deps = $(top_srcdir)/lib/unistring/m4/gnulib-comp.m4 \
 	$(top_srcdir)/src/gl/m4/symlink.m4 \
 	$(top_srcdir)/src/gl/m4/sys_ioctl_h.m4 \
 	$(top_srcdir)/src/gl/m4/sys_select_h.m4 \
+	$(top_srcdir)/src/gl/m4/tcgetattr.m4 \
 	$(top_srcdir)/src/gl/m4/thread.m4 \
 	$(top_srcdir)/src/gl/m4/time_rz.m4 \
 	$(top_srcdir)/src/gl/m4/timegm.m4 \
@@ -317,7 +316,7 @@ am__aclocal_m4_deps = $(top_srcdir)/lib/unistring/m4/gnulib-comp.m4 \
 	$(top_srcdir)/src/gl/m4/yield.m4 $(top_srcdir)/m4/00gnulib.m4 \
 	$(top_srcdir)/m4/__inline.m4 \
 	$(top_srcdir)/m4/absolute-header.m4 $(top_srcdir)/m4/alloca.m4 \
-	$(top_srcdir)/m4/arpa_inet_h.m4 \
+	$(top_srcdir)/m4/arpa_inet_h.m4 $(top_srcdir)/m4/assert_h.m4 \
 	$(top_srcdir)/m4/ax_ac_append_to_file.m4 \
 	$(top_srcdir)/m4/ax_ac_print_to_file.m4 \
 	$(top_srcdir)/m4/ax_add_am_macro_static.m4 \
@@ -326,7 +325,8 @@ am__aclocal_m4_deps = $(top_srcdir)/lib/unistring/m4/gnulib-comp.m4 \
 	$(top_srcdir)/m4/ax_code_coverage.m4 \
 	$(top_srcdir)/m4/ax_file_escapes.m4 \
 	$(top_srcdir)/m4/builtin-expect.m4 \
-	$(top_srcdir)/m4/byteswap.m4 $(top_srcdir)/m4/close.m4 \
+	$(top_srcdir)/m4/byteswap.m4 $(top_srcdir)/m4/c-bool.m4 \
+	$(top_srcdir)/m4/canonicalize.m4 $(top_srcdir)/m4/close.m4 \
 	$(top_srcdir)/m4/double-slash-root.m4 $(top_srcdir)/m4/dup2.m4 \
 	$(top_srcdir)/m4/eealloc.m4 $(top_srcdir)/m4/errno_h.m4 \
 	$(top_srcdir)/m4/explicit_bzero.m4 \
@@ -342,53 +342,55 @@ am__aclocal_m4_deps = $(top_srcdir)/lib/unistring/m4/gnulib-comp.m4 \
 	$(top_srcdir)/m4/gettimeofday.m4 \
 	$(top_srcdir)/m4/gnulib-common.m4 \
 	$(top_srcdir)/m4/gnulib-comp.m4 $(top_srcdir)/m4/gtk-doc.m4 \
-	$(top_srcdir)/m4/guile.m4 $(top_srcdir)/m4/hooks.m4 \
-	$(top_srcdir)/m4/host-cpu-c-abi.m4 $(top_srcdir)/m4/iconv.m4 \
-	$(top_srcdir)/m4/include_next.m4 $(top_srcdir)/m4/inet_ntop.m4 \
-	$(top_srcdir)/m4/inet_pton.m4 $(top_srcdir)/m4/intlmacosx.m4 \
-	$(top_srcdir)/m4/intmax_t.m4 $(top_srcdir)/m4/inttypes.m4 \
-	$(top_srcdir)/m4/inttypes_h.m4 $(top_srcdir)/m4/largefile.m4 \
+	$(top_srcdir)/m4/hooks.m4 $(top_srcdir)/m4/host-cpu-c-abi.m4 \
+	$(top_srcdir)/m4/iconv.m4 $(top_srcdir)/m4/include_next.m4 \
+	$(top_srcdir)/m4/inet_ntop.m4 $(top_srcdir)/m4/inet_pton.m4 \
+	$(top_srcdir)/m4/intlmacosx.m4 $(top_srcdir)/m4/intmax_t.m4 \
+	$(top_srcdir)/m4/inttypes.m4 $(top_srcdir)/m4/inttypes_h.m4 \
+	$(top_srcdir)/m4/largefile.m4 \
 	$(top_srcdir)/m4/ld-output-def.m4 \
 	$(top_srcdir)/m4/ld-version-script.m4 $(top_srcdir)/m4/ldd.m4 \
 	$(top_srcdir)/m4/lib-ld.m4 $(top_srcdir)/m4/lib-link.m4 \
 	$(top_srcdir)/m4/lib-prefix.m4 $(top_srcdir)/m4/libtool.m4 \
 	$(top_srcdir)/m4/limits-h.m4 $(top_srcdir)/m4/lock.m4 \
-	$(top_srcdir)/m4/lseek.m4 $(top_srcdir)/m4/ltoptions.m4 \
-	$(top_srcdir)/m4/ltsugar.m4 $(top_srcdir)/m4/ltversion.m4 \
-	$(top_srcdir)/m4/lt~obsolete.m4 $(top_srcdir)/m4/malloc.m4 \
-	$(top_srcdir)/m4/malloca.m4 $(top_srcdir)/m4/manywarnings.m4 \
-	$(top_srcdir)/m4/memchr.m4 $(top_srcdir)/m4/memmem.m4 \
-	$(top_srcdir)/m4/minmax.m4 $(top_srcdir)/m4/mmap-anon.m4 \
-	$(top_srcdir)/m4/mode_t.m4 $(top_srcdir)/m4/msvc-inval.m4 \
+	$(top_srcdir)/m4/lseek.m4 $(top_srcdir)/m4/lstat.m4 \
+	$(top_srcdir)/m4/ltoptions.m4 $(top_srcdir)/m4/ltsugar.m4 \
+	$(top_srcdir)/m4/ltversion.m4 $(top_srcdir)/m4/lt~obsolete.m4 \
+	$(top_srcdir)/m4/malloc.m4 $(top_srcdir)/m4/malloca.m4 \
+	$(top_srcdir)/m4/manywarnings.m4 $(top_srcdir)/m4/memchr.m4 \
+	$(top_srcdir)/m4/memmem.m4 $(top_srcdir)/m4/mempcpy.m4 \
+	$(top_srcdir)/m4/memset_explicit.m4 $(top_srcdir)/m4/minmax.m4 \
+	$(top_srcdir)/m4/mmap-anon.m4 $(top_srcdir)/m4/mode_t.m4 \
+	$(top_srcdir)/m4/msvc-inval.m4 \
 	$(top_srcdir)/m4/msvc-nothrow.m4 $(top_srcdir)/m4/multiarch.m4 \
 	$(top_srcdir)/m4/netdb_h.m4 $(top_srcdir)/m4/netinet_in_h.m4 \
-	$(top_srcdir)/m4/nls.m4 $(top_srcdir)/m4/off_t.m4 \
-	$(top_srcdir)/m4/open-cloexec.m4 \
+	$(top_srcdir)/m4/nls.m4 $(top_srcdir)/m4/nocrash.m4 \
+	$(top_srcdir)/m4/off_t.m4 $(top_srcdir)/m4/open-cloexec.m4 \
 	$(top_srcdir)/m4/open-slash.m4 $(top_srcdir)/m4/open.m4 \
 	$(top_srcdir)/m4/pathmax.m4 $(top_srcdir)/m4/pkg.m4 \
 	$(top_srcdir)/m4/po.m4 $(top_srcdir)/m4/printf.m4 \
 	$(top_srcdir)/m4/progtest.m4 \
 	$(top_srcdir)/m4/pthread_rwlock_rdlock.m4 \
-	$(top_srcdir)/m4/read-file.m4 $(top_srcdir)/m4/realloc.m4 \
+	$(top_srcdir)/m4/rawmemchr.m4 $(top_srcdir)/m4/read-file.m4 \
+	$(top_srcdir)/m4/readlink.m4 $(top_srcdir)/m4/realloc.m4 \
 	$(top_srcdir)/m4/secure_getenv.m4 $(top_srcdir)/m4/size_max.m4 \
 	$(top_srcdir)/m4/snprintf.m4 $(top_srcdir)/m4/socketlib.m4 \
 	$(top_srcdir)/m4/socklen.m4 $(top_srcdir)/m4/sockpfaf.m4 \
 	$(top_srcdir)/m4/ssize_t.m4 $(top_srcdir)/m4/stat-time.m4 \
 	$(top_srcdir)/m4/stat.m4 $(top_srcdir)/m4/stdalign.m4 \
-	$(top_srcdir)/m4/stdbool.m4 $(top_srcdir)/m4/stddef_h.m4 \
-	$(top_srcdir)/m4/stdint.m4 $(top_srcdir)/m4/stdint_h.m4 \
-	$(top_srcdir)/m4/stdio_h.m4 $(top_srcdir)/m4/stdlib_h.m4 \
-	$(top_srcdir)/m4/stpcpy.m4 $(top_srcdir)/m4/strcase.m4 \
-	$(top_srcdir)/m4/strdup.m4 $(top_srcdir)/m4/string_h.m4 \
-	$(top_srcdir)/m4/strings_h.m4 $(top_srcdir)/m4/strndup.m4 \
-	$(top_srcdir)/m4/strnlen.m4 $(top_srcdir)/m4/strtok_r.m4 \
-	$(top_srcdir)/m4/strverscmp.m4 \
+	$(top_srcdir)/m4/stddef_h.m4 $(top_srcdir)/m4/stdint.m4 \
+	$(top_srcdir)/m4/stdint_h.m4 $(top_srcdir)/m4/stdio_h.m4 \
+	$(top_srcdir)/m4/stdlib_h.m4 $(top_srcdir)/m4/stpcpy.m4 \
+	$(top_srcdir)/m4/strcase.m4 $(top_srcdir)/m4/strdup.m4 \
+	$(top_srcdir)/m4/string_h.m4 $(top_srcdir)/m4/strings_h.m4 \
+	$(top_srcdir)/m4/strndup.m4 $(top_srcdir)/m4/strnlen.m4 \
+	$(top_srcdir)/m4/strtok_r.m4 $(top_srcdir)/m4/strverscmp.m4 \
 	$(top_srcdir)/m4/sys_socket_h.m4 \
 	$(top_srcdir)/m4/sys_stat_h.m4 $(top_srcdir)/m4/sys_time_h.m4 \
 	$(top_srcdir)/m4/sys_types_h.m4 $(top_srcdir)/m4/sys_uio_h.m4 \
 	$(top_srcdir)/m4/threadlib.m4 $(top_srcdir)/m4/time_h.m4 \
-	$(top_srcdir)/m4/time_r.m4 $(top_srcdir)/m4/ungetc.m4 \
-	$(top_srcdir)/m4/unistd_h.m4 \
+	$(top_srcdir)/m4/time_r.m4 $(top_srcdir)/m4/tls.m4 \
+	$(top_srcdir)/m4/ungetc.m4 $(top_srcdir)/m4/unistd_h.m4 \
 	$(top_srcdir)/m4/valgrind-tests.m4 \
 	$(top_srcdir)/m4/vasnprintf.m4 $(top_srcdir)/m4/vasprintf.m4 \
 	$(top_srcdir)/m4/vsnprintf.m4 $(top_srcdir)/m4/warn-on-use.m4 \
@@ -472,7 +474,8 @@ am__EXEEXT_2 = $(am__EXEEXT_1)
 @HAVE_FORK_TRUE@	resume-with-record-size-limit$(EXEEXT)
 @ENABLE_PKCS11_TRUE@@WINDOWS_FALSE@am__EXEEXT_13 = tls13/post-handshake-with-cert-pkcs11$(EXEEXT) \
 @ENABLE_PKCS11_TRUE@@WINDOWS_FALSE@	pkcs11/tls-neg-pkcs11-no-key$(EXEEXT) \
-@ENABLE_PKCS11_TRUE@@WINDOWS_FALSE@	global-init-override$(EXEEXT)
+@ENABLE_PKCS11_TRUE@@WINDOWS_FALSE@	global-init-override$(EXEEXT) \
+@ENABLE_PKCS11_TRUE@@WINDOWS_FALSE@	pkcs11/distrust-after$(EXEEXT)
 @WINDOWS_TRUE@am__EXEEXT_14 = win32-certopenstore$(EXEEXT)
 am__EXEEXT_15 = tls13/supported_versions$(EXEEXT) \
 	tls13/tls12-no-tls13-exts$(EXEEXT) \
@@ -556,20 +559,20 @@ am__EXEEXT_15 = tls13/supported_versions$(EXEEXT) \
 	set_x509_key_mem$(EXEEXT) set_x509_key_file$(EXEEXT) \
 	tls12-rehandshake-cert-auto$(EXEEXT) \
 	tls12-rehandshake-set-prio$(EXEEXT) \
-	mini-chain-unsorted$(EXEEXT) x509-verify-with-crl$(EXEEXT) \
-	mini-dtls-mtu$(EXEEXT) privkey-verify-broken$(EXEEXT) \
-	mini-dtls-record-asym$(EXEEXT) key-import-export$(EXEEXT) \
-	priority-set$(EXEEXT) priority-set2$(EXEEXT) \
-	pubkey-import-export$(EXEEXT) sign-is-secure$(EXEEXT) \
-	spki$(EXEEXT) spki-abstract$(EXEEXT) rsa-rsa-pss$(EXEEXT) \
-	mini-dtls-fork$(EXEEXT) dtls-pthread$(EXEEXT) \
-	mini-key-material$(EXEEXT) x509cert-invalid$(EXEEXT) \
-	tls-ext-register$(EXEEXT) tls-supplemental$(EXEEXT) \
-	mini-dtls0-9$(EXEEXT) duplicate-extensions$(EXEEXT) \
-	record-retvals$(EXEEXT) mini-server-name$(EXEEXT) \
-	tls-etm$(EXEEXT) tls-force-etm$(EXEEXT) \
-	x509-cert-callback$(EXEEXT) alerts$(EXEEXT) \
-	client-sign-md5-rep$(EXEEXT) \
+	mini-chain-unsorted$(EXEEXT) x509-verify-duplicate$(EXEEXT) \
+	x509-verify-with-crl$(EXEEXT) mini-dtls-mtu$(EXEEXT) \
+	privkey-verify-broken$(EXEEXT) mini-dtls-record-asym$(EXEEXT) \
+	key-import-export$(EXEEXT) priority-set$(EXEEXT) \
+	priority-set2$(EXEEXT) pubkey-import-export$(EXEEXT) \
+	sign-is-secure$(EXEEXT) spki$(EXEEXT) spki-abstract$(EXEEXT) \
+	rsa-rsa-pss$(EXEEXT) mini-dtls-fork$(EXEEXT) \
+	dtls-pthread$(EXEEXT) mini-key-material$(EXEEXT) \
+	x509cert-invalid$(EXEEXT) tls-ext-register$(EXEEXT) \
+	tls-supplemental$(EXEEXT) mini-dtls0-9$(EXEEXT) \
+	duplicate-extensions$(EXEEXT) record-retvals$(EXEEXT) \
+	mini-server-name$(EXEEXT) tls-etm$(EXEEXT) \
+	tls-force-etm$(EXEEXT) x509-cert-callback$(EXEEXT) \
+	alerts$(EXEEXT) client-sign-md5-rep$(EXEEXT) \
 	tls12-invalid-key-exchanges$(EXEEXT) session-rdn-read$(EXEEXT) \
 	tls13-cert-key-exchange$(EXEEXT) \
 	x509-cert-callback-ocsp$(EXEEXT) \
@@ -648,7 +651,7 @@ am__EXEEXT_15 = tls13/supported_versions$(EXEEXT) \
 	dtls-repro-20170915$(EXEEXT) rng-no-onload$(EXEEXT) \
 	dtls1-2-mtu-check$(EXEEXT) crl_apis$(EXEEXT) \
 	cert_verify_inv_utf8$(EXEEXT) no-extensions$(EXEEXT) \
-	hostname-check-utf8$(EXEEXT) \
+	no-status-request$(EXEEXT) hostname-check-utf8$(EXEEXT) \
 	pkcs8-key-decode-encrypted$(EXEEXT) priority-mix$(EXEEXT) \
 	pkcs7$(EXEEXT) send-data-before-handshake$(EXEEXT) \
 	recv-data-before-handshake$(EXEEXT) crt_inv_write$(EXEEXT) \
@@ -674,25 +677,26 @@ am__EXEEXT_15 = tls13/supported_versions$(EXEEXT) \
 	keylog-func$(EXEEXT) handshake-write$(EXEEXT) \
 	x509cert-dntypes$(EXEEXT) id-on-xmppAddr$(EXEEXT) \
 	tls13-compat-mode$(EXEEXT) ciphersuite-name$(EXEEXT) \
-	x509-upnconstraint$(EXEEXT) cipher-padding$(EXEEXT) \
-	pkcs7-verify-double-free$(EXEEXT) fips-rsa-sizes$(EXEEXT) \
+	x509-upnconstraint$(EXEEXT) xts-key-check$(EXEEXT) \
+	cipher-padding$(EXEEXT) pkcs7-verify-double-free$(EXEEXT) \
+	fips-rsa-sizes$(EXEEXT) tls12-rehandshake-ticket$(EXEEXT) \
+	pathbuf$(EXEEXT) tls-force-ems$(EXEEXT) psk-importer$(EXEEXT) \
 	tls-channel-binding$(EXEEXT) $(am__EXEEXT_3) $(am__EXEEXT_4) \
 	$(am__EXEEXT_5) $(am__EXEEXT_6) $(am__EXEEXT_7) \
 	$(am__EXEEXT_8) $(am__EXEEXT_9) $(am__EXEEXT_10) \
 	$(am__EXEEXT_11) $(am__EXEEXT_12) record-sendfile$(EXEEXT) \
 	$(am__EXEEXT_13) $(am__EXEEXT_14)
-@ENABLE_KTLS_TRUE@am__EXEEXT_16 = gnutls_ktls$(EXEEXT)
+@ENABLE_KTLS_TRUE@am__EXEEXT_16 = gnutls_ktls$(EXEEXT) \
+@ENABLE_KTLS_TRUE@	ktls_keyupdate$(EXEEXT)
 @WINDOWS_FALSE@am__EXEEXT_17 = dtls-stress$(EXEEXT)
 @DISABLE_SYSTEM_CONFIG_FALSE@@WINDOWS_FALSE@am__EXEEXT_18 = system-override-curves-allowlist$(EXEEXT) \
 @DISABLE_SYSTEM_CONFIG_FALSE@@WINDOWS_FALSE@	protocol-set-allowlist$(EXEEXT)
 @ENABLE_PKCS11_TRUE@@HAVE_PKCS11_TRUST_STORE_TRUE@@P11KIT_0_23_11_API_TRUE@@WINDOWS_FALSE@am__EXEEXT_19 = pkcs11/list-tokens$(EXEEXT) \
 @ENABLE_PKCS11_TRUE@@HAVE_PKCS11_TRUST_STORE_TRUE@@P11KIT_0_23_11_API_TRUE@@WINDOWS_FALSE@	pkcs11/list-objects$(EXEEXT)
-@WINDOWS_FALSE@am__EXEEXT_20 = datefudge-check$(EXEEXT)
-am__EXEEXT_21 = system-override-hash$(EXEEXT) \
+am__EXEEXT_20 = system-override-hash$(EXEEXT) \
 	system-override-sig$(EXEEXT) system-override-sig-tls$(EXEEXT) \
 	$(am__EXEEXT_16) $(am__EXEEXT_17) $(am__EXEEXT_18) \
-	$(am__EXEEXT_19) $(am__EXEEXT_20)
-PROGRAMS = $(noinst_PROGRAMS)
+	$(am__EXEEXT_19)
 LTLIBRARIES = $(noinst_LTLIBRARIES)
 @ENABLE_PKCS11_TRUE@@WINDOWS_FALSE@libpkcs11mock1_la_DEPENDENCIES =  \
 @ENABLE_PKCS11_TRUE@@WINDOWS_FALSE@	../gl/libgnu.la
@@ -722,6 +726,17 @@ libpkcs11mock2_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
 	$(AM_CFLAGS) $(CFLAGS) $(libpkcs11mock2_la_LDFLAGS) $(LDFLAGS) \
 	-o $@
 @ENABLE_PKCS11_TRUE@@WINDOWS_FALSE@am_libpkcs11mock2_la_rpath =
+@ENABLE_PKCS11_TRUE@@WINDOWS_FALSE@libpkcs11mock3_la_DEPENDENCIES =  \
+@ENABLE_PKCS11_TRUE@@WINDOWS_FALSE@	../gl/libgnu.la
+am__libpkcs11mock3_la_SOURCES_DIST = pkcs11/pkcs11-mock3.c
+@ENABLE_PKCS11_TRUE@@WINDOWS_FALSE@am_libpkcs11mock3_la_OBJECTS =  \
+@ENABLE_PKCS11_TRUE@@WINDOWS_FALSE@	pkcs11/pkcs11-mock3.lo
+libpkcs11mock3_la_OBJECTS = $(am_libpkcs11mock3_la_OBJECTS)
+libpkcs11mock3_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
+	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
+	$(AM_CFLAGS) $(CFLAGS) $(libpkcs11mock3_la_LDFLAGS) $(LDFLAGS) \
+	-o $@
+@ENABLE_PKCS11_TRUE@@WINDOWS_FALSE@am_libpkcs11mock3_la_rpath =
 libutils_la_DEPENDENCIES = ../lib/libgnutls.la
 am_libutils_la_OBJECTS = utils.lo seccomp.lo utils-adv.lo
 libutils_la_OBJECTS = $(am_libutils_la_OBJECTS)
@@ -919,11 +934,6 @@ dane_strcodes_SOURCES = dane-strcodes.c
 dane_strcodes_OBJECTS = dane-strcodes.$(OBJEXT)
 dane_strcodes_DEPENDENCIES = $(am__DEPENDENCIES_3) \
 	../libdane/libgnutls-dane.la
-datefudge_check_SOURCES = datefudge-check.c
-datefudge_check_OBJECTS = datefudge-check.$(OBJEXT)
-datefudge_check_LDADD = $(LDADD)
-datefudge_check_DEPENDENCIES = $(COMMON_GNUTLS_LDADD) libutils.la \
-	$(am__DEPENDENCIES_2)
 dh_compute_SOURCES = dh-compute.c
 dh_compute_OBJECTS = dh-compute.$(OBJEXT)
 dh_compute_LDADD = $(LDADD)
@@ -1301,6 +1311,11 @@ keylog_func_OBJECTS = keylog-func.$(OBJEXT)
 keylog_func_LDADD = $(LDADD)
 keylog_func_DEPENDENCIES = $(COMMON_GNUTLS_LDADD) libutils.la \
 	$(am__DEPENDENCIES_2)
+ktls_keyupdate_SOURCES = ktls_keyupdate.c
+ktls_keyupdate_OBJECTS = ktls_keyupdate.$(OBJEXT)
+ktls_keyupdate_LDADD = $(LDADD)
+ktls_keyupdate_DEPENDENCIES = $(COMMON_GNUTLS_LDADD) libutils.la \
+	$(am__DEPENDENCIES_2)
 long_session_id_SOURCES = long-session-id.c
 long_session_id_OBJECTS = long-session-id.$(OBJEXT)
 long_session_id_LDADD = $(LDADD)
@@ -1528,6 +1543,11 @@ no_signal_OBJECTS = no-signal.$(OBJEXT)
 no_signal_LDADD = $(LDADD)
 no_signal_DEPENDENCIES = $(COMMON_GNUTLS_LDADD) libutils.la \
 	$(am__DEPENDENCIES_2)
+no_status_request_SOURCES = no-status-request.c
+no_status_request_OBJECTS = no-status-request.$(OBJEXT)
+no_status_request_LDADD = $(LDADD)
+no_status_request_DEPENDENCIES = $(COMMON_GNUTLS_LDADD) libutils.la \
+	$(am__DEPENDENCIES_2)
 nul_in_x509_names_SOURCES = nul-in-x509-names.c
 nul_in_x509_names_OBJECTS = nul-in-x509-names.$(OBJEXT)
 nul_in_x509_names_LDADD = $(LDADD)
@@ -1567,6 +1587,11 @@ parse_ca_SOURCES = parse_ca.c
 parse_ca_OBJECTS = parse_ca.$(OBJEXT)
 parse_ca_LDADD = $(LDADD)
 parse_ca_DEPENDENCIES = $(COMMON_GNUTLS_LDADD) libutils.la \
+	$(am__DEPENDENCIES_2)
+pathbuf_SOURCES = pathbuf.c
+pathbuf_OBJECTS = pathbuf-pathbuf.$(OBJEXT)
+pathbuf_LDADD = $(LDADD)
+pathbuf_DEPENDENCIES = $(COMMON_GNUTLS_LDADD) libutils.la \
 	$(am__DEPENDENCIES_2)
 pcert_list_SOURCES = pcert-list.c
 pcert_list_OBJECTS = pcert-list.$(OBJEXT)
@@ -1645,6 +1670,8 @@ pkcs11_privkey_safenet_always_auth_OBJECTS =  \
 am__pkcs11_token_raw_SOURCES_DIST = pkcs11/pkcs11-token-raw.c
 @ENABLE_PKCS11_TRUE@@WINDOWS_FALSE@am_pkcs11_token_raw_OBJECTS = pkcs11/pkcs11-token-raw.$(OBJEXT)
 pkcs11_token_raw_OBJECTS = $(am_pkcs11_token_raw_OBJECTS)
+pkcs11_distrust_after_SOURCES = pkcs11/distrust-after.c
+pkcs11_distrust_after_OBJECTS = pkcs11/distrust-after.$(OBJEXT)
 pkcs11_gnutls_pcert_list_import_x509_file_SOURCES =  \
 	pkcs11/gnutls_pcert_list_import_x509_file.c
 pkcs11_gnutls_pcert_list_import_x509_file_OBJECTS =  \
@@ -1881,6 +1908,11 @@ psk_file_SOURCES = psk-file.c
 psk_file_OBJECTS = psk-file.$(OBJEXT)
 psk_file_LDADD = $(LDADD)
 psk_file_DEPENDENCIES = $(COMMON_GNUTLS_LDADD) libutils.la \
+	$(am__DEPENDENCIES_2)
+psk_importer_SOURCES = psk-importer.c
+psk_importer_OBJECTS = psk-importer.$(OBJEXT)
+psk_importer_LDADD = $(LDADD)
+psk_importer_DEPENDENCIES = $(COMMON_GNUTLS_LDADD) libutils.la \
 	$(am__DEPENDENCIES_2)
 pskself_SOURCES = pskself.c
 pskself_OBJECTS = pskself.$(OBJEXT)
@@ -2123,8 +2155,7 @@ am__sanity_cpp_SOURCES_DIST = sanity-cpp.cpp
 @ENABLE_CXX_TRUE@@HAVE_CMOCKA_TRUE@am_sanity_cpp_OBJECTS = sanity_cpp-sanity-cpp.$(OBJEXT)
 sanity_cpp_OBJECTS = $(am_sanity_cpp_OBJECTS)
 @ENABLE_CXX_TRUE@@HAVE_CMOCKA_TRUE@sanity_cpp_DEPENDENCIES =  \
-@ENABLE_CXX_TRUE@@HAVE_CMOCKA_TRUE@	$(am__DEPENDENCIES_5) \
-@ENABLE_CXX_TRUE@@HAVE_CMOCKA_TRUE@	../lib/libgnutlsxx.la
+@ENABLE_CXX_TRUE@@HAVE_CMOCKA_TRUE@	$(am__DEPENDENCIES_5)
 sanity_cpp_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(sanity_cpp_CXXFLAGS) \
 	$(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
@@ -2481,6 +2512,11 @@ tls_ext_register_OBJECTS = tls-ext-register.$(OBJEXT)
 tls_ext_register_LDADD = $(LDADD)
 tls_ext_register_DEPENDENCIES = $(COMMON_GNUTLS_LDADD) libutils.la \
 	$(am__DEPENDENCIES_2)
+tls_force_ems_SOURCES = tls-force-ems.c
+tls_force_ems_OBJECTS = tls-force-ems.$(OBJEXT)
+tls_force_ems_LDADD = $(LDADD)
+tls_force_ems_DEPENDENCIES = $(COMMON_GNUTLS_LDADD) libutils.la \
+	$(am__DEPENDENCIES_2)
 tls_force_etm_SOURCES = tls-force-etm.c
 tls_force_etm_OBJECTS = tls-force-etm.$(OBJEXT)
 tls_force_etm_LDADD = $(LDADD)
@@ -2663,6 +2699,11 @@ tls12_rehandshake_set_prio_OBJECTS =  \
 	tls12-rehandshake-set-prio.$(OBJEXT)
 tls12_rehandshake_set_prio_LDADD = $(LDADD)
 tls12_rehandshake_set_prio_DEPENDENCIES = $(COMMON_GNUTLS_LDADD) \
+	libutils.la $(am__DEPENDENCIES_2)
+tls12_rehandshake_ticket_SOURCES = tls12-rehandshake-ticket.c
+tls12_rehandshake_ticket_OBJECTS = tls12-rehandshake-ticket.$(OBJEXT)
+tls12_rehandshake_ticket_LDADD = $(LDADD)
+tls12_rehandshake_ticket_DEPENDENCIES = $(COMMON_GNUTLS_LDADD) \
 	libutils.la $(am__DEPENDENCIES_2)
 am_tls12_resume_anon_OBJECTS = tls12_resume_anon-resume.$(OBJEXT)
 tls12_resume_anon_OBJECTS = $(am_tls12_resume_anon_OBJECTS)
@@ -3019,6 +3060,11 @@ x509_upnconstraint_OBJECTS = x509-upnconstraint.$(OBJEXT)
 x509_upnconstraint_LDADD = $(LDADD)
 x509_upnconstraint_DEPENDENCIES = $(COMMON_GNUTLS_LDADD) libutils.la \
 	$(am__DEPENDENCIES_2)
+x509_verify_duplicate_SOURCES = x509-verify-duplicate.c
+x509_verify_duplicate_OBJECTS = x509-verify-duplicate.$(OBJEXT)
+x509_verify_duplicate_LDADD = $(LDADD)
+x509_verify_duplicate_DEPENDENCIES = $(COMMON_GNUTLS_LDADD) \
+	libutils.la $(am__DEPENDENCIES_2)
 x509_verify_with_crl_SOURCES = x509-verify-with-crl.c
 x509_verify_with_crl_OBJECTS = x509-verify-with-crl.$(OBJEXT)
 x509_verify_with_crl_LDADD = $(LDADD)
@@ -3089,12 +3135,17 @@ x509sign_verify_rsa_OBJECTS = x509sign-verify-rsa.$(OBJEXT)
 x509sign_verify_rsa_LDADD = $(LDADD)
 x509sign_verify_rsa_DEPENDENCIES = $(COMMON_GNUTLS_LDADD) libutils.la \
 	$(am__DEPENDENCIES_2)
+xts_key_check_SOURCES = xts-key-check.c
+xts_key_check_OBJECTS = xts-key-check.$(OBJEXT)
+xts_key_check_LDADD = $(LDADD)
+xts_key_check_DEPENDENCIES = $(COMMON_GNUTLS_LDADD) libutils.la \
+	$(am__DEPENDENCIES_2)
 am__dist_check_SCRIPTS_DIST = rfc2253-escape-test.sh \
 	rsa-md5-collision/rsa-md5-collision.sh systemkey.sh tpm2.sh \
-	ktls.sh dtls/dtls.sh dtls/dtls-resume.sh fastopen.sh \
-	pkgconfig.sh starttls.sh starttls-ftp.sh starttls-smtp.sh \
-	starttls-lmtp.sh starttls-pop3.sh starttls-xmpp.sh \
-	starttls-nntp.sh starttls-sieve.sh \
+	ktls.sh ktls_keyupdate.sh dtls/dtls.sh dtls/dtls-resume.sh \
+	fastopen.sh pkgconfig.sh starttls.sh starttls-ftp.sh \
+	starttls-smtp.sh starttls-lmtp.sh starttls-pop3.sh \
+	starttls-xmpp.sh starttls-nntp.sh starttls-sieve.sh \
 	ocsp-tests/ocsp-tls-connection.sh \
 	ocsp-tests/ocsp-must-staple-connection.sh \
 	ocsp-tests/ocsp-test.sh cipher-listings.sh sni-hostname.sh \
@@ -3158,11 +3209,10 @@ am__depfiles_remade = ./$(DEPDIR)/aead-cipher-vec.Po \
 	./$(DEPDIR)/custom-urls-override.Po ./$(DEPDIR)/custom-urls.Po \
 	./$(DEPDIR)/cve-2008-4989.Po ./$(DEPDIR)/cve-2009-1415.Po \
 	./$(DEPDIR)/cve-2009-1416.Po ./$(DEPDIR)/dane-strcodes.Po \
-	./$(DEPDIR)/dane.Po ./$(DEPDIR)/datefudge-check.Po \
-	./$(DEPDIR)/dh-compute.Po ./$(DEPDIR)/dh-params.Po \
-	./$(DEPDIR)/dhepskself.Po ./$(DEPDIR)/dhex509self.Po \
-	./$(DEPDIR)/dn.Po ./$(DEPDIR)/dn2.Po \
-	./$(DEPDIR)/dss-sig-val.Po \
+	./$(DEPDIR)/dane.Po ./$(DEPDIR)/dh-compute.Po \
+	./$(DEPDIR)/dh-params.Po ./$(DEPDIR)/dhepskself.Po \
+	./$(DEPDIR)/dhex509self.Po ./$(DEPDIR)/dn.Po \
+	./$(DEPDIR)/dn2.Po ./$(DEPDIR)/dss-sig-val.Po \
 	./$(DEPDIR)/dtls-client-with-seccomp.Po \
 	./$(DEPDIR)/dtls-etm.Po ./$(DEPDIR)/dtls-handshake-versions.Po \
 	./$(DEPDIR)/dtls-max-record.Po ./$(DEPDIR)/dtls-pthread.Po \
@@ -3213,8 +3263,9 @@ am__depfiles_remade = ./$(DEPDIR)/aead-cipher-vec.Po \
 	./$(DEPDIR)/key-material-set-dtls.Po \
 	./$(DEPDIR)/key-openssl.Po ./$(DEPDIR)/key-usage-ecdhe-rsa.Po \
 	./$(DEPDIR)/key-usage-rsa.Po ./$(DEPDIR)/keylog-env.Po \
-	./$(DEPDIR)/keylog-func.Po ./$(DEPDIR)/long-session-id.Po \
-	./$(DEPDIR)/mini-alpn.Po ./$(DEPDIR)/mini-chain-unsorted.Po \
+	./$(DEPDIR)/keylog-func.Po ./$(DEPDIR)/ktls_keyupdate.Po \
+	./$(DEPDIR)/long-session-id.Po ./$(DEPDIR)/mini-alpn.Po \
+	./$(DEPDIR)/mini-chain-unsorted.Po \
 	./$(DEPDIR)/mini-dtls-discard.Po ./$(DEPDIR)/mini-dtls-fork.Po \
 	./$(DEPDIR)/mini-dtls-heartbeat.Po \
 	./$(DEPDIR)/mini-dtls-hello-verify-48.Po \
@@ -3244,13 +3295,14 @@ am__depfiles_remade = ./$(DEPDIR)/aead-cipher-vec.Po \
 	./$(DEPDIR)/name-constraints.Po \
 	./$(DEPDIR)/name_constraints_merge-name-constraints-merge.Po \
 	./$(DEPDIR)/no-extensions.Po ./$(DEPDIR)/no-signal.Po \
+	./$(DEPDIR)/no-status-request.Po \
 	./$(DEPDIR)/nul-in-x509-names.Po \
 	./$(DEPDIR)/null_retrieve_function.Po \
 	./$(DEPDIR)/ocsp-filename-memleak.Po ./$(DEPDIR)/ocsp.Po \
 	./$(DEPDIR)/oids.Po ./$(DEPDIR)/openconnect-dtls12.Po \
 	./$(DEPDIR)/openssl.Po ./$(DEPDIR)/parse_ca.Po \
-	./$(DEPDIR)/pcert-list.Po ./$(DEPDIR)/pkcs1-digest-info.Po \
-	./$(DEPDIR)/pkcs12_encode.Po \
+	./$(DEPDIR)/pathbuf-pathbuf.Po ./$(DEPDIR)/pcert-list.Po \
+	./$(DEPDIR)/pkcs1-digest-info.Po ./$(DEPDIR)/pkcs12_encode.Po \
 	./$(DEPDIR)/pkcs12_s2k-pkcs12_s2k.Po \
 	./$(DEPDIR)/pkcs12_s2k_pem.Po ./$(DEPDIR)/pkcs12_simple.Po \
 	./$(DEPDIR)/pkcs7-cat-parse.Po ./$(DEPDIR)/pkcs7-gen.Po \
@@ -3264,10 +3316,11 @@ am__depfiles_remade = ./$(DEPDIR)/aead-cipher-vec.Po \
 	./$(DEPDIR)/priority-set2.Po ./$(DEPDIR)/privkey-keygen.Po \
 	./$(DEPDIR)/privkey-verify-broken.Po \
 	./$(DEPDIR)/protocol-set-allowlist.Po ./$(DEPDIR)/psk-file.Po \
-	./$(DEPDIR)/pskself.Po ./$(DEPDIR)/pskself2.Po \
-	./$(DEPDIR)/pubkey-import-export.Po ./$(DEPDIR)/random-art.Po \
-	./$(DEPDIR)/rawpk-api.Po ./$(DEPDIR)/record-pad.Po \
-	./$(DEPDIR)/record-retvals.Po ./$(DEPDIR)/record-sendfile.Po \
+	./$(DEPDIR)/psk-importer.Po ./$(DEPDIR)/pskself.Po \
+	./$(DEPDIR)/pskself2.Po ./$(DEPDIR)/pubkey-import-export.Po \
+	./$(DEPDIR)/random-art.Po ./$(DEPDIR)/rawpk-api.Po \
+	./$(DEPDIR)/record-pad.Po ./$(DEPDIR)/record-retvals.Po \
+	./$(DEPDIR)/record-sendfile.Po \
 	./$(DEPDIR)/record-sizes-range.Po ./$(DEPDIR)/record-sizes.Po \
 	./$(DEPDIR)/record-timeouts.Po \
 	./$(DEPDIR)/recv-data-before-handshake.Po \
@@ -3346,9 +3399,9 @@ am__depfiles_remade = ./$(DEPDIR)/aead-cipher-vec.Po \
 	./$(DEPDIR)/tls-client-with-seccomp.Po \
 	./$(DEPDIR)/tls-crt_type-neg.Po ./$(DEPDIR)/tls-etm.Po \
 	./$(DEPDIR)/tls-ext-not-in-dtls.Po \
-	./$(DEPDIR)/tls-ext-register.Po ./$(DEPDIR)/tls-force-etm.Po \
-	./$(DEPDIR)/tls-neg-ext-key.Po ./$(DEPDIR)/tls-neg-ext4-key.Po \
-	./$(DEPDIR)/tls-pthread.Po \
+	./$(DEPDIR)/tls-ext-register.Po ./$(DEPDIR)/tls-force-ems.Po \
+	./$(DEPDIR)/tls-force-etm.Po ./$(DEPDIR)/tls-neg-ext-key.Po \
+	./$(DEPDIR)/tls-neg-ext4-key.Po ./$(DEPDIR)/tls-pthread.Po \
 	./$(DEPDIR)/tls-record-size-limit-asym.Po \
 	./$(DEPDIR)/tls-record-size-limit.Po \
 	./$(DEPDIR)/tls-session-ext-override.Po \
@@ -3372,6 +3425,7 @@ am__depfiles_remade = ./$(DEPDIR)/aead-cipher-vec.Po \
 	./$(DEPDIR)/tls12-rehandshake-cert-auto.Po \
 	./$(DEPDIR)/tls12-rehandshake-cert.Po \
 	./$(DEPDIR)/tls12-rehandshake-set-prio.Po \
+	./$(DEPDIR)/tls12-rehandshake-ticket.Po \
 	./$(DEPDIR)/tls12-server-kx-neg.Po \
 	./$(DEPDIR)/tls12_resume_anon-resume.Po \
 	./$(DEPDIR)/tls12_resume_psk-resume.Po \
@@ -3401,6 +3455,7 @@ am__depfiles_remade = ./$(DEPDIR)/aead-cipher-vec.Po \
 	./$(DEPDIR)/x509-extensions.Po \
 	./$(DEPDIR)/x509-server-verify.Po \
 	./$(DEPDIR)/x509-upnconstraint.Po \
+	./$(DEPDIR)/x509-verify-duplicate.Po \
 	./$(DEPDIR)/x509-verify-with-crl.Po \
 	./$(DEPDIR)/x509_altname.Po ./$(DEPDIR)/x509cert-ct.Po \
 	./$(DEPDIR)/x509cert-dntypes.Po \
@@ -3410,7 +3465,9 @@ am__depfiles_remade = ./$(DEPDIR)/aead-cipher-vec.Po \
 	./$(DEPDIR)/x509sign-verify-error.Po \
 	./$(DEPDIR)/x509sign-verify-gost.Po \
 	./$(DEPDIR)/x509sign-verify-rsa.Po \
-	./$(DEPDIR)/x509sign-verify.Po dtls/$(DEPDIR)/dtls-stress.Po \
+	./$(DEPDIR)/x509sign-verify.Po ./$(DEPDIR)/xts-key-check.Po \
+	dtls/$(DEPDIR)/dtls-stress.Po \
+	pkcs11/$(DEPDIR)/distrust-after.Po \
 	pkcs11/$(DEPDIR)/gnutls_pcert_list_import_x509_file.Po \
 	pkcs11/$(DEPDIR)/gnutls_x509_crt_list_import_url.Po \
 	pkcs11/$(DEPDIR)/import_url_privkey_caps-pkcs11-import-url-privkey.Po \
@@ -3431,6 +3488,7 @@ am__depfiles_remade = ./$(DEPDIR)/aead-cipher-vec.Po \
 	pkcs11/$(DEPDIR)/pkcs11-mechanisms.Po \
 	pkcs11/$(DEPDIR)/pkcs11-mock.Plo \
 	pkcs11/$(DEPDIR)/pkcs11-mock2.Plo \
+	pkcs11/$(DEPDIR)/pkcs11-mock3.Plo \
 	pkcs11/$(DEPDIR)/pkcs11-obj-import.Po \
 	pkcs11/$(DEPDIR)/pkcs11-obj-raw.Po \
 	pkcs11/$(DEPDIR)/pkcs11-pin-func.Po \
@@ -3521,18 +3579,18 @@ am__v_CXXLD_ = $(am__v_CXXLD_@AM_DEFAULT_V@)
 am__v_CXXLD_0 = @echo "  CXXLD   " $@;
 am__v_CXXLD_1 = 
 SOURCES = $(libpkcs11mock1_la_SOURCES) $(libpkcs11mock2_la_SOURCES) \
-	$(libutils_la_SOURCES) aead-cipher-vec.c alerts.c \
-	alpn-server-prec.c anonself.c atfork.c auto-verify.c base64.c \
-	base64-raw.c buffer.c cert.c cert-status.c \
-	cert_verify_inv_utf8.c certificate_set_x509_crl.c \
-	certuniqueid.c chainverify.c chainverify-unsorted.c \
-	cipher-alignment.c cipher-padding.c ciphersuite-name.c \
-	client-fastopen.c client-sign-md5-rep.c client_dsa_key.c \
-	conv-utf8.c crl-basic.c crl_apis.c crlverify.c crq-basic.c \
-	crq_apis.c crq_key_id.c crt_apis.c crt_inv_write.c \
-	custom-urls.c custom-urls-override.c cve-2008-4989.c \
-	cve-2009-1415.c cve-2009-1416.c dane.c dane-strcodes.c \
-	datefudge-check.c dh-compute.c dh-params.c dhepskself.c \
+	$(libpkcs11mock3_la_SOURCES) $(libutils_la_SOURCES) \
+	aead-cipher-vec.c alerts.c alpn-server-prec.c anonself.c \
+	atfork.c auto-verify.c base64.c base64-raw.c buffer.c cert.c \
+	cert-status.c cert_verify_inv_utf8.c \
+	certificate_set_x509_crl.c certuniqueid.c chainverify.c \
+	chainverify-unsorted.c cipher-alignment.c cipher-padding.c \
+	ciphersuite-name.c client-fastopen.c client-sign-md5-rep.c \
+	client_dsa_key.c conv-utf8.c crl-basic.c crl_apis.c \
+	crlverify.c crq-basic.c crq_apis.c crq_key_id.c crt_apis.c \
+	crt_inv_write.c custom-urls.c custom-urls-override.c \
+	cve-2008-4989.c cve-2009-1415.c cve-2009-1416.c dane.c \
+	dane-strcodes.c dh-compute.c dh-params.c dhepskself.c \
 	dhex509self.c dn.c dn2.c dss-sig-val.c \
 	dtls-client-with-seccomp.c dtls-etm.c \
 	dtls-handshake-versions.c dtls-max-record.c dtls-pthread.c \
@@ -3560,7 +3618,7 @@ SOURCES = $(libpkcs11mock1_la_SOURCES) $(libpkcs11mock2_la_SOURCES) \
 	ip-utils.c kdf-api.c key-export-pkcs8.c key-import-export.c \
 	key-material-dtls.c key-material-set-dtls.c key-openssl.c \
 	key-usage-ecdhe-rsa.c key-usage-rsa.c keylog-env.c \
-	keylog-func.c long-session-id.c mini-alpn.c \
+	keylog-func.c ktls_keyupdate.c long-session-id.c mini-alpn.c \
 	mini-chain-unsorted.c mini-dtls-discard.c mini-dtls-fork.c \
 	mini-dtls-heartbeat.c mini-dtls-hello-verify.c \
 	mini-dtls-hello-verify-48.c mini-dtls-large.c \
@@ -3577,9 +3635,10 @@ SOURCES = $(libpkcs11mock1_la_SOURCES) $(libpkcs11mock2_la_SOURCES) \
 	missingissuer_aia.c mpi.c multi-alerts.c naked-alerts.c \
 	name-constraints.c name-constraints-ip.c \
 	name-constraints-merge.c no-extensions.c no-signal.c \
-	nul-in-x509-names.c null_retrieve_function.c ocsp.c \
-	ocsp-filename-memleak.c oids.c openconnect-dtls12.c openssl.c \
-	parse_ca.c pcert-list.c pkcs1-digest-info.c \
+	no-status-request.c nul-in-x509-names.c \
+	null_retrieve_function.c ocsp.c ocsp-filename-memleak.c oids.c \
+	openconnect-dtls12.c openssl.c parse_ca.c pathbuf.c \
+	pcert-list.c pkcs1-digest-info.c \
 	$(pkcs11_cert_import_url_exts_SOURCES) \
 	$(pkcs11_cert_import_url4_exts_SOURCES) \
 	$(pkcs11_get_exts_SOURCES) \
@@ -3592,7 +3651,7 @@ SOURCES = $(libpkcs11mock1_la_SOURCES) $(libpkcs11mock2_la_SOURCES) \
 	$(pkcs11_privkey_fork_SOURCES) \
 	$(pkcs11_privkey_fork_reinit_SOURCES) \
 	$(pkcs11_privkey_safenet_always_auth_SOURCES) \
-	$(pkcs11_token_raw_SOURCES) \
+	$(pkcs11_token_raw_SOURCES) pkcs11/distrust-after.c \
 	pkcs11/gnutls_pcert_list_import_x509_file.c \
 	pkcs11/gnutls_x509_crt_list_import_url.c pkcs11/list-objects.c \
 	pkcs11/list-tokens.c pkcs11/pkcs11-chainverify.c \
@@ -3613,11 +3672,12 @@ SOURCES = $(libpkcs11mock1_la_SOURCES) $(libpkcs11mock2_la_SOURCES) \
 	prf.c priorities.c priorities-groups.c priority-init2.c \
 	priority-mix.c priority-set.c priority-set2.c privkey-keygen.c \
 	privkey-verify-broken.c protocol-set-allowlist.c psk-file.c \
-	pskself.c pskself2.c pubkey-import-export.c random-art.c \
-	rawpk-api.c record-pad.c record-retvals.c record-sendfile.c \
-	record-sizes.c record-sizes-range.c record-timeouts.c \
-	recv-data-before-handshake.c rehandshake-ext-secret.c \
-	rehandshake-switch-cert.c rehandshake-switch-cert-allow.c \
+	psk-importer.c pskself.c pskself2.c pubkey-import-export.c \
+	random-art.c rawpk-api.c record-pad.c record-retvals.c \
+	record-sendfile.c record-sizes.c record-sizes-range.c \
+	record-timeouts.c recv-data-before-handshake.c \
+	rehandshake-ext-secret.c rehandshake-switch-cert.c \
+	rehandshake-switch-cert-allow.c \
 	rehandshake-switch-cert-client.c \
 	rehandshake-switch-cert-client-allow.c \
 	rehandshake-switch-psk-id.c rehandshake-switch-srp-id.c \
@@ -3658,13 +3718,13 @@ SOURCES = $(libpkcs11mock1_la_SOURCES) $(libpkcs11mock2_la_SOURCES) \
 	system-override-sig-tls.c system-prio-file.c time.c \
 	tls-channel-binding.c tls-client-with-seccomp.c \
 	tls-crt_type-neg.c tls-etm.c tls-ext-not-in-dtls.c \
-	tls-ext-register.c tls-force-etm.c tls-neg-ext-key.c \
-	tls-neg-ext4-key.c tls-pthread.c tls-record-size-limit.c \
-	tls-record-size-limit-asym.c tls-session-ext-override.c \
-	tls-session-ext-register.c tls-session-supplemental.c \
-	tls-supplemental.c tls-with-seccomp.c \
-	$(tls10_cert_key_exchange_SOURCES) tls10-cipher-neg.c \
-	tls10-prf.c tls10-server-kx-neg.c \
+	tls-ext-register.c tls-force-ems.c tls-force-etm.c \
+	tls-neg-ext-key.c tls-neg-ext4-key.c tls-pthread.c \
+	tls-record-size-limit.c tls-record-size-limit-asym.c \
+	tls-session-ext-override.c tls-session-ext-register.c \
+	tls-session-supplemental.c tls-supplemental.c \
+	tls-with-seccomp.c $(tls10_cert_key_exchange_SOURCES) \
+	tls10-cipher-neg.c tls10-prf.c tls10-server-kx-neg.c \
 	$(tls11_cert_key_exchange_SOURCES) \
 	$(tls11_check_rollback_val_SOURCES) tls11-cipher-neg.c \
 	$(tls11_rollback_detection_SOURCES) tls11-server-kx-neg.c \
@@ -3674,8 +3734,8 @@ SOURCES = $(libpkcs11mock1_la_SOURCES) $(libpkcs11mock2_la_SOURCES) \
 	tls12-prf.c tls12-rehandshake-cert.c \
 	tls12-rehandshake-cert-2.c tls12-rehandshake-cert-3.c \
 	tls12-rehandshake-cert-auto.c tls12-rehandshake-set-prio.c \
-	$(tls12_resume_anon_SOURCES) $(tls12_resume_psk_SOURCES) \
-	$(tls12_resume_x509_SOURCES) \
+	tls12-rehandshake-ticket.c $(tls12_resume_anon_SOURCES) \
+	$(tls12_resume_psk_SOURCES) $(tls12_resume_x509_SOURCES) \
 	$(tls12_rollback_detection_SOURCES) tls12-server-kx-neg.c \
 	$(tls13_cert_key_exchange_SOURCES) tls13-cipher-neg.c \
 	tls13-compat-mode.c tls13-early-data.c tls13-early-data-neg.c \
@@ -3704,13 +3764,15 @@ SOURCES = $(libpkcs11mock1_la_SOURCES) $(libpkcs11mock2_la_SOURCES) \
 	x509-cert-callback.c x509-cert-callback-legacy.c \
 	x509-cert-callback-ocsp.c x509-dn.c x509-dn-decode.c \
 	x509-dn-decode-compat.c x509-extensions.c x509-server-verify.c \
-	x509-upnconstraint.c x509-verify-with-crl.c x509_altname.c \
-	x509cert.c x509cert-ct.c x509cert-dntypes.c x509cert-invalid.c \
-	x509cert-tl.c x509dn.c x509self.c x509sign-verify.c \
-	x509sign-verify-ecdsa.c x509sign-verify-error.c \
-	x509sign-verify-gost.c x509sign-verify-rsa.c
+	x509-upnconstraint.c x509-verify-duplicate.c \
+	x509-verify-with-crl.c x509_altname.c x509cert.c x509cert-ct.c \
+	x509cert-dntypes.c x509cert-invalid.c x509cert-tl.c x509dn.c \
+	x509self.c x509sign-verify.c x509sign-verify-ecdsa.c \
+	x509sign-verify-error.c x509sign-verify-gost.c \
+	x509sign-verify-rsa.c xts-key-check.c
 DIST_SOURCES = $(am__libpkcs11mock1_la_SOURCES_DIST) \
-	$(am__libpkcs11mock2_la_SOURCES_DIST) $(libutils_la_SOURCES) \
+	$(am__libpkcs11mock2_la_SOURCES_DIST) \
+	$(am__libpkcs11mock3_la_SOURCES_DIST) $(libutils_la_SOURCES) \
 	aead-cipher-vec.c alerts.c alpn-server-prec.c anonself.c \
 	atfork.c auto-verify.c base64.c base64-raw.c buffer.c cert.c \
 	cert-status.c cert_verify_inv_utf8.c \
@@ -3721,8 +3783,8 @@ DIST_SOURCES = $(am__libpkcs11mock1_la_SOURCES_DIST) \
 	crlverify.c crq-basic.c crq_apis.c crq_key_id.c crt_apis.c \
 	crt_inv_write.c custom-urls.c custom-urls-override.c \
 	cve-2008-4989.c cve-2009-1415.c cve-2009-1416.c dane.c \
-	dane-strcodes.c datefudge-check.c dh-compute.c dh-params.c \
-	dhepskself.c dhex509self.c dn.c dn2.c dss-sig-val.c \
+	dane-strcodes.c dh-compute.c dh-params.c dhepskself.c \
+	dhex509self.c dn.c dn2.c dss-sig-val.c \
 	dtls-client-with-seccomp.c dtls-etm.c \
 	dtls-handshake-versions.c dtls-max-record.c dtls-pthread.c \
 	dtls-rehandshake-anon.c dtls-rehandshake-cert.c \
@@ -3749,7 +3811,7 @@ DIST_SOURCES = $(am__libpkcs11mock1_la_SOURCES_DIST) \
 	ip-utils.c kdf-api.c key-export-pkcs8.c key-import-export.c \
 	key-material-dtls.c key-material-set-dtls.c key-openssl.c \
 	key-usage-ecdhe-rsa.c key-usage-rsa.c keylog-env.c \
-	keylog-func.c long-session-id.c mini-alpn.c \
+	keylog-func.c ktls_keyupdate.c long-session-id.c mini-alpn.c \
 	mini-chain-unsorted.c mini-dtls-discard.c mini-dtls-fork.c \
 	mini-dtls-heartbeat.c mini-dtls-hello-verify.c \
 	mini-dtls-hello-verify-48.c mini-dtls-large.c \
@@ -3766,9 +3828,10 @@ DIST_SOURCES = $(am__libpkcs11mock1_la_SOURCES_DIST) \
 	missingissuer_aia.c mpi.c multi-alerts.c naked-alerts.c \
 	name-constraints.c name-constraints-ip.c \
 	name-constraints-merge.c no-extensions.c no-signal.c \
-	nul-in-x509-names.c null_retrieve_function.c ocsp.c \
-	ocsp-filename-memleak.c oids.c openconnect-dtls12.c openssl.c \
-	parse_ca.c pcert-list.c pkcs1-digest-info.c \
+	no-status-request.c nul-in-x509-names.c \
+	null_retrieve_function.c ocsp.c ocsp-filename-memleak.c oids.c \
+	openconnect-dtls12.c openssl.c parse_ca.c pathbuf.c \
+	pcert-list.c pkcs1-digest-info.c \
 	$(am__pkcs11_cert_import_url_exts_SOURCES_DIST) \
 	$(am__pkcs11_cert_import_url4_exts_SOURCES_DIST) \
 	$(am__pkcs11_get_exts_SOURCES_DIST) \
@@ -3782,7 +3845,7 @@ DIST_SOURCES = $(am__libpkcs11mock1_la_SOURCES_DIST) \
 	$(am__pkcs11_privkey_fork_SOURCES_DIST) \
 	$(am__pkcs11_privkey_fork_reinit_SOURCES_DIST) \
 	$(am__pkcs11_privkey_safenet_always_auth_SOURCES_DIST) \
-	$(am__pkcs11_token_raw_SOURCES_DIST) \
+	$(am__pkcs11_token_raw_SOURCES_DIST) pkcs11/distrust-after.c \
 	pkcs11/gnutls_pcert_list_import_x509_file.c \
 	pkcs11/gnutls_x509_crt_list_import_url.c pkcs11/list-objects.c \
 	pkcs11/list-tokens.c pkcs11/pkcs11-chainverify.c \
@@ -3803,11 +3866,12 @@ DIST_SOURCES = $(am__libpkcs11mock1_la_SOURCES_DIST) \
 	prf.c priorities.c priorities-groups.c priority-init2.c \
 	priority-mix.c priority-set.c priority-set2.c privkey-keygen.c \
 	privkey-verify-broken.c protocol-set-allowlist.c psk-file.c \
-	pskself.c pskself2.c pubkey-import-export.c random-art.c \
-	rawpk-api.c record-pad.c record-retvals.c record-sendfile.c \
-	record-sizes.c record-sizes-range.c record-timeouts.c \
-	recv-data-before-handshake.c rehandshake-ext-secret.c \
-	rehandshake-switch-cert.c rehandshake-switch-cert-allow.c \
+	psk-importer.c pskself.c pskself2.c pubkey-import-export.c \
+	random-art.c rawpk-api.c record-pad.c record-retvals.c \
+	record-sendfile.c record-sizes.c record-sizes-range.c \
+	record-timeouts.c recv-data-before-handshake.c \
+	rehandshake-ext-secret.c rehandshake-switch-cert.c \
+	rehandshake-switch-cert-allow.c \
 	rehandshake-switch-cert-client.c \
 	rehandshake-switch-cert-client-allow.c \
 	rehandshake-switch-psk-id.c rehandshake-switch-srp-id.c \
@@ -3848,13 +3912,13 @@ DIST_SOURCES = $(am__libpkcs11mock1_la_SOURCES_DIST) \
 	system-override-sig-tls.c system-prio-file.c time.c \
 	tls-channel-binding.c tls-client-with-seccomp.c \
 	tls-crt_type-neg.c tls-etm.c tls-ext-not-in-dtls.c \
-	tls-ext-register.c tls-force-etm.c tls-neg-ext-key.c \
-	tls-neg-ext4-key.c tls-pthread.c tls-record-size-limit.c \
-	tls-record-size-limit-asym.c tls-session-ext-override.c \
-	tls-session-ext-register.c tls-session-supplemental.c \
-	tls-supplemental.c tls-with-seccomp.c \
-	$(tls10_cert_key_exchange_SOURCES) tls10-cipher-neg.c \
-	tls10-prf.c tls10-server-kx-neg.c \
+	tls-ext-register.c tls-force-ems.c tls-force-etm.c \
+	tls-neg-ext-key.c tls-neg-ext4-key.c tls-pthread.c \
+	tls-record-size-limit.c tls-record-size-limit-asym.c \
+	tls-session-ext-override.c tls-session-ext-register.c \
+	tls-session-supplemental.c tls-supplemental.c \
+	tls-with-seccomp.c $(tls10_cert_key_exchange_SOURCES) \
+	tls10-cipher-neg.c tls10-prf.c tls10-server-kx-neg.c \
 	$(tls11_cert_key_exchange_SOURCES) \
 	$(tls11_check_rollback_val_SOURCES) tls11-cipher-neg.c \
 	$(tls11_rollback_detection_SOURCES) tls11-server-kx-neg.c \
@@ -3864,8 +3928,8 @@ DIST_SOURCES = $(am__libpkcs11mock1_la_SOURCES_DIST) \
 	tls12-prf.c tls12-rehandshake-cert.c \
 	tls12-rehandshake-cert-2.c tls12-rehandshake-cert-3.c \
 	tls12-rehandshake-cert-auto.c tls12-rehandshake-set-prio.c \
-	$(tls12_resume_anon_SOURCES) $(tls12_resume_psk_SOURCES) \
-	$(tls12_resume_x509_SOURCES) \
+	tls12-rehandshake-ticket.c $(tls12_resume_anon_SOURCES) \
+	$(tls12_resume_psk_SOURCES) $(tls12_resume_x509_SOURCES) \
 	$(tls12_rollback_detection_SOURCES) tls12-server-kx-neg.c \
 	$(tls13_cert_key_exchange_SOURCES) tls13-cipher-neg.c \
 	tls13-compat-mode.c tls13-early-data.c tls13-early-data-neg.c \
@@ -3894,11 +3958,12 @@ DIST_SOURCES = $(am__libpkcs11mock1_la_SOURCES_DIST) \
 	x509-cert-callback.c x509-cert-callback-legacy.c \
 	x509-cert-callback-ocsp.c x509-dn.c x509-dn-decode.c \
 	x509-dn-decode-compat.c x509-extensions.c x509-server-verify.c \
-	x509-upnconstraint.c x509-verify-with-crl.c x509_altname.c \
-	x509cert.c x509cert-ct.c x509cert-dntypes.c x509cert-invalid.c \
-	x509cert-tl.c x509dn.c x509self.c x509sign-verify.c \
-	x509sign-verify-ecdsa.c x509sign-verify-error.c \
-	x509sign-verify-gost.c x509sign-verify-rsa.c
+	x509-upnconstraint.c x509-verify-duplicate.c \
+	x509-verify-with-crl.c x509_altname.c x509cert.c x509cert-ct.c \
+	x509cert-dntypes.c x509cert-invalid.c x509cert-tl.c x509dn.c \
+	x509self.c x509sign-verify.c x509sign-verify-ecdsa.c \
+	x509sign-verify-error.c x509sign-verify-gost.c \
+	x509sign-verify-rsa.c xts-key-check.c
 RECURSIVE_TARGETS = all-recursive check-recursive cscopelist-recursive \
 	ctags-recursive dvi-recursive html-recursive info-recursive \
 	install-data-recursive install-dvi-recursive \
@@ -4180,6 +4245,7 @@ APPLE_UNIVERSAL_BUILD = @APPLE_UNIVERSAL_BUILD@
 AR = @AR@
 ARFLAGS = @ARFLAGS@
 ASN1PARSER = @ASN1PARSER@
+ASSERT_H = @ASSERT_H@
 AUTOCONF = @AUTOCONF@
 AUTOHEADER = @AUTOHEADER@
 AUTOMAKE = @AUTOMAKE@
@@ -4197,6 +4263,7 @@ CCASFLAGS = @CCASFLAGS@
 CCDEPMODE = @CCDEPMODE@
 CFLAGS = @CFLAGS@
 CFLAG_VISIBILITY = @CFLAG_VISIBILITY@
+CLOCK_TIME_LIB = @CLOCK_TIME_LIB@
 CMOCKA_CFLAGS = @CMOCKA_CFLAGS@
 CMOCKA_LIBS = @CMOCKA_LIBS@
 CODE_COVERAGE_CFLAGS = @CODE_COVERAGE_CFLAGS@
@@ -4218,6 +4285,7 @@ CXX_LT_AGE = @CXX_LT_AGE@
 CXX_LT_CURRENT = @CXX_LT_CURRENT@
 CXX_LT_REVISION = @CXX_LT_REVISION@
 CYGPATH_W = @CYGPATH_W@
+DATEFUDGE = @DATEFUDGE@
 DEFAULT_VALGRINDFLAGS = @DEFAULT_VALGRINDFLAGS@
 DEFS = @DEFS@
 DEPDIR = @DEPDIR@
@@ -4238,8 +4306,11 @@ ENOLINK_VALUE = @ENOLINK_VALUE@
 EOVERFLOW_HIDDEN = @EOVERFLOW_HIDDEN@
 EOVERFLOW_VALUE = @EOVERFLOW_VALUE@
 ERRNO_H = @ERRNO_H@
+ERROR_H = @ERROR_H@
 ETAGS = @ETAGS@
 EXEEXT = @EXEEXT@
+FAKETIME = @FAKETIME@
+FAKETIME_F_OPT = @FAKETIME_F_OPT@
 FGREP = @FGREP@
 FILECMD = @FILECMD@
 FIPS140_LIBS = @FIPS140_LIBS@
@@ -4248,6 +4319,9 @@ GCOV = @GCOV@
 GENHTML = @GENHTML@
 GETADDRINFO_LIB = @GETADDRINFO_LIB@
 GETTEXT_MACRO_VERSION = @GETTEXT_MACRO_VERSION@
+GL_CFLAG_ALLOW_WARNINGS = @GL_CFLAG_ALLOW_WARNINGS@
+GL_CFLAG_GNULIB_WARNINGS = @GL_CFLAG_GNULIB_WARNINGS@
+GL_CXXFLAG_ALLOW_WARNINGS = @GL_CXXFLAG_ALLOW_WARNINGS@
 GL_GGL_GNULIB_ACCEPT = @GL_GGL_GNULIB_ACCEPT@
 GL_GGL_GNULIB_ACCEPT4 = @GL_GGL_GNULIB_ACCEPT4@
 GL_GGL_GNULIB_ACCESS = @GL_GGL_GNULIB_ACCESS@
@@ -4255,9 +4329,11 @@ GL_GGL_GNULIB_ALIGNED_ALLOC = @GL_GGL_GNULIB_ALIGNED_ALLOC@
 GL_GGL_GNULIB_ATOLL = @GL_GGL_GNULIB_ATOLL@
 GL_GGL_GNULIB_BIND = @GL_GGL_GNULIB_BIND@
 GL_GGL_GNULIB_BTOWC = @GL_GGL_GNULIB_BTOWC@
+GL_GGL_GNULIB_CALLOC_GNU = @GL_GGL_GNULIB_CALLOC_GNU@
 GL_GGL_GNULIB_CALLOC_POSIX = @GL_GGL_GNULIB_CALLOC_POSIX@
 GL_GGL_GNULIB_CANONICALIZE_FILE_NAME = @GL_GGL_GNULIB_CANONICALIZE_FILE_NAME@
 GL_GGL_GNULIB_CHDIR = @GL_GGL_GNULIB_CHDIR@
+GL_GGL_GNULIB_CHMOD = @GL_GGL_GNULIB_CHMOD@
 GL_GGL_GNULIB_CHOWN = @GL_GGL_GNULIB_CHOWN@
 GL_GGL_GNULIB_CLOSE = @GL_GGL_GNULIB_CLOSE@
 GL_GGL_GNULIB_CONNECT = @GL_GGL_GNULIB_CONNECT@
@@ -4294,6 +4370,7 @@ GL_GGL_GNULIB_FFSLL = @GL_GGL_GNULIB_FFSLL@
 GL_GGL_GNULIB_FGETC = @GL_GGL_GNULIB_FGETC@
 GL_GGL_GNULIB_FGETS = @GL_GGL_GNULIB_FGETS@
 GL_GGL_GNULIB_FOPEN = @GL_GGL_GNULIB_FOPEN@
+GL_GGL_GNULIB_FOPEN_GNU = @GL_GGL_GNULIB_FOPEN_GNU@
 GL_GGL_GNULIB_FPRINTF = @GL_GGL_GNULIB_FPRINTF@
 GL_GGL_GNULIB_FPRINTF_POSIX = @GL_GGL_GNULIB_FPRINTF_POSIX@
 GL_GGL_GNULIB_FPURGE = @GL_GGL_GNULIB_FPURGE@
@@ -4330,7 +4407,9 @@ GL_GGL_GNULIB_GETLOGIN_R = @GL_GGL_GNULIB_GETLOGIN_R@
 GL_GGL_GNULIB_GETOPT_POSIX = @GL_GGL_GNULIB_GETOPT_POSIX@
 GL_GGL_GNULIB_GETPAGESIZE = @GL_GGL_GNULIB_GETPAGESIZE@
 GL_GGL_GNULIB_GETPASS = @GL_GGL_GNULIB_GETPASS@
+GL_GGL_GNULIB_GETPASS_GNU = @GL_GGL_GNULIB_GETPASS_GNU@
 GL_GGL_GNULIB_GETPEERNAME = @GL_GGL_GNULIB_GETPEERNAME@
+GL_GGL_GNULIB_GETPROGNAME = @GL_GGL_GNULIB_GETPROGNAME@
 GL_GGL_GNULIB_GETSOCKNAME = @GL_GGL_GNULIB_GETSOCKNAME@
 GL_GGL_GNULIB_GETSOCKOPT = @GL_GGL_GNULIB_GETSOCKOPT@
 GL_GGL_GNULIB_GETSUBOPT = @GL_GGL_GNULIB_GETSUBOPT@
@@ -4356,6 +4435,7 @@ GL_GGL_GNULIB_LOCALENAME = @GL_GGL_GNULIB_LOCALENAME@
 GL_GGL_GNULIB_LOCALTIME = @GL_GGL_GNULIB_LOCALTIME@
 GL_GGL_GNULIB_LSEEK = @GL_GGL_GNULIB_LSEEK@
 GL_GGL_GNULIB_LSTAT = @GL_GGL_GNULIB_LSTAT@
+GL_GGL_GNULIB_MALLOC_GNU = @GL_GGL_GNULIB_MALLOC_GNU@
 GL_GGL_GNULIB_MALLOC_POSIX = @GL_GGL_GNULIB_MALLOC_POSIX@
 GL_GGL_GNULIB_MBRLEN = @GL_GGL_GNULIB_MBRLEN@
 GL_GGL_GNULIB_MBRTOWC = @GL_GGL_GNULIB_MBRTOWC@
@@ -4422,6 +4502,7 @@ GL_GGL_GNULIB_MEMCHR = @GL_GGL_GNULIB_MEMCHR@
 GL_GGL_GNULIB_MEMMEM = @GL_GGL_GNULIB_MEMMEM@
 GL_GGL_GNULIB_MEMPCPY = @GL_GGL_GNULIB_MEMPCPY@
 GL_GGL_GNULIB_MEMRCHR = @GL_GGL_GNULIB_MEMRCHR@
+GL_GGL_GNULIB_MEMSET_EXPLICIT = @GL_GGL_GNULIB_MEMSET_EXPLICIT@
 GL_GGL_GNULIB_MKDIR = @GL_GGL_GNULIB_MKDIR@
 GL_GGL_GNULIB_MKDIRAT = @GL_GGL_GNULIB_MKDIRAT@
 GL_GGL_GNULIB_MKDTEMP = @GL_GGL_GNULIB_MKDTEMP@
@@ -4478,6 +4559,7 @@ GL_GGL_GNULIB_READ = @GL_GGL_GNULIB_READ@
 GL_GGL_GNULIB_READLINK = @GL_GGL_GNULIB_READLINK@
 GL_GGL_GNULIB_READLINKAT = @GL_GGL_GNULIB_READLINKAT@
 GL_GGL_GNULIB_REALLOCARRAY = @GL_GGL_GNULIB_REALLOCARRAY@
+GL_GGL_GNULIB_REALLOC_GNU = @GL_GGL_GNULIB_REALLOC_GNU@
 GL_GGL_GNULIB_REALLOC_POSIX = @GL_GGL_GNULIB_REALLOC_POSIX@
 GL_GGL_GNULIB_REALPATH = @GL_GGL_GNULIB_REALPATH@
 GL_GGL_GNULIB_RECV = @GL_GGL_GNULIB_RECV@
@@ -4543,12 +4625,14 @@ GL_GGL_GNULIB_SYMLINKAT = @GL_GGL_GNULIB_SYMLINKAT@
 GL_GGL_GNULIB_SYSTEM_POSIX = @GL_GGL_GNULIB_SYSTEM_POSIX@
 GL_GGL_GNULIB_TIMEGM = @GL_GGL_GNULIB_TIMEGM@
 GL_GGL_GNULIB_TIMESPEC_GET = @GL_GGL_GNULIB_TIMESPEC_GET@
+GL_GGL_GNULIB_TIMESPEC_GETRES = @GL_GGL_GNULIB_TIMESPEC_GETRES@
 GL_GGL_GNULIB_TIME_R = @GL_GGL_GNULIB_TIME_R@
 GL_GGL_GNULIB_TIME_RZ = @GL_GGL_GNULIB_TIME_RZ@
 GL_GGL_GNULIB_TMPFILE = @GL_GGL_GNULIB_TMPFILE@
 GL_GGL_GNULIB_TRUNCATE = @GL_GGL_GNULIB_TRUNCATE@
 GL_GGL_GNULIB_TTYNAME_R = @GL_GGL_GNULIB_TTYNAME_R@
 GL_GGL_GNULIB_TZSET = @GL_GGL_GNULIB_TZSET@
+GL_GGL_GNULIB_UNISTD_H_GETOPT = @GL_GGL_GNULIB_UNISTD_H_GETOPT@
 GL_GGL_GNULIB_UNISTD_H_NONBLOCKING = @GL_GGL_GNULIB_UNISTD_H_NONBLOCKING@
 GL_GGL_GNULIB_UNISTD_H_SIGPIPE = @GL_GGL_GNULIB_UNISTD_H_SIGPIPE@
 GL_GGL_GNULIB_UNLINK = @GL_GGL_GNULIB_UNLINK@
@@ -4612,9 +4696,11 @@ GL_GNULIB_ALIGNED_ALLOC = @GL_GNULIB_ALIGNED_ALLOC@
 GL_GNULIB_ATOLL = @GL_GNULIB_ATOLL@
 GL_GNULIB_BIND = @GL_GNULIB_BIND@
 GL_GNULIB_BTOWC = @GL_GNULIB_BTOWC@
+GL_GNULIB_CALLOC_GNU = @GL_GNULIB_CALLOC_GNU@
 GL_GNULIB_CALLOC_POSIX = @GL_GNULIB_CALLOC_POSIX@
 GL_GNULIB_CANONICALIZE_FILE_NAME = @GL_GNULIB_CANONICALIZE_FILE_NAME@
 GL_GNULIB_CHDIR = @GL_GNULIB_CHDIR@
+GL_GNULIB_CHMOD = @GL_GNULIB_CHMOD@
 GL_GNULIB_CHOWN = @GL_GNULIB_CHOWN@
 GL_GNULIB_CLOSE = @GL_GNULIB_CLOSE@
 GL_GNULIB_CONNECT = @GL_GNULIB_CONNECT@
@@ -4650,6 +4736,7 @@ GL_GNULIB_FFSLL = @GL_GNULIB_FFSLL@
 GL_GNULIB_FGETC = @GL_GNULIB_FGETC@
 GL_GNULIB_FGETS = @GL_GNULIB_FGETS@
 GL_GNULIB_FOPEN = @GL_GNULIB_FOPEN@
+GL_GNULIB_FOPEN_GNU = @GL_GNULIB_FOPEN_GNU@
 GL_GNULIB_FPRINTF = @GL_GNULIB_FPRINTF@
 GL_GNULIB_FPRINTF_POSIX = @GL_GNULIB_FPRINTF_POSIX@
 GL_GNULIB_FPURGE = @GL_GNULIB_FPURGE@
@@ -4686,7 +4773,9 @@ GL_GNULIB_GETLOGIN_R = @GL_GNULIB_GETLOGIN_R@
 GL_GNULIB_GETOPT_POSIX = @GL_GNULIB_GETOPT_POSIX@
 GL_GNULIB_GETPAGESIZE = @GL_GNULIB_GETPAGESIZE@
 GL_GNULIB_GETPASS = @GL_GNULIB_GETPASS@
+GL_GNULIB_GETPASS_GNU = @GL_GNULIB_GETPASS_GNU@
 GL_GNULIB_GETPEERNAME = @GL_GNULIB_GETPEERNAME@
+GL_GNULIB_GETPROGNAME = @GL_GNULIB_GETPROGNAME@
 GL_GNULIB_GETSOCKNAME = @GL_GNULIB_GETSOCKNAME@
 GL_GNULIB_GETSOCKOPT = @GL_GNULIB_GETSOCKOPT@
 GL_GNULIB_GETSUBOPT = @GL_GNULIB_GETSUBOPT@
@@ -4708,6 +4797,7 @@ GL_GNULIB_LISTEN = @GL_GNULIB_LISTEN@
 GL_GNULIB_LOCALTIME = @GL_GNULIB_LOCALTIME@
 GL_GNULIB_LSEEK = @GL_GNULIB_LSEEK@
 GL_GNULIB_LSTAT = @GL_GNULIB_LSTAT@
+GL_GNULIB_MALLOC_GNU = @GL_GNULIB_MALLOC_GNU@
 GL_GNULIB_MALLOC_POSIX = @GL_GNULIB_MALLOC_POSIX@
 GL_GNULIB_MBRLEN = @GL_GNULIB_MBRLEN@
 GL_GNULIB_MBRTOWC = @GL_GNULIB_MBRTOWC@
@@ -4774,6 +4864,7 @@ GL_GNULIB_MEMCHR = @GL_GNULIB_MEMCHR@
 GL_GNULIB_MEMMEM = @GL_GNULIB_MEMMEM@
 GL_GNULIB_MEMPCPY = @GL_GNULIB_MEMPCPY@
 GL_GNULIB_MEMRCHR = @GL_GNULIB_MEMRCHR@
+GL_GNULIB_MEMSET_EXPLICIT = @GL_GNULIB_MEMSET_EXPLICIT@
 GL_GNULIB_MKDIR = @GL_GNULIB_MKDIR@
 GL_GNULIB_MKDIRAT = @GL_GNULIB_MKDIRAT@
 GL_GNULIB_MKDTEMP = @GL_GNULIB_MKDTEMP@
@@ -4818,6 +4909,7 @@ GL_GNULIB_READ = @GL_GNULIB_READ@
 GL_GNULIB_READLINK = @GL_GNULIB_READLINK@
 GL_GNULIB_READLINKAT = @GL_GNULIB_READLINKAT@
 GL_GNULIB_REALLOCARRAY = @GL_GNULIB_REALLOCARRAY@
+GL_GNULIB_REALLOC_GNU = @GL_GNULIB_REALLOC_GNU@
 GL_GNULIB_REALLOC_POSIX = @GL_GNULIB_REALLOC_POSIX@
 GL_GNULIB_REALPATH = @GL_GNULIB_REALPATH@
 GL_GNULIB_RECV = @GL_GNULIB_RECV@
@@ -4876,12 +4968,14 @@ GL_GNULIB_SYMLINKAT = @GL_GNULIB_SYMLINKAT@
 GL_GNULIB_SYSTEM_POSIX = @GL_GNULIB_SYSTEM_POSIX@
 GL_GNULIB_TIMEGM = @GL_GNULIB_TIMEGM@
 GL_GNULIB_TIMESPEC_GET = @GL_GNULIB_TIMESPEC_GET@
+GL_GNULIB_TIMESPEC_GETRES = @GL_GNULIB_TIMESPEC_GETRES@
 GL_GNULIB_TIME_R = @GL_GNULIB_TIME_R@
 GL_GNULIB_TIME_RZ = @GL_GNULIB_TIME_RZ@
 GL_GNULIB_TMPFILE = @GL_GNULIB_TMPFILE@
 GL_GNULIB_TRUNCATE = @GL_GNULIB_TRUNCATE@
 GL_GNULIB_TTYNAME_R = @GL_GNULIB_TTYNAME_R@
 GL_GNULIB_TZSET = @GL_GNULIB_TZSET@
+GL_GNULIB_UNISTD_H_GETOPT = @GL_GNULIB_UNISTD_H_GETOPT@
 GL_GNULIB_UNISTD_H_NONBLOCKING = @GL_GNULIB_UNISTD_H_NONBLOCKING@
 GL_GNULIB_UNISTD_H_SIGPIPE = @GL_GNULIB_UNISTD_H_SIGPIPE@
 GL_GNULIB_UNLINK = @GL_GNULIB_UNLINK@
@@ -4954,18 +5048,6 @@ GTKDOC_DEPS_CFLAGS = @GTKDOC_DEPS_CFLAGS@
 GTKDOC_DEPS_LIBS = @GTKDOC_DEPS_LIBS@
 GTKDOC_MKPDF = @GTKDOC_MKPDF@
 GTKDOC_REBASE = @GTKDOC_REBASE@
-GUILD = @GUILD@
-GUILE = @GUILE@
-GUILE_CFLAGS = @GUILE_CFLAGS@
-GUILE_CONFIG = @GUILE_CONFIG@
-GUILE_EFFECTIVE_VERSION = @GUILE_EFFECTIVE_VERSION@
-GUILE_EXTENSION = @GUILE_EXTENSION@
-GUILE_LDFLAGS = @GUILE_LDFLAGS@
-GUILE_LIBS = @GUILE_LIBS@
-GUILE_LTLIBS = @GUILE_LTLIBS@
-GUILE_SITE = @GUILE_SITE@
-GUILE_SITE_CCACHE = @GUILE_SITE_CCACHE@
-GUILE_TOOLS = @GUILE_TOOLS@
 HAVE_ACCEPT4 = @HAVE_ACCEPT4@
 HAVE_ALIGNED_ALLOC = @HAVE_ALIGNED_ALLOC@
 HAVE_ALLOCA_H = @HAVE_ALLOCA_H@
@@ -5000,6 +5082,7 @@ HAVE_DECL_GETLOGIN_R = @HAVE_DECL_GETLOGIN_R@
 HAVE_DECL_GETNAMEINFO = @HAVE_DECL_GETNAMEINFO@
 HAVE_DECL_GETPAGESIZE = @HAVE_DECL_GETPAGESIZE@
 HAVE_DECL_GETUSERSHELL = @HAVE_DECL_GETUSERSHELL@
+HAVE_DECL_GETW = @HAVE_DECL_GETW@
 HAVE_DECL_IMAXABS = @HAVE_DECL_IMAXABS@
 HAVE_DECL_IMAXDIV = @HAVE_DECL_IMAXDIV@
 HAVE_DECL_INET_NTOP = @HAVE_DECL_INET_NTOP@
@@ -5009,6 +5092,7 @@ HAVE_DECL_LOCALTIME_R = @HAVE_DECL_LOCALTIME_R@
 HAVE_DECL_MEMMEM = @HAVE_DECL_MEMMEM@
 HAVE_DECL_MEMRCHR = @HAVE_DECL_MEMRCHR@
 HAVE_DECL_OBSTACK_PRINTF = @HAVE_DECL_OBSTACK_PRINTF@
+HAVE_DECL_PUTW = @HAVE_DECL_PUTW@
 HAVE_DECL_SETENV = @HAVE_DECL_SETENV@
 HAVE_DECL_SETHOSTNAME = @HAVE_DECL_SETHOSTNAME@
 HAVE_DECL_SETSTATE = @HAVE_DECL_SETSTATE@
@@ -5032,6 +5116,9 @@ HAVE_DECL_WCWIDTH = @HAVE_DECL_WCWIDTH@
 HAVE_DPRINTF = @HAVE_DPRINTF@
 HAVE_DUP3 = @HAVE_DUP3@
 HAVE_DUPLOCALE = @HAVE_DUPLOCALE@
+HAVE_ERROR = @HAVE_ERROR@
+HAVE_ERROR_AT_LINE = @HAVE_ERROR_AT_LINE@
+HAVE_ERROR_H = @HAVE_ERROR_H@
 HAVE_EUIDACCESS = @HAVE_EUIDACCESS@
 HAVE_EXECVPE = @HAVE_EXECVPE@
 HAVE_EXPLICIT_BZERO = @HAVE_EXPLICIT_BZERO@
@@ -5059,11 +5146,14 @@ HAVE_GETHOSTNAME = @HAVE_GETHOSTNAME@
 HAVE_GETLOGIN = @HAVE_GETLOGIN@
 HAVE_GETPAGESIZE = @HAVE_GETPAGESIZE@
 HAVE_GETPASS = @HAVE_GETPASS@
+HAVE_GETPROGNAME = @HAVE_GETPROGNAME@
 HAVE_GETSUBOPT = @HAVE_GETSUBOPT@
 HAVE_GETTIMEOFDAY = @HAVE_GETTIMEOFDAY@
 HAVE_GETUMASK = @HAVE_GETUMASK@
 HAVE_GRANTPT = @HAVE_GRANTPT@
 HAVE_GROUP_MEMBER = @HAVE_GROUP_MEMBER@
+HAVE_IMAXABS = @HAVE_IMAXABS@
+HAVE_IMAXDIV = @HAVE_IMAXDIV@
 HAVE_IMAXDIV_T = @HAVE_IMAXDIV_T@
 HAVE_INITSTATE = @HAVE_INITSTATE@
 HAVE_INTTYPES_H = @HAVE_INTTYPES_H@
@@ -5095,6 +5185,7 @@ HAVE_MBSNRTOWCS = @HAVE_MBSNRTOWCS@
 HAVE_MBSRTOWCS = @HAVE_MBSRTOWCS@
 HAVE_MBTOWC = @HAVE_MBTOWC@
 HAVE_MEMPCPY = @HAVE_MEMPCPY@
+HAVE_MEMSET_EXPLICIT = @HAVE_MEMSET_EXPLICIT@
 HAVE_MKDIRAT = @HAVE_MKDIRAT@
 HAVE_MKDTEMP = @HAVE_MKDTEMP@
 HAVE_MKFIFO = @HAVE_MKFIFO@
@@ -5253,6 +5344,7 @@ HAVE_SYS_TYPES_H = @HAVE_SYS_TYPES_H@
 HAVE_SYS_UIO_H = @HAVE_SYS_UIO_H@
 HAVE_TIMEGM = @HAVE_TIMEGM@
 HAVE_TIMESPEC_GET = @HAVE_TIMESPEC_GET@
+HAVE_TIMESPEC_GETRES = @HAVE_TIMESPEC_GETRES@
 HAVE_TIMEZONE_T = @HAVE_TIMEZONE_T@
 HAVE_TYPE_VOLATILE_SIG_ATOMIC_T = @HAVE_TYPE_VOLATILE_SIG_ATOMIC_T@
 HAVE_UNISTD_H = @HAVE_UNISTD_H@
@@ -5302,7 +5394,6 @@ HAVE_WMEMPCPY = @HAVE_WMEMPCPY@
 HAVE_WMEMSET = @HAVE_WMEMSET@
 HAVE_WS2TCPIP_H = @HAVE_WS2TCPIP_H@
 HAVE_XLOCALE_H = @HAVE_XLOCALE_H@
-HAVE__BOOL = @HAVE__BOOL@
 HAVE__EXIT = @HAVE__EXIT@
 HOGWEED_CFLAGS = @HOGWEED_CFLAGS@
 HOGWEED_LIBS = @HOGWEED_LIBS@
@@ -5427,13 +5518,17 @@ MKDIR_P = @MKDIR_P@
 MSGFMT = @MSGFMT@
 MSGMERGE = @MSGMERGE@
 MSGMERGE_FOR_MSGFMT_OPTION = @MSGMERGE_FOR_MSGFMT_OPTION@
+NANOSLEEP_LIB = @NANOSLEEP_LIB@
 NETINET_IN_H = @NETINET_IN_H@
 NETTLE_CFLAGS = @NETTLE_CFLAGS@
 NETTLE_LIBS = @NETTLE_LIBS@
 NEXT_ARPA_INET_H = @NEXT_ARPA_INET_H@
+NEXT_ASSERT_H = @NEXT_ASSERT_H@
 NEXT_AS_FIRST_DIRECTIVE_ARPA_INET_H = @NEXT_AS_FIRST_DIRECTIVE_ARPA_INET_H@
+NEXT_AS_FIRST_DIRECTIVE_ASSERT_H = @NEXT_AS_FIRST_DIRECTIVE_ASSERT_H@
 NEXT_AS_FIRST_DIRECTIVE_CTYPE_H = @NEXT_AS_FIRST_DIRECTIVE_CTYPE_H@
 NEXT_AS_FIRST_DIRECTIVE_ERRNO_H = @NEXT_AS_FIRST_DIRECTIVE_ERRNO_H@
+NEXT_AS_FIRST_DIRECTIVE_ERROR_H = @NEXT_AS_FIRST_DIRECTIVE_ERROR_H@
 NEXT_AS_FIRST_DIRECTIVE_FCNTL_H = @NEXT_AS_FIRST_DIRECTIVE_FCNTL_H@
 NEXT_AS_FIRST_DIRECTIVE_FLOAT_H = @NEXT_AS_FIRST_DIRECTIVE_FLOAT_H@
 NEXT_AS_FIRST_DIRECTIVE_INTTYPES_H = @NEXT_AS_FIRST_DIRECTIVE_INTTYPES_H@
@@ -5463,6 +5558,7 @@ NEXT_AS_FIRST_DIRECTIVE_UNISTD_H = @NEXT_AS_FIRST_DIRECTIVE_UNISTD_H@
 NEXT_AS_FIRST_DIRECTIVE_WCHAR_H = @NEXT_AS_FIRST_DIRECTIVE_WCHAR_H@
 NEXT_CTYPE_H = @NEXT_CTYPE_H@
 NEXT_ERRNO_H = @NEXT_ERRNO_H@
+NEXT_ERROR_H = @NEXT_ERROR_H@
 NEXT_FCNTL_H = @NEXT_FCNTL_H@
 NEXT_FLOAT_H = @NEXT_FLOAT_H@
 NEXT_INTTYPES_H = @NEXT_INTTYPES_H@
@@ -5509,6 +5605,7 @@ PACKAGE_VERSION = @PACKAGE_VERSION@
 PARSE_DATETIME_BISON = @PARSE_DATETIME_BISON@
 PATCH_VERSION = @PATCH_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
+PERL = @PERL@
 PKCS12_ITER_COUNT = @PKCS12_ITER_COUNT@
 PKG_CONFIG = @PKG_CONFIG@
 PKG_CONFIG_LIBDIR = @PKG_CONFIG_LIBDIR@
@@ -5519,6 +5616,7 @@ PRAGMA_COLUMNS = @PRAGMA_COLUMNS@
 PRAGMA_SYSTEM_HEADER = @PRAGMA_SYSTEM_HEADER@
 PRIPTR_PREFIX = @PRIPTR_PREFIX@
 PTHREAD_H_DEFINES_STRUCT_TIMESPEC = @PTHREAD_H_DEFINES_STRUCT_TIMESPEC@
+PTHREAD_SIGMASK_LIB = @PTHREAD_SIGMASK_LIB@
 PTRDIFF_T_SUFFIX = @PTRDIFF_T_SUFFIX@
 PYTHON = @PYTHON@
 PYTHON_EXEC_PREFIX = @PYTHON_EXEC_PREFIX@
@@ -5529,16 +5627,22 @@ RANLIB = @RANLIB@
 REPLACE_ACCESS = @REPLACE_ACCESS@
 REPLACE_ALIGNED_ALLOC = @REPLACE_ALIGNED_ALLOC@
 REPLACE_BTOWC = @REPLACE_BTOWC@
-REPLACE_CALLOC = @REPLACE_CALLOC@
+REPLACE_CALLOC_FOR_CALLOC_GNU = @REPLACE_CALLOC_FOR_CALLOC_GNU@
+REPLACE_CALLOC_FOR_CALLOC_POSIX = @REPLACE_CALLOC_FOR_CALLOC_POSIX@
 REPLACE_CANONICALIZE_FILE_NAME = @REPLACE_CANONICALIZE_FILE_NAME@
+REPLACE_CHMOD = @REPLACE_CHMOD@
 REPLACE_CHOWN = @REPLACE_CHOWN@
 REPLACE_CLOSE = @REPLACE_CLOSE@
+REPLACE_COPY_FILE_RANGE = @REPLACE_COPY_FILE_RANGE@
 REPLACE_CREAT = @REPLACE_CREAT@
 REPLACE_CTIME = @REPLACE_CTIME@
 REPLACE_DPRINTF = @REPLACE_DPRINTF@
 REPLACE_DUP = @REPLACE_DUP@
 REPLACE_DUP2 = @REPLACE_DUP2@
+REPLACE_DUP3 = @REPLACE_DUP3@
 REPLACE_DUPLOCALE = @REPLACE_DUPLOCALE@
+REPLACE_ERROR = @REPLACE_ERROR@
+REPLACE_ERROR_AT_LINE = @REPLACE_ERROR_AT_LINE@
 REPLACE_EXECL = @REPLACE_EXECL@
 REPLACE_EXECLE = @REPLACE_EXECLE@
 REPLACE_EXECLP = @REPLACE_EXECLP@
@@ -5551,10 +5655,12 @@ REPLACE_FCHMODAT = @REPLACE_FCHMODAT@
 REPLACE_FCHOWNAT = @REPLACE_FCHOWNAT@
 REPLACE_FCLOSE = @REPLACE_FCLOSE@
 REPLACE_FCNTL = @REPLACE_FCNTL@
+REPLACE_FDATASYNC = @REPLACE_FDATASYNC@
 REPLACE_FDOPEN = @REPLACE_FDOPEN@
 REPLACE_FFLUSH = @REPLACE_FFLUSH@
 REPLACE_FFSLL = @REPLACE_FFSLL@
 REPLACE_FOPEN = @REPLACE_FOPEN@
+REPLACE_FOPEN_FOR_FOPEN_GNU = @REPLACE_FOPEN_FOR_FOPEN_GNU@
 REPLACE_FPRINTF = @REPLACE_FPRINTF@
 REPLACE_FPURGE = @REPLACE_FPURGE@
 REPLACE_FREE = @REPLACE_FREE@
@@ -5574,13 +5680,20 @@ REPLACE_GETCWD = @REPLACE_GETCWD@
 REPLACE_GETDELIM = @REPLACE_GETDELIM@
 REPLACE_GETDOMAINNAME = @REPLACE_GETDOMAINNAME@
 REPLACE_GETDTABLESIZE = @REPLACE_GETDTABLESIZE@
+REPLACE_GETENTROPY = @REPLACE_GETENTROPY@
 REPLACE_GETGROUPS = @REPLACE_GETGROUPS@
 REPLACE_GETLINE = @REPLACE_GETLINE@
+REPLACE_GETLOADAVG = @REPLACE_GETLOADAVG@
 REPLACE_GETLOGIN_R = @REPLACE_GETLOGIN_R@
 REPLACE_GETPAGESIZE = @REPLACE_GETPAGESIZE@
 REPLACE_GETPASS = @REPLACE_GETPASS@
+REPLACE_GETPASS_FOR_GETPASS_GNU = @REPLACE_GETPASS_FOR_GETPASS_GNU@
+REPLACE_GETPROGNAME = @REPLACE_GETPROGNAME@
+REPLACE_GETSUBOPT = @REPLACE_GETSUBOPT@
 REPLACE_GETTIMEOFDAY = @REPLACE_GETTIMEOFDAY@
 REPLACE_GMTIME = @REPLACE_GMTIME@
+REPLACE_IMAXABS = @REPLACE_IMAXABS@
+REPLACE_IMAXDIV = @REPLACE_IMAXDIV@
 REPLACE_INET_NTOP = @REPLACE_INET_NTOP@
 REPLACE_INET_PTON = @REPLACE_INET_PTON@
 REPLACE_INITSTATE = @REPLACE_INITSTATE@
@@ -5595,7 +5708,8 @@ REPLACE_LOCALTIME = @REPLACE_LOCALTIME@
 REPLACE_LOCALTIME_R = @REPLACE_LOCALTIME_R@
 REPLACE_LSEEK = @REPLACE_LSEEK@
 REPLACE_LSTAT = @REPLACE_LSTAT@
-REPLACE_MALLOC = @REPLACE_MALLOC@
+REPLACE_MALLOC_FOR_MALLOC_GNU = @REPLACE_MALLOC_FOR_MALLOC_GNU@
+REPLACE_MALLOC_FOR_MALLOC_POSIX = @REPLACE_MALLOC_FOR_MALLOC_POSIX@
 REPLACE_MBRLEN = @REPLACE_MBRLEN@
 REPLACE_MBRTOWC = @REPLACE_MBRTOWC@
 REPLACE_MBSINIT = @REPLACE_MBSINIT@
@@ -5605,11 +5719,14 @@ REPLACE_MBSTATE_T = @REPLACE_MBSTATE_T@
 REPLACE_MBTOWC = @REPLACE_MBTOWC@
 REPLACE_MEMCHR = @REPLACE_MEMCHR@
 REPLACE_MEMMEM = @REPLACE_MEMMEM@
+REPLACE_MEMPCPY = @REPLACE_MEMPCPY@
 REPLACE_MKDIR = @REPLACE_MKDIR@
 REPLACE_MKFIFO = @REPLACE_MKFIFO@
 REPLACE_MKFIFOAT = @REPLACE_MKFIFOAT@
 REPLACE_MKNOD = @REPLACE_MKNOD@
 REPLACE_MKNODAT = @REPLACE_MKNODAT@
+REPLACE_MKOSTEMP = @REPLACE_MKOSTEMP@
+REPLACE_MKOSTEMPS = @REPLACE_MKOSTEMPS@
 REPLACE_MKSTEMP = @REPLACE_MKSTEMP@
 REPLACE_MKTIME = @REPLACE_MKTIME@
 REPLACE_NANOSLEEP = @REPLACE_NANOSLEEP@
@@ -5620,8 +5737,10 @@ REPLACE_OBSTACK_PRINTF = @REPLACE_OBSTACK_PRINTF@
 REPLACE_OPEN = @REPLACE_OPEN@
 REPLACE_OPENAT = @REPLACE_OPENAT@
 REPLACE_PERROR = @REPLACE_PERROR@
+REPLACE_PIPE2 = @REPLACE_PIPE2@
 REPLACE_POPEN = @REPLACE_POPEN@
 REPLACE_POSIX_MEMALIGN = @REPLACE_POSIX_MEMALIGN@
+REPLACE_POSIX_OPENPT = @REPLACE_POSIX_OPENPT@
 REPLACE_PREAD = @REPLACE_PREAD@
 REPLACE_PRINTF = @REPLACE_PRINTF@
 REPLACE_PSELECT = @REPLACE_PSELECT@
@@ -5688,8 +5807,9 @@ REPLACE_RANDOM_R = @REPLACE_RANDOM_R@
 REPLACE_READ = @REPLACE_READ@
 REPLACE_READLINK = @REPLACE_READLINK@
 REPLACE_READLINKAT = @REPLACE_READLINKAT@
-REPLACE_REALLOC = @REPLACE_REALLOC@
 REPLACE_REALLOCARRAY = @REPLACE_REALLOCARRAY@
+REPLACE_REALLOC_FOR_REALLOC_GNU = @REPLACE_REALLOC_FOR_REALLOC_GNU@
+REPLACE_REALLOC_FOR_REALLOC_POSIX = @REPLACE_REALLOC_FOR_REALLOC_POSIX@
 REPLACE_REALPATH = @REPLACE_REALPATH@
 REPLACE_REMOVE = @REPLACE_REMOVE@
 REPLACE_RENAME = @REPLACE_RENAME@
@@ -5698,6 +5818,7 @@ REPLACE_RMDIR = @REPLACE_RMDIR@
 REPLACE_SCHED_YIELD = @REPLACE_SCHED_YIELD@
 REPLACE_SELECT = @REPLACE_SELECT@
 REPLACE_SETENV = @REPLACE_SETENV@
+REPLACE_SETHOSTNAME = @REPLACE_SETHOSTNAME@
 REPLACE_SETLOCALE = @REPLACE_SETLOCALE@
 REPLACE_SETSTATE = @REPLACE_SETSTATE@
 REPLACE_SLEEP = @REPLACE_SLEEP@
@@ -5706,6 +5827,7 @@ REPLACE_SPRINTF = @REPLACE_SPRINTF@
 REPLACE_STAT = @REPLACE_STAT@
 REPLACE_STDIO_READ_FUNCS = @REPLACE_STDIO_READ_FUNCS@
 REPLACE_STDIO_WRITE_FUNCS = @REPLACE_STDIO_WRITE_FUNCS@
+REPLACE_STPCPY = @REPLACE_STPCPY@
 REPLACE_STPNCPY = @REPLACE_STPNCPY@
 REPLACE_STRCASESTR = @REPLACE_STRCASESTR@
 REPLACE_STRCHRNUL = @REPLACE_STRCHRNUL@
@@ -5733,6 +5855,7 @@ REPLACE_STRUCT_TIMEVAL = @REPLACE_STRUCT_TIMEVAL@
 REPLACE_SYMLINK = @REPLACE_SYMLINK@
 REPLACE_SYMLINKAT = @REPLACE_SYMLINKAT@
 REPLACE_TIMEGM = @REPLACE_TIMEGM@
+REPLACE_TIMESPEC_GET = @REPLACE_TIMESPEC_GET@
 REPLACE_TMPFILE = @REPLACE_TMPFILE@
 REPLACE_TRUNCATE = @REPLACE_TRUNCATE@
 REPLACE_TTYNAME_R = @REPLACE_TTYNAME_R@
@@ -5757,15 +5880,20 @@ REPLACE_WCSWIDTH = @REPLACE_WCSWIDTH@
 REPLACE_WCTOB = @REPLACE_WCTOB@
 REPLACE_WCTOMB = @REPLACE_WCTOMB@
 REPLACE_WCWIDTH = @REPLACE_WCWIDTH@
+REPLACE_WMEMPCPY = @REPLACE_WMEMPCPY@
 REPLACE_WRITE = @REPLACE_WRITE@
+REPLACE__EXIT = @REPLACE__EXIT@
+SCHED_YIELD_LIB = @SCHED_YIELD_LIB@
 SED = @SED@
+SELECT_LIB = @SELECT_LIB@
 SERVENT_LIB = @SERVENT_LIB@
+SETLOCALE_LIB = @SETLOCALE_LIB@
+SETLOCALE_NULL_LIB = @SETLOCALE_NULL_LIB@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 SIG_ATOMIC_T_SUFFIX = @SIG_ATOMIC_T_SUFFIX@
 SIZE_T_SUFFIX = @SIZE_T_SUFFIX@
-STDALIGN_H = @STDALIGN_H@
-STDBOOL_H = @STDBOOL_H@
+STDCKDINT_H = @STDCKDINT_H@
 STDDEF_H = @STDDEF_H@
 STDINT_H = @STDINT_H@
 STRIP = @STRIP@
@@ -5816,6 +5944,7 @@ ac_ct_AR = @ac_ct_AR@
 ac_ct_CC = @ac_ct_CC@
 ac_ct_CXX = @ac_ct_CXX@
 ac_ct_DUMPBIN = @ac_ct_DUMPBIN@
+ac_cv_faketime_works = @ac_cv_faketime_works@
 ac_cv_sizeof_time_t = @ac_cv_sizeof_time_t@
 am__include = @am__include@
 am__leading_dot = @am__leading_dot@
@@ -5834,21 +5963,21 @@ datarootdir = @datarootdir@
 docdir = @docdir@
 dvidir = @dvidir@
 exec_prefix = @exec_prefix@
+ggl_LIBOBJDEPS = @ggl_LIBOBJDEPS@
 ggl_LIBOBJS = @ggl_LIBOBJS@
 ggl_LTLIBOBJS = @ggl_LTLIBOBJS@
+ggltests_LIBOBJDEPS = @ggltests_LIBOBJDEPS@
 ggltests_LIBOBJS = @ggltests_LIBOBJS@
 ggltests_LTLIBOBJS = @ggltests_LTLIBOBJS@
 ggltests_WITNESS = @ggltests_WITNESS@
+gl_LIBOBJDEPS = @gl_LIBOBJDEPS@
 gl_LIBOBJS = @gl_LIBOBJS@
 gl_LTLIBOBJS = @gl_LTLIBOBJS@
+gltests_LIBOBJDEPS = @gltests_LIBOBJDEPS@
 gltests_LIBOBJS = @gltests_LIBOBJS@
 gltests_LTLIBOBJS = @gltests_LTLIBOBJS@
 gltests_WITNESS = @gltests_WITNESS@
 gnutls_so = @gnutls_so@
-guile_snarf = @guile_snarf@
-guileextensiondir = @guileextensiondir@
-guilesiteccachedir = @guilesiteccachedir@
-guilesitedir = @guilesitedir@
 host = @host@
 host_alias = @host_alias@
 host_cpu = @host_cpu@
@@ -5865,7 +5994,6 @@ libexecdir = @libexecdir@
 localedir = @localedir@
 localstatedir = @localstatedir@
 mandir = @mandir@
-maybe_guileextensiondir = @maybe_guileextensiondir@
 mkdir_p = @mkdir_p@
 oldincludedir = @oldincludedir@
 pdfdir = @pdfdir@
@@ -5885,8 +6013,10 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
+unistring_LIBOBJDEPS = @unistring_LIBOBJDEPS@
 unistring_LIBOBJS = @unistring_LIBOBJS@
 unistring_LTLIBOBJS = @unistring_LTLIBOBJS@
+unistringtests_LIBOBJDEPS = @unistringtests_LIBOBJDEPS@
 unistringtests_LIBOBJS = @unistringtests_LIBOBJS@
 unistringtests_LTLIBOBJS = @unistringtests_LTLIBOBJS@
 unistringtests_WITNESS = @unistringtests_WITNESS@
@@ -5897,6 +6027,7 @@ TESTS_ENVIRONMENT = $(am__append_29) CC="$(CC)" CFLAGS="$(CFLAGS)" \
 	CAFILE=$(srcdir)/cert-tests/data/ca-certs.pem \
 	P11MOCKLIB1=$(abs_builddir)/.libs/libpkcs11mock1.so \
 	P11MOCKLIB2=$(abs_builddir)/.libs/libpkcs11mock2.so \
+	P11MOCKLIB3=$(abs_builddir)/.libs/libpkcs11mock3.so \
 	PKCS12_MANY_CERTS_FILE=$(srcdir)/cert-tests/data/pkcs12_5certs.p12 \
 	PKCS12FILE=$(srcdir)/cert-tests/data/client.p12 \
 	PKCS12PASSWORD=foobar \
@@ -5908,8 +6039,10 @@ TESTS_ENVIRONMENT = $(am__append_29) CC="$(CC)" CFLAGS="$(CFLAGS)" \
 	EXEEXT=$(EXEEXT) GNUTLS_TEST_SUITE_RUN=1 \
 	builddir="$(builddir)" top_builddir="$(top_builddir)" \
 	abs_top_builddir="$(abs_top_builddir)" libdir="$(libdir)" \
-	srcdir="$(srcdir)" $(am__append_33) $(am__append_34) \
-	$(am__append_35) $(am__append_36)
+	srcdir="$(srcdir)" $(am__append_32) $(am__append_33) \
+	$(am__append_34) $(am__append_35) FAKETIME="$(FAKETIME)" \
+	FAKETIME_F_OPT="$(FAKETIME_F_OPT)" \
+	ac_cv_faketime_works="$(ac_cv_faketime_works)"
 EXTRA_DIST = suppressions.valgrind eagain-common.h cert-common.h \
 	test-chains.h ocsp-common.h cmocka-common.h virt-time.h \
 	test-chains-issuer.h test-chains-issuer-aia.h \
@@ -5978,8 +6111,8 @@ EXTRA_DIST = suppressions.valgrind eagain-common.h cert-common.h \
 	system-override-default-priority-string.bad.config \
 	system-override-default-priority-string.none.config \
 	system-override-default-priority-string.only-tls13.config \
-	client-secrets.h server-secrets.h \
-	fixtures/templates/arb-extensions.tmpl.exp \
+	system-override-session-hash.sh client-secrets.h \
+	server-secrets.h fixtures/templates/arb-extensions.tmpl.exp \
 	fixtures/templates/crit-extensions.tmpl.exp \
 	fixtures/templates/inhibit-anypolicy.tmpl.exp \
 	fixtures/templates/simple-policy.tmpl.exp \
@@ -6028,7 +6161,7 @@ libutils_la_SOURCES = utils.h utils.c seccomp.c utils-adv.c
 libutils_la_LIBADD = ../lib/libgnutls.la
 indirect_tests = system-override-hash system-override-sig \
 	system-override-sig-tls $(am__append_17) $(am__append_20) \
-	$(am__append_22) $(am__append_26) $(am__append_32)
+	$(am__append_22) $(am__append_26)
 ctests = tls13/supported_versions tls13/tls12-no-tls13-exts \
 	tls13/post-handshake-with-cert \
 	tls13/post-handshake-without-cert tls13/cookie tls13/key_share \
@@ -6079,10 +6212,10 @@ ctests = tls13/supported_versions tls13/tls12-no-tls13-exts \
 	tls12-rehandshake-cert-2 custom-urls set_x509_key_mem \
 	set_x509_key_file tls12-rehandshake-cert-auto \
 	tls12-rehandshake-set-prio mini-chain-unsorted \
-	x509-verify-with-crl mini-dtls-mtu privkey-verify-broken \
-	mini-dtls-record-asym key-import-export priority-set \
-	priority-set2 pubkey-import-export sign-is-secure spki \
-	spki-abstract rsa-rsa-pss mini-dtls-fork dtls-pthread \
+	x509-verify-duplicate x509-verify-with-crl mini-dtls-mtu \
+	privkey-verify-broken mini-dtls-record-asym key-import-export \
+	priority-set priority-set2 pubkey-import-export sign-is-secure \
+	spki spki-abstract rsa-rsa-pss mini-dtls-fork dtls-pthread \
 	mini-key-material x509cert-invalid tls-ext-register \
 	tls-supplemental mini-dtls0-9 duplicate-extensions \
 	record-retvals mini-server-name tls-etm tls-force-etm \
@@ -6133,23 +6266,25 @@ ctests = tls13/supported_versions tls13/tls12-no-tls13-exts \
 	set_x509_key_file_legacy status-request-ext \
 	gnutls_x509_crt_sign gnutls_x509_crq_sign dtls-repro-20170915 \
 	rng-no-onload dtls1-2-mtu-check crl_apis cert_verify_inv_utf8 \
-	no-extensions hostname-check-utf8 pkcs8-key-decode-encrypted \
-	priority-mix pkcs7 send-data-before-handshake \
-	recv-data-before-handshake crt_inv_write x509sign-verify-error \
-	rng-op-nonce rng-op-random rng-op-key x509-dn-decode-compat \
-	ip-check mini-x509-ipaddr trust-store base64-raw random-art \
-	dhex509self dss-sig-val sign-pk-api tls-session-ext-override \
-	record-pad tls13-server-kx-neg gnutls_ext_raw_parse_dtls \
-	key-export-pkcs8 null_retrieve_function tls-record-size-limit \
-	tls-crt_type-neg resume-with-stek-expiration \
-	resume-with-previous-stek rawpk-api tls-record-size-limit-asym \
-	dh-compute ecdh-compute sign-verify-data-newapi \
-	sign-verify-newapi sign-verify-deterministic iov \
-	aead-cipher-vec tls13-without-timeout-func buffer \
-	status-request-revoked set_x509_ocsp_multi_cli kdf-api \
-	keylog-func handshake-write x509cert-dntypes id-on-xmppAddr \
-	tls13-compat-mode ciphersuite-name x509-upnconstraint \
+	no-extensions no-status-request hostname-check-utf8 \
+	pkcs8-key-decode-encrypted priority-mix pkcs7 \
+	send-data-before-handshake recv-data-before-handshake \
+	crt_inv_write x509sign-verify-error rng-op-nonce rng-op-random \
+	rng-op-key x509-dn-decode-compat ip-check mini-x509-ipaddr \
+	trust-store base64-raw random-art dhex509self dss-sig-val \
+	sign-pk-api tls-session-ext-override record-pad \
+	tls13-server-kx-neg gnutls_ext_raw_parse_dtls key-export-pkcs8 \
+	null_retrieve_function tls-record-size-limit tls-crt_type-neg \
+	resume-with-stek-expiration resume-with-previous-stek \
+	rawpk-api tls-record-size-limit-asym dh-compute ecdh-compute \
+	sign-verify-data-newapi sign-verify-newapi \
+	sign-verify-deterministic iov aead-cipher-vec \
+	tls13-without-timeout-func buffer status-request-revoked \
+	set_x509_ocsp_multi_cli kdf-api keylog-func handshake-write \
+	x509cert-dntypes id-on-xmppAddr tls13-compat-mode \
+	ciphersuite-name x509-upnconstraint xts-key-check \
 	cipher-padding pkcs7-verify-double-free fips-rsa-sizes \
+	tls12-rehandshake-ticket pathbuf tls-force-ems psk-importer \
 	tls-channel-binding $(am__append_4) $(am__append_5) \
 	$(am__append_6) $(am__append_7) $(am__append_9) \
 	$(am__append_10) $(am__append_11) $(am__append_12) \
@@ -6223,6 +6358,9 @@ ssl30_cert_key_exchange_SOURCES = common-cert-key-exchange.c ssl30-cert-key-exch
 @ENABLE_PKCS11_TRUE@@WINDOWS_FALSE@libpkcs11mock2_la_SOURCES = pkcs11/pkcs11-mock2.c
 @ENABLE_PKCS11_TRUE@@WINDOWS_FALSE@libpkcs11mock2_la_LDFLAGS = -shared -rpath $(pkglibdir) -module -no-undefined -avoid-version
 @ENABLE_PKCS11_TRUE@@WINDOWS_FALSE@libpkcs11mock2_la_LIBADD = ../gl/libgnu.la
+@ENABLE_PKCS11_TRUE@@WINDOWS_FALSE@libpkcs11mock3_la_SOURCES = pkcs11/pkcs11-mock3.c
+@ENABLE_PKCS11_TRUE@@WINDOWS_FALSE@libpkcs11mock3_la_LDFLAGS = -shared -rpath $(pkglibdir) -module -no-undefined -avoid-version
+@ENABLE_PKCS11_TRUE@@WINDOWS_FALSE@libpkcs11mock3_la_LIBADD = ../gl/libgnu.la
 @ENABLE_PKCS11_TRUE@@WINDOWS_FALSE@pkcs11_cert_import_url_exts_SOURCES = pkcs11/pkcs11-cert-import-url-exts.c
 @ENABLE_PKCS11_TRUE@@WINDOWS_FALSE@pkcs11_cert_import_url_exts_DEPENDENCIES = libpkcs11mock1.la libutils.la
 @ENABLE_PKCS11_TRUE@@WINDOWS_FALSE@pkcs11_cert_import_url4_exts_SOURCES = pkcs11/pkcs11-cert-import-url4-exts.c
@@ -6303,10 +6441,16 @@ buffer_CPPFLAGS = $(AM_CPPFLAGS) \
 	-I$(top_srcdir)/gl	\
 	-I$(top_builddir)/gl
 
+pathbuf_CPPFLAGS = $(AM_CPPFLAGS) \
+	-I$(top_srcdir)/gl	\
+	-I$(top_builddir)/gl
+
 @ENABLE_PKCS11_TRUE@@WINDOWS_FALSE@tls13_post_handshake_with_cert_pkcs11_DEPENDENCIES = libpkcs11mock2.la libutils.la
 @ENABLE_PKCS11_TRUE@@WINDOWS_FALSE@tls13_post_handshake_with_cert_pkcs11_LDADD = $(LDADD) $(LIBDL)
 @ENABLE_PKCS11_TRUE@@WINDOWS_FALSE@pkcs11_tls_neg_pkcs11_no_key_DEPENDENCIES = libpkcs11mock2.la libutils.la
 @ENABLE_PKCS11_TRUE@@WINDOWS_FALSE@pkcs11_tls_neg_pkcs11_no_key_LDADD = $(LDADD) $(LIBDL)
+@ENABLE_PKCS11_TRUE@@WINDOWS_FALSE@pkcs11_distrust_after_DEPENDENCIES = libpkcs11mock3.la libutils.la
+@ENABLE_PKCS11_TRUE@@WINDOWS_FALSE@pkcs11_distrust_after_LDADD = $(LDADD) $(LIBDL)
 dist_check_SCRIPTS = rfc2253-escape-test.sh \
 	rsa-md5-collision/rsa-md5-collision.sh systemkey.sh \
 	$(am__append_16) $(am__append_18) $(am__append_19) \
@@ -6320,7 +6464,7 @@ dist_check_SCRIPTS = rfc2253-escape-test.sh \
 @WINDOWS_TRUE@win32_certopenstore_LDADD = $(LDADD) -lcrypt32
 cpptests = $(am__append_31)
 @ENABLE_CXX_TRUE@@HAVE_CMOCKA_TRUE@sanity_cpp_SOURCES = sanity-cpp.cpp
-@ENABLE_CXX_TRUE@@HAVE_CMOCKA_TRUE@sanity_cpp_LDADD = $(CMOCKA_LDADD) ../lib/libgnutlsxx.la
+@ENABLE_CXX_TRUE@@HAVE_CMOCKA_TRUE@sanity_cpp_LDADD = $(CMOCKA_LDADD)
 @ENABLE_CXX_TRUE@@HAVE_CMOCKA_TRUE@sanity_cpp_CXXFLAGS = $(AM_CPPFLAGS) \
 @ENABLE_CXX_TRUE@@HAVE_CMOCKA_TRUE@	-I$(top_srcdir)/gl	\
 @ENABLE_CXX_TRUE@@HAVE_CMOCKA_TRUE@	-I$(top_builddir)/gl
@@ -6371,15 +6515,6 @@ clean-checkPROGRAMS:
 	echo " rm -f" $$list; \
 	rm -f $$list
 
-clean-noinstPROGRAMS:
-	@list='$(noinst_PROGRAMS)'; test -n "$$list" || exit 0; \
-	echo " rm -f" $$list; \
-	rm -f $$list || exit $$?; \
-	test -n "$(EXEEXT)" || exit 0; \
-	list=`for p in $$list; do echo "$$p"; done | sed 's/$(EXEEXT)$$//'`; \
-	echo " rm -f" $$list; \
-	rm -f $$list
-
 clean-noinstLTLIBRARIES:
 	-test -z "$(noinst_LTLIBRARIES)" || rm -f $(noinst_LTLIBRARIES)
 	@list='$(noinst_LTLIBRARIES)'; \
@@ -6406,6 +6541,11 @@ pkcs11/pkcs11-mock2.lo: pkcs11/$(am__dirstamp) \
 
 libpkcs11mock2.la: $(libpkcs11mock2_la_OBJECTS) $(libpkcs11mock2_la_DEPENDENCIES) $(EXTRA_libpkcs11mock2_la_DEPENDENCIES) 
 	$(AM_V_CCLD)$(libpkcs11mock2_la_LINK) $(am_libpkcs11mock2_la_rpath) $(libpkcs11mock2_la_OBJECTS) $(libpkcs11mock2_la_LIBADD) $(LIBS)
+pkcs11/pkcs11-mock3.lo: pkcs11/$(am__dirstamp) \
+	pkcs11/$(DEPDIR)/$(am__dirstamp)
+
+libpkcs11mock3.la: $(libpkcs11mock3_la_OBJECTS) $(libpkcs11mock3_la_DEPENDENCIES) $(EXTRA_libpkcs11mock3_la_DEPENDENCIES) 
+	$(AM_V_CCLD)$(libpkcs11mock3_la_LINK) $(am_libpkcs11mock3_la_rpath) $(libpkcs11mock3_la_OBJECTS) $(libpkcs11mock3_la_LIBADD) $(LIBS)
 
 libutils.la: $(libutils_la_OBJECTS) $(libutils_la_DEPENDENCIES) $(EXTRA_libutils_la_DEPENDENCIES) 
 	$(AM_V_CCLD)$(LINK)  $(libutils_la_OBJECTS) $(libutils_la_LIBADD) $(LIBS)
@@ -6561,10 +6701,6 @@ dane$(EXEEXT): $(dane_OBJECTS) $(dane_DEPENDENCIES) $(EXTRA_dane_DEPENDENCIES)
 dane-strcodes$(EXEEXT): $(dane_strcodes_OBJECTS) $(dane_strcodes_DEPENDENCIES) $(EXTRA_dane_strcodes_DEPENDENCIES) 
 	@rm -f dane-strcodes$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(dane_strcodes_OBJECTS) $(dane_strcodes_LDADD) $(LIBS)
-
-datefudge-check$(EXEEXT): $(datefudge_check_OBJECTS) $(datefudge_check_DEPENDENCIES) $(EXTRA_datefudge_check_DEPENDENCIES) 
-	@rm -f datefudge-check$(EXEEXT)
-	$(AM_V_CCLD)$(LINK) $(datefudge_check_OBJECTS) $(datefudge_check_LDADD) $(LIBS)
 
 dh-compute$(EXEEXT): $(dh_compute_OBJECTS) $(dh_compute_DEPENDENCIES) $(EXTRA_dh_compute_DEPENDENCIES) 
 	@rm -f dh-compute$(EXEEXT)
@@ -6874,6 +7010,10 @@ keylog-func$(EXEEXT): $(keylog_func_OBJECTS) $(keylog_func_DEPENDENCIES) $(EXTRA
 	@rm -f keylog-func$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(keylog_func_OBJECTS) $(keylog_func_LDADD) $(LIBS)
 
+ktls_keyupdate$(EXEEXT): $(ktls_keyupdate_OBJECTS) $(ktls_keyupdate_DEPENDENCIES) $(EXTRA_ktls_keyupdate_DEPENDENCIES) 
+	@rm -f ktls_keyupdate$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(ktls_keyupdate_OBJECTS) $(ktls_keyupdate_LDADD) $(LIBS)
+
 long-session-id$(EXEEXT): $(long_session_id_OBJECTS) $(long_session_id_DEPENDENCIES) $(EXTRA_long_session_id_DEPENDENCIES) 
 	@rm -f long-session-id$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(long_session_id_OBJECTS) $(long_session_id_LDADD) $(LIBS)
@@ -7054,6 +7194,10 @@ no-signal$(EXEEXT): $(no_signal_OBJECTS) $(no_signal_DEPENDENCIES) $(EXTRA_no_si
 	@rm -f no-signal$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(no_signal_OBJECTS) $(no_signal_LDADD) $(LIBS)
 
+no-status-request$(EXEEXT): $(no_status_request_OBJECTS) $(no_status_request_DEPENDENCIES) $(EXTRA_no_status_request_DEPENDENCIES) 
+	@rm -f no-status-request$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(no_status_request_OBJECTS) $(no_status_request_LDADD) $(LIBS)
+
 nul-in-x509-names$(EXEEXT): $(nul_in_x509_names_OBJECTS) $(nul_in_x509_names_DEPENDENCIES) $(EXTRA_nul_in_x509_names_DEPENDENCIES) 
 	@rm -f nul-in-x509-names$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(nul_in_x509_names_OBJECTS) $(nul_in_x509_names_LDADD) $(LIBS)
@@ -7085,6 +7229,10 @@ openssl$(EXEEXT): $(openssl_OBJECTS) $(openssl_DEPENDENCIES) $(EXTRA_openssl_DEP
 parse_ca$(EXEEXT): $(parse_ca_OBJECTS) $(parse_ca_DEPENDENCIES) $(EXTRA_parse_ca_DEPENDENCIES) 
 	@rm -f parse_ca$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(parse_ca_OBJECTS) $(parse_ca_LDADD) $(LIBS)
+
+pathbuf$(EXEEXT): $(pathbuf_OBJECTS) $(pathbuf_DEPENDENCIES) $(EXTRA_pathbuf_DEPENDENCIES) 
+	@rm -f pathbuf$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(pathbuf_OBJECTS) $(pathbuf_LDADD) $(LIBS)
 
 pcert-list$(EXEEXT): $(pcert_list_OBJECTS) $(pcert_list_DEPENDENCIES) $(EXTRA_pcert_list_DEPENDENCIES) 
 	@rm -f pcert-list$(EXEEXT)
@@ -7177,6 +7325,12 @@ pkcs11/pkcs11-token-raw.$(OBJEXT): pkcs11/$(am__dirstamp) \
 pkcs11-token-raw$(EXEEXT): $(pkcs11_token_raw_OBJECTS) $(pkcs11_token_raw_DEPENDENCIES) $(EXTRA_pkcs11_token_raw_DEPENDENCIES) 
 	@rm -f pkcs11-token-raw$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(pkcs11_token_raw_OBJECTS) $(pkcs11_token_raw_LDADD) $(LIBS)
+pkcs11/distrust-after.$(OBJEXT): pkcs11/$(am__dirstamp) \
+	pkcs11/$(DEPDIR)/$(am__dirstamp)
+
+pkcs11/distrust-after$(EXEEXT): $(pkcs11_distrust_after_OBJECTS) $(pkcs11_distrust_after_DEPENDENCIES) $(EXTRA_pkcs11_distrust_after_DEPENDENCIES) pkcs11/$(am__dirstamp)
+	@rm -f pkcs11/distrust-after$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(pkcs11_distrust_after_OBJECTS) $(pkcs11_distrust_after_LDADD) $(LIBS)
 pkcs11/gnutls_pcert_list_import_x509_file.$(OBJEXT):  \
 	pkcs11/$(am__dirstamp) pkcs11/$(DEPDIR)/$(am__dirstamp)
 
@@ -7391,6 +7545,10 @@ protocol-set-allowlist$(EXEEXT): $(protocol_set_allowlist_OBJECTS) $(protocol_se
 psk-file$(EXEEXT): $(psk_file_OBJECTS) $(psk_file_DEPENDENCIES) $(EXTRA_psk_file_DEPENDENCIES) 
 	@rm -f psk-file$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(psk_file_OBJECTS) $(psk_file_LDADD) $(LIBS)
+
+psk-importer$(EXEEXT): $(psk_importer_OBJECTS) $(psk_importer_DEPENDENCIES) $(EXTRA_psk_importer_DEPENDENCIES) 
+	@rm -f psk-importer$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(psk_importer_OBJECTS) $(psk_importer_LDADD) $(LIBS)
 
 pskself$(EXEEXT): $(pskself_OBJECTS) $(pskself_DEPENDENCIES) $(EXTRA_pskself_DEPENDENCIES) 
 	@rm -f pskself$(EXEEXT)
@@ -7870,6 +8028,10 @@ tls-ext-register$(EXEEXT): $(tls_ext_register_OBJECTS) $(tls_ext_register_DEPEND
 	@rm -f tls-ext-register$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(tls_ext_register_OBJECTS) $(tls_ext_register_LDADD) $(LIBS)
 
+tls-force-ems$(EXEEXT): $(tls_force_ems_OBJECTS) $(tls_force_ems_DEPENDENCIES) $(EXTRA_tls_force_ems_DEPENDENCIES) 
+	@rm -f tls-force-ems$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(tls_force_ems_OBJECTS) $(tls_force_ems_LDADD) $(LIBS)
+
 tls-force-etm$(EXEEXT): $(tls_force_etm_OBJECTS) $(tls_force_etm_DEPENDENCIES) $(EXTRA_tls_force_etm_DEPENDENCIES) 
 	@rm -f tls-force-etm$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(tls_force_etm_OBJECTS) $(tls_force_etm_LDADD) $(LIBS)
@@ -8013,6 +8175,10 @@ tls12-rehandshake-cert-auto$(EXEEXT): $(tls12_rehandshake_cert_auto_OBJECTS) $(t
 tls12-rehandshake-set-prio$(EXEEXT): $(tls12_rehandshake_set_prio_OBJECTS) $(tls12_rehandshake_set_prio_DEPENDENCIES) $(EXTRA_tls12_rehandshake_set_prio_DEPENDENCIES) 
 	@rm -f tls12-rehandshake-set-prio$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(tls12_rehandshake_set_prio_OBJECTS) $(tls12_rehandshake_set_prio_LDADD) $(LIBS)
+
+tls12-rehandshake-ticket$(EXEEXT): $(tls12_rehandshake_ticket_OBJECTS) $(tls12_rehandshake_ticket_DEPENDENCIES) $(EXTRA_tls12_rehandshake_ticket_DEPENDENCIES) 
+	@rm -f tls12-rehandshake-ticket$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(tls12_rehandshake_ticket_OBJECTS) $(tls12_rehandshake_ticket_LDADD) $(LIBS)
 
 tls12-resume-anon$(EXEEXT): $(tls12_resume_anon_OBJECTS) $(tls12_resume_anon_DEPENDENCIES) $(EXTRA_tls12_resume_anon_DEPENDENCIES) 
 	@rm -f tls12-resume-anon$(EXEEXT)
@@ -8332,6 +8498,10 @@ x509-upnconstraint$(EXEEXT): $(x509_upnconstraint_OBJECTS) $(x509_upnconstraint_
 	@rm -f x509-upnconstraint$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(x509_upnconstraint_OBJECTS) $(x509_upnconstraint_LDADD) $(LIBS)
 
+x509-verify-duplicate$(EXEEXT): $(x509_verify_duplicate_OBJECTS) $(x509_verify_duplicate_DEPENDENCIES) $(EXTRA_x509_verify_duplicate_DEPENDENCIES) 
+	@rm -f x509-verify-duplicate$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(x509_verify_duplicate_OBJECTS) $(x509_verify_duplicate_LDADD) $(LIBS)
+
 x509-verify-with-crl$(EXEEXT): $(x509_verify_with_crl_OBJECTS) $(x509_verify_with_crl_DEPENDENCIES) $(EXTRA_x509_verify_with_crl_DEPENDENCIES) 
 	@rm -f x509-verify-with-crl$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(x509_verify_with_crl_OBJECTS) $(x509_verify_with_crl_LDADD) $(LIBS)
@@ -8388,6 +8558,10 @@ x509sign-verify-rsa$(EXEEXT): $(x509sign_verify_rsa_OBJECTS) $(x509sign_verify_r
 	@rm -f x509sign-verify-rsa$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(x509sign_verify_rsa_OBJECTS) $(x509sign_verify_rsa_LDADD) $(LIBS)
 
+xts-key-check$(EXEEXT): $(xts_key_check_OBJECTS) $(xts_key_check_DEPENDENCIES) $(EXTRA_xts_key_check_DEPENDENCIES) 
+	@rm -f xts-key-check$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(xts_key_check_OBJECTS) $(xts_key_check_LDADD) $(LIBS)
+
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
 	-rm -f dtls/*.$(OBJEXT)
@@ -8438,7 +8612,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cve-2009-1416.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dane-strcodes.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dane.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/datefudge-check.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dh-compute.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dh-params.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dhepskself.Po@am__quote@ # am--include-marker
@@ -8513,6 +8686,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/key-usage-rsa.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/keylog-env.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/keylog-func.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ktls_keyupdate.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/long-session-id.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mini-alpn.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mini-chain-unsorted.Po@am__quote@ # am--include-marker
@@ -8558,6 +8732,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/name_constraints_merge-name-constraints-merge.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/no-extensions.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/no-signal.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/no-status-request.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/nul-in-x509-names.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/null_retrieve_function.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ocsp-filename-memleak.Po@am__quote@ # am--include-marker
@@ -8566,6 +8741,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/openconnect-dtls12.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/openssl.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/parse_ca.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pathbuf-pathbuf.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pcert-list.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pkcs1-digest-info.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pkcs12_encode.Po@am__quote@ # am--include-marker
@@ -8590,6 +8766,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/privkey-verify-broken.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/protocol-set-allowlist.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/psk-file.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/psk-importer.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pskself.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pskself2.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pubkey-import-export.Po@am__quote@ # am--include-marker
@@ -8700,6 +8877,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tls-etm.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tls-ext-not-in-dtls.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tls-ext-register.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tls-force-ems.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tls-force-etm.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tls-neg-ext-key.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tls-neg-ext4-key.Po@am__quote@ # am--include-marker
@@ -8730,6 +8908,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tls12-rehandshake-cert-auto.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tls12-rehandshake-cert.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tls12-rehandshake-set-prio.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tls12-rehandshake-ticket.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tls12-server-kx-neg.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tls12_resume_anon-resume.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tls12_resume_psk-resume.Po@am__quote@ # am--include-marker
@@ -8765,6 +8944,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/x509-extensions.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/x509-server-verify.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/x509-upnconstraint.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/x509-verify-duplicate.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/x509-verify-with-crl.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/x509_altname.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/x509cert-ct.Po@am__quote@ # am--include-marker
@@ -8779,7 +8959,9 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/x509sign-verify-gost.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/x509sign-verify-rsa.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/x509sign-verify.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xts-key-check.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@dtls/$(DEPDIR)/dtls-stress.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@pkcs11/$(DEPDIR)/distrust-after.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@pkcs11/$(DEPDIR)/gnutls_pcert_list_import_x509_file.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@pkcs11/$(DEPDIR)/gnutls_x509_crt_list_import_url.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@pkcs11/$(DEPDIR)/import_url_privkey_caps-pkcs11-import-url-privkey.Po@am__quote@ # am--include-marker
@@ -8800,6 +8982,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@pkcs11/$(DEPDIR)/pkcs11-mechanisms.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@pkcs11/$(DEPDIR)/pkcs11-mock.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@pkcs11/$(DEPDIR)/pkcs11-mock2.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@pkcs11/$(DEPDIR)/pkcs11-mock3.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@pkcs11/$(DEPDIR)/pkcs11-obj-import.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@pkcs11/$(DEPDIR)/pkcs11-obj-raw.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@pkcs11/$(DEPDIR)/pkcs11-pin-func.Po@am__quote@ # am--include-marker
@@ -8999,6 +9182,20 @@ name_constraints_merge-name-constraints-merge.obj: name-constraints-merge.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='name-constraints-merge.c' object='name_constraints_merge-name-constraints-merge.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(name_constraints_merge_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o name_constraints_merge-name-constraints-merge.obj `if test -f 'name-constraints-merge.c'; then $(CYGPATH_W) 'name-constraints-merge.c'; else $(CYGPATH_W) '$(srcdir)/name-constraints-merge.c'; fi`
+
+pathbuf-pathbuf.o: pathbuf.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pathbuf_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT pathbuf-pathbuf.o -MD -MP -MF $(DEPDIR)/pathbuf-pathbuf.Tpo -c -o pathbuf-pathbuf.o `test -f 'pathbuf.c' || echo '$(srcdir)/'`pathbuf.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/pathbuf-pathbuf.Tpo $(DEPDIR)/pathbuf-pathbuf.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='pathbuf.c' object='pathbuf-pathbuf.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pathbuf_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o pathbuf-pathbuf.o `test -f 'pathbuf.c' || echo '$(srcdir)/'`pathbuf.c
+
+pathbuf-pathbuf.obj: pathbuf.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pathbuf_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT pathbuf-pathbuf.obj -MD -MP -MF $(DEPDIR)/pathbuf-pathbuf.Tpo -c -o pathbuf-pathbuf.obj `if test -f 'pathbuf.c'; then $(CYGPATH_W) 'pathbuf.c'; else $(CYGPATH_W) '$(srcdir)/pathbuf.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/pathbuf-pathbuf.Tpo $(DEPDIR)/pathbuf-pathbuf.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='pathbuf.c' object='pathbuf-pathbuf.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pathbuf_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o pathbuf-pathbuf.obj `if test -f 'pathbuf.c'; then $(CYGPATH_W) 'pathbuf.c'; else $(CYGPATH_W) '$(srcdir)/pathbuf.c'; fi`
 
 pkcs11/import_url_privkey_caps-pkcs11-import-url-privkey.o: pkcs11/pkcs11-import-url-privkey.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(pkcs11_import_url_privkey_caps_CFLAGS) $(CFLAGS) -MT pkcs11/import_url_privkey_caps-pkcs11-import-url-privkey.o -MD -MP -MF pkcs11/$(DEPDIR)/import_url_privkey_caps-pkcs11-import-url-privkey.Tpo -c -o pkcs11/import_url_privkey_caps-pkcs11-import-url-privkey.o `test -f 'pkcs11/pkcs11-import-url-privkey.c' || echo '$(srcdir)/'`pkcs11/pkcs11-import-url-privkey.c
@@ -10533,6 +10730,13 @@ mini-chain-unsorted.log: mini-chain-unsorted$(EXEEXT)
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
+x509-verify-duplicate.log: x509-verify-duplicate$(EXEEXT)
+	@p='x509-verify-duplicate$(EXEEXT)'; \
+	b='x509-verify-duplicate'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
 x509-verify-with-crl.log: x509-verify-with-crl$(EXEEXT)
 	@p='x509-verify-with-crl$(EXEEXT)'; \
 	b='x509-verify-with-crl'; \
@@ -11653,6 +11857,13 @@ no-extensions.log: no-extensions$(EXEEXT)
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
+no-status-request.log: no-status-request$(EXEEXT)
+	@p='no-status-request$(EXEEXT)'; \
+	b='no-status-request'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
 hostname-check-utf8.log: hostname-check-utf8$(EXEEXT)
 	@p='hostname-check-utf8$(EXEEXT)'; \
 	b='hostname-check-utf8'; \
@@ -12010,6 +12221,13 @@ x509-upnconstraint.log: x509-upnconstraint$(EXEEXT)
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
+xts-key-check.log: xts-key-check$(EXEEXT)
+	@p='xts-key-check$(EXEEXT)'; \
+	b='xts-key-check'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
 cipher-padding.log: cipher-padding$(EXEEXT)
 	@p='cipher-padding$(EXEEXT)'; \
 	b='cipher-padding'; \
@@ -12027,6 +12245,34 @@ pkcs7-verify-double-free.log: pkcs7-verify-double-free$(EXEEXT)
 fips-rsa-sizes.log: fips-rsa-sizes$(EXEEXT)
 	@p='fips-rsa-sizes$(EXEEXT)'; \
 	b='fips-rsa-sizes'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tls12-rehandshake-ticket.log: tls12-rehandshake-ticket$(EXEEXT)
+	@p='tls12-rehandshake-ticket$(EXEEXT)'; \
+	b='tls12-rehandshake-ticket'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+pathbuf.log: pathbuf$(EXEEXT)
+	@p='pathbuf$(EXEEXT)'; \
+	b='pathbuf'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tls-force-ems.log: tls-force-ems$(EXEEXT)
+	@p='tls-force-ems$(EXEEXT)'; \
+	b='tls-force-ems'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+psk-importer.log: psk-importer$(EXEEXT)
+	@p='psk-importer$(EXEEXT)'; \
+	b='psk-importer'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
@@ -12556,6 +12802,13 @@ global-init-override.log: global-init-override$(EXEEXT)
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
+pkcs11/distrust-after.log: pkcs11/distrust-after$(EXEEXT)
+	@p='pkcs11/distrust-after$(EXEEXT)'; \
+	b='pkcs11/distrust-after'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
 win32-certopenstore.log: win32-certopenstore$(EXEEXT)
 	@p='win32-certopenstore$(EXEEXT)'; \
 	b='win32-certopenstore'; \
@@ -12640,7 +12893,7 @@ check-am: all-am
 	  $(dist_check_SCRIPTS)
 	$(MAKE) $(AM_MAKEFLAGS) check-TESTS
 check: check-recursive
-all-am: Makefile $(PROGRAMS) $(LTLIBRARIES)
+all-am: Makefile $(LTLIBRARIES)
 installdirs: installdirs-recursive
 installdirs-am:
 install: install-recursive
@@ -12687,7 +12940,7 @@ maintainer-clean-generic:
 clean: clean-recursive
 
 clean-am: clean-checkPROGRAMS clean-generic clean-libtool \
-	clean-noinstLTLIBRARIES clean-noinstPROGRAMS mostlyclean-am
+	clean-noinstLTLIBRARIES mostlyclean-am
 
 distclean: distclean-recursive
 		-rm -f ./$(DEPDIR)/aead-cipher-vec.Po
@@ -12729,7 +12982,6 @@ distclean: distclean-recursive
 	-rm -f ./$(DEPDIR)/cve-2009-1416.Po
 	-rm -f ./$(DEPDIR)/dane-strcodes.Po
 	-rm -f ./$(DEPDIR)/dane.Po
-	-rm -f ./$(DEPDIR)/datefudge-check.Po
 	-rm -f ./$(DEPDIR)/dh-compute.Po
 	-rm -f ./$(DEPDIR)/dh-params.Po
 	-rm -f ./$(DEPDIR)/dhepskself.Po
@@ -12804,6 +13056,7 @@ distclean: distclean-recursive
 	-rm -f ./$(DEPDIR)/key-usage-rsa.Po
 	-rm -f ./$(DEPDIR)/keylog-env.Po
 	-rm -f ./$(DEPDIR)/keylog-func.Po
+	-rm -f ./$(DEPDIR)/ktls_keyupdate.Po
 	-rm -f ./$(DEPDIR)/long-session-id.Po
 	-rm -f ./$(DEPDIR)/mini-alpn.Po
 	-rm -f ./$(DEPDIR)/mini-chain-unsorted.Po
@@ -12849,6 +13102,7 @@ distclean: distclean-recursive
 	-rm -f ./$(DEPDIR)/name_constraints_merge-name-constraints-merge.Po
 	-rm -f ./$(DEPDIR)/no-extensions.Po
 	-rm -f ./$(DEPDIR)/no-signal.Po
+	-rm -f ./$(DEPDIR)/no-status-request.Po
 	-rm -f ./$(DEPDIR)/nul-in-x509-names.Po
 	-rm -f ./$(DEPDIR)/null_retrieve_function.Po
 	-rm -f ./$(DEPDIR)/ocsp-filename-memleak.Po
@@ -12857,6 +13111,7 @@ distclean: distclean-recursive
 	-rm -f ./$(DEPDIR)/openconnect-dtls12.Po
 	-rm -f ./$(DEPDIR)/openssl.Po
 	-rm -f ./$(DEPDIR)/parse_ca.Po
+	-rm -f ./$(DEPDIR)/pathbuf-pathbuf.Po
 	-rm -f ./$(DEPDIR)/pcert-list.Po
 	-rm -f ./$(DEPDIR)/pkcs1-digest-info.Po
 	-rm -f ./$(DEPDIR)/pkcs12_encode.Po
@@ -12881,6 +13136,7 @@ distclean: distclean-recursive
 	-rm -f ./$(DEPDIR)/privkey-verify-broken.Po
 	-rm -f ./$(DEPDIR)/protocol-set-allowlist.Po
 	-rm -f ./$(DEPDIR)/psk-file.Po
+	-rm -f ./$(DEPDIR)/psk-importer.Po
 	-rm -f ./$(DEPDIR)/pskself.Po
 	-rm -f ./$(DEPDIR)/pskself2.Po
 	-rm -f ./$(DEPDIR)/pubkey-import-export.Po
@@ -12991,6 +13247,7 @@ distclean: distclean-recursive
 	-rm -f ./$(DEPDIR)/tls-etm.Po
 	-rm -f ./$(DEPDIR)/tls-ext-not-in-dtls.Po
 	-rm -f ./$(DEPDIR)/tls-ext-register.Po
+	-rm -f ./$(DEPDIR)/tls-force-ems.Po
 	-rm -f ./$(DEPDIR)/tls-force-etm.Po
 	-rm -f ./$(DEPDIR)/tls-neg-ext-key.Po
 	-rm -f ./$(DEPDIR)/tls-neg-ext4-key.Po
@@ -13021,6 +13278,7 @@ distclean: distclean-recursive
 	-rm -f ./$(DEPDIR)/tls12-rehandshake-cert-auto.Po
 	-rm -f ./$(DEPDIR)/tls12-rehandshake-cert.Po
 	-rm -f ./$(DEPDIR)/tls12-rehandshake-set-prio.Po
+	-rm -f ./$(DEPDIR)/tls12-rehandshake-ticket.Po
 	-rm -f ./$(DEPDIR)/tls12-server-kx-neg.Po
 	-rm -f ./$(DEPDIR)/tls12_resume_anon-resume.Po
 	-rm -f ./$(DEPDIR)/tls12_resume_psk-resume.Po
@@ -13056,6 +13314,7 @@ distclean: distclean-recursive
 	-rm -f ./$(DEPDIR)/x509-extensions.Po
 	-rm -f ./$(DEPDIR)/x509-server-verify.Po
 	-rm -f ./$(DEPDIR)/x509-upnconstraint.Po
+	-rm -f ./$(DEPDIR)/x509-verify-duplicate.Po
 	-rm -f ./$(DEPDIR)/x509-verify-with-crl.Po
 	-rm -f ./$(DEPDIR)/x509_altname.Po
 	-rm -f ./$(DEPDIR)/x509cert-ct.Po
@@ -13070,7 +13329,9 @@ distclean: distclean-recursive
 	-rm -f ./$(DEPDIR)/x509sign-verify-gost.Po
 	-rm -f ./$(DEPDIR)/x509sign-verify-rsa.Po
 	-rm -f ./$(DEPDIR)/x509sign-verify.Po
+	-rm -f ./$(DEPDIR)/xts-key-check.Po
 	-rm -f dtls/$(DEPDIR)/dtls-stress.Po
+	-rm -f pkcs11/$(DEPDIR)/distrust-after.Po
 	-rm -f pkcs11/$(DEPDIR)/gnutls_pcert_list_import_x509_file.Po
 	-rm -f pkcs11/$(DEPDIR)/gnutls_x509_crt_list_import_url.Po
 	-rm -f pkcs11/$(DEPDIR)/import_url_privkey_caps-pkcs11-import-url-privkey.Po
@@ -13091,6 +13352,7 @@ distclean: distclean-recursive
 	-rm -f pkcs11/$(DEPDIR)/pkcs11-mechanisms.Po
 	-rm -f pkcs11/$(DEPDIR)/pkcs11-mock.Plo
 	-rm -f pkcs11/$(DEPDIR)/pkcs11-mock2.Plo
+	-rm -f pkcs11/$(DEPDIR)/pkcs11-mock3.Plo
 	-rm -f pkcs11/$(DEPDIR)/pkcs11-obj-import.Po
 	-rm -f pkcs11/$(DEPDIR)/pkcs11-obj-raw.Po
 	-rm -f pkcs11/$(DEPDIR)/pkcs11-pin-func.Po
@@ -13232,7 +13494,6 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f ./$(DEPDIR)/cve-2009-1416.Po
 	-rm -f ./$(DEPDIR)/dane-strcodes.Po
 	-rm -f ./$(DEPDIR)/dane.Po
-	-rm -f ./$(DEPDIR)/datefudge-check.Po
 	-rm -f ./$(DEPDIR)/dh-compute.Po
 	-rm -f ./$(DEPDIR)/dh-params.Po
 	-rm -f ./$(DEPDIR)/dhepskself.Po
@@ -13307,6 +13568,7 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f ./$(DEPDIR)/key-usage-rsa.Po
 	-rm -f ./$(DEPDIR)/keylog-env.Po
 	-rm -f ./$(DEPDIR)/keylog-func.Po
+	-rm -f ./$(DEPDIR)/ktls_keyupdate.Po
 	-rm -f ./$(DEPDIR)/long-session-id.Po
 	-rm -f ./$(DEPDIR)/mini-alpn.Po
 	-rm -f ./$(DEPDIR)/mini-chain-unsorted.Po
@@ -13352,6 +13614,7 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f ./$(DEPDIR)/name_constraints_merge-name-constraints-merge.Po
 	-rm -f ./$(DEPDIR)/no-extensions.Po
 	-rm -f ./$(DEPDIR)/no-signal.Po
+	-rm -f ./$(DEPDIR)/no-status-request.Po
 	-rm -f ./$(DEPDIR)/nul-in-x509-names.Po
 	-rm -f ./$(DEPDIR)/null_retrieve_function.Po
 	-rm -f ./$(DEPDIR)/ocsp-filename-memleak.Po
@@ -13360,6 +13623,7 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f ./$(DEPDIR)/openconnect-dtls12.Po
 	-rm -f ./$(DEPDIR)/openssl.Po
 	-rm -f ./$(DEPDIR)/parse_ca.Po
+	-rm -f ./$(DEPDIR)/pathbuf-pathbuf.Po
 	-rm -f ./$(DEPDIR)/pcert-list.Po
 	-rm -f ./$(DEPDIR)/pkcs1-digest-info.Po
 	-rm -f ./$(DEPDIR)/pkcs12_encode.Po
@@ -13384,6 +13648,7 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f ./$(DEPDIR)/privkey-verify-broken.Po
 	-rm -f ./$(DEPDIR)/protocol-set-allowlist.Po
 	-rm -f ./$(DEPDIR)/psk-file.Po
+	-rm -f ./$(DEPDIR)/psk-importer.Po
 	-rm -f ./$(DEPDIR)/pskself.Po
 	-rm -f ./$(DEPDIR)/pskself2.Po
 	-rm -f ./$(DEPDIR)/pubkey-import-export.Po
@@ -13494,6 +13759,7 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f ./$(DEPDIR)/tls-etm.Po
 	-rm -f ./$(DEPDIR)/tls-ext-not-in-dtls.Po
 	-rm -f ./$(DEPDIR)/tls-ext-register.Po
+	-rm -f ./$(DEPDIR)/tls-force-ems.Po
 	-rm -f ./$(DEPDIR)/tls-force-etm.Po
 	-rm -f ./$(DEPDIR)/tls-neg-ext-key.Po
 	-rm -f ./$(DEPDIR)/tls-neg-ext4-key.Po
@@ -13524,6 +13790,7 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f ./$(DEPDIR)/tls12-rehandshake-cert-auto.Po
 	-rm -f ./$(DEPDIR)/tls12-rehandshake-cert.Po
 	-rm -f ./$(DEPDIR)/tls12-rehandshake-set-prio.Po
+	-rm -f ./$(DEPDIR)/tls12-rehandshake-ticket.Po
 	-rm -f ./$(DEPDIR)/tls12-server-kx-neg.Po
 	-rm -f ./$(DEPDIR)/tls12_resume_anon-resume.Po
 	-rm -f ./$(DEPDIR)/tls12_resume_psk-resume.Po
@@ -13559,6 +13826,7 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f ./$(DEPDIR)/x509-extensions.Po
 	-rm -f ./$(DEPDIR)/x509-server-verify.Po
 	-rm -f ./$(DEPDIR)/x509-upnconstraint.Po
+	-rm -f ./$(DEPDIR)/x509-verify-duplicate.Po
 	-rm -f ./$(DEPDIR)/x509-verify-with-crl.Po
 	-rm -f ./$(DEPDIR)/x509_altname.Po
 	-rm -f ./$(DEPDIR)/x509cert-ct.Po
@@ -13573,7 +13841,9 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f ./$(DEPDIR)/x509sign-verify-gost.Po
 	-rm -f ./$(DEPDIR)/x509sign-verify-rsa.Po
 	-rm -f ./$(DEPDIR)/x509sign-verify.Po
+	-rm -f ./$(DEPDIR)/xts-key-check.Po
 	-rm -f dtls/$(DEPDIR)/dtls-stress.Po
+	-rm -f pkcs11/$(DEPDIR)/distrust-after.Po
 	-rm -f pkcs11/$(DEPDIR)/gnutls_pcert_list_import_x509_file.Po
 	-rm -f pkcs11/$(DEPDIR)/gnutls_x509_crt_list_import_url.Po
 	-rm -f pkcs11/$(DEPDIR)/import_url_privkey_caps-pkcs11-import-url-privkey.Po
@@ -13594,6 +13864,7 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f pkcs11/$(DEPDIR)/pkcs11-mechanisms.Po
 	-rm -f pkcs11/$(DEPDIR)/pkcs11-mock.Plo
 	-rm -f pkcs11/$(DEPDIR)/pkcs11-mock2.Plo
+	-rm -f pkcs11/$(DEPDIR)/pkcs11-mock3.Plo
 	-rm -f pkcs11/$(DEPDIR)/pkcs11-obj-import.Po
 	-rm -f pkcs11/$(DEPDIR)/pkcs11-obj-raw.Po
 	-rm -f pkcs11/$(DEPDIR)/pkcs11-pin-func.Po
@@ -13674,19 +13945,18 @@ uninstall-am:
 .PHONY: $(am__recursive_targets) CTAGS GTAGS TAGS all all-am \
 	am--depfiles check check-TESTS check-am clean \
 	clean-checkPROGRAMS clean-generic clean-libtool \
-	clean-noinstLTLIBRARIES clean-noinstPROGRAMS cscopelist-am \
-	ctags ctags-am distclean distclean-compile distclean-generic \
-	distclean-libtool distclean-local distclean-tags distdir dvi \
-	dvi-am html html-am info info-am install install-am \
-	install-data install-data-am install-dvi install-dvi-am \
-	install-exec install-exec-am install-html install-html-am \
-	install-info install-info-am install-man install-pdf \
-	install-pdf-am install-ps install-ps-am install-strip \
-	installcheck installcheck-am installdirs installdirs-am \
-	maintainer-clean maintainer-clean-generic mostlyclean \
-	mostlyclean-compile mostlyclean-generic mostlyclean-libtool \
-	pdf pdf-am ps ps-am recheck tags tags-am uninstall \
-	uninstall-am
+	clean-noinstLTLIBRARIES cscopelist-am ctags ctags-am distclean \
+	distclean-compile distclean-generic distclean-libtool \
+	distclean-local distclean-tags distdir dvi dvi-am html html-am \
+	info info-am install install-am install-data install-data-am \
+	install-dvi install-dvi-am install-exec install-exec-am \
+	install-html install-html-am install-info install-info-am \
+	install-man install-pdf install-pdf-am install-ps \
+	install-ps-am install-strip installcheck installcheck-am \
+	installdirs installdirs-am maintainer-clean \
+	maintainer-clean-generic mostlyclean mostlyclean-compile \
+	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
+	recheck tags tags-am uninstall uninstall-am
 
 .PRECIOUS: Makefile
 

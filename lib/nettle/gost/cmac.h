@@ -30,14 +30,14 @@
 
    You should have received copies of the GNU General Public License and
    the GNU Lesser General Public License along with this program.  If
-   not, see http://www.gnu.org/licenses/.
+   not, see https://www.gnu.org/licenses/.
 */
 
 #ifndef GOST_CMAC_H_INCLUDED
 #define GOST_CMAC_H_INCLUDED
 
 #if HAVE_CONFIG_H
-# include <config.h>
+#include <config.h>
 #endif
 
 #ifndef HAVE_NETTLE_CMAC_MAGMA_UPDATE
@@ -53,26 +53,20 @@ extern "C" {
 
 struct cmac_magma_ctx CMAC64_CTX(struct magma_ctx);
 
-void
-cmac_magma_set_key(struct cmac_magma_ctx *ctx, const uint8_t *key);
+void cmac_magma_set_key(struct cmac_magma_ctx *ctx, const uint8_t *key);
 
-void
-cmac_magma_update(struct cmac_magma_ctx *ctx,
-		  size_t length, const uint8_t *data);
+void cmac_magma_update(struct cmac_magma_ctx *ctx, size_t length,
+		       const uint8_t *data);
 
-void
-cmac_magma_digest(struct cmac_magma_ctx *ctx,
-		  size_t length, uint8_t *digest);
+void cmac_magma_digest(struct cmac_magma_ctx *ctx, size_t length,
+		       uint8_t *digest);
 
 #ifdef __cplusplus
 }
 #endif
-
 #endif /* HAVE_NETTLE_CMAC_MAGMA_UPDATE */
-
 #ifndef HAVE_NETTLE_CMAC_KUZNYECHIK_UPDATE
 #include "kuznyechik.h"
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -83,21 +77,17 @@ extern "C" {
 
 struct cmac_kuznyechik_ctx CMAC128_CTX(struct kuznyechik_ctx);
 
-void
-cmac_kuznyechik_set_key(struct cmac_kuznyechik_ctx *ctx, const uint8_t *key);
+void cmac_kuznyechik_set_key(struct cmac_kuznyechik_ctx *ctx,
+			     const uint8_t *key);
 
-void
-cmac_kuznyechik_update(struct cmac_kuznyechik_ctx *ctx,
-		       size_t length, const uint8_t *data);
+void cmac_kuznyechik_update(struct cmac_kuznyechik_ctx *ctx, size_t length,
+			    const uint8_t *data);
 
-void
-cmac_kuznyechik_digest(struct cmac_kuznyechik_ctx *ctx,
-		       size_t length, uint8_t *digest);
+void cmac_kuznyechik_digest(struct cmac_kuznyechik_ctx *ctx, size_t length,
+			    uint8_t *digest);
 
 #ifdef __cplusplus
 }
 #endif
-
 #endif
-
 #endif /* CMAC_H_INCLUDED */

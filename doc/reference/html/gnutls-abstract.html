@@ -1153,13 +1153,13 @@
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-SIGN-ALGO-TO-FLAGS:CAPS"></a><h3>GNUTLS_SIGN_ALGO_TO_FLAGS()</h3>
-<pre class="programlisting">#define GNUTLS_SIGN_ALGO_TO_FLAGS(sig) (unsigned int)((sig)&lt;&lt;20)
+<pre class="programlisting">#define GNUTLS_SIGN_ALGO_TO_FLAGS(sig) (unsigned int)((sig) &lt;&lt; 20)
 </pre>
 </div>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-FLAGS-TO-SIGN-ALGO:CAPS"></a><h3>GNUTLS_FLAGS_TO_SIGN_ALGO()</h3>
-<pre class="programlisting">#define GNUTLS_FLAGS_TO_SIGN_ALGO(flags) (unsigned int)((flags)&gt;&gt;20)
+<pre class="programlisting">#define GNUTLS_FLAGS_TO_SIGN_ALGO(flags) (unsigned int)((flags) &gt;&gt; 20)
 </pre>
 </div>
 <hr>
@@ -1593,7 +1593,7 @@ gnutls_pubkey_import_openpgp (<em class="parameter"><code><a class="link" href="
 gnutls_pubkey_import_openpgp_raw (<em class="parameter"><code><a class="link" href="gnutls-gnutls.html#gnutls-pubkey-t" title="gnutls_pubkey_t"><span class="type">gnutls_pubkey_t</span></a> pkey</code></em>,
                                   <em class="parameter"><code>const <a class="link" href="gnutls-gnutls.html#gnutls-datum-t" title="gnutls_datum_t"><span class="type">gnutls_datum_t</span></a> *data</code></em>,
                                   <em class="parameter"><code><a class="link" href="gnutls-openpgp.html#gnutls-openpgp-crt-fmt-t" title="enum gnutls_openpgp_crt_fmt_t"><span class="type">gnutls_openpgp_crt_fmt_t</span></a> format</code></em>,
-                                  <em class="parameter"><code>const <span class="type">gnutls_openpgp_keyid_t</span> keyid</code></em>,
+                                  <em class="parameter"><code>const <a class="link" href="gnutls-openpgp.html#gnutls-openpgp-keyid-t" title="gnutls_openpgp_keyid_t"><span class="type">gnutls_openpgp_keyid_t</span></a> keyid</code></em>,
                                   <em class="parameter"><code>unsigned <span class="type">int</span> flags</code></em>);</pre>
 <p>This function is no-op.</p>
 <div class="refsect3">
@@ -2668,8 +2668,7 @@ negative error value.</p>
 <hr>
 <div class="refsect2">
 <a name="gnutls-pubkey-import-pkcs11-url"></a><h3>gnutls_pubkey_import_pkcs11_url()</h3>
-<pre class="programlisting">#define gnutls_pubkey_import_pkcs11_url(key, url, flags) gnutls_pubkey_import_url(key, url, flags)
-</pre>
+<pre class="programlisting">#define             gnutls_pubkey_import_pkcs11_url(key, url, flags)</pre>
 <p>This function will import a PKCS 11 certificate to a <a class="link" href="gnutls-gnutls.html#gnutls-pubkey-t" title="gnutls_pubkey_t"><span class="type">gnutls_pubkey_t</span></a>
 structure.</p>
 <div class="refsect3">
@@ -3278,8 +3277,7 @@ gnutls_privkey_deinit (<em class="parameter"><code><a class="link" href="gnutls-
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-SUBGROUP-TO-BITS:CAPS"></a><h3>GNUTLS_SUBGROUP_TO_BITS()</h3>
-<pre class="programlisting">#define GNUTLS_SUBGROUP_TO_BITS(group, subgroup) (unsigned int)((subgroup&lt;&lt;16)|(group))
-</pre>
+<pre class="programlisting">#define             GNUTLS_SUBGROUP_TO_BITS(group, subgroup)</pre>
 </div>
 <hr>
 <div class="refsect2">
@@ -3296,7 +3294,7 @@ gnutls_privkey_deinit (<em class="parameter"><code><a class="link" href="gnutls-
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-BITS-HAVE-SUBGROUP:CAPS"></a><h3>GNUTLS_BITS_HAVE_SUBGROUP()</h3>
-<pre class="programlisting">#define GNUTLS_BITS_HAVE_SUBGROUP(bits) ((bits) &amp; 0xFFFF0000)
+<pre class="programlisting">#define GNUTLS_BITS_HAVE_SUBGROUP(bits) ((bits)&amp;0xFFFF0000)
 </pre>
 </div>
 <hr>
@@ -4064,7 +4062,7 @@ negative error value.</p>
 gnutls_privkey_import_openpgp_raw (<em class="parameter"><code><a class="link" href="gnutls-gnutls.html#gnutls-privkey-t" title="gnutls_privkey_t"><span class="type">gnutls_privkey_t</span></a> pkey</code></em>,
                                    <em class="parameter"><code>const <a class="link" href="gnutls-gnutls.html#gnutls-datum-t" title="gnutls_datum_t"><span class="type">gnutls_datum_t</span></a> *data</code></em>,
                                    <em class="parameter"><code><a class="link" href="gnutls-openpgp.html#gnutls-openpgp-crt-fmt-t" title="enum gnutls_openpgp_crt_fmt_t"><span class="type">gnutls_openpgp_crt_fmt_t</span></a> format</code></em>,
-                                   <em class="parameter"><code>const <span class="type">gnutls_openpgp_keyid_t</span> keyid</code></em>,
+                                   <em class="parameter"><code>const <a class="link" href="gnutls-openpgp.html#gnutls-openpgp-keyid-t" title="gnutls_openpgp_keyid_t"><span class="type">gnutls_openpgp_keyid_t</span></a> keyid</code></em>,
                                    <em class="parameter"><code>const <span class="type">char</span> *password</code></em>);</pre>
 <p>This function is no-op.</p>
 <div class="refsect3">
@@ -6277,7 +6275,7 @@ negative error value.</p>
 gnutls_pcert_import_openpgp_raw (<em class="parameter"><code><a class="link" href="gnutls-abstract.html#gnutls-pcert-st" title="gnutls_pcert_st"><span class="type">gnutls_pcert_st</span></a> *pcert</code></em>,
                                  <em class="parameter"><code>const <a class="link" href="gnutls-gnutls.html#gnutls-datum-t" title="gnutls_datum_t"><span class="type">gnutls_datum_t</span></a> *cert</code></em>,
                                  <em class="parameter"><code><a class="link" href="gnutls-openpgp.html#gnutls-openpgp-crt-fmt-t" title="enum gnutls_openpgp_crt_fmt_t"><span class="type">gnutls_openpgp_crt_fmt_t</span></a> format</code></em>,
-                                 <em class="parameter"><code><span class="type">gnutls_openpgp_keyid_t</span> keyid</code></em>,
+                                 <em class="parameter"><code><a class="link" href="gnutls-openpgp.html#gnutls-openpgp-keyid-t" title="gnutls_openpgp_keyid_t"><span class="type">gnutls_openpgp_keyid_t</span></a> keyid</code></em>,
                                  <em class="parameter"><code>unsigned <span class="type">int</span> flags</code></em>);</pre>
 <p>This function is no-op.</p>
 <div class="refsect3">
@@ -6848,19 +6846,19 @@ negative error value.</p>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-PRIVKEY-INFO-SIGN-ALGO:CAPS"></a><h3>GNUTLS_PRIVKEY_INFO_SIGN_ALGO</h3>
-<pre class="programlisting">#define GNUTLS_PRIVKEY_INFO_SIGN_ALGO (1&lt;&lt;1)
+<pre class="programlisting">#define GNUTLS_PRIVKEY_INFO_SIGN_ALGO (1 &lt;&lt; 1)
 </pre>
 </div>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-PRIVKEY-INFO-HAVE-SIGN-ALGO:CAPS"></a><h3>GNUTLS_PRIVKEY_INFO_HAVE_SIGN_ALGO</h3>
-<pre class="programlisting">#define GNUTLS_PRIVKEY_INFO_HAVE_SIGN_ALGO (1&lt;&lt;2)
+<pre class="programlisting">#define GNUTLS_PRIVKEY_INFO_HAVE_SIGN_ALGO (1 &lt;&lt; 2)
 </pre>
 </div>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-PRIVKEY-INFO-PK-ALGO-BITS:CAPS"></a><h3>GNUTLS_PRIVKEY_INFO_PK_ALGO_BITS</h3>
-<pre class="programlisting">#define GNUTLS_PRIVKEY_INFO_PK_ALGO_BITS (1&lt;&lt;3)
+<pre class="programlisting">#define GNUTLS_PRIVKEY_INFO_PK_ALGO_BITS (1 &lt;&lt; 3)
 </pre>
 </div>
 <hr>

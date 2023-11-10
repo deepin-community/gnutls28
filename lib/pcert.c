@@ -44,8 +44,8 @@
  *
  * Since: 3.0
  **/
-int gnutls_pcert_import_x509(gnutls_pcert_st * pcert,
-			     gnutls_x509_crt_t crt, unsigned int flags)
+int gnutls_pcert_import_x509(gnutls_pcert_st *pcert, gnutls_x509_crt_t crt,
+			     unsigned int flags)
 {
 	int ret;
 
@@ -54,9 +54,7 @@ int gnutls_pcert_import_x509(gnutls_pcert_st * pcert,
 	pcert->type = GNUTLS_CRT_X509;
 	pcert->cert.data = NULL;
 
-	ret =
-	    gnutls_x509_crt_export2(crt, GNUTLS_X509_FMT_DER,
-				    &pcert->cert);
+	ret = gnutls_x509_crt_export2(crt, GNUTLS_X509_FMT_DER, &pcert->cert);
 	if (ret < 0) {
 		ret = gnutls_assert_val(ret);
 		goto cleanup;
@@ -78,7 +76,7 @@ int gnutls_pcert_import_x509(gnutls_pcert_st * pcert,
 
 	return 0;
 
-      cleanup:
+cleanup:
 	_gnutls_free_datum(&pcert->cert);
 
 	return ret;
@@ -106,7 +104,7 @@ int gnutls_pcert_import_x509(gnutls_pcert_st * pcert,
  *
  * Since: 3.4.0
  **/
-int gnutls_pcert_import_x509_list(gnutls_pcert_st * pcert_list,
+int gnutls_pcert_import_x509_list(gnutls_pcert_st *pcert_list,
 				  gnutls_x509_crt_t *crt, unsigned *ncrt,
 				  unsigned int flags)
 {
@@ -134,7 +132,7 @@ int gnutls_pcert_import_x509_list(gnutls_pcert_st * pcert_list,
 		}
 	}
 
-	for (i=0;i<*ncrt;i++) {
+	for (i = 0; i < *ncrt; i++) {
 		ret = gnutls_pcert_import_x509(&pcert_list[i], s[i], 0);
 		if (ret < 0) {
 			current = i;
@@ -144,12 +142,11 @@ int gnutls_pcert_import_x509_list(gnutls_pcert_st * pcert_list,
 
 	return 0;
 
- cleanup:
-	for (i=0;i<current;i++) {
+cleanup:
+	for (i = 0; i < current; i++) {
 		gnutls_pcert_deinit(&pcert_list[i]);
 	}
 	return ret;
-
 }
 
 /**
@@ -174,12 +171,11 @@ int gnutls_pcert_import_x509_list(gnutls_pcert_st * pcert_list,
  *
  * Since: 3.0
  **/
-int
-gnutls_pcert_list_import_x509_raw(gnutls_pcert_st *pcert_list,
-				  unsigned int *pcert_list_size,
-				  const gnutls_datum_t *data,
-				  gnutls_x509_crt_fmt_t format,
-				  unsigned int flags)
+int gnutls_pcert_list_import_x509_raw(gnutls_pcert_st *pcert_list,
+				      unsigned int *pcert_list_size,
+				      const gnutls_datum_t *data,
+				      gnutls_x509_crt_fmt_t format,
+				      unsigned int flags)
 {
 	int ret;
 	unsigned int i = 0, j;
@@ -191,9 +187,8 @@ gnutls_pcert_list_import_x509_raw(gnutls_pcert_st *pcert_list,
 	if (crt == NULL)
 		return gnutls_assert_val(GNUTLS_E_MEMORY_ERROR);
 
-	ret =
-	    gnutls_x509_crt_list_import(crt, pcert_list_size, data, format,
-					flags);
+	ret = gnutls_x509_crt_list_import(crt, pcert_list_size, data, format,
+					  flags);
 	if (ret < 0) {
 		ret = gnutls_assert_val(ret);
 		goto cleanup_crt;
@@ -210,18 +205,17 @@ gnutls_pcert_list_import_x509_raw(gnutls_pcert_st *pcert_list,
 	ret = 0;
 	goto cleanup;
 
- cleanup_pcert:
+cleanup_pcert:
 	for (j = 0; j < i; j++)
 		gnutls_pcert_deinit(&pcert_list[j]);
 
- cleanup:
+cleanup:
 	for (i = 0; i < *pcert_list_size; i++)
 		gnutls_x509_crt_deinit(crt[i]);
 
- cleanup_crt:
+cleanup_crt:
 	gnutls_free(crt);
 	return ret;
-
 }
 
 /**
@@ -246,25 +240,26 @@ gnutls_pcert_list_import_x509_raw(gnutls_pcert_st *pcert_list,
  *
  * Since: 3.6.3
  **/
-int gnutls_pcert_list_import_x509_file(gnutls_pcert_st *pcert_list,
-				       unsigned *pcert_list_size,
-				       const char *file,
-				       gnutls_x509_crt_fmt_t format,
-				       gnutls_pin_callback_t pin_fn,
-				       void *pin_fn_userdata,
-				       unsigned int flags)
+int gnutls_pcert_list_import_x509_file(
+	gnutls_pcert_st *pcert_list, unsigned *pcert_list_size,
+	const char *file, gnutls_x509_crt_fmt_t format,
+	gnutls_pin_callback_t pin_fn, void *pin_fn_userdata, unsigned int flags)
 {
 	int ret, ret2;
 	unsigned i;
 	gnutls_x509_crt_t *crts = NULL;
 	unsigned crts_size = 0;
-	gnutls_datum_t data = {NULL, 0};
+	gnutls_datum_t data = { NULL, 0 };
 
 	if (gnutls_url_is_supported(file) != 0) {
-		ret = gnutls_x509_crt_list_import_url(&crts, &crts_size, file, pin_fn, pin_fn_userdata, 0);
+		ret = gnutls_x509_crt_list_import_url(
+			&crts, &crts_size, file, pin_fn, pin_fn_userdata, 0);
 		if (ret < 0) {
-			ret2 = gnutls_x509_crt_list_import_url(&crts, &crts_size, file, pin_fn, pin_fn_userdata, GNUTLS_PKCS11_OBJ_FLAG_LOGIN);
-			if (ret2 >= 0) ret = ret2;
+			ret2 = gnutls_x509_crt_list_import_url(
+				&crts, &crts_size, file, pin_fn,
+				pin_fn_userdata, GNUTLS_PKCS11_OBJ_FLAG_LOGIN);
+			if (ret2 >= 0)
+				ret = ret2;
 		}
 
 		if (ret < 0) {
@@ -277,7 +272,9 @@ int gnutls_pcert_list_import_x509_file(gnutls_pcert_st *pcert_list,
 		if (ret < 0)
 			return gnutls_assert_val(ret);
 
-		ret = gnutls_x509_crt_list_import2(&crts, &crts_size, &data, format, flags|GNUTLS_X509_CRT_LIST_SORT);
+		ret = gnutls_x509_crt_list_import2(
+			&crts, &crts_size, &data, format,
+			flags | GNUTLS_X509_CRT_LIST_SORT);
 		if (ret < 0) {
 			gnutls_assert();
 			goto cleanup;
@@ -290,7 +287,8 @@ int gnutls_pcert_list_import_x509_file(gnutls_pcert_st *pcert_list,
 		goto cleanup;
 	}
 
-	ret = gnutls_pcert_import_x509_list(pcert_list, crts, &crts_size, flags);
+	ret = gnutls_pcert_import_x509_list(pcert_list, crts, &crts_size,
+					    flags);
 	if (ret < 0) {
 		gnutls_assert();
 		goto cleanup;
@@ -299,13 +297,12 @@ int gnutls_pcert_list_import_x509_file(gnutls_pcert_st *pcert_list,
 
 	ret = 0;
 cleanup:
-	for (i=0;i<crts_size;i++)
+	for (i = 0; i < crts_size; i++)
 		gnutls_x509_crt_deinit(crts[i]);
 	gnutls_free(crts);
 	gnutls_free(data.data);
 	return ret;
 }
-
 
 /**
  * gnutls_pcert_import_x509_raw:
@@ -323,8 +320,8 @@ cleanup:
  *
  * Since: 3.0
  **/
-int gnutls_pcert_import_x509_raw(gnutls_pcert_st * pcert,
-				 const gnutls_datum_t * cert,
+int gnutls_pcert_import_x509_raw(gnutls_pcert_st *pcert,
+				 const gnutls_datum_t *cert,
 				 gnutls_x509_crt_fmt_t format,
 				 unsigned int flags)
 {
@@ -351,7 +348,7 @@ int gnutls_pcert_import_x509_raw(gnutls_pcert_st * pcert,
 
 	ret = 0;
 
-      cleanup:
+cleanup:
 	gnutls_x509_crt_deinit(crt);
 
 	return ret;
@@ -374,8 +371,8 @@ int gnutls_pcert_import_x509_raw(gnutls_pcert_st * pcert,
  *
  * Since: 3.6.6
  **/
-int gnutls_pcert_import_rawpk(gnutls_pcert_st* pcert,
-			     gnutls_pubkey_t pubkey, unsigned int flags)
+int gnutls_pcert_import_rawpk(gnutls_pcert_st *pcert, gnutls_pubkey_t pubkey,
+			      unsigned int flags)
 {
 	int ret;
 
@@ -426,10 +423,10 @@ int gnutls_pcert_import_rawpk(gnutls_pcert_st* pcert,
  *
  * Since: 3.6.6
  **/
-int gnutls_pcert_import_rawpk_raw(gnutls_pcert_st* pcert,
-				    const gnutls_datum_t* rawpubkey,
-				    gnutls_x509_crt_fmt_t format,
-				    unsigned int key_usage, unsigned int flags)
+int gnutls_pcert_import_rawpk_raw(gnutls_pcert_st *pcert,
+				  const gnutls_datum_t *rawpubkey,
+				  gnutls_x509_crt_fmt_t format,
+				  unsigned int key_usage, unsigned int flags)
 {
 	int ret;
 
@@ -443,7 +440,6 @@ int gnutls_pcert_import_rawpk_raw(gnutls_pcert_st* pcert,
 	if (ret < 0) {
 		return gnutls_assert_val(ret);
 	}
-
 	// Convert our raw public-key to a gnutls_pubkey_t structure
 	ret = gnutls_pubkey_import(pcert->pubkey, rawpubkey, format);
 	if (ret < 0) {
@@ -459,9 +455,8 @@ int gnutls_pcert_import_rawpk_raw(gnutls_pcert_st* pcert,
 	 * convert if necessary.
 	 */
 	if (format == GNUTLS_X509_FMT_PEM) {
-		ret = _gnutls_fbase64_decode(PEM_PK,
-					rawpubkey->data, rawpubkey->size,
-					&pcert->cert);
+		ret = _gnutls_fbase64_decode(PEM_PK, rawpubkey->data,
+					     rawpubkey->size, &pcert->cert);
 
 		if (ret < 0) {
 			gnutls_pubkey_deinit(pcert->pubkey);
@@ -470,7 +465,8 @@ int gnutls_pcert_import_rawpk_raw(gnutls_pcert_st* pcert,
 		}
 	} else {
 		// Directly copy the raw DER data to our pcert
-		ret = _gnutls_set_datum(&pcert->cert, rawpubkey->data, rawpubkey->size);
+		ret = _gnutls_set_datum(&pcert->cert, rawpubkey->data,
+					rawpubkey->size);
 
 		if (ret < 0) {
 			gnutls_pubkey_deinit(pcert->pubkey);
@@ -499,8 +495,7 @@ int gnutls_pcert_import_rawpk_raw(gnutls_pcert_st* pcert,
  *
  * Since: 3.4.0
  */
-int gnutls_pcert_export_x509(gnutls_pcert_st * pcert,
-			     gnutls_x509_crt_t * crt)
+int gnutls_pcert_export_x509(gnutls_pcert_st *pcert, gnutls_x509_crt_t *crt)
 {
 	int ret;
 
@@ -532,7 +527,7 @@ int gnutls_pcert_export_x509(gnutls_pcert_st * pcert,
  *
  * Since: 3.0
  **/
-void gnutls_pcert_deinit(gnutls_pcert_st * pcert)
+void gnutls_pcert_deinit(gnutls_pcert_st *pcert)
 {
 	if (pcert->pubkey)
 		gnutls_pubkey_deinit(pcert->pubkey);
@@ -543,23 +538,20 @@ void gnutls_pcert_deinit(gnutls_pcert_st * pcert)
 /* Converts the first certificate for the cert_auth_info structure
  * to a pcert.
  */
-int
-_gnutls_get_auth_info_pcert(gnutls_pcert_st * pcert,
-			    gnutls_certificate_type_t type,
-			    cert_auth_info_t info)
+int _gnutls_get_auth_info_pcert(gnutls_pcert_st *pcert,
+				gnutls_certificate_type_t type,
+				cert_auth_info_t info)
 {
 	switch (type) {
-		case GNUTLS_CRT_X509:
-			return gnutls_pcert_import_x509_raw(pcert,
-							&info->raw_certificate_list[0],
-							GNUTLS_X509_FMT_DER,
-							0);
-		case GNUTLS_CRT_RAWPK:
-			return gnutls_pcert_import_rawpk_raw(pcert,
-							&info->raw_certificate_list[0],
-							GNUTLS_X509_FMT_DER,
-							0, 0);
-		default:
-			return gnutls_assert_val(GNUTLS_E_INTERNAL_ERROR);
+	case GNUTLS_CRT_X509:
+		return gnutls_pcert_import_x509_raw(
+			pcert, &info->raw_certificate_list[0],
+			GNUTLS_X509_FMT_DER, 0);
+	case GNUTLS_CRT_RAWPK:
+		return gnutls_pcert_import_rawpk_raw(
+			pcert, &info->raw_certificate_list[0],
+			GNUTLS_X509_FMT_DER, 0, 0);
+	default:
+		return gnutls_assert_val(GNUTLS_E_INTERNAL_ERROR);
 	}
 }

@@ -37,6 +37,7 @@ None:
        --infile=file          Input file
 				- file must pre-exist
        --outfile=str          Output file
+       --attime=str           Perform validation at the timestamp instead of the system time
 
 Certificate related options:
 
@@ -173,6 +174,16 @@ Please send bug reports to:  <bugs@@gnutls.org>
 This is the ``enable debugging'' option.
 This option takes a ArgumentType.NUMBER argument.
 Specifies the debug level.
+@subsubheading attime option.
+@anchor{certtool attime}
+
+This is the ``perform validation at the timestamp instead of the system time'' option.
+This option takes a ArgumentType.STRING argument @file{timestamp}.
+timestamp is an instance in time encoded as Unix time or in a human
+ readable timestring such as "29 Feb 2004", "2004-02-29".
+Full documentation available at 
+<https://www.gnu.org/software/coreutils/manual/html_node/Date-input-formats.html>
+or locally via info '(coreutils) date invocation'.
 @anchor{certtool cert-options}
 @subsubheading cert-options options
 Certificate related options.

@@ -50,10 +50,9 @@ typedef struct {
 static int pull_timeout_func(gnutls_transport_ptr_t ptr, unsigned int ms);
 static ssize_t push_func(gnutls_transport_ptr_t p, const void *data,
 			 size_t size);
-static ssize_t pull_func(gnutls_transport_ptr_t p, void *data,
-			 size_t size);
+static ssize_t pull_func(gnutls_transport_ptr_t p, void *data, size_t size);
 
-#define MAX_BUFFER 255		/* Longest string to echo */
+#define MAX_BUFFER 255 /* Longest string to echo */
 
 /* record layer indication for a handshake packet */
 #define HANDSHAKE_CONTENT_TYPE 22
@@ -95,55 +94,50 @@ void udp_server(const char *name, int port, int mtu)
 			continue;
 
 		cli_addr_size = sizeof(cli_addr);
-		ret =
-		    recvfrom(sock, buffer, sizeof(buffer)-1, MSG_PEEK,
-			     (struct sockaddr *) &cli_addr,
-			     &cli_addr_size);
+		ret = recvfrom(sock, buffer, sizeof(buffer) - 1, MSG_PEEK,
+			       (struct sockaddr *)&cli_addr, &cli_addr_size);
 
 		/* only accept a valid client hello */
 		if (ret > HANDSHAKE_TYPE_POS &&
 		    buffer[RECORD_CONTENT_POS] == HANDSHAKE_CONTENT_TYPE &&
-		    buffer[HANDSHAKE_TYPE_POS] == GNUTLS_HANDSHAKE_CLIENT_HELLO) {
+		    buffer[HANDSHAKE_TYPE_POS] ==
+			    GNUTLS_HANDSHAKE_CLIENT_HELLO) {
 			if (!HAVE_OPT(NOCOOKIE)) {
 				memset(&prestate, 0, sizeof(prestate));
-				ret =
-				    gnutls_dtls_cookie_verify(&cookie_key,
-							      &cli_addr,
-							      cli_addr_size,
-							      buffer, ret,
-							      &prestate);
-				if (ret < 0) {	/* cookie not valid */
+				ret = gnutls_dtls_cookie_verify(
+					&cookie_key, &cli_addr, cli_addr_size,
+					buffer, ret, &prestate);
+				if (ret < 0) { /* cookie not valid */
 					priv_data_st s;
 
 					memset(&s, 0, sizeof(s));
 					s.fd = sock;
-					s.cli_addr = (void *) &cli_addr;
+					s.cli_addr = (void *)&cli_addr;
 					s.cli_addr_size = cli_addr_size;
 
-					printf
-					    ("Sending hello verify request to %s\n",
-					     human_addr((struct sockaddr *)
-							&cli_addr,
-							cli_addr_size, buffer,
-							sizeof(buffer)-1));
-					gnutls_dtls_cookie_send(&cookie_key,
-								&cli_addr,
-								cli_addr_size,
-								&prestate,
-								(gnutls_transport_ptr_t)
-								&s, push_func);
+					printf("Sending hello verify request to %s\n",
+					       human_addr((struct sockaddr
+								   *)&cli_addr,
+							  cli_addr_size, buffer,
+							  sizeof(buffer) - 1));
+					gnutls_dtls_cookie_send(
+						&cookie_key, &cli_addr,
+						cli_addr_size, &prestate,
+						(gnutls_transport_ptr_t)&s,
+						push_func);
 
 					/* discard peeked data */
-					recvfrom(sock, buffer, sizeof(buffer)-1, 0,
-						 (struct sockaddr *) &cli_addr,
+					recvfrom(sock, buffer,
+						 sizeof(buffer) - 1, 0,
+						 (struct sockaddr *)&cli_addr,
 						 &cli_addr_size);
 					continue;
 				}
 			}
 			printf("Accepted connection from %s\n",
-			       human_addr((struct sockaddr *)
-					  &cli_addr, sizeof(cli_addr),
-					  buffer, sizeof(buffer)-1));
+			       human_addr((struct sockaddr *)&cli_addr,
+					  sizeof(cli_addr), buffer,
+					  sizeof(buffer) - 1));
 		} else
 			continue;
 
@@ -167,9 +161,7 @@ void udp_server(const char *name, int port, int mtu)
 
 		do {
 			ret = gnutls_handshake(session);
-		}
-		while (ret == GNUTLS_E_AGAIN
-		       || ret == GNUTLS_E_INTERRUPTED);
+		} while (ret == GNUTLS_E_AGAIN || ret == GNUTLS_E_INTERRUPTED);
 
 		if (ret < 0) {
 			fprintf(stderr, "Error in handshake(): %s\n",
@@ -180,26 +172,21 @@ void udp_server(const char *name, int port, int mtu)
 
 		for (;;) {
 			do {
-				ret =
-				    gnutls_record_recv_seq(session, buffer,
-							   sizeof(buffer)-1,
-							   sequence);
-				if (ret ==
-				    GNUTLS_E_HEARTBEAT_PING_RECEIVED)
+				ret = gnutls_record_recv_seq(session, buffer,
+							     sizeof(buffer) - 1,
+							     sequence);
+				if (ret == GNUTLS_E_HEARTBEAT_PING_RECEIVED)
 					gnutls_heartbeat_pong(session, 0);
-			}
-			while (ret == GNUTLS_E_INTERRUPTED
-			       || ret == GNUTLS_E_AGAIN
-			       || ret == GNUTLS_E_HEARTBEAT_PING_RECEIVED);
+			} while (ret == GNUTLS_E_INTERRUPTED ||
+				 ret == GNUTLS_E_AGAIN ||
+				 ret == GNUTLS_E_HEARTBEAT_PING_RECEIVED);
 
 			if (ret == GNUTLS_E_REHANDSHAKE) {
-				fprintf(stderr,
-					"*** Received hello message\n");
+				fprintf(stderr, "*** Received hello message\n");
 				do {
 					ret = gnutls_handshake(session);
-				}
-				while (ret == GNUTLS_E_INTERRUPTED ||
-				       ret == GNUTLS_E_AGAIN);
+				} while (ret == GNUTLS_E_INTERRUPTED ||
+					 ret == GNUTLS_E_AGAIN);
 
 				if (ret == 0)
 					continue;
@@ -215,20 +202,17 @@ void udp_server(const char *name, int port, int mtu)
 			}
 
 			buffer[ret] = 0;
-			printf
-			    ("received[%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x]: %s\n",
-			     sequence[0], sequence[1], sequence[2],
-			     sequence[3], sequence[4], sequence[5],
-			     sequence[6], sequence[7], buffer);
+			printf("received[%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x]: %s\n",
+			       sequence[0], sequence[1], sequence[2],
+			       sequence[3], sequence[4], sequence[5],
+			       sequence[6], sequence[7], buffer);
 
-			if (check_command(session, buffer, disable_client_cert) == 0) {
+			if (check_command(session, buffer,
+					  disable_client_cert) == 0) {
 				/* reply back */
-				ret =
-				    gnutls_record_send(session, buffer,
-						       ret);
+				ret = gnutls_record_send(session, buffer, ret);
 				if (ret < 0) {
-					fprintf(stderr,
-						"Error in send(): %s\n",
+					fprintf(stderr, "Error in send(): %s\n",
 						gnutls_strerror(ret));
 					break;
 				}
@@ -265,13 +249,11 @@ static int pull_timeout_func(gnutls_transport_ptr_t ptr, unsigned int ms)
 	 * from 
 	 */
 	cli_addr_size = sizeof(cli_addr);
-	ret =
-	    recvfrom(priv->fd, &c, 1, MSG_PEEK,
-		     (struct sockaddr *) &cli_addr, &cli_addr_size);
+	ret = recvfrom(priv->fd, &c, 1, MSG_PEEK, (struct sockaddr *)&cli_addr,
+		       &cli_addr_size);
 	if (ret > 0) {
-		if (cli_addr_size == priv->cli_addr_size
-		    && memcmp(&cli_addr, priv->cli_addr,
-			      sizeof(cli_addr)) == 0)
+		if (cli_addr_size == priv->cli_addr_size &&
+		    memcmp(&cli_addr, priv->cli_addr, sizeof(cli_addr)) == 0)
 			return 1;
 	}
 
@@ -283,8 +265,8 @@ static ssize_t push_func(gnutls_transport_ptr_t p, const void *data,
 {
 	priv_data_st *priv = p;
 
-	return sendto(priv->fd, data, size, 0, (struct sockaddr*)priv->cli_addr,
-		      priv->cli_addr_size);
+	return sendto(priv->fd, data, size, 0,
+		      (struct sockaddr *)priv->cli_addr, priv->cli_addr_size);
 }
 
 static ssize_t pull_func(gnutls_transport_ptr_t p, void *data, size_t size)
@@ -296,20 +278,18 @@ static ssize_t pull_func(gnutls_transport_ptr_t p, void *data, size_t size)
 	int ret;
 
 	cli_addr_size = sizeof(cli_addr);
-	ret =
-	    recvfrom(priv->fd, data, size, 0,
-		     (struct sockaddr *) &cli_addr, &cli_addr_size);
+	ret = recvfrom(priv->fd, data, size, 0, (struct sockaddr *)&cli_addr,
+		       &cli_addr_size);
 	if (ret == -1)
 		return ret;
 
-	if (cli_addr_size == priv->cli_addr_size
-	    && memcmp(&cli_addr, priv->cli_addr, sizeof(cli_addr)) == 0)
+	if (cli_addr_size == priv->cli_addr_size &&
+	    memcmp(&cli_addr, priv->cli_addr, sizeof(cli_addr)) == 0)
 		return ret;
 
 	printf("Denied connection from %s\n",
-	       human_addr((struct sockaddr *)
-			  &cli_addr, sizeof(cli_addr), buffer,
-			  sizeof(buffer)));
+	       human_addr((struct sockaddr *)&cli_addr, sizeof(cli_addr),
+			  buffer, sizeof(buffer)));
 
 	gnutls_transport_set_errno(priv->session, EAGAIN);
 	return -1;

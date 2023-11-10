@@ -1,0 +1,40 @@
+From 3b6ec1e01de4e96d36276dfe34ee9e183f285264 Mon Sep 17 00:00:00 2001
+From: Samuel Thibault <samuel.thibault@ens-lyon.org>
+Date: Sun, 6 Aug 2023 20:37:31 +0200
+Subject: [PATCH] Fix build on GNU/Hurd
+
+GNU/Hurd does not define an arbitrary PATH_MAX limitation, so pathbuf
+can define its own abitrary limitation.
+
+Signed-off-by: Samuel Thibault <samuel.thibault@ens-lyon.org>
+---
+ lib/pathbuf.h | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/lib/pathbuf.h b/lib/pathbuf.h
+index 394f1cd2d5..592ecac047 100644
+--- a/lib/pathbuf.h
++++ b/lib/pathbuf.h
+@@ -21,15 +21,19 @@
+  *
+  */
+ 
+ #ifndef GNUTLS_LIB_PATHBUF_H
+ #define GNUTLS_LIB_PATHBUF_H
+ 
+ #include "pathmax.h"
++#ifdef PATH_MAX
+ #define GNUTLS_PATH_MAX PATH_MAX
++#else
++#define GNUTLS_PATH_MAX 1024
++#endif
+ 
+ struct gnutls_pathbuf_st {
+ 	char base[GNUTLS_PATH_MAX + 1];
+ 	char *ptr; /* API */
+ 	size_t len; /* API: NOT including NUL */
+ 	size_t cap; /* including NUL */
+ };
+-- 
+2.40.1
+

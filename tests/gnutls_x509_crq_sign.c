@@ -46,7 +46,7 @@ static unsigned char saved_crq_pem[] =
 	"gf4oXM6OPw==\n"
 	"-----END NEW CERTIFICATE REQUEST-----\n";
 
-const gnutls_datum_t saved_crq = { saved_crq_pem, sizeof(saved_crq_pem)-1 };
+const gnutls_datum_t saved_crq = { saved_crq_pem, sizeof(saved_crq_pem) - 1 };
 
 static unsigned char key_pem[] =
 	"-----BEGIN RSA PRIVATE KEY-----\n"
@@ -64,9 +64,9 @@ static unsigned char key_pem[] =
 	"/iVX2cmMTSh3w3z8MaECQEp0XJWDVKOwcTW6Ajp9SowtmiZ3YDYo1LF9igb4iaLv\n"
 	"sWZGfbnU3ryjvkb6YuFjgtzbZDZHWQCo8/cOtOBmPdk=\n"
 	"-----END RSA PRIVATE KEY-----\n";
-const gnutls_datum_t key = { key_pem, sizeof(key_pem)-1 };
+const gnutls_datum_t key = { key_pem, sizeof(key_pem) - 1 };
 
-static time_t mytime(time_t * t)
+static time_t mytime(time_t *t)
 {
 	time_t then = 1207000800;
 
@@ -135,7 +135,7 @@ static void verify_crq(const gnutls_datum_t *pem)
 	gnutls_x509_crq_t crq;
 
 	assert(gnutls_x509_crq_init(&crq) >= 0);
-	assert(gnutls_x509_crq_import(crq, pem, GNUTLS_X509_FMT_PEM)>=0);
+	assert(gnutls_x509_crq_import(crq, pem, GNUTLS_X509_FMT_PEM) >= 0);
 	assert(gnutls_x509_crq_verify(crq, 0) >= 0);
 	gnutls_x509_crq_deinit(crq);
 }
@@ -155,7 +155,7 @@ void doit(void)
 		printf("%s\n", out.data);
 
 	assert(out.size == saved_crq.size);
-	assert(memcmp(out.data, saved_crq.data, out.size)==0);
+	assert(memcmp(out.data, saved_crq.data, out.size) == 0);
 
 	verify_crq(&out);
 

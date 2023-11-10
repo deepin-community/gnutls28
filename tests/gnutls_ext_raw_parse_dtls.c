@@ -28,7 +28,7 @@
 
 #if defined(_WIN32)
 
-int main()
+int main(void)
 {
 	exit(77);
 }
@@ -70,13 +70,14 @@ static void client_log_func(int level, const char *str)
 static unsigned found_server_name = 0;
 static unsigned found_status_req = 0;
 
-static int ext_callback(void *ctx, unsigned tls_id, const unsigned char *data, unsigned size)
+static int ext_callback(void *ctx, unsigned tls_id, const unsigned char *data,
+			unsigned size)
 {
 	if (tls_id == 0) { /* server name */
 		/* very interesting extension, 4 bytes of sizes
 		 * and 1 byte of type. */
 		unsigned esize = (data[0] << 8) | data[1];
-		assert(esize == strlen(HOSTNAME)+3);
+		assert(esize == strlen(HOSTNAME) + 3);
 
 		size -= 2;
 		data += 2;
@@ -103,12 +104,15 @@ static int ext_callback(void *ctx, unsigned tls_id, const unsigned char *data, u
 }
 
 static int handshake_callback(gnutls_session_t session, unsigned int htype,
-	unsigned post, unsigned int incoming, const gnutls_datum_t *msg)
+			      unsigned post, unsigned int incoming,
+			      const gnutls_datum_t *msg)
 {
 	int ret;
 
 	if (htype == GNUTLS_HANDSHAKE_CLIENT_HELLO && post) {
-		ret = gnutls_ext_raw_parse(NULL, ext_callback, msg, GNUTLS_EXT_RAW_FLAG_DTLS_CLIENT_HELLO);
+		ret = gnutls_ext_raw_parse(
+			NULL, ext_callback, msg,
+			GNUTLS_EXT_RAW_FLAG_DTLS_CLIENT_HELLO);
 
 		assert(ret >= 0);
 	}
@@ -132,22 +136,23 @@ static void client(int fd)
 
 	/* Initialize TLS session
 	 */
-	gnutls_init(&session, GNUTLS_CLIENT|GNUTLS_DATAGRAM);
+	gnutls_init(&session, GNUTLS_CLIENT | GNUTLS_DATAGRAM);
 	gnutls_handshake_set_timeout(session, get_timeout());
 
-	assert(gnutls_priority_set_direct(session, "NORMAL:-VERS-ALL:+VERS-DTLS1.2", NULL)>= 0);
+	assert(gnutls_priority_set_direct(
+		       session, "NORMAL:-VERS-ALL:+VERS-DTLS1.2", NULL) >= 0);
 
 	gnutls_credentials_set(session, GNUTLS_CRD_CERTIFICATE, x509_cred);
 
 	gnutls_transport_set_int(session, fd);
-	assert(gnutls_server_name_set(session, GNUTLS_NAME_DNS, HOSTNAME, strlen(HOSTNAME))>=0);
+	assert(gnutls_server_name_set(session, GNUTLS_NAME_DNS, HOSTNAME,
+				      strlen(HOSTNAME)) >= 0);
 
 	/* Perform the TLS handshake
 	 */
 	do {
 		ret = gnutls_handshake(session);
-	}
-	while (ret < 0 && gnutls_error_is_fatal(ret) == 0);
+	} while (ret < 0 && gnutls_error_is_fatal(ret) == 0);
 
 	if (ret == GNUTLS_E_UNSUPPORTED_SIGNATURE_ALGORITHM) {
 		/* success */
@@ -163,12 +168,12 @@ static void client(int fd)
 
 	if (debug)
 		success("client: TLS version is: %s\n",
-			gnutls_protocol_get_name
-			(gnutls_protocol_get_version(session)));
+			gnutls_protocol_get_name(
+				gnutls_protocol_get_version(session)));
 
 	gnutls_bye(session, GNUTLS_SHUT_WR);
 
-      end:
+end:
 
 	close(fd);
 
@@ -178,7 +183,6 @@ static void client(int fd)
 
 	gnutls_global_deinit();
 }
-
 
 static void server(int fd)
 {
@@ -197,17 +201,18 @@ static void server(int fd)
 
 	gnutls_certificate_allocate_credentials(&x509_cred);
 	gnutls_certificate_set_x509_key_mem(x509_cred, &server_cert,
-					    &server_key,
-					    GNUTLS_X509_FMT_PEM);
+					    &server_key, GNUTLS_X509_FMT_PEM);
 
-	gnutls_init(&session, GNUTLS_SERVER|GNUTLS_DATAGRAM);
+	gnutls_init(&session, GNUTLS_SERVER | GNUTLS_DATAGRAM);
 	gnutls_handshake_set_timeout(session, get_timeout());
 
-	gnutls_handshake_set_hook_function(session, GNUTLS_HANDSHAKE_CLIENT_HELLO,
+	gnutls_handshake_set_hook_function(session,
+					   GNUTLS_HANDSHAKE_CLIENT_HELLO,
 					   GNUTLS_HOOK_POST,
 					   handshake_callback);
 
-	assert(gnutls_priority_set_direct(session, "NORMAL:-VERS-ALL:+VERS-DTLS1.2", NULL)>= 0);
+	assert(gnutls_priority_set_direct(
+		       session, "NORMAL:-VERS-ALL:+VERS-DTLS1.2", NULL) >= 0);
 
 	gnutls_credentials_set(session, GNUTLS_CRD_CERTIFICATE, x509_cred);
 
@@ -226,15 +231,15 @@ static void server(int fd)
 
 	if (debug)
 		success("server: TLS version is: %s\n",
-			gnutls_protocol_get_name
-			(gnutls_protocol_get_version(session)));
+			gnutls_protocol_get_name(
+				gnutls_protocol_get_version(session)));
 
 	assert(found_server_name != 0);
 	assert(found_status_req != 0);
 
 	gnutls_bye(session, GNUTLS_SHUT_WR);
 
- end:
+end:
 	close(fd);
 	gnutls_deinit(session);
 
@@ -288,5 +293,4 @@ void doit(void)
 	return;
 }
 
-
-#endif				/* _WIN32 */
+#endif /* _WIN32 */

@@ -16,8 +16,7 @@
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GnuTLS; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
+ * along with GnuTLS.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 #ifdef HAVE_CONFIG_H
@@ -33,21 +32,21 @@
 
 #include "utils.h"
 
-#define SELF_TEST_SIG(x) \
-	ret = gnutls_oid_to_sign(gnutls_sign_get_oid(x)); \
-	if (ret != x) { \
+#define SELF_TEST_SIG(x)                                             \
+	ret = gnutls_oid_to_sign(gnutls_sign_get_oid(x));            \
+	if (ret != x) {                                              \
 		fail("error testing %s\n", gnutls_sign_get_name(x)); \
 	}
 
-#define SELF_TEST_PK(x) \
-	ret = gnutls_oid_to_pk(gnutls_pk_get_oid(x)); \
-	if (ret != x) { \
+#define SELF_TEST_PK(x)                                            \
+	ret = gnutls_oid_to_pk(gnutls_pk_get_oid(x));              \
+	if (ret != x) {                                            \
 		fail("error testing %s\n", gnutls_pk_get_name(x)); \
 	}
 
-#define SELF_TEST_DIG(x) \
-	ret = gnutls_oid_to_digest(gnutls_digest_get_oid(x)); \
-	if (ret != x) { \
+#define SELF_TEST_DIG(x)                                               \
+	ret = gnutls_oid_to_digest(gnutls_digest_get_oid(x));          \
+	if (ret != x) {                                                \
 		fail("error testing %s\n", gnutls_digest_get_name(x)); \
 	}
 

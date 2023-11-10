@@ -54,12 +54,13 @@ static void try(int rnd)
 	for (i = 0; i <= 65539; i++) {
 		ret = gnutls_rnd(rnd, buf1, sizeof(buf1));
 		if (ret < 0) {
-			fail("Error iterating RNG-%d more than %u times\n", rnd, i);
+			fail("Error iterating RNG-%d more than %u times\n", rnd,
+			     i);
 			exit(1);
 		}
 	}
 
-#define TMP_SIZE (65*1024)
+#define TMP_SIZE (65 * 1024)
 	tmp = malloc(TMP_SIZE);
 	if (tmp == NULL) {
 		fail("memory error\n");
@@ -69,7 +70,8 @@ static void try(int rnd)
 	for (i = 0; i <= 65539; i++) {
 		ret = gnutls_rnd(rnd, tmp, TMP_SIZE);
 		if (ret < 0) {
-			fail("Error iterating RNG-%d more than %u times for %d data\n", rnd, i, TMP_SIZE);
+			fail("Error iterating RNG-%d more than %u times for %d data\n",
+			     rnd, i, TMP_SIZE);
 			exit(1);
 		}
 	}

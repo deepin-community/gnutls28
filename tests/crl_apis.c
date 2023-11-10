@@ -36,7 +36,7 @@
 
 static time_t then = 1207000800;
 
-static time_t mytime(time_t * t)
+static time_t mytime(time_t *t)
 {
 	if (t)
 		*t = then;
@@ -79,10 +79,10 @@ static unsigned char saved_min_crl_pem[] =
 	"-----END X509 CRL-----\n";
 
 const gnutls_datum_t saved_crl = { saved_crl_pem, sizeof(saved_crl_pem) - 1 };
-const gnutls_datum_t saved_min_crl =
-    { saved_min_crl_pem, sizeof(saved_min_crl_pem) - 1 };
+const gnutls_datum_t saved_min_crl = { saved_min_crl_pem,
+				       sizeof(saved_min_crl_pem) - 1 };
 
-static void append_crt(gnutls_x509_crl_t crl, const gnutls_datum_t * pem)
+static void append_crt(gnutls_x509_crl_t crl, const gnutls_datum_t *pem)
 {
 	gnutls_x509_crt_t crt;
 	int ret;
@@ -96,7 +96,7 @@ static void append_crt(gnutls_x509_crl_t crl, const gnutls_datum_t * pem)
 	gnutls_x509_crt_deinit(crt);
 }
 
-static void append_aki(gnutls_x509_crl_t crl, const gnutls_datum_t * pem)
+static void append_aki(gnutls_x509_crl_t crl, const gnutls_datum_t *pem)
 {
 	gnutls_x509_crt_t crt;
 	int ret;
@@ -141,8 +141,8 @@ static void verify_crl(gnutls_x509_crl_t _crl, gnutls_x509_crt_t crt)
 	gnutls_x509_crl_deinit(crl);
 }
 
-static void sign_crl(gnutls_x509_crl_t crl, const gnutls_datum_t * cert,
-		     const gnutls_datum_t * key)
+static void sign_crl(gnutls_x509_crl_t crl, const gnutls_datum_t *cert,
+		     const gnutls_datum_t *key)
 {
 	gnutls_x509_crt_t crt;
 	gnutls_x509_privkey_t pkey;
@@ -158,7 +158,7 @@ static void sign_crl(gnutls_x509_crl_t crl, const gnutls_datum_t * cert,
 	if (ret != 0)
 		fail("gnutls_x509_crl_sign: %s\n", gnutls_strerror(ret));
 
-	then+=10;
+	then += 10;
 
 	verify_crl(crl, crt);
 
@@ -202,12 +202,105 @@ static gnutls_x509_crl_t generate_crl(unsigned skip_optional)
 
 	ret = gnutls_x509_crl_set_number(crl, "\x01", 1);
 	if (ret != 0)
-		fail("gnutls_x509_crl_set_number %d: %s\n",
-		     ret, gnutls_strerror(ret));
+		fail("gnutls_x509_crl_set_number %d: %s\n", ret,
+		     gnutls_strerror(ret));
 
 	sign_crl(crl, &ca3_cert, &ca3_key);
 
 	return crl;
+}
+
+static void verify_issuer(gnutls_x509_crl_t crl,
+			  const gnutls_datum_t *issuer_cert)
+{
+#define DN_MAX_LEN (1024)
+	gnutls_x509_crt_t crt;
+	char *issuer = gnutls_calloc(DN_MAX_LEN, sizeof(char));
+	assert(issuer != NULL);
+	size_t issuer_size = DN_MAX_LEN;
+	assert(gnutls_x509_crt_init(&crt) >= 0);
+	assert(gnutls_x509_crt_import(crt, issuer_cert, GNUTLS_X509_FMT_PEM) >=
+	       0);
+	assert(gnutls_x509_crt_get_issuer_dn(crt, issuer, &issuer_size) >= 0);
+
+	/* issuer check */
+	char *crl_issuer = gnutls_calloc(DN_MAX_LEN, sizeof(char));
+	assert(crl_issuer != NULL);
+	size_t crl_issuer_size = DN_MAX_LEN;
+	assert(gnutls_x509_crl_get_issuer_dn(
+		       crl, crl_issuer, &crl_issuer_size) == GNUTLS_E_SUCCESS);
+	assert(crl_issuer_size == issuer_size &&
+	       memcmp(crl_issuer, issuer, issuer_size) == 0);
+
+	gnutls_datum_t dn;
+	dn.data = NULL;
+	dn.size = 0;
+	assert(gnutls_x509_crl_get_issuer_dn2(crl, &dn) == GNUTLS_E_SUCCESS);
+	assert(dn.size == issuer_size &&
+	       memcmp(dn.data, issuer, issuer_size) == 0);
+	gnutls_free(dn.data);
+	dn.data = NULL;
+	dn.size = 0;
+
+	assert(gnutls_x509_crl_get_issuer_dn3(crl, &dn, 0) == GNUTLS_E_SUCCESS);
+	assert(dn.size == issuer_size &&
+	       memcmp(dn.data, issuer, issuer_size) == 0);
+	gnutls_free(dn.data);
+	dn.data = NULL;
+	dn.size = 0;
+
+	assert(gnutls_x509_crl_get_issuer_dn3(crl, &dn,
+					      GNUTLS_X509_DN_FLAG_COMPAT) ==
+	       GNUTLS_E_SUCCESS);
+	assert(dn.size == issuer_size &&
+	       memcmp(dn.data, issuer, issuer_size) == 0);
+	gnutls_free(dn.data);
+	dn.data = NULL;
+	dn.size = 0;
+
+	gnutls_free(issuer);
+	gnutls_free(crl_issuer);
+	gnutls_x509_crt_deinit(crt);
+}
+
+static void get_dn_by_oid(gnutls_x509_crl_t crl,
+			  const gnutls_datum_t *issuer_cert)
+{
+	gnutls_x509_crt_t crt;
+	assert(gnutls_x509_crt_init(&crt) >= 0);
+	assert(gnutls_x509_crt_import(crt, issuer_cert, GNUTLS_X509_FMT_PEM) >=
+	       0);
+
+	char *crt_buf = gnutls_calloc(DN_MAX_LEN, sizeof(char));
+	size_t crt_buf_size = DN_MAX_LEN;
+	gnutls_x509_crt_get_issuer_dn_by_oid(crt, "2.5.4.3", 0, 0, crt_buf,
+					     &crt_buf_size);
+
+	char *crl_buf = gnutls_calloc(DN_MAX_LEN, sizeof(char));
+	size_t crl_buf_size = DN_MAX_LEN;
+	gnutls_x509_crl_get_issuer_dn_by_oid(crl, "2.5.4.3", 0, 0, crl_buf,
+					     &crl_buf_size);
+
+	assert(crt_buf_size == crl_buf_size &&
+	       memcmp(crt_buf, crl_buf, crl_buf_size) == 0);
+
+	gnutls_free(crt_buf);
+	gnutls_free(crl_buf);
+	gnutls_x509_crt_deinit(crt);
+}
+
+static void import_der_crl_list(gnutls_x509_crl_t crl)
+{
+	gnutls_datum_t out;
+	assert(gnutls_x509_crl_export2(crl, GNUTLS_X509_FMT_DER, &out) >= 0);
+
+	gnutls_x509_crl_t crl_list;
+	unsigned int crl_list_max = 1;
+	assert(gnutls_x509_crl_list_import(&crl_list, &crl_list_max, &out,
+					   GNUTLS_X509_FMT_DER, 0) > 0);
+
+	gnutls_free(out.data);
+	gnutls_x509_crl_deinit(crl_list);
 }
 
 void doit(void)
@@ -239,7 +332,15 @@ void doit(void)
 	assert(out.size == saved_min_crl.size);
 	assert(memcmp(out.data, saved_min_crl.data, out.size) == 0);
 
+	/* verify issuer */
+	verify_issuer(crl, &ca3_cert);
+
+	/* get dn by oid */
+	get_dn_by_oid(crl, &ca3_cert);
+
+	/* import DER crl */
+	import_der_crl_list(crl);
+
 	gnutls_free(out.data);
 	gnutls_x509_crl_deinit(crl);
-
 }

@@ -19,6 +19,7 @@ struct gnutls_cli_debug_options
     bool verbose;
     bool port;
     bool starttls_proto;
+    bool attime;
     bool version;
     bool help;
     bool more_help;
@@ -30,6 +31,7 @@ struct gnutls_cli_debug_options
     const char *debug;
     const char *port;
     const char *starttls_proto;
+    const char *attime;
     const char *version;
   } arg;
 
@@ -47,6 +49,7 @@ struct gnutls_cli_debug_options
     bool verbose;
     bool port;
     bool starttls_proto;
+    bool attime;
     bool version;
     bool help;
     bool more_help;
@@ -64,6 +67,7 @@ struct gnutls_cli_debug_options
 #define HAVE_OPT_VERBOSE gnutls_cli_debug_options.present.verbose
 #define HAVE_OPT_PORT gnutls_cli_debug_options.present.port
 #define HAVE_OPT_STARTTLS_PROTO gnutls_cli_debug_options.present.starttls_proto
+#define HAVE_OPT_ATTIME gnutls_cli_debug_options.present.attime
 #define HAVE_OPT_VERSION gnutls_cli_debug_options.present.version
 #define HAVE_OPT_HELP gnutls_cli_debug_options.present.help
 #define HAVE_OPT_MORE_HELP gnutls_cli_debug_options.present.more_help
@@ -72,6 +76,7 @@ struct gnutls_cli_debug_options
 #define OPT_ARG_VERBOSE gnutls_cli_debug_options.arg.verbose
 #define OPT_ARG_PORT gnutls_cli_debug_options.arg.port
 #define OPT_ARG_STARTTLS_PROTO gnutls_cli_debug_options.arg.starttls_proto
+#define OPT_ARG_ATTIME gnutls_cli_debug_options.arg.attime
 #define OPT_ARG_VERSION gnutls_cli_debug_options.arg.version
 #define OPT_ARG_HELP gnutls_cli_debug_options.arg.help
 #define OPT_ARG_MORE_HELP gnutls_cli_debug_options.arg.more_help
@@ -83,6 +88,7 @@ struct gnutls_cli_debug_options
 #define ENABLED_OPT_VERBOSE gnutls_cli_debug_options.enabled.verbose
 #define ENABLED_OPT_PORT gnutls_cli_debug_options.enabled.port
 #define ENABLED_OPT_STARTTLS_PROTO gnutls_cli_debug_options.enabled.starttls_proto
+#define ENABLED_OPT_ATTIME gnutls_cli_debug_options.enabled.attime
 #define ENABLED_OPT_VERSION gnutls_cli_debug_options.enabled.version
 #define ENABLED_OPT_HELP gnutls_cli_debug_options.enabled.help
 #define ENABLED_OPT_MORE_HELP gnutls_cli_debug_options.enabled.more_help

@@ -52,9 +52,9 @@ typedef struct srp_server_auth_info_st {
 
 #ifdef ENABLE_SRP
 
-int _gnutls_proc_srp_server_hello(gnutls_session_t state,
-				  const uint8_t * data, size_t data_size);
-int _gnutls_gen_srp_server_hello(gnutls_session_t state, uint8_t * data,
+int _gnutls_proc_srp_server_hello(gnutls_session_t state, const uint8_t *data,
+				  size_t data_size);
+int _gnutls_gen_srp_server_hello(gnutls_session_t state, uint8_t *data,
 				 size_t data_size);
 
 int _gnutls_gen_srp_server_kx(gnutls_session_t, gnutls_buffer_st *);
@@ -69,6 +69,6 @@ typedef struct srp_server_auth_info_st srp_server_auth_info_st;
  */
 #define SRP_FAKE_SALT_MAC GNUTLS_MAC_SHA1
 
-#endif				/* ENABLE_SRP */
+#endif /* ENABLE_SRP */
 
 #endif /* GNUTLS_LIB_AUTH_SRP_KX_H */

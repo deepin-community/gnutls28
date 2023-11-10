@@ -22,7 +22,7 @@
  */
 
 #ifndef GNUTLS_LIB_TPM2_H
-# define GNUTLS_LIB_TPM2_H
+#define GNUTLS_LIB_TPM2_H
 
 #include "pin.h"
 
@@ -58,8 +58,7 @@ int tpm2_ec_sign_hash_fn(gnutls_privkey_t key, gnutls_sign_algorithm_t algo,
 uint16_t tpm2_key_curve(struct tpm2_info_st *info);
 int tpm2_rsa_key_bits(struct tpm2_info_st *info);
 
-int tpm2_convert_public(gnutls_privkey_t key,
-			void *userdata,
+int tpm2_convert_public(gnutls_privkey_t key, void *userdata,
 			gnutls_pk_params_st *params);
 
 #endif /* GNUTLS_LIB_TPM2_H */

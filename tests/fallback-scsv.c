@@ -16,8 +16,7 @@
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GnuTLS; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
+ * along with GnuTLS.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 #ifdef HAVE_CONFIG_H
@@ -29,7 +28,7 @@
 
 #if defined(_WIN32)
 
-int main()
+int main(void)
 {
 	exit(77);
 }
@@ -92,7 +91,7 @@ static void client(int fd, const char *prio, unsigned expect_fail)
 	gnutls_init(&session, GNUTLS_CLIENT);
 
 	/* Use default priorities */
-	assert(gnutls_priority_set_direct(session, prio, NULL)>=0);
+	assert(gnutls_priority_set_direct(session, prio, NULL) >= 0);
 
 	gnutls_credentials_set(session, GNUTLS_CRD_CERTIFICATE, x509_cred);
 
@@ -102,8 +101,7 @@ static void client(int fd, const char *prio, unsigned expect_fail)
 	 */
 	do {
 		ret = gnutls_handshake(session);
-	}
-	while (ret < 0 && gnutls_error_is_fatal(ret) == 0);
+	} while (ret < 0 && gnutls_error_is_fatal(ret) == 0);
 
 	if (expect_fail) {
 		goto end;
@@ -120,20 +118,18 @@ static void client(int fd, const char *prio, unsigned expect_fail)
 
 	if (debug)
 		success("client: TLS version is: %s\n",
-			gnutls_protocol_get_name
-			(gnutls_protocol_get_version(session)));
+			gnutls_protocol_get_name(
+				gnutls_protocol_get_version(session)));
 
 	do {
 		do {
 			ret = gnutls_record_recv(session, buffer, MAX_BUF);
-		} while (ret == GNUTLS_E_AGAIN
-			 || ret == GNUTLS_E_INTERRUPTED);
+		} while (ret == GNUTLS_E_AGAIN || ret == GNUTLS_E_INTERRUPTED);
 	} while (ret > 0);
 
 	if (ret == 0) {
 		if (debug)
-			success
-			    ("client: Peer has closed the TLS connection\n");
+			success("client: Peer has closed the TLS connection\n");
 		goto end;
 	} else if (ret < 0) {
 		if (ret != 0) {
@@ -144,7 +140,7 @@ static void client(int fd, const char *prio, unsigned expect_fail)
 
 	gnutls_bye(session, GNUTLS_SHUT_WR);
 
-      end:
+end:
 
 	close(fd);
 
@@ -154,7 +150,6 @@ static void client(int fd, const char *prio, unsigned expect_fail)
 
 	gnutls_global_deinit();
 }
-
 
 /* These are global */
 pid_t child;
@@ -172,7 +167,7 @@ static void server(int fd, const char *prio, unsigned expect_fail)
 	char buffer[MAX_BUF + 1];
 	gnutls_session_t session;
 	gnutls_certificate_credentials_t x509_cred;
-	unsigned to_send = sizeof(buffer)/4;
+	unsigned to_send = sizeof(buffer) / 4;
 
 	/* this must be called once in the program
 	 */
@@ -186,15 +181,14 @@ static void server(int fd, const char *prio, unsigned expect_fail)
 
 	gnutls_certificate_allocate_credentials(&x509_cred);
 	gnutls_certificate_set_x509_key_mem(x509_cred, &server_cert,
-					    &server_key,
-					    GNUTLS_X509_FMT_PEM);
+					    &server_key, GNUTLS_X509_FMT_PEM);
 
 	gnutls_init(&session, GNUTLS_SERVER);
 
 	/* avoid calling all the priority functions, since the defaults
 	 * are adequate.
 	 */
-	assert(gnutls_priority_set_direct(session, prio, NULL)>=0);
+	assert(gnutls_priority_set_direct(session, prio, NULL) >= 0);
 
 	gnutls_credentials_set(session, GNUTLS_CRD_CERTIFICATE, x509_cred);
 
@@ -210,7 +204,8 @@ static void server(int fd, const char *prio, unsigned expect_fail)
 				success("server: received inappropriate fallback error\n");
 			goto cleanup;
 		} else {
-			fail("server: received unexpected error: %s\n", gnutls_strerror(ret));
+			fail("server: received unexpected error: %s\n",
+			     gnutls_strerror(ret));
 		}
 	}
 
@@ -227,16 +222,14 @@ static void server(int fd, const char *prio, unsigned expect_fail)
 
 	if (debug)
 		success("server: TLS version is: %s\n",
-			gnutls_protocol_get_name
-			(gnutls_protocol_get_version(session)));
+			gnutls_protocol_get_name(
+				gnutls_protocol_get_version(session)));
 
 	do {
 		do {
-			ret =
-			    gnutls_record_send(session, buffer,
-						sizeof(buffer));
-		} while (ret == GNUTLS_E_AGAIN
-			 || ret == GNUTLS_E_INTERRUPTED);
+			ret = gnutls_record_send(session, buffer,
+						 sizeof(buffer));
+		} while (ret == GNUTLS_E_AGAIN || ret == GNUTLS_E_INTERRUPTED);
 
 		if (ret < 0) {
 			fail("Error sending %d byte packet: %s\n", to_send,
@@ -244,14 +237,13 @@ static void server(int fd, const char *prio, unsigned expect_fail)
 			terminate();
 		}
 		to_send++;
-	}
-	while (to_send < 64);
+	} while (to_send < 64);
 
 	to_send = -1;
 	/* do not wait for the peer to close the connection.
 	 */
 	gnutls_bye(session, GNUTLS_SHUT_WR);
- cleanup:
+cleanup:
 	close(fd);
 	gnutls_deinit(session);
 
@@ -263,7 +255,8 @@ static void server(int fd, const char *prio, unsigned expect_fail)
 		success("server: finished\n");
 }
 
-static void start(const char *server_prio, const char *cli_prio, unsigned expect_fail)
+static void start(const char *server_prio, const char *cli_prio,
+		  unsigned expect_fail)
 {
 	int fd[2];
 	int ret, status = 0;
@@ -305,14 +298,21 @@ void doit(void)
 	signal(SIGPIPE, SIG_IGN);
 
 	start("NORMAL", "NORMAL", 0);
-	start("NORMAL:-VERS-TLS-ALL:+VERS-TLS1.0:+VERS-TLS1.1:+VERS-TLS1.2", "NORMAL:-VERS-TLS-ALL:+VERS-TLS1.0:+VERS-TLS1.1:+VERS-TLS1.2", 0);
-	start("NORMAL:-VERS-TLS-ALL:+VERS-TLS1.0:+VERS-TLS1.1:+VERS-TLS1.2", "NORMAL:-VERS-TLS-ALL:+VERS-TLS1.0:+VERS-TLS1.1:+VERS-TLS1.2:%FALLBACK_SCSV", 0);
+	start("NORMAL:-VERS-TLS-ALL:+VERS-TLS1.0:+VERS-TLS1.1:+VERS-TLS1.2",
+	      "NORMAL:-VERS-TLS-ALL:+VERS-TLS1.0:+VERS-TLS1.1:+VERS-TLS1.2", 0);
+	start("NORMAL:-VERS-TLS-ALL:+VERS-TLS1.0:+VERS-TLS1.1:+VERS-TLS1.2",
+	      "NORMAL:-VERS-TLS-ALL:+VERS-TLS1.0:+VERS-TLS1.1:+VERS-TLS1.2:%FALLBACK_SCSV",
+	      0);
 	start("NORMAL", "NORMAL:%FALLBACK_SCSV", 0);
-	start("NORMAL:-VERS-TLS-ALL:+VERS-TLS1.1", "NORMAL:-VERS-TLS-ALL:+VERS-TLS1.1:%FALLBACK_SCSV", 0);
+	start("NORMAL:-VERS-TLS-ALL:+VERS-TLS1.1",
+	      "NORMAL:-VERS-TLS-ALL:+VERS-TLS1.1:%FALLBACK_SCSV", 0);
 	start("NORMAL", "NORMAL:-VERS-TLS-ALL:+VERS-TLS1.1:%FALLBACK_SCSV", 1);
 	/* Check whether a TLS1.3 server rejects a TLS1.2 client which includes the SCSV */
-	start("NORMAL:+VERS-TLS1.3:+VERS-TLS1.2", "NORMAL:-VERS-TLS-ALL:+VERS-TLS1.2:%FALLBACK_SCSV", 1);
-	start("NORMAL:+VERS-TLS1.3:+VERS-TLS1.2", "NORMAL:-VERS-TLS-ALL:+VERS-TLS1.3:+VERS-TLS1.2:%FALLBACK_SCSV", 0);
+	start("NORMAL:+VERS-TLS1.3:+VERS-TLS1.2",
+	      "NORMAL:-VERS-TLS-ALL:+VERS-TLS1.2:%FALLBACK_SCSV", 1);
+	start("NORMAL:+VERS-TLS1.3:+VERS-TLS1.2",
+	      "NORMAL:-VERS-TLS-ALL:+VERS-TLS1.3:+VERS-TLS1.2:%FALLBACK_SCSV",
+	      0);
 }
 
-#endif				/* _WIN32 */
+#endif /* _WIN32 */

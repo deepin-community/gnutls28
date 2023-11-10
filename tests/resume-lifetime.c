@@ -48,11 +48,10 @@ struct hsk_st {
 	unsigned sent_nst; /* whether the new session ticket was sent */
 	unsigned sent_psk; /* whether the PSK extension was sent */
 	unsigned sleep_at_finished; /* how long to wait at finished message reception */
-
 };
 
-static int ext_hook_func(void *ctx, unsigned tls_id,
-			 const unsigned char *data, unsigned size)
+static int ext_hook_func(void *ctx, unsigned tls_id, const unsigned char *data,
+			 unsigned size)
 {
 	if (tls_id == 41) {
 		struct hsk_st *h = ctx;
@@ -62,7 +61,8 @@ static int ext_hook_func(void *ctx, unsigned tls_id,
 }
 
 static int handshake_callback(gnutls_session_t session, unsigned int htype,
-	unsigned post, unsigned int incoming, const gnutls_datum_t *msg)
+			      unsigned post, unsigned int incoming,
+			      const gnutls_datum_t *msg)
 {
 	struct hsk_st *h = gnutls_session_get_ptr(session);
 
@@ -84,10 +84,9 @@ static int handshake_callback(gnutls_session_t session, unsigned int htype,
 }
 
 /* Returns true if resumed */
-static unsigned handshake(const char *prio, unsigned t, const gnutls_datum_t *sdata,
-			  gnutls_datum_t *ndata,
-			  gnutls_datum_t *skey,
-			  struct hsk_st *h)
+static unsigned handshake(const char *prio, unsigned t,
+			  const gnutls_datum_t *sdata, gnutls_datum_t *ndata,
+			  gnutls_datum_t *skey, struct hsk_st *h)
 {
 	int ret;
 	/* Server stuff. */
@@ -104,15 +103,14 @@ static unsigned handshake(const char *prio, unsigned t, const gnutls_datum_t *sd
 	if (debug)
 		gnutls_global_set_log_level(6);
 
-	assert(gnutls_certificate_allocate_credentials(&serverx509cred)>=0);
-	assert(gnutls_certificate_set_x509_key_mem(serverx509cred,
-					    &server_cert, &server_key,
-					    GNUTLS_X509_FMT_PEM)>=0);
+	assert(gnutls_certificate_allocate_credentials(&serverx509cred) >= 0);
+	assert(gnutls_certificate_set_x509_key_mem(serverx509cred, &server_cert,
+						   &server_key,
+						   GNUTLS_X509_FMT_PEM) >= 0);
 
-	assert(gnutls_init(&server, GNUTLS_SERVER)>=0);
-	gnutls_credentials_set(server, GNUTLS_CRD_CERTIFICATE,
-				serverx509cred);
-	assert(gnutls_priority_set_direct(server, prio, NULL)>=0);
+	assert(gnutls_init(&server, GNUTLS_SERVER) >= 0);
+	gnutls_credentials_set(server, GNUTLS_CRD_CERTIFICATE, serverx509cred);
+	assert(gnutls_priority_set_direct(server, prio, NULL) >= 0);
 	gnutls_transport_set_push_function(server, server_push);
 	gnutls_transport_set_pull_function(server, server_pull);
 	gnutls_transport_set_ptr(server, server);
@@ -121,24 +119,25 @@ static unsigned handshake(const char *prio, unsigned t, const gnutls_datum_t *sd
 	gnutls_db_set_cache_expiration(server, t);
 	assert(gnutls_session_ticket_enable_server(server, skey) >= 0);
 
-	gnutls_handshake_set_hook_function(server, -1,
-					   GNUTLS_HOOK_POST,
+	gnutls_handshake_set_hook_function(server, -1, GNUTLS_HOOK_POST,
 					   handshake_callback);
 
-	assert(gnutls_certificate_allocate_credentials(&clientx509cred)>=0);
-	assert(gnutls_certificate_set_x509_trust_mem(clientx509cred, &ca_cert, GNUTLS_X509_FMT_PEM)>=0);
-	assert(gnutls_init(&client, GNUTLS_CLIENT)>=0);
+	assert(gnutls_certificate_allocate_credentials(&clientx509cred) >= 0);
+	assert(gnutls_certificate_set_x509_trust_mem(clientx509cred, &ca_cert,
+						     GNUTLS_X509_FMT_PEM) >= 0);
+	assert(gnutls_init(&client, GNUTLS_CLIENT) >= 0);
 
 	assert(gnutls_credentials_set(client, GNUTLS_CRD_CERTIFICATE,
-				      clientx509cred)>=0);
+				      clientx509cred) >= 0);
 
-	assert(gnutls_priority_set_direct(client, prio, NULL)>=0);
+	assert(gnutls_priority_set_direct(client, prio, NULL) >= 0);
 	gnutls_transport_set_push_function(client, client_push);
 	gnutls_transport_set_pull_function(client, client_pull);
 	gnutls_transport_set_ptr(client, client);
 
 	if (sdata) {
-		assert(gnutls_session_set_data(client, sdata->data, sdata->size)>=0);
+		assert(gnutls_session_set_data(client, sdata->data,
+					       sdata->size) >= 0);
 	}
 
 	memset(buf, 0, sizeof(buf));
@@ -181,7 +180,7 @@ static void start(const char *name, const char *prio, unsigned t, unsigned s)
 
 	success("trying %s\n", name);
 
-	assert(gnutls_session_ticket_key_generate(&skey)>=0);
+	assert(gnutls_session_ticket_key_generate(&skey) >= 0);
 
 	/* step1: get a fresh ticket */
 	ret = handshake(prio, t, NULL, &sdata, &skey, &h);
@@ -241,7 +240,7 @@ static void start2(const char *name, const char *prio, unsigned t, unsigned s)
 
 	success("trying %s\n", name);
 
-	assert(gnutls_session_ticket_key_generate(&skey)>=0);
+	assert(gnutls_session_ticket_key_generate(&skey) >= 0);
 
 	/* step1: get a fresh ticket */
 	ret = handshake(prio, t, NULL, &sdata, &skey, &h);
@@ -278,5 +277,6 @@ void doit(void)
 
 	start("TLS1.3 sanity", "NORMAL:-VERS-ALL:+VERS-TLS1.3", 64, 0);
 	start("TLS1.3 ticket extension", "NORMAL:-VERS-ALL:+VERS-TLS1.3", 5, 3);
-	start2("TLS1.3 ticket extension - expires at handshake", "NORMAL:-VERS-ALL:+VERS-TLS1.3", 2, 3);
+	start2("TLS1.3 ticket extension - expires at handshake",
+	       "NORMAL:-VERS-ALL:+VERS-TLS1.3", 2, 3);
 }

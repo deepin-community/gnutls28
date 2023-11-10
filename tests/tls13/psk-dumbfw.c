@@ -75,7 +75,7 @@ static void client(int sd, const char *prio)
 	char buffer[MAX_BUF + 1];
 	gnutls_psk_client_credentials_t pskcred;
 	/* Need to enable anonymous KX specifically. */
-	const gnutls_datum_t key = { (void *) "DEADBEEF", 8 };
+	const gnutls_datum_t key = { (void *)"DEADBEEF", 8 };
 
 	global_init();
 	gnutls_global_set_log_function(tls_log_func);
@@ -88,10 +88,11 @@ static void client(int sd, const char *prio)
 	gnutls_psk_set_client_credentials(pskcred, "test", &key,
 					  GNUTLS_PSK_KEY_HEX);
 
-	assert(gnutls_init(&session, GNUTLS_CLIENT|GNUTLS_KEY_SHARE_TOP)>=0);
+	assert(gnutls_init(&session, GNUTLS_CLIENT | GNUTLS_KEY_SHARE_TOP) >=
+	       0);
 
-	assert(gnutls_priority_set_direct(session, prio, NULL)>=0);
-	assert(gnutls_credentials_set(session, GNUTLS_CRD_PSK, pskcred)>=0);
+	assert(gnutls_priority_set_direct(session, prio, NULL) >= 0);
+	assert(gnutls_credentials_set(session, GNUTLS_CRD_PSK, pskcred) >= 0);
 
 	gnutls_transport_set_int(session, sd);
 
@@ -108,13 +109,12 @@ static void client(int sd, const char *prio)
 			success("client: Handshake was completed\n");
 	}
 
-	assert(gnutls_record_send(session, MSG, strlen(MSG))>=0);
+	assert(gnutls_record_send(session, MSG, strlen(MSG)) >= 0);
 
 	ret = gnutls_record_recv(session, buffer, MAX_BUF);
 	if (ret == 0) {
 		if (debug)
-			success
-			    ("client: Peer has closed the TLS connection\n");
+			success("client: Peer has closed the TLS connection\n");
 		goto end;
 	} else if (ret < 0) {
 		fail("client: Error: %s\n", gnutls_strerror(ret));
@@ -131,7 +131,7 @@ static void client(int sd, const char *prio)
 
 	gnutls_bye(session, GNUTLS_SHUT_RDWR);
 
-      end:
+end:
 
 	close(sd);
 
@@ -142,9 +142,8 @@ static void client(int sd, const char *prio)
 	gnutls_global_deinit();
 }
 
-static int
-pskfunc(gnutls_session_t session, const char *username,
-	gnutls_datum_t * key)
+static int pskfunc(gnutls_session_t session, const char *username,
+		   gnutls_datum_t *key)
 {
 	if (debug)
 		printf("psk: username %s\n", username);
@@ -165,8 +164,7 @@ struct ctx_st {
 	void *base;
 };
 
-static
-void check_ext_pos(void *priv, gnutls_datum_t *msg)
+static void check_ext_pos(void *priv, gnutls_datum_t *msg)
 {
 	struct ctx_st *ctx = priv;
 
@@ -174,21 +172,25 @@ void check_ext_pos(void *priv, gnutls_datum_t *msg)
 }
 
 static int client_hello_callback(gnutls_session_t session, unsigned int htype,
-	unsigned post, unsigned int incoming, const gnutls_datum_t *msg)
+				 unsigned post, unsigned int incoming,
+				 const gnutls_datum_t *msg)
 {
 	unsigned long pos_psk;
 	unsigned long pos_pad;
 
-	if (htype == GNUTLS_HANDSHAKE_CLIENT_HELLO && post == GNUTLS_HOOK_POST) {
+	if (htype == GNUTLS_HANDSHAKE_CLIENT_HELLO &&
+	    post == GNUTLS_HOOK_POST) {
 		struct ctx_st ctx;
 
 		ctx.base = msg->data;
-		if (find_client_extension(msg, EXT_CLIENTHELLO_PADDING, &ctx, check_ext_pos) == 0)
+		if (find_client_extension(msg, EXT_CLIENTHELLO_PADDING, &ctx,
+					  check_ext_pos) == 0)
 			fail("Could not find dumbfw/client hello padding extension!\n");
 		pos_pad = ctx.pos;
 
 		ctx.base = msg->data;
-		if (find_client_extension(msg, EXT_PRE_SHARED_KEY, &ctx, check_ext_pos) == 0)
+		if (find_client_extension(msg, EXT_PRE_SHARED_KEY, &ctx,
+					  check_ext_pos) == 0)
 			fail("Could not find psk extension!\n");
 		pos_psk = ctx.pos;
 
@@ -205,7 +207,6 @@ static int client_hello_callback(gnutls_session_t session, unsigned int htype,
 	return 0;
 }
 
-
 static void server(int sd, const char *prio)
 {
 	gnutls_psk_server_credentials_t server_pskcred;
@@ -220,14 +221,12 @@ static void server(int sd, const char *prio)
 
 	side = "server";
 
+	assert(gnutls_psk_allocate_server_credentials(&server_pskcred) >= 0);
+	gnutls_psk_set_server_credentials_function(server_pskcred, pskfunc);
 
-	assert(gnutls_psk_allocate_server_credentials(&server_pskcred)>=0);
-	gnutls_psk_set_server_credentials_function(server_pskcred,
-						   pskfunc);
+	assert(gnutls_init(&session, GNUTLS_SERVER) >= 0);
 
-	assert(gnutls_init(&session, GNUTLS_SERVER)>=0);
-
-	assert(gnutls_priority_set_direct(session, prio, NULL)>=0);
+	assert(gnutls_priority_set_direct(session, prio, NULL) >= 0);
 	gnutls_credentials_set(session, GNUTLS_CRD_PSK, server_pskcred);
 
 	gnutls_handshake_set_hook_function(session, GNUTLS_HANDSHAKE_ANY,
@@ -253,17 +252,16 @@ static void server(int sd, const char *prio)
 
 		if (ret == 0) {
 			if (debug)
-				success
-				    ("server: Peer has closed the GnuTLS connection\n");
+				success("server: Peer has closed the GnuTLS connection\n");
 			break;
 		} else if (ret < 0) {
-			fail("server: Received corrupted data(%d). Closing...\n", ret);
+			fail("server: Received corrupted data(%d). Closing...\n",
+			     ret);
 			break;
 		} else if (ret > 0) {
 			/* echo data back to the client
 			 */
-			gnutls_record_send(session, buffer,
-					   strlen(buffer));
+			gnutls_record_send(session, buffer, strlen(buffer));
 		}
 	}
 
@@ -288,9 +286,7 @@ static void ch_handler(int sig)
 	return;
 }
 
-
-static
-void run_test(const char *prio)
+static void run_test(const char *prio)
 {
 	pid_t child;
 	int err;
@@ -331,7 +327,8 @@ void run_test(const char *prio)
 
 void doit(void)
 {
-	run_test("NORMAL:-VERS-ALL:+VERS-TLS1.3:+VERS-TLS1.2:+PSK:%DUMBFW:-GROUP-ALL:+GROUP-FFDHE2048");
+	run_test(
+		"NORMAL:-VERS-ALL:+VERS-TLS1.3:+VERS-TLS1.2:+PSK:%DUMBFW:-GROUP-ALL:+GROUP-FFDHE2048");
 }
 
-#endif				/* _WIN32 */
+#endif /* _WIN32 */

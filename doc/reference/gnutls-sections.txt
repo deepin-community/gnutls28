@@ -199,6 +199,9 @@ aes_v8_decrypt
 
 <SECTION>
 <FILE>aes-gcm-aead</FILE>
+aes_gcm_aead_encrypt
+gnutls_assert_val
+aes_gcm_aead_decrypt
 unlikely
 gnutls_memcmp
 </SECTION>
@@ -266,10 +269,12 @@ nversion_to_entry
 unlikely
 mac_to_entry
 hash_to_entry
+cipher_suite_get
 ciphersuite_to_entry
 cipher_to_entry
 cipher_name_to_entry
 encipher_type
+hash_security_level_t
 GNUTLS_SIGN_FLAG_TLS13_OK
 GNUTLS_SIGN_FLAG_CRT_VRFY_REVERSE
 GNUTLS_SIGN_FLAG_INSECURE_REVERTIBLE
@@ -278,7 +283,6 @@ gnutls_sign_entry_st
 gnutls_ecc_curve_entry_st
 MAX_ECC_CURVE_SIZE
 curve_is_modern_ecdh
-pk
 </SECTION>
 
 <SECTION>
@@ -330,6 +334,8 @@ ATTRIBUTE_WARNING
 ATTRIBUTE_ERROR
 ATTRIBUTE_MALLOC
 ATTRIBUTE_ALLOC_SIZE
+ATTRIBUTE_DEALLOC
+ATTRIBUTE_DEALLOC_FREE
 ATTRIBUTE_SENTINEL
 ATTRIBUTE_FORMAT
 ATTRIBUTE_NONNULL
@@ -914,6 +920,8 @@ LIBGNUTLS_EXTRA_VERSION
 gnutls_x509_privkey_sign_hash
 gnutls_openpgp_privkey_sign_hash
 gnutls_x509_crt_get_preferred_hash_algorithm
+gnutls_session_get_server_random
+gnutls_session_get_client_random
 gnutls_global_set_mem_functions
 GNUTLS_SUPPLEMENTAL_USER_MAPPING_DATA
 gnutls_compression_get
@@ -1267,6 +1275,8 @@ dsa_generate_dss_pqg
 dsa_generate_dss_keypair
 dsa_validate_dss_pqg
 DIGEST_SIZE
+hash
+mpz_seed_sizeinbase_256_u
 </SECTION>
 
 <SECTION>
@@ -1317,17 +1327,6 @@ ext_mod_supported_ec_point_formats
 </SECTION>
 
 <SECTION>
-<FILE>ecc-gost-curve</FILE>
-NETTLE_PURE
-gost_point_mul_g
-gost_point_set
-gostdsa_generate_keypair
-nettle_get_gost_gc256b
-nettle_get_gost_gc512a
-ecc_curve
-</SECTION>
-
-<SECTION>
 <FILE>ecdhe</FILE>
 
 </SECTION>
@@ -1363,6 +1362,7 @@ ext_mod_etm
 
 <SECTION>
 <FILE>ext_master_secret</FILE>
+GNUTLS_NO_EXTENSIONS
 ext_mod_ext_master_secret
 </SECTION>
 
@@ -1390,7 +1390,6 @@ HAVE_LIB_ERROR
 FAIL_IF_LIB_ERROR
 is_mac_algo_approved_in_fips
 is_cipher_algo_approved_in_fips
-mode
 is_mac_algo_allowed
 is_cipher_algo_allowed
 FIPS_RULE
@@ -1438,7 +1437,7 @@ GNUTLS_SERVER
 GNUTLS_CLIENT
 GNUTLS_DATAGRAM
 GNUTLS_NONBLOCK
-GNUTLS_NO_EXTENSIONS
+GNUTLS_NO_DEFAULT_EXTENSIONS
 GNUTLS_NO_REPLAY_PROTECTION
 GNUTLS_NO_SIGNAL
 GNUTLS_ALLOW_ID_CHANGE
@@ -1450,6 +1449,7 @@ gnutls_alert_level_t
 gnutls_alert_description_t
 gnutls_handshake_description_t
 GNUTLS_HANDSHAKE_ANY
+gnutls_handshake_description_get_name
 gnutls_certificate_status_t
 gnutls_certificate_request_t
 gnutls_openpgp_crt_status_t
@@ -1588,6 +1588,7 @@ gnutls_session_etm_status
 gnutls_session_flags_t
 gnutls_session_get_flags
 gnutls_supplemental_data_format_type_t
+gnutls_supplemental_get_name
 gnutls_session_ticket_key_generate
 gnutls_session_ticket_enable_client
 gnutls_session_ticket_enable_server
@@ -1685,6 +1686,8 @@ gnutls_x509_crl_t
 gnutls_x509_crt_t
 gnutls_x509_crq_t
 gnutls_openpgp_keyring_t
+gnutls_certificate_server_credentials
+gnutls_certificate_client_credentials
 gnutls_anon_free_server_credentials
 gnutls_anon_allocate_server_credentials
 gnutls_anon_set_server_dh_params
@@ -1725,6 +1728,7 @@ gnutls_certificate_set_x509_trust
 gnutls_certificate_set_x509_crl
 gnutls_certificate_get_x509_key
 gnutls_certificate_get_x509_crt
+gnutls_status_request_ocsp_func
 gnutls_certificate_set_ocsp_status_request_function
 gnutls_certificate_set_ocsp_status_request_function2
 gnutls_certificate_set_ocsp_status_request_file
@@ -1806,6 +1810,8 @@ gnutls_random_art
 GNUTLS_IDNA_FORCE_2008
 gnutls_idna_map
 gnutls_idna_reverse_map
+gnutls_srp_server_credentials_t
+gnutls_srp_client_credentials_t
 gnutls_srp_free_client_credentials
 gnutls_srp_allocate_client_credentials
 gnutls_srp_set_client_credentials
@@ -1824,6 +1830,8 @@ gnutls_srp_base64_decode2
 gnutls_srp_base64_encode_alloc
 gnutls_srp_base64_decode_alloc
 gnutls_srp_set_server_fake_salt_seed
+gnutls_psk_server_credentials_t
+gnutls_psk_client_credentials_t
 gnutls_psk_key_flags
 gnutls_psk_free_client_credentials
 gnutls_psk_allocate_client_credentials
@@ -1838,8 +1846,11 @@ gnutls_psk_server_get_username2
 gnutls_psk_client_get_hint
 gnutls_psk_set_server_credentials_function
 gnutls_psk_set_server_credentials_function2
+gnutls_psk_set_server_credentials_function3
+gnutls_psk_format_imported_identity
 gnutls_psk_set_client_credentials_function
 gnutls_psk_set_client_credentials_function2
+gnutls_psk_set_client_credentials_function3
 gnutls_hex_encode
 gnutls_hex_decode
 gnutls_hex_encode2
@@ -1976,6 +1987,8 @@ gnutls_fips140_get_operation_state
 gnutls_fips140_push_context
 gnutls_fips140_pop_context
 gnutls_fips140_run_self_tests
+gnutls_transport_ktls_enable_flags_t
+gnutls_transport_is_ktls_enabled
 GNUTLS_E_SUCCESS
 GNUTLS_E_UNKNOWN_COMPRESSION_ALGORITHM
 GNUTLS_E_UNKNOWN_CIPHER_TYPE
@@ -2249,7 +2262,6 @@ MAX_RECORD_HEADER_SIZE
 MIN_RECORD_SIZE
 MIN_RECORD_SIZE_SMALL
 MAX_RECORD_SEND_OVERHEAD
-MAX_RECORD_SEND_SIZE
 MAX_PAD_SIZE
 EXTRA_COMP_SIZE
 TLS_HANDSHAKE_HEADER_SIZE
@@ -2285,6 +2297,7 @@ MAX_ALGOS
 extensions_t
 GNUTLS_EXTENSION_MAX_VALUE
 ext_track_t
+cipher_type_t
 content_type_t
 GNUTLS_PK_ANY
 GNUTLS_PK_NONE
@@ -2335,6 +2348,7 @@ MAX_CIPHERSUITE_SIZE
 ciphersuite_list_st
 group_list_st
 sign_algo_list_st
+ext_master_secret_t
 gnutls_priority_st
 DEFAULT_MAX_EMPTY_RECORDS
 ENABLE_COMPAT
@@ -2404,7 +2418,7 @@ client_session
 set_verify_cert
 set_server_name
 get_request_status
-credentials
+get_type
 free_keys
 free_cas
 free_ca_names
@@ -2424,6 +2438,35 @@ set_retrieve_function
 set_params_function
 set_credentials_file
 set_credentials_function
+RETWRAP
+gnutls_alert_get
+gnutls_cipher_get
+gnutls_kx_get
+gnutls_mac_get
+gnutls_compression_get
+gnutls_certificate_type_get
+gnutls_handshake_get_last_out
+gnutls_handshake_get_last_in
+gnutls_record_get_direction
+gnutls_record_get_max_size
+gnutls_record_check_pending
+gnutls_protocol_get_version
+ret
+gnutls_certificate_activation_time_peers
+gnutls_certificate_expiration_time_peers
+store_function
+retrieve_function
+remove_function
+gnutls_srp_server_get_username
+gnutls_psk_server_get_username
+gnutls_transport_get_ptr
+gnutls_session_get_ptr
+gnutls_strerror
+dst
+<SUBSECTION Standard>
+gnutls_auth_client_get_type
+gnutls_auth_get_type
+gnutls_auth_server_get_type
 </SECTION>
 
 <SECTION>
@@ -2474,7 +2517,6 @@ gostdsa_unmask_key
 <FILE>gstr</FILE>
 Estrcpy
 Estrcat
-safe_memset
 </SECTION>
 
 <SECTION>
@@ -2503,10 +2545,12 @@ have_creds_for_tls13
 EARLY_TRAFFIC_LABEL
 EXT_BINDER_LABEL
 RES_BINDER_LABEL
+IMP_BINDER_LABEL
 EARLY_EXPORTER_MASTER_LABEL
 HANDSHAKE_CLIENT_TRAFFIC_LABEL
 HANDSHAKE_SERVER_TRAFFIC_LABEL
 DERIVED_LABEL
+DERIVED_PSK_LABEL
 APPLICATION_CLIENT_TRAFFIC_LABEL
 APPLICATION_SERVER_TRAFFIC_LABEL
 APPLICATION_TRAFFIC_UPDATE
@@ -2818,7 +2862,6 @@ asn1_expand_octet_string
 asn1_read_tag
 asn1_find_structure_from_oid
 asn1_check_version
-asn1_strerror
 asn1_perror
 ASN1_MAX_TAG_SIZE
 ASN1_MAX_LENGTH_SIZE
@@ -2869,6 +2912,8 @@ LONG_WIDTH
 ULONG_WIDTH
 LLONG_WIDTH
 ULLONG_WIDTH
+BOOL_WIDTH
+BOOL_MAX
 </SECTION>
 
 <SECTION>
@@ -2890,6 +2935,8 @@ LONG_WIDTH
 ULONG_WIDTH
 LLONG_WIDTH
 ULLONG_WIDTH
+BOOL_WIDTH
+BOOL_MAX
 </SECTION>
 
 <SECTION>
@@ -2957,12 +3004,6 @@ mpn_get_base256
 <SECTION>
 <FILE>name_val_array</FILE>
 
-</SECTION>
-
-<SECTION>
-<FILE>nettle-alloca</FILE>
-TMP_DECL
-TMP_ALLOC
 </SECTION>
 
 <SECTION>
@@ -3047,6 +3088,7 @@ MAX_OCSP_MSG_SIZE
 gnutls_openpgp_crt_fmt_t
 GNUTLS_OPENPGP_KEYID_SIZE
 GNUTLS_OPENPGP_V4_FINGERPRINT_SIZE
+gnutls_openpgp_keyid_t
 gnutls_openpgp_crt_init
 gnutls_openpgp_crt_deinit
 gnutls_openpgp_crt_import
@@ -3131,6 +3173,12 @@ gnutls_certificate_set_openpgp_keyring_file
 <FILE>parser_aux</FILE>
 LTOSTR_MAX_SIZE
 EXPAND_OBJECT_ID_MAX_RECURSION
+</SECTION>
+
+<SECTION>
+<FILE>pathbuf</FILE>
+GNUTLS_PATH_MAX
+gnutls_pathbuf_st
 </SECTION>
 
 <SECTION>
@@ -3634,8 +3682,6 @@ gnutls_sign_algorithm_set_client
 
 <SECTION>
 <FILE>socket</FILE>
-gnutls_transport_ktls_enable_flags_t
-gnutls_transport_is_ktls_enabled
 gnutls_transport_set_fastopen
 </SECTION>
 
@@ -3678,22 +3724,18 @@ ext_mod_srtp
 
 <SECTION>
 <FILE>state</FILE>
+get_group
 set_default_version
 CHECK_AUTH_TYPE
 reset_binders
 DEFAULT_CERT_TYPE
+GNUTLS_NO_EXTENSIONS
 </SECTION>
 
 <SECTION>
 <FILE>status_request</FILE>
 STATUS_REQUEST_TLS_ID
 ext_mod_status_request
-</SECTION>
-
-<SECTION>
-<FILE>stdbool.in</FILE>
-bool
-_Bool
 </SECTION>
 
 <SECTION>
@@ -3931,8 +3973,8 @@ GNULIB_defined_dev_t
 <SECTION>
 <FILE>system</FILE>
 NEED_CERT_ENUM_CRLS
+CertEnumCRLsInStoreFunc
 pCertEnumCRLsInStore
-GNUTLS_PATH_MAX
 system_errno
 system_write
 HAVE_WRITEV
@@ -4186,6 +4228,12 @@ UC_PROPERTY_UNIFIED_IDEOGRAPH
 UC_PROPERTY_RADICAL
 UC_PROPERTY_IDS_BINARY_OPERATOR
 UC_PROPERTY_IDS_TRINARY_OPERATOR
+UC_PROPERTY_EMOJI
+UC_PROPERTY_EMOJI_PRESENTATION
+UC_PROPERTY_EMOJI_MODIFIER
+UC_PROPERTY_EMOJI_MODIFIER_BASE
+UC_PROPERTY_EMOJI_COMPONENT
+UC_PROPERTY_EXTENDED_PICTOGRAPHIC
 UC_PROPERTY_ZERO_WIDTH
 UC_PROPERTY_SPACE
 UC_PROPERTY_NON_BREAK
@@ -4211,6 +4259,7 @@ UC_PROPERTY_NUMERIC
 UC_PROPERTY_DIACRITIC
 UC_PROPERTY_EXTENDER
 UC_PROPERTY_IGNORABLE_CONTROL
+UC_PROPERTY_REGIONAL_INDICATOR
 uc_property_byname
 uc_property_is_valid
 uc_is_property
@@ -4363,6 +4412,12 @@ UC_PROPERTY_UNIFIED_IDEOGRAPH
 UC_PROPERTY_RADICAL
 UC_PROPERTY_IDS_BINARY_OPERATOR
 UC_PROPERTY_IDS_TRINARY_OPERATOR
+UC_PROPERTY_EMOJI
+UC_PROPERTY_EMOJI_PRESENTATION
+UC_PROPERTY_EMOJI_MODIFIER
+UC_PROPERTY_EMOJI_MODIFIER_BASE
+UC_PROPERTY_EMOJI_COMPONENT
+UC_PROPERTY_EXTENDED_PICTOGRAPHIC
 UC_PROPERTY_ZERO_WIDTH
 UC_PROPERTY_SPACE
 UC_PROPERTY_NON_BREAK
@@ -4388,6 +4443,7 @@ UC_PROPERTY_NUMERIC
 UC_PROPERTY_DIACRITIC
 UC_PROPERTY_EXTENDER
 UC_PROPERTY_IGNORABLE_CONTROL
+UC_PROPERTY_REGIONAL_INDICATOR
 uc_property_byname
 uc_property_is_valid
 uc_is_property
@@ -4412,10 +4468,10 @@ u32_normxfrm
 u8_normcoll
 u16_normcoll
 u32_normcoll
+uninorm_filter_free
 uninorm_filter_create
 uninorm_filter_write
 uninorm_filter_flush
-uninorm_filter_free
 uninorm_filter
 </SECTION>
 
@@ -4436,10 +4492,10 @@ u32_normxfrm
 u8_normcoll
 u16_normcoll
 u32_normcoll
+uninorm_filter_free
 uninorm_filter_create
 uninorm_filter_write
 uninorm_filter_flush
-uninorm_filter_free
 uninorm_filter
 </SECTION>
 
@@ -4513,9 +4569,6 @@ u8_strcmp_gnu
 u16_strcoll
 u32_strcoll
 u8_strncmp
-u16_strdup
-u32_strdup
-u8_strchr
 u16_strtok
 u32_strtok
 </SECTION>
@@ -4590,9 +4643,6 @@ u8_strcmp_gnu
 u16_strcoll
 u32_strcoll
 u8_strncmp
-u16_strdup
-u32_strdup
-u8_strchr
 u16_strtok
 u32_strtok
 </SECTION>
@@ -4605,11 +4655,6 @@ ucs4_t
 <SECTION>
 <FILE>unitypes.in</FILE>
 ucs4_t
-</SECTION>
-
-<SECTION>
-<FILE>unused-parameter</FILE>
-
 </SECTION>
 
 <SECTION>

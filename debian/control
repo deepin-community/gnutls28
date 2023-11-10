@@ -15,7 +15,6 @@ Build-Depends:
  debhelper-compat (= 13),
  freebsd-net-tools [kfreebsd-i386 kfreebsd-amd64] <!nocheck>,
  gperf,
- guile-3.0-dev <!noguile>,
  libcmocka-dev <!nocheck>,
  libidn2-dev,
  libp11-kit-dev,
@@ -53,7 +52,6 @@ Depends:
  libgnutls-dane0 (= ${binary:Version}),
  libgnutls-openssl27 (= ${binary:Version}),
  libgnutls30 (= ${binary:Version}),
- libgnutlsxx30 (= ${binary:Version}),
  libidn2-dev,
  libp11-kit-dev,
  libtasn1-6-dev,
@@ -161,31 +159,6 @@ Description: GNU TLS library - documentation and examples
  .
  This package contains all the GnuTLS documentation.
 
-Package: libgnutlsxx30
-Architecture: any
-Depends:
- libgnutls30 (= ${binary:Version}),
- ${misc:Depends},
- ${shlibs:Depends},
-Pre-Depends:
- ${misc:Pre-Depends},
-Multi-Arch: same
-Description: GNU TLS library - C++ runtime library
- GnuTLS is a portable library which implements the Transport Layer
- Security (TLS 1.0, 1.1, 1.2, 1.3) and Datagram
- Transport Layer Security (DTLS 1.0, 1.2) protocols.
- .
- GnuTLS features support for:
-  - certificate path validation, as well as DANE and trust on first use.
-  - the Online Certificate Status Protocol (OCSP).
-  - public key methods, including RSA and Elliptic curves, as well as password
-    and key authentication methods such as SRP and PSK protocols.
-  - all the strong encryption algorithms, including AES and Camellia.
-  - CPU-assisted cryptography with VIA padlock and AES-NI instruction sets.
-  - HSMs and cryptographic tokens, via PKCS #11.
- .
- This package contains the C++ runtime libraries.
-
 Package: libgnutls-openssl27
 Architecture: any
 Depends:
@@ -239,27 +212,3 @@ Description: GNU TLS library - DANE security support
  .
  This package contains the runtime library for DANE (DNS-based Authentication
  of Named Entities) support.
-
-Package: guile-gnutls
-Build-Profiles: <!noguile>
-Architecture: any
-Section: lisp
-Depends:
- guile-3.0,
- ${misc:Depends},
- ${shlibs:Depends},
-Description: GNU TLS library - GNU Guile bindings
- GnuTLS is a portable library which implements the Transport Layer
- Security (TLS 1.0, 1.1, 1.2, 1.3) and Datagram
- Transport Layer Security (DTLS 1.0, 1.2) protocols.
- .
- GnuTLS features support for:
-  - certificate path validation, as well as DANE and trust on first use.
-  - the Online Certificate Status Protocol (OCSP).
-  - public key methods, including RSA and Elliptic curves, as well as password
-    and key authentication methods such as SRP and PSK protocols.
-  - all the strong encryption algorithms, including AES and Camellia.
-  - CPU-assisted cryptography with VIA padlock and AES-NI instruction sets.
-  - HSMs and cryptographic tokens, via PKCS #11.
- .
- This package contains the GNU Guile modules.

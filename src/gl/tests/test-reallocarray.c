@@ -1,9 +1,9 @@
 /* Test of reallocarray function.
-   Copyright (C) 2010-2021 Free Software Foundation, Inc.
+   Copyright (C) 2010-2023 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 3 of the License, or
+   the Free Software Foundation, either version 3 of the License, or
    (at your option) any later version.
 
    This program is distributed in the hope that it will be useful,
@@ -36,9 +36,12 @@ main ()
     {
       void *volatile p = NULL;
 
-      p = reallocarray (p, PTRDIFF_MAX / n + 1, n);
-      ASSERT (p == NULL);
-      ASSERT (errno == ENOMEM);
+      if (PTRDIFF_MAX / n + 1 <= SIZE_MAX)
+        {
+          p = reallocarray (p, PTRDIFF_MAX / n + 1, n);
+          ASSERT (p == NULL);
+          ASSERT (errno == ENOMEM);
+        }
 
       p = reallocarray (p, SIZE_MAX / n + 1, n);
       ASSERT (p == NULL);

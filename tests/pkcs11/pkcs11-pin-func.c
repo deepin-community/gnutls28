@@ -16,8 +16,7 @@
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GnuTLS; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
+ * along with GnuTLS.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 #ifdef HAVE_CONFIG_H
@@ -32,9 +31,9 @@
 #include <gnutls/gnutls.h>
 #include <gnutls/pkcs11.h>
 
-static
-int pin_func(void* userdata, int attempt, const char* url, const char *label,
-		unsigned flags, char *pin, size_t pin_max)
+static int pin_func(void *userdata, int attempt, const char *url,
+		    const char *label, unsigned flags, char *pin,
+		    size_t pin_max)
 {
 	if (attempt == 0) {
 		strcpy(pin, "xxx");
@@ -48,11 +47,11 @@ int main(int argc, char **argv)
 	void *u;
 	gnutls_pin_callback_t cb;
 
-	gnutls_pkcs11_set_pin_function(pin_func, (void*)-1);
+	gnutls_pkcs11_set_pin_function(pin_func, (void *)-1);
 
 	cb = gnutls_pkcs11_get_pin_function(&u);
 
-	assert(u==(void*)-1);
+	assert(u == (void *)-1);
 	assert(cb == pin_func);
 
 	return 0;

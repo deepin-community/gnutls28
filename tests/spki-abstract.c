@@ -51,28 +51,28 @@ static void pubkey_check(void)
 	}
 
 	ret = gnutls_x509_spki_init(&spki);
-	assert(ret>=0);
+	assert(ret >= 0);
 
 	ret = gnutls_pubkey_init(&pubkey);
 	if (ret < 0) {
-		fprintf(stderr,
-			"gnutls_pubkey_init: %s\n", gnutls_strerror(ret));
+		fprintf(stderr, "gnutls_pubkey_init: %s\n",
+			gnutls_strerror(ret));
 		exit(1);
 	}
 
-	ret =
-	    gnutls_pubkey_import_x509_raw(pubkey, &server_ca3_rsa_pss2_cert,
-				   GNUTLS_X509_FMT_PEM, 0);
+	ret = gnutls_pubkey_import_x509_raw(pubkey, &server_ca3_rsa_pss2_cert,
+					    GNUTLS_X509_FMT_PEM, 0);
 	if (ret < 0) {
-		fprintf(stderr,
-			"gnutls_pubkey_import: %s\n", gnutls_strerror(ret));
+		fprintf(stderr, "gnutls_pubkey_import: %s\n",
+			gnutls_strerror(ret));
 		exit(1);
 	}
 
 	ret = gnutls_pubkey_get_spki(pubkey, spki, 0);
 	assert(ret >= 0);
 
-	assert(gnutls_x509_spki_get_rsa_pss_params(spki, &dig, &salt_size) >= 0);
+	assert(gnutls_x509_spki_get_rsa_pss_params(spki, &dig, &salt_size) >=
+	       0);
 	assert(salt_size == 32);
 	assert(dig == GNUTLS_DIG_SHA256);
 
@@ -96,21 +96,19 @@ static void key_check(void)
 	}
 
 	ret = gnutls_x509_spki_init(&spki);
-	assert(ret>=0);
+	assert(ret >= 0);
 
 	ret = gnutls_privkey_init(&key);
 	if (ret < 0) {
-		fprintf(stderr,
-			"gnutls_privkey_init: %s\n", gnutls_strerror(ret));
+		fprintf(stderr, "gnutls_privkey_init: %s\n",
+			gnutls_strerror(ret));
 		exit(1);
 	}
 
-	ret =
-	    gnutls_privkey_import_x509_raw(key, &server_ca3_rsa_pss2_key,
-				           GNUTLS_X509_FMT_PEM, NULL, 0);
+	ret = gnutls_privkey_import_x509_raw(key, &server_ca3_rsa_pss2_key,
+					     GNUTLS_X509_FMT_PEM, NULL, 0);
 	if (ret < 0) {
-		fprintf(stderr,
-			"gnutls_privkey_import: %s\n",
+		fprintf(stderr, "gnutls_privkey_import: %s\n",
 			gnutls_strerror(ret));
 		exit(1);
 	}
@@ -118,18 +116,21 @@ static void key_check(void)
 	ret = gnutls_privkey_get_spki(key, spki, 0);
 	assert(ret >= 0);
 
-	assert(gnutls_x509_spki_get_rsa_pss_params(spki, &dig, &salt_size) >= 0);
+	assert(gnutls_x509_spki_get_rsa_pss_params(spki, &dig, &salt_size) >=
+	       0);
 	assert(salt_size == 32);
 	assert(dig == GNUTLS_DIG_SHA256);
 
 	/* set and get */
 	gnutls_x509_spki_set_rsa_pss_params(spki, GNUTLS_DIG_SHA1, 64);
-	assert(gnutls_x509_spki_get_rsa_pss_params(spki, &dig, &salt_size) >= 0);
+	assert(gnutls_x509_spki_get_rsa_pss_params(spki, &dig, &salt_size) >=
+	       0);
 	assert(salt_size == 64);
 	assert(dig == GNUTLS_DIG_SHA1);
 
 	/* read one at a time */
-	assert(gnutls_x509_spki_get_rsa_pss_params(spki, NULL, &salt_size) >= 0);
+	assert(gnutls_x509_spki_get_rsa_pss_params(spki, NULL, &salt_size) >=
+	       0);
 	assert(salt_size == 64);
 	assert(gnutls_x509_spki_get_rsa_pss_params(spki, &dig, NULL) >= 0);
 	assert(dig == GNUTLS_DIG_SHA1);

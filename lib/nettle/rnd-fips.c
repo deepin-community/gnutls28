@@ -14,7 +14,7 @@
  * GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with this program; if not, see <https://www.gnu.org/licenses/>.
+ * License along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 #include <config.h>
@@ -55,7 +55,7 @@ static int get_random(struct drbg_aes_ctx *ctx, struct fips_ctx *fctx,
 {
 	int ret;
 
-	if ( _gnutls_detect_fork(fctx->forkid) != 0) {
+	if (_gnutls_detect_fork(fctx->forkid) != 0) {
 		ret = _rngfips_ctx_reinit(fctx);
 		if (ret < 0) {
 			_gnutls_switch_fips_state(GNUTLS_FIPS140_OP_ERROR);
@@ -123,7 +123,7 @@ static int get_entropy(struct fips_ctx *fctx, uint8_t *buffer, size_t length)
 }
 
 #define PSTRING "gnutls-rng"
-#define PSTRING_SIZE (sizeof(PSTRING)-1)
+#define PSTRING_SIZE (sizeof(PSTRING) - 1)
 static int drbg_init(struct fips_ctx *fctx, struct drbg_aes_ctx *ctx)
 {
 	uint8_t buffer[DRBG_AES_SEED_SIZE];
@@ -135,8 +135,8 @@ static int drbg_init(struct fips_ctx *fctx, struct drbg_aes_ctx *ctx)
 		return gnutls_assert_val(ret);
 	}
 
-	ret = drbg_aes_init(ctx, sizeof(buffer), buffer,
-			    PSTRING_SIZE, (void*)PSTRING);
+	ret = drbg_aes_init(ctx, sizeof(buffer), buffer, PSTRING_SIZE,
+			    (void *)PSTRING);
 	zeroize_key(buffer, sizeof(buffer));
 	if (ret == 0) {
 		_gnutls_switch_fips_state(GNUTLS_FIPS140_OP_ERROR);
@@ -228,7 +228,7 @@ static int _rngfips_ctx_reinit(struct fips_ctx *fctx)
 /* Initialize this random subsystem. */
 static int _rngfips_init(void **_ctx)
 {
-/* Basic initialization is required to
+	/* Basic initialization is required to
    do a few checks on the implementation.  */
 	struct fips_ctx *ctx;
 	int ret;
@@ -305,4 +305,3 @@ gnutls_crypto_rnd_st _gnutls_fips_rnd_ops = {
 	.rnd_refresh = _rngfips_refresh,
 	.self_test = selftest_kat,
 };
-

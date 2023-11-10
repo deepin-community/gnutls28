@@ -35,7 +35,7 @@
 #define addf _gnutls_buffer_append_printf
 #define adds _gnutls_buffer_append_str
 
-static void print_req(gnutls_buffer_st * str, gnutls_ocsp_req_const_t req)
+static void print_req(gnutls_buffer_st *str, gnutls_ocsp_req_const_t req)
 {
 	int ret;
 	unsigned indx;
@@ -58,9 +58,8 @@ static void print_req(gnutls_buffer_st * str, gnutls_ocsp_req_const_t req)
 		gnutls_digest_algorithm_t digest;
 		gnutls_datum_t in, ik, sn;
 
-		ret =
-		    gnutls_ocsp_req_get_cert_id(req, indx, &digest, &in,
-						&ik, &sn);
+		ret = gnutls_ocsp_req_get_cert_id(req, indx, &digest, &in, &ik,
+						  &sn);
 		if (ret == GNUTLS_E_REQUESTED_DATA_NOT_AVAILABLE)
 			break;
 		addf(str, "\t\tCertificate ID:\n");
@@ -96,9 +95,8 @@ static void print_req(gnutls_buffer_st * str, gnutls_ocsp_req_const_t req)
 		unsigned int critical;
 		gnutls_datum_t data;
 
-		ret =
-		    gnutls_ocsp_req_get_extension(req, indx, &oid,
-						  &critical, &data);
+		ret = gnutls_ocsp_req_get_extension(req, indx, &oid, &critical,
+						    &data);
 		if (ret == GNUTLS_E_REQUESTED_DATA_NOT_AVAILABLE)
 			break;
 		else if (ret != GNUTLS_E_SUCCESS) {
@@ -114,9 +112,7 @@ static void print_req(gnutls_buffer_st * str, gnutls_ocsp_req_const_t req)
 			gnutls_datum_t nonce;
 			unsigned int ncrit;
 
-			ret =
-			    gnutls_ocsp_req_get_nonce(req, &ncrit,
-						      &nonce);
+			ret = gnutls_ocsp_req_get_nonce(req, &ncrit, &nonce);
 			if (ret != GNUTLS_E_SUCCESS) {
 				addf(str, "error: get_nonce: %s\n",
 				     gnutls_strerror(ret));
@@ -129,17 +125,16 @@ static void print_req(gnutls_buffer_st * str, gnutls_ocsp_req_const_t req)
 				gnutls_free(nonce.data);
 			}
 		} else {
-			addf(str, "\t\tUnknown extension %s (%s):\n",
-			     oid.data,
+			addf(str, "\t\tUnknown extension %s (%s):\n", oid.data,
 			     critical ? "critical" : "not critical");
 
 			adds(str, _("\t\t\tASCII: "));
-			_gnutls_buffer_asciiprint(str, (char *) data.data,
+			_gnutls_buffer_asciiprint(str, (char *)data.data,
 						  data.size);
 			addf(str, "\n");
 
 			adds(str, _("\t\t\tHexdump: "));
-			_gnutls_buffer_hexprint(str, (char *) data.data,
+			_gnutls_buffer_hexprint(str, (char *)data.data,
 						data.size);
 			adds(str, "\n");
 		}
@@ -168,10 +163,9 @@ static void print_req(gnutls_buffer_st * str, gnutls_ocsp_req_const_t req)
  * Returns: On success, %GNUTLS_E_SUCCESS (0) is returned, otherwise a
  *   negative error value.
  **/
-int
-gnutls_ocsp_req_print(gnutls_ocsp_req_const_t req,
-		      gnutls_ocsp_print_formats_t format,
-		      gnutls_datum_t * out)
+int gnutls_ocsp_req_print(gnutls_ocsp_req_const_t req,
+			  gnutls_ocsp_print_formats_t format,
+			  gnutls_datum_t *out)
 {
 	gnutls_buffer_st str;
 	int rc;
@@ -196,9 +190,8 @@ gnutls_ocsp_req_print(gnutls_ocsp_req_const_t req,
 	return GNUTLS_E_SUCCESS;
 }
 
-static void
-print_resp(gnutls_buffer_st * str, gnutls_ocsp_resp_const_t resp,
-	   gnutls_ocsp_print_formats_t format)
+static void print_resp(gnutls_buffer_st *str, gnutls_ocsp_resp_const_t resp,
+		       gnutls_ocsp_print_formats_t format)
 {
 	int ret;
 	unsigned indx;
@@ -254,13 +247,13 @@ print_resp(gnutls_buffer_st * str, gnutls_ocsp_resp_const_t resp,
 		adds(str, "\tResponse Type: ");
 #define OCSP_BASIC "1.3.6.1.5.5.7.48.1.1"
 
-		if (oid.size == sizeof(OCSP_BASIC) - 1
-		    && memcmp(oid.data, OCSP_BASIC, oid.size) == 0) {
+		if (oid.size == sizeof(OCSP_BASIC) - 1 &&
+		    memcmp(oid.data, OCSP_BASIC, oid.size) == 0) {
 			adds(str, "Basic OCSP Response\n");
 			gnutls_free(oid.data);
 		} else {
-			addf(str, "Unknown response type (%.*s)\n",
-			     oid.size, oid.data);
+			addf(str, "Unknown response type (%.*s)\n", oid.size,
+			     oid.data);
 			gnutls_free(oid.data);
 			return;
 		}
@@ -278,16 +271,18 @@ print_resp(gnutls_buffer_st * str, gnutls_ocsp_resp_const_t resp,
 
 	/* responderID */
 	{
-		gnutls_datum_t dn = {NULL, 0};
+		gnutls_datum_t dn = { NULL, 0 };
 
 		ret = gnutls_ocsp_resp_get_responder2(resp, &dn, 0);
 		if (ret < 0) {
 			if (ret == GNUTLS_E_REQUESTED_DATA_NOT_AVAILABLE) {
-				ret = gnutls_ocsp_resp_get_responder_raw_id(resp, GNUTLS_OCSP_RESP_ID_KEY, &dn);
+				ret = gnutls_ocsp_resp_get_responder_raw_id(
+					resp, GNUTLS_OCSP_RESP_ID_KEY, &dn);
 
 				if (ret >= 0) {
 					addf(str, _("\tResponder Key ID: "));
-					_gnutls_buffer_hexprint(str, dn.data, dn.size);
+					_gnutls_buffer_hexprint(str, dn.data,
+								dn.size);
 					adds(str, "\n");
 				}
 				gnutls_free(dn.data);
@@ -307,15 +302,14 @@ print_resp(gnutls_buffer_st * str, gnutls_ocsp_resp_const_t resp,
 		struct tm t;
 		time_t tim = gnutls_ocsp_resp_get_produced(resp);
 
-		if (tim == (time_t) - 1)
+		if (tim == (time_t)-1)
 			addf(str, "error: ocsp_resp_get_produced\n");
 		else if (gmtime_r(&tim, &t) == NULL)
 			addf(str, "error: gmtime_r (%ld)\n",
-			     (unsigned long) tim);
-		else if (strftime(s, max, "%a %b %d %H:%M:%S UTC %Y", &t)
-			 == 0)
+			     (unsigned long)tim);
+		else if (strftime(s, max, "%a %b %d %H:%M:%S UTC %Y", &t) == 0)
 			addf(str, "error: strftime (%ld)\n",
-			     (unsigned long) tim);
+			     (unsigned long)tim);
 		else
 			addf(str, _("\tProduced At: %s\n"), s);
 	}
@@ -330,12 +324,9 @@ print_resp(gnutls_buffer_st * str, gnutls_ocsp_resp_const_t resp,
 		time_t revocation_time;
 		unsigned int revocation_reason;
 
-		ret = gnutls_ocsp_resp_get_single(resp,
-						  indx,
-						  &digest, &in, &ik, &sn,
-						  &cert_status,
-						  &this_update,
-						  &next_update,
+		ret = gnutls_ocsp_resp_get_single(resp, indx, &digest, &in, &ik,
+						  &sn, &cert_status,
+						  &this_update, &next_update,
 						  &revocation_time,
 						  &revocation_reason);
 		if (ret == GNUTLS_E_REQUESTED_DATA_NOT_AVAILABLE)
@@ -389,8 +380,7 @@ print_resp(gnutls_buffer_st * str, gnutls_ocsp_resp_const_t resp,
 			}
 
 			if (p)
-				addf(str, "\t\tCertificate Status: %s\n",
-				     p);
+				addf(str, "\t\tCertificate Status: %s\n", p);
 		}
 
 		/* XXX revocation reason */
@@ -400,19 +390,17 @@ print_resp(gnutls_buffer_st * str, gnutls_ocsp_resp_const_t resp,
 			size_t max = sizeof(s);
 			struct tm t;
 
-			if (revocation_time == (time_t) - 1)
+			if (revocation_time == (time_t)-1)
 				addf(str, "error: revocation_time\n");
 			else if (gmtime_r(&revocation_time, &t) == NULL)
 				addf(str, "error: gmtime_r (%ld)\n",
-				     (unsigned long) revocation_time);
-			else if (strftime
-				 (s, max, "%a %b %d %H:%M:%S UTC %Y",
-				  &t) == 0)
+				     (unsigned long)revocation_time);
+			else if (strftime(s, max, "%a %b %d %H:%M:%S UTC %Y",
+					  &t) == 0)
 				addf(str, "error: strftime (%ld)\n",
-				     (unsigned long) revocation_time);
+				     (unsigned long)revocation_time);
 			else
-				addf(str, _("\t\tRevocation time: %s\n"),
-				     s);
+				addf(str, _("\t\tRevocation time: %s\n"), s);
 		}
 
 		{
@@ -420,16 +408,15 @@ print_resp(gnutls_buffer_st * str, gnutls_ocsp_resp_const_t resp,
 			size_t max = sizeof(s);
 			struct tm t;
 
-			if (this_update == (time_t) - 1)
+			if (this_update == (time_t)-1)
 				addf(str, "error: this_update\n");
 			else if (gmtime_r(&this_update, &t) == NULL)
 				addf(str, "error: gmtime_r (%ld)\n",
-				     (unsigned long) this_update);
-			else if (strftime
-				 (s, max, "%a %b %d %H:%M:%S UTC %Y",
-				  &t) == 0)
+				     (unsigned long)this_update);
+			else if (strftime(s, max, "%a %b %d %H:%M:%S UTC %Y",
+					  &t) == 0)
 				addf(str, "error: strftime (%ld)\n",
-				     (unsigned long) this_update);
+				     (unsigned long)this_update);
 			else
 				addf(str, _("\t\tThis Update: %s\n"), s);
 		}
@@ -439,17 +426,18 @@ print_resp(gnutls_buffer_st * str, gnutls_ocsp_resp_const_t resp,
 			size_t max = sizeof(s);
 			struct tm t;
 
-			if (next_update != (time_t) - 1) {
+			if (next_update != (time_t)-1) {
 				if (gmtime_r(&next_update, &t) == NULL)
 					addf(str, "error: gmtime_r (%ld)\n",
-					     (unsigned long) next_update);
-				else if (strftime
-					 (s, max, "%a %b %d %H:%M:%S UTC %Y",
-					  &t) == 0)
+					     (unsigned long)next_update);
+				else if (strftime(s, max,
+						  "%a %b %d %H:%M:%S UTC %Y",
+						  &t) == 0)
 					addf(str, "error: strftime (%ld)\n",
-					     (unsigned long) next_update);
+					     (unsigned long)next_update);
 				else
-					addf(str, _("\t\tNext Update: %s\n"), s);
+					addf(str, _("\t\tNext Update: %s\n"),
+					     s);
 			}
 		}
 
@@ -462,9 +450,8 @@ print_resp(gnutls_buffer_st * str, gnutls_ocsp_resp_const_t resp,
 		unsigned int critical;
 		gnutls_datum_t data;
 
-		ret =
-		    gnutls_ocsp_resp_get_extension(resp, indx, &oid,
-						   &critical, &data);
+		ret = gnutls_ocsp_resp_get_extension(resp, indx, &oid,
+						     &critical, &data);
 		if (ret == GNUTLS_E_REQUESTED_DATA_NOT_AVAILABLE)
 			break;
 		else if (ret != GNUTLS_E_SUCCESS) {
@@ -478,9 +465,7 @@ print_resp(gnutls_buffer_st * str, gnutls_ocsp_resp_const_t resp,
 			gnutls_datum_t nonce;
 			unsigned int ncrit;
 
-			ret =
-			    gnutls_ocsp_resp_get_nonce(resp, &ncrit,
-						       &nonce);
+			ret = gnutls_ocsp_resp_get_nonce(resp, &ncrit, &nonce);
 			if (ret != GNUTLS_E_SUCCESS) {
 				addf(str, "error: get_nonce: %s\n",
 				     gnutls_strerror(ret));
@@ -493,24 +478,22 @@ print_resp(gnutls_buffer_st * str, gnutls_ocsp_resp_const_t resp,
 				gnutls_free(nonce.data);
 			}
 		} else {
-			addf(str, "\t\tUnknown extension %s (%s):\n",
-			     oid.data,
+			addf(str, "\t\tUnknown extension %s (%s):\n", oid.data,
 			     critical ? "critical" : "not critical");
 
 			adds(str, _("\t\t\tASCII: "));
-			_gnutls_buffer_asciiprint(str, (char *) data.data,
+			_gnutls_buffer_asciiprint(str, (char *)data.data,
 						  data.size);
 			addf(str, "\n");
 
 			adds(str, _("\t\t\tHexdump: "));
-			_gnutls_buffer_hexprint(str, (char *) data.data,
+			_gnutls_buffer_hexprint(str, (char *)data.data,
 						data.size);
 			adds(str, "\n");
 		}
 
 		gnutls_free(oid.data);
 		gnutls_free(data.data);
-
 	}
 
 	ret = gnutls_ocsp_resp_get_signature_algorithm(resp);
@@ -518,16 +501,14 @@ print_resp(gnutls_buffer_st * str, gnutls_ocsp_resp_const_t resp,
 		addf(str, "error: get_signature_algorithm: %s\n",
 		     gnutls_strerror(ret));
 	else {
-		const char *name =
-		    gnutls_sign_algorithm_get_name(ret);
+		const char *name = gnutls_sign_algorithm_get_name(ret);
 		if (name == NULL)
 			name = _("unknown");
 		addf(str, _("\tSignature Algorithm: %s\n"), name);
 	}
 	if (ret != GNUTLS_SIGN_UNKNOWN && gnutls_sign_is_secure(ret) == 0) {
-		adds(str,
-		     _("warning: signed using a broken signature "
-		       "algorithm that can be forged.\n"));
+		adds(str, _("warning: signed using a broken signature "
+			    "algorithm that can be forged.\n"));
 	}
 
 	if (format == GNUTLS_OCSP_PRINT_FULL) {
@@ -543,8 +524,7 @@ print_resp(gnutls_buffer_st * str, gnutls_ocsp_resp_const_t resp,
 			     gnutls_strerror(ret));
 		else {
 			adds(str, _("\tSignature:\n"));
-			_gnutls_buffer_hexdump(str, sig.data, sig.size,
-					       "\t\t");
+			_gnutls_buffer_hexdump(str, sig.data, sig.size, "\t\t");
 
 			gnutls_free(sig.data);
 		}
@@ -561,45 +541,38 @@ print_resp(gnutls_buffer_st * str, gnutls_ocsp_resp_const_t resp,
 			for (i = 0; i < ncerts; i++) {
 				size_t s = 0;
 
-				ret =
-				    gnutls_x509_crt_print(certs[i],
-							  GNUTLS_CRT_PRINT_FULL,
-							  &out);
+				ret = gnutls_x509_crt_print(
+					certs[i], GNUTLS_CRT_PRINT_FULL, &out);
 				if (ret < 0)
 					addf(str, "error: crt_print: %s\n",
 					     gnutls_strerror(ret));
 				else {
-					addf(str, "%.*s", out.size,
-					     out.data);
+					addf(str, "%.*s", out.size, out.data);
 					gnutls_free(out.data);
 				}
 
-				ret =
-				    gnutls_x509_crt_export(certs[i],
-							   GNUTLS_X509_FMT_PEM,
-							   NULL, &s);
+				ret = gnutls_x509_crt_export(
+					certs[i], GNUTLS_X509_FMT_PEM, NULL,
+					&s);
 				if (ret != GNUTLS_E_SHORT_MEMORY_BUFFER)
-					addf(str,
-					     "error: crt_export: %s\n",
+					addf(str, "error: crt_export: %s\n",
 					     gnutls_strerror(ret));
 				else {
 					out.data = gnutls_malloc(s);
 					if (out.data == NULL)
-						addf(str,
-						     "error: malloc: %s\n",
-						     gnutls_strerror
-						     (GNUTLS_E_MEMORY_ERROR));
+						addf(str, "error: malloc: %s\n",
+						     gnutls_strerror(
+							     GNUTLS_E_MEMORY_ERROR));
 					else {
-						ret =
-						    gnutls_x509_crt_export
-						    (certs[i],
-						     GNUTLS_X509_FMT_PEM,
-						     out.data, &s);
+						ret = gnutls_x509_crt_export(
+							certs[i],
+							GNUTLS_X509_FMT_PEM,
+							out.data, &s);
 						if (ret < 0)
 							addf(str,
 							     "error: crt_export: %s\n",
-							     gnutls_strerror
-							     (ret));
+							     gnutls_strerror(
+								     ret));
 						else {
 							out.size = s;
 							addf(str, "%.*s",
@@ -634,10 +607,9 @@ print_resp(gnutls_buffer_st * str, gnutls_ocsp_resp_const_t resp,
  * Returns: On success, %GNUTLS_E_SUCCESS (0) is returned, otherwise a
  *   negative error value.
  **/
-int
-gnutls_ocsp_resp_print(gnutls_ocsp_resp_const_t resp,
-		       gnutls_ocsp_print_formats_t format,
-		       gnutls_datum_t * out)
+int gnutls_ocsp_resp_print(gnutls_ocsp_resp_const_t resp,
+			   gnutls_ocsp_print_formats_t format,
+			   gnutls_datum_t *out)
 {
 	gnutls_buffer_st str;
 	int rc;

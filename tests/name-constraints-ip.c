@@ -16,8 +16,7 @@
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GnuTLS; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
+ * along with GnuTLS.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 #ifdef HAVE_CONFIG_H
@@ -48,11 +47,12 @@ typedef struct test_vars_t {
 /* just declaration: function is exported privately
    from lib/x509/name_constraints.c (declared in lib/x509/x509_int.h)
    but including the header breaks includes */
-extern int _gnutls_x509_name_constraints_merge(
-					gnutls_x509_name_constraints_t nc,
-					gnutls_x509_name_constraints_t nc2);
+extern int
+_gnutls_x509_name_constraints_merge(gnutls_x509_name_constraints_t nc,
+				    gnutls_x509_name_constraints_t nc2);
 
-static void check_for_error(int ret) {
+static void check_for_error(int ret)
+{
 	if (ret != GNUTLS_E_SUCCESS)
 		fail_msg("error in %d: %s\n", __LINE__, gnutls_strerror(ret));
 }
@@ -61,21 +61,24 @@ static void check_for_error(int ret) {
 #define IP_REJECTED 0
 
 static void check_test_result(int ret, int expected_outcome,
-							  gnutls_datum_t *tested_ip) {
+			      gnutls_datum_t *tested_ip)
+{
 	if (expected_outcome == IP_ACCEPTED ? ret == 0 : ret != 0) {
 		char ip_out[48];
-		_gnutls_ip_to_string(tested_ip->data, tested_ip->size, ip_out, sizeof(ip_out));
+		_gnutls_ip_to_string(tested_ip->data, tested_ip->size, ip_out,
+				     sizeof(ip_out));
 		if (expected_outcome == IP_ACCEPTED) {
 			fail_msg("Checking %.*s should have succeeded.\n",
-				 (int) sizeof(ip_out), ip_out);
+				 (int)sizeof(ip_out), ip_out);
 		} else {
 			fail_msg("Checking %.*s should have failed.\n",
-				 (int) sizeof(ip_out), ip_out);
+				 (int)sizeof(ip_out), ip_out);
 		}
 	}
 }
 
-static void parse_cidr(const char* cidr, gnutls_datum_t *datum) {
+static void parse_cidr(const char *cidr, gnutls_datum_t *datum)
+{
 	if (datum->data != NULL) {
 		gnutls_free(datum->data);
 	}
@@ -83,36 +86,37 @@ static void parse_cidr(const char* cidr, gnutls_datum_t *datum) {
 	check_for_error(ret);
 }
 
-static void tls_log_func(int level, const char *str) {
+static void tls_log_func(int level, const char *str)
+{
 	fprintf(stderr, "<%d>| %s", level, str);
 }
 
 static unsigned char cert_pem[] =
-    "-----BEGIN CERTIFICATE-----\n"
-    "MIIEMTCCAxmgAwIBAgIBADANBgkqhkiG9w0BAQUFADCBlTELMAkGA1UEBhMCR1Ix\n"
-    "RDBCBgNVBAoTO0hlbGxlbmljIEFjYWRlbWljIGFuZCBSZXNlYXJjaCBJbnN0aXR1\n"
-    "dGlvbnMgQ2VydC4gQXV0aG9yaXR5MUAwPgYDVQQDEzdIZWxsZW5pYyBBY2FkZW1p\n"
-    "YyBhbmQgUmVzZWFyY2ggSW5zdGl0dXRpb25zIFJvb3RDQSAyMDExMB4XDTExMTIw\n"
-    "NjEzNDk1MloXDTMxMTIwMTEzNDk1MlowgZUxCzAJBgNVBAYTAkdSMUQwQgYDVQQK\n"
-    "EztIZWxsZW5pYyBBY2FkZW1pYyBhbmQgUmVzZWFyY2ggSW5zdGl0dXRpb25zIENl\n"
-    "cnQuIEF1dGhvcml0eTFAMD4GA1UEAxM3SGVsbGVuaWMgQWNhZGVtaWMgYW5kIFJl\n"
-    "c2VhcmNoIEluc3RpdHV0aW9ucyBSb290Q0EgMjAxMTCCASIwDQYJKoZIhvcNAQEB\n"
-    "BQADggEPADCCAQoCggEBAKlTAOMupvaO+mDYLZU++CwqVE7NuYRhlFhPjz2L5EPz\n"
-    "dYmNUeTDN9KKiE15HrcS3UN4SoqS5tdI1Q+kOilENbgH9mgdVc04UfCMJDGFr4PJ\n"
-    "fel3r+0ae50X+bOdOFAPplp5kYCvN66m0zH7tSYJnTxa71HFK9+WXesyHgLacEns\n"
-    "bgzImjeN9/E2YEsmLIKe0HjzDQ9jpFEw4fkrJxIH2Oq9GGKYsFk3fb7u8yBRQlqD\n"
-    "75O6aRXxYp2fmTmCobd0LovUxQt7L/DICto9eQqakxylKHJzkUOap9FNhYS5qXSP\n"
-    "FEDH3N6sQWRstBmbAmNtJGSPRLIl6s5ddAxjMlyNh+UCAwEAAaOBiTCBhjAPBgNV\n"
-    "HRMBAf8EBTADAQH/MAsGA1UdDwQEAwIBBjAdBgNVHQ4EFgQUppFC/RNhSiOeCKQp\n"
-    "5dgTBCPuQSUwRwYDVR0eBEAwPqA8MAWCAy5ncjAFggMuZXUwBoIELmVkdTAGggQu\n"
-    "b3JnMAWBAy5ncjAFgQMuZXUwBoEELmVkdTAGgQQub3JnMA0GCSqGSIb3DQEBBQUA\n"
-    "A4IBAQAf73lB4XtuP7KMhjdCSk4cNx6NZrokgclPEg8hwAOXhiVtXdMiKahsog2p\n"
-    "6z0GW5k6x8zDmjR/qw7IThzh+uTczQ2+vyT+bOdrwg3IBp5OjWEopmr95fZi6hg8\n"
-    "TqBTnbI6nOulnJEWtk2C4AwFSKls9cz4y51JtPACpf1wA+2KIaWuE4ZJwzNzvoc7\n"
-    "dIsXRSZMFpGD/md9zU1jZ/rzAxKWeAaNsWftjj++n08C9bMJL/NMh98qy5V8Acys\n"
-    "Nnq/onN694/BtZqhFLKPM58N7yLcZnuEvUUXBj08yrl3NI/K6s8/MT7jiOOASSXI\n"
-    "l7WdmplNsDz4SgCbZN2fOUvRJ9e4\n"
-    "-----END CERTIFICATE-----\n";
+	"-----BEGIN CERTIFICATE-----\n"
+	"MIIEMTCCAxmgAwIBAgIBADANBgkqhkiG9w0BAQUFADCBlTELMAkGA1UEBhMCR1Ix\n"
+	"RDBCBgNVBAoTO0hlbGxlbmljIEFjYWRlbWljIGFuZCBSZXNlYXJjaCBJbnN0aXR1\n"
+	"dGlvbnMgQ2VydC4gQXV0aG9yaXR5MUAwPgYDVQQDEzdIZWxsZW5pYyBBY2FkZW1p\n"
+	"YyBhbmQgUmVzZWFyY2ggSW5zdGl0dXRpb25zIFJvb3RDQSAyMDExMB4XDTExMTIw\n"
+	"NjEzNDk1MloXDTMxMTIwMTEzNDk1MlowgZUxCzAJBgNVBAYTAkdSMUQwQgYDVQQK\n"
+	"EztIZWxsZW5pYyBBY2FkZW1pYyBhbmQgUmVzZWFyY2ggSW5zdGl0dXRpb25zIENl\n"
+	"cnQuIEF1dGhvcml0eTFAMD4GA1UEAxM3SGVsbGVuaWMgQWNhZGVtaWMgYW5kIFJl\n"
+	"c2VhcmNoIEluc3RpdHV0aW9ucyBSb290Q0EgMjAxMTCCASIwDQYJKoZIhvcNAQEB\n"
+	"BQADggEPADCCAQoCggEBAKlTAOMupvaO+mDYLZU++CwqVE7NuYRhlFhPjz2L5EPz\n"
+	"dYmNUeTDN9KKiE15HrcS3UN4SoqS5tdI1Q+kOilENbgH9mgdVc04UfCMJDGFr4PJ\n"
+	"fel3r+0ae50X+bOdOFAPplp5kYCvN66m0zH7tSYJnTxa71HFK9+WXesyHgLacEns\n"
+	"bgzImjeN9/E2YEsmLIKe0HjzDQ9jpFEw4fkrJxIH2Oq9GGKYsFk3fb7u8yBRQlqD\n"
+	"75O6aRXxYp2fmTmCobd0LovUxQt7L/DICto9eQqakxylKHJzkUOap9FNhYS5qXSP\n"
+	"FEDH3N6sQWRstBmbAmNtJGSPRLIl6s5ddAxjMlyNh+UCAwEAAaOBiTCBhjAPBgNV\n"
+	"HRMBAf8EBTADAQH/MAsGA1UdDwQEAwIBBjAdBgNVHQ4EFgQUppFC/RNhSiOeCKQp\n"
+	"5dgTBCPuQSUwRwYDVR0eBEAwPqA8MAWCAy5ncjAFggMuZXUwBoIELmVkdTAGggQu\n"
+	"b3JnMAWBAy5ncjAFgQMuZXUwBoEELmVkdTAGgQQub3JnMA0GCSqGSIb3DQEBBQUA\n"
+	"A4IBAQAf73lB4XtuP7KMhjdCSk4cNx6NZrokgclPEg8hwAOXhiVtXdMiKahsog2p\n"
+	"6z0GW5k6x8zDmjR/qw7IThzh+uTczQ2+vyT+bOdrwg3IBp5OjWEopmr95fZi6hg8\n"
+	"TqBTnbI6nOulnJEWtk2C4AwFSKls9cz4y51JtPACpf1wA+2KIaWuE4ZJwzNzvoc7\n"
+	"dIsXRSZMFpGD/md9zU1jZ/rzAxKWeAaNsWftjj++n08C9bMJL/NMh98qy5V8Acys\n"
+	"Nnq/onN694/BtZqhFLKPM58N7yLcZnuEvUUXBj08yrl3NI/K6s8/MT7jiOOASSXI\n"
+	"l7WdmplNsDz4SgCbZN2fOUvRJ9e4\n"
+	"-----END CERTIFICATE-----\n";
 
 const gnutls_datum_t cert = { cert_pem, sizeof(cert_pem) };
 
@@ -121,8 +125,8 @@ const gnutls_datum_t cert = { cert_pem, sizeof(cert_pem) };
 static void check_generation_reading_basic_checking(void **glob_state)
 {
 	int ret;
-	gnutls_x509_name_constraints_t nc =  ((test_vars_t*)*glob_state)->nc;
-	gnutls_datum_t *ip = &(((test_vars_t*)*glob_state)->ip);
+	gnutls_x509_name_constraints_t nc = ((test_vars_t *)*glob_state)->nc;
+	gnutls_datum_t *ip = &(((test_vars_t *)*glob_state)->ip);
 
 	unsigned int i, num_permitted, num_excluded, type;
 	gnutls_x509_crt_t crt;
@@ -142,22 +146,26 @@ static void check_generation_reading_basic_checking(void **glob_state)
 	num_permitted = num_excluded = 0;
 
 	parse_cidr("203.0.113.0/24", ip);
-	ret = gnutls_x509_name_constraints_add_permitted(nc, GNUTLS_SAN_IPADDRESS, ip);
+	ret = gnutls_x509_name_constraints_add_permitted(
+		nc, GNUTLS_SAN_IPADDRESS, ip);
 	num_permitted++;
 	check_for_error(ret);
 
 	parse_cidr("2001:DB8::/32", ip);
-	ret = gnutls_x509_name_constraints_add_permitted(nc, GNUTLS_SAN_IPADDRESS, ip);
+	ret = gnutls_x509_name_constraints_add_permitted(
+		nc, GNUTLS_SAN_IPADDRESS, ip);
 	num_permitted++;
 	check_for_error(ret);
 
 	parse_cidr("203.0.113.0/26", ip);
-	ret = gnutls_x509_name_constraints_add_excluded(nc, GNUTLS_SAN_IPADDRESS, ip);
+	ret = gnutls_x509_name_constraints_add_excluded(
+		nc, GNUTLS_SAN_IPADDRESS, ip);
 	num_excluded++;
 	check_for_error(ret);
 
 	parse_cidr("2001:DB8::/34", ip);
-	ret = gnutls_x509_name_constraints_add_excluded(nc, GNUTLS_SAN_IPADDRESS, ip);
+	ret = gnutls_x509_name_constraints_add_excluded(
+		nc, GNUTLS_SAN_IPADDRESS, ip);
 	num_excluded++;
 	check_for_error(ret);
 
@@ -165,13 +173,15 @@ static void check_generation_reading_basic_checking(void **glob_state)
 
 	parse_cidr("2001:DB8::/34", ip);
 	ip->data[30] = 2;
-	ret = gnutls_x509_name_constraints_add_excluded(nc, GNUTLS_SAN_IPADDRESS, ip);
+	ret = gnutls_x509_name_constraints_add_excluded(
+		nc, GNUTLS_SAN_IPADDRESS, ip);
 	if (ret == 0)
 		fail_msg("Checking invalid network mask should have failed.");
 
 	parse_cidr("2001:DB8::/34", ip);
 	ip->size = 31;
-	ret = gnutls_x509_name_constraints_add_permitted(nc, GNUTLS_SAN_IPADDRESS, ip);
+	ret = gnutls_x509_name_constraints_add_permitted(
+		nc, GNUTLS_SAN_IPADDRESS, ip);
 	if (ret == 0)
 		fail_msg("Checking invalid IP size should have failed.");
 
@@ -182,28 +192,36 @@ static void check_generation_reading_basic_checking(void **glob_state)
 
 	i = 0;
 	do {
-		ret = gnutls_x509_name_constraints_get_permitted(nc, i++, &type, &name);
+		ret = gnutls_x509_name_constraints_get_permitted(nc, i++, &type,
+								 &name);
 #ifdef DEBUG
-			_gnutls_cidr_to_string(name.data, name.size, ip_out, sizeof(ip_out));
-			printf("Loaded name constraint: %s\n",ip_out);
+		_gnutls_cidr_to_string(name.data, name.size, ip_out,
+				       sizeof(ip_out));
+		printf("Loaded name constraint: %s\n", ip_out);
 #endif
-	} while(ret == 0);
+	} while (ret == 0);
 
-	if (i-1 != num_permitted) {
-		fail_msg("Could not read all constraints; read %d, expected %d\n", i-1, num_permitted);
+	if (i - 1 != num_permitted) {
+		fail_msg(
+			"Could not read all constraints; read %d, expected %d\n",
+			i - 1, num_permitted);
 	}
 
 	i = 0;
 	do {
-		ret = gnutls_x509_name_constraints_get_excluded(nc, i++, &type, &name);
+		ret = gnutls_x509_name_constraints_get_excluded(nc, i++, &type,
+								&name);
 #ifdef DEBUG
-		_gnutls_cidr_to_string(name.data, name.size, ip_out, sizeof(ip_out));
-		printf("Loaded name constraint: %s\n",ip_out);
+		_gnutls_cidr_to_string(name.data, name.size, ip_out,
+				       sizeof(ip_out));
+		printf("Loaded name constraint: %s\n", ip_out);
 #endif
-	} while(ret == 0);
+	} while (ret == 0);
 
-	if (i-1 != num_excluded) {
-		fail_msg("Could not read all excluded constraints; read %d, expected %d\n", i-1, num_excluded);
+	if (i - 1 != num_excluded) {
+		fail_msg(
+			"Could not read all excluded constraints; read %d, expected %d\n",
+			i - 1, num_excluded);
 	}
 
 	/* 3: test the name constraints check function */
@@ -222,7 +240,6 @@ static void check_generation_reading_basic_checking(void **glob_state)
 	ip->size = 4; // strip network mask
 	ret = gnutls_x509_name_constraints_check(nc, GNUTLS_SAN_IPADDRESS, ip);
 	check_test_result(ret, IP_REJECTED, ip);
-
 
 	parse_cidr("2001:DB8:4000::/128", ip);
 	ip->size = 16; // strip network mask
@@ -246,11 +263,12 @@ static void check_universal_constraint_checking(void **glob_state)
 {
 	/* 3b setting universal constraint */
 	int ret;
-	gnutls_x509_name_constraints_t nc =  ((test_vars_t*)*glob_state)->nc;
-	gnutls_datum_t *ip = &(((test_vars_t*)*glob_state)->ip);
+	gnutls_x509_name_constraints_t nc = ((test_vars_t *)*glob_state)->nc;
+	gnutls_datum_t *ip = &(((test_vars_t *)*glob_state)->ip);
 
 	parse_cidr("2001:DB8::/0", ip);
-	ret = gnutls_x509_name_constraints_add_excluded(nc, GNUTLS_SAN_IPADDRESS, ip);
+	ret = gnutls_x509_name_constraints_add_excluded(
+		nc, GNUTLS_SAN_IPADDRESS, ip);
 	check_for_error(ret);
 
 	parse_cidr("2001:DB8:10::/128", ip);
@@ -269,18 +287,20 @@ static void check_simple_intersection(void **glob_state)
 	/* 4: simple intersection
 	 * --------P:203.0.113.0/24--------
 	 * --P:203.0.113.0/26--
-	 *      A		   B	  C
+	 *      A                  B      C
 	 */
 	int ret;
-	gnutls_x509_name_constraints_t nc =  ((test_vars_t*)*glob_state)->nc;
-	gnutls_x509_name_constraints_t nc2 = ((test_vars_t*)*glob_state)->nc2;
-	gnutls_datum_t *ip = &(((test_vars_t*)*glob_state)->ip);
+	gnutls_x509_name_constraints_t nc = ((test_vars_t *)*glob_state)->nc;
+	gnutls_x509_name_constraints_t nc2 = ((test_vars_t *)*glob_state)->nc2;
+	gnutls_datum_t *ip = &(((test_vars_t *)*glob_state)->ip);
 
 	parse_cidr("203.0.113.0/24", ip);
-	ret = gnutls_x509_name_constraints_add_permitted(nc, GNUTLS_SAN_IPADDRESS, ip);
+	ret = gnutls_x509_name_constraints_add_permitted(
+		nc, GNUTLS_SAN_IPADDRESS, ip);
 	check_for_error(ret);
 	parse_cidr("203.0.113.0/26", ip);
-	ret = gnutls_x509_name_constraints_add_permitted(nc2, GNUTLS_SAN_IPADDRESS, ip);
+	ret = gnutls_x509_name_constraints_add_permitted(
+		nc2, GNUTLS_SAN_IPADDRESS, ip);
 	check_for_error(ret);
 	ret = _gnutls_x509_name_constraints_merge(nc, nc2);
 	check_for_error(ret);
@@ -305,19 +325,21 @@ static void check_empty_intersection(void **glob_state)
 {
 	/* 5: empty intersection
 	 * --P:127.0.113.0/24--
-	 *			    --P:255.0.113.0/24--
-	 *      A		 B	  C
+	 *                          --P:255.0.113.0/24--
+	 *      A                B        C
 	 */
 	int ret;
-	gnutls_x509_name_constraints_t nc =  ((test_vars_t*)*glob_state)->nc;
-	gnutls_x509_name_constraints_t nc2 = ((test_vars_t*)*glob_state)->nc2;
-	gnutls_datum_t *ip = &(((test_vars_t*)*glob_state)->ip);
+	gnutls_x509_name_constraints_t nc = ((test_vars_t *)*glob_state)->nc;
+	gnutls_x509_name_constraints_t nc2 = ((test_vars_t *)*glob_state)->nc2;
+	gnutls_datum_t *ip = &(((test_vars_t *)*glob_state)->ip);
 
 	parse_cidr("127.0.113.0/24", ip);
-	ret = gnutls_x509_name_constraints_add_permitted(nc, GNUTLS_SAN_IPADDRESS, ip);
+	ret = gnutls_x509_name_constraints_add_permitted(
+		nc, GNUTLS_SAN_IPADDRESS, ip);
 	check_for_error(ret);
 	parse_cidr("255.0.113.0/24", ip);
-	ret = gnutls_x509_name_constraints_add_permitted(nc2, GNUTLS_SAN_IPADDRESS, ip);
+	ret = gnutls_x509_name_constraints_add_permitted(
+		nc2, GNUTLS_SAN_IPADDRESS, ip);
 	check_for_error(ret);
 	ret = _gnutls_x509_name_constraints_merge(nc, nc2);
 	check_for_error(ret);
@@ -342,22 +364,25 @@ static void check_mediocre_intersection(void **glob_state)
 {
 	/* 6: mediocre intersection
 	 * --------P:127.0.113.0/24--------
-	 * --P:127.0.113.0/26--		    --P:255.0.113.0/24--
-	 *      A		 B	  C	    D
+	 * --P:127.0.113.0/26--             --P:255.0.113.0/24--
+	 *      A                B        C         D
 	 */
 	int ret;
-	gnutls_x509_name_constraints_t nc =  ((test_vars_t*)*glob_state)->nc;
-	gnutls_x509_name_constraints_t nc2 = ((test_vars_t*)*glob_state)->nc2;
-	gnutls_datum_t *ip = &(((test_vars_t*)*glob_state)->ip);
+	gnutls_x509_name_constraints_t nc = ((test_vars_t *)*glob_state)->nc;
+	gnutls_x509_name_constraints_t nc2 = ((test_vars_t *)*glob_state)->nc2;
+	gnutls_datum_t *ip = &(((test_vars_t *)*glob_state)->ip);
 
 	parse_cidr("127.0.113.0/24", ip);
-	ret = gnutls_x509_name_constraints_add_permitted(nc, GNUTLS_SAN_IPADDRESS, ip);
+	ret = gnutls_x509_name_constraints_add_permitted(
+		nc, GNUTLS_SAN_IPADDRESS, ip);
 	check_for_error(ret);
 	parse_cidr("127.0.113.0/26", ip);
-	ret = gnutls_x509_name_constraints_add_permitted(nc2, GNUTLS_SAN_IPADDRESS, ip);
+	ret = gnutls_x509_name_constraints_add_permitted(
+		nc2, GNUTLS_SAN_IPADDRESS, ip);
 	check_for_error(ret);
 	parse_cidr("255.0.113.0/24", ip);
-	ret = gnutls_x509_name_constraints_add_permitted(nc2, GNUTLS_SAN_IPADDRESS, ip);
+	ret = gnutls_x509_name_constraints_add_permitted(
+		nc2, GNUTLS_SAN_IPADDRESS, ip);
 	check_for_error(ret);
 	ret = _gnutls_x509_name_constraints_merge(nc, nc2);
 	check_for_error(ret);
@@ -388,27 +413,32 @@ static void check_difficult_intersection(void **glob_state)
 	/* 7: difficult intersection
 	 * --------P:0.0.0.0/3---------------     --P:88.0.0.0/5--
 	 * --P:0.0.0.0/5-- --P:16.0.0.0/5--   ----P:64.0.0.0/3----
-	 *      A	 B	C	D E  F	 G	H
+	 *      A        B      C       D E  F   G      H
 	 */
 	int ret;
-	gnutls_x509_name_constraints_t nc =  ((test_vars_t*)*glob_state)->nc;
-	gnutls_x509_name_constraints_t nc2 = ((test_vars_t*)*glob_state)->nc2;
-	gnutls_datum_t *ip = &(((test_vars_t*)*glob_state)->ip);
+	gnutls_x509_name_constraints_t nc = ((test_vars_t *)*glob_state)->nc;
+	gnutls_x509_name_constraints_t nc2 = ((test_vars_t *)*glob_state)->nc2;
+	gnutls_datum_t *ip = &(((test_vars_t *)*glob_state)->ip);
 
 	parse_cidr("0.0.0.0/3", ip);
-	ret = gnutls_x509_name_constraints_add_permitted(nc, GNUTLS_SAN_IPADDRESS, ip);
+	ret = gnutls_x509_name_constraints_add_permitted(
+		nc, GNUTLS_SAN_IPADDRESS, ip);
 	check_for_error(ret);
 	parse_cidr("88.0.0.0/5", ip);
-	ret = gnutls_x509_name_constraints_add_permitted(nc, GNUTLS_SAN_IPADDRESS, ip);
+	ret = gnutls_x509_name_constraints_add_permitted(
+		nc, GNUTLS_SAN_IPADDRESS, ip);
 	check_for_error(ret);
 	parse_cidr("0.0.0.0/5", ip);
-	ret = gnutls_x509_name_constraints_add_permitted(nc2, GNUTLS_SAN_IPADDRESS, ip);
+	ret = gnutls_x509_name_constraints_add_permitted(
+		nc2, GNUTLS_SAN_IPADDRESS, ip);
 	check_for_error(ret);
 	parse_cidr("16.0.0.0/5", ip);
-	ret = gnutls_x509_name_constraints_add_permitted(nc2, GNUTLS_SAN_IPADDRESS, ip);
+	ret = gnutls_x509_name_constraints_add_permitted(
+		nc2, GNUTLS_SAN_IPADDRESS, ip);
 	check_for_error(ret);
 	parse_cidr("64.0.0.0/3", ip);
-	ret = gnutls_x509_name_constraints_add_permitted(nc2, GNUTLS_SAN_IPADDRESS, ip);
+	ret = gnutls_x509_name_constraints_add_permitted(
+		nc2, GNUTLS_SAN_IPADDRESS, ip);
 	check_for_error(ret);
 	ret = _gnutls_x509_name_constraints_merge(nc, nc2);
 	check_for_error(ret);
@@ -459,21 +489,24 @@ static void check_ipv6_intersection(void **glob_state)
 	/* 8: IPv6 intersection
 	 *   --------P:affb::/16-----   --P:affd:0000::/20--
 	 *     --P:affb:aa00::/24--
-	 * A  B	C	   D  E     F		G
+	 * A  B C          D  E     F           G
 	 */
 	int ret;
-	gnutls_x509_name_constraints_t nc =  ((test_vars_t*)*glob_state)->nc;
-	gnutls_x509_name_constraints_t nc2 = ((test_vars_t*)*glob_state)->nc2;
-	gnutls_datum_t *ip = &(((test_vars_t*)*glob_state)->ip);
+	gnutls_x509_name_constraints_t nc = ((test_vars_t *)*glob_state)->nc;
+	gnutls_x509_name_constraints_t nc2 = ((test_vars_t *)*glob_state)->nc2;
+	gnutls_datum_t *ip = &(((test_vars_t *)*glob_state)->ip);
 
 	parse_cidr("affb::/16", ip);
-	ret = gnutls_x509_name_constraints_add_permitted(nc, GNUTLS_SAN_IPADDRESS, ip);
+	ret = gnutls_x509_name_constraints_add_permitted(
+		nc, GNUTLS_SAN_IPADDRESS, ip);
 	check_for_error(ret);
 	parse_cidr("affd:0000::/20", ip);
-	ret = gnutls_x509_name_constraints_add_permitted(nc, GNUTLS_SAN_IPADDRESS, ip);
+	ret = gnutls_x509_name_constraints_add_permitted(
+		nc, GNUTLS_SAN_IPADDRESS, ip);
 	check_for_error(ret);
 	parse_cidr("affb:aa00::/24", ip);
-	ret = gnutls_x509_name_constraints_add_permitted(nc2, GNUTLS_SAN_IPADDRESS, ip);
+	ret = gnutls_x509_name_constraints_add_permitted(
+		nc2, GNUTLS_SAN_IPADDRESS, ip);
 	check_for_error(ret);
 	ret = _gnutls_x509_name_constraints_merge(nc, nc2);
 	check_for_error(ret);
@@ -519,25 +552,28 @@ static void check_empty_ipv4_intersection_ipv6_remains(void **glob_state)
 	/* 9: IPv4 and IPv6 in a common test case
 	 *    IPv4 with empty intersection, but IPv6 gets restricted as well
 	 * --P:127.0.113.0/24--
-	 *			    --P:255.0.113.0/24--
-	 *      A		 B	  C
+	 *                          --P:255.0.113.0/24--
+	 *      A                B        C
 	 *
 	 * --P:bfa6::/16--
-	 *    D	   E
+	 *    D    E
 	 */
 	int ret;
-	gnutls_x509_name_constraints_t nc =  ((test_vars_t*)*glob_state)->nc;
-	gnutls_x509_name_constraints_t nc2 = ((test_vars_t*)*glob_state)->nc2;
-	gnutls_datum_t *ip = &(((test_vars_t*)*glob_state)->ip);
+	gnutls_x509_name_constraints_t nc = ((test_vars_t *)*glob_state)->nc;
+	gnutls_x509_name_constraints_t nc2 = ((test_vars_t *)*glob_state)->nc2;
+	gnutls_datum_t *ip = &(((test_vars_t *)*glob_state)->ip);
 
 	parse_cidr("127.0.113.0/24", ip);
-	ret = gnutls_x509_name_constraints_add_permitted(nc, GNUTLS_SAN_IPADDRESS, ip);
+	ret = gnutls_x509_name_constraints_add_permitted(
+		nc, GNUTLS_SAN_IPADDRESS, ip);
 	check_for_error(ret);
 	parse_cidr("bfa6::/16", ip);
-	ret = gnutls_x509_name_constraints_add_permitted(nc, GNUTLS_SAN_IPADDRESS, ip);
+	ret = gnutls_x509_name_constraints_add_permitted(
+		nc, GNUTLS_SAN_IPADDRESS, ip);
 	check_for_error(ret);
 	parse_cidr("255.0.113.0/24", ip);
-	ret = gnutls_x509_name_constraints_add_permitted(nc2, GNUTLS_SAN_IPADDRESS, ip);
+	ret = gnutls_x509_name_constraints_add_permitted(
+		nc2, GNUTLS_SAN_IPADDRESS, ip);
 	check_for_error(ret);
 	ret = _gnutls_x509_name_constraints_merge(nc, nc2);
 	check_for_error(ret);
@@ -573,29 +609,33 @@ static void check_empty_ipv4v6_intersections(void **glob_state)
 	/* 10: IPv4 and IPv6 in a common test case
 	 *     both IPv4 and IPv6 have empty intersection
 	 * --P:127.0.113.0/24--
-	 *			    --P:255.0.113.0/24--
-	 *      A		 B	  C
+	 *                          --P:255.0.113.0/24--
+	 *      A                B        C
 	 *
 	 * --P:bfa6::/16--
-	 *			  --P:cfa6::/16--
-	 *    D	   E	     F
+	 *                        --P:cfa6::/16--
+	 *    D    E         F
 	 */
 	int ret;
-	gnutls_x509_name_constraints_t nc =  ((test_vars_t*)*glob_state)->nc;
-	gnutls_x509_name_constraints_t nc2 = ((test_vars_t*)*glob_state)->nc2;
-	gnutls_datum_t *ip = &(((test_vars_t*)*glob_state)->ip);
+	gnutls_x509_name_constraints_t nc = ((test_vars_t *)*glob_state)->nc;
+	gnutls_x509_name_constraints_t nc2 = ((test_vars_t *)*glob_state)->nc2;
+	gnutls_datum_t *ip = &(((test_vars_t *)*glob_state)->ip);
 
 	parse_cidr("127.0.113.0/24", ip);
-	ret = gnutls_x509_name_constraints_add_permitted(nc, GNUTLS_SAN_IPADDRESS, ip);
+	ret = gnutls_x509_name_constraints_add_permitted(
+		nc, GNUTLS_SAN_IPADDRESS, ip);
 	check_for_error(ret);
 	parse_cidr("bfa6::/16", ip);
-	ret = gnutls_x509_name_constraints_add_permitted(nc, GNUTLS_SAN_IPADDRESS, ip);
+	ret = gnutls_x509_name_constraints_add_permitted(
+		nc, GNUTLS_SAN_IPADDRESS, ip);
 	check_for_error(ret);
 	parse_cidr("255.0.113.0/24", ip);
-	ret = gnutls_x509_name_constraints_add_permitted(nc2, GNUTLS_SAN_IPADDRESS, ip);
+	ret = gnutls_x509_name_constraints_add_permitted(
+		nc2, GNUTLS_SAN_IPADDRESS, ip);
 	check_for_error(ret);
 	parse_cidr("cfa6::/16", ip);
-	ret = gnutls_x509_name_constraints_add_permitted(nc2, GNUTLS_SAN_IPADDRESS, ip);
+	ret = gnutls_x509_name_constraints_add_permitted(
+		nc2, GNUTLS_SAN_IPADDRESS, ip);
 	check_for_error(ret);
 	ret = _gnutls_x509_name_constraints_merge(nc, nc2);
 	check_for_error(ret);
@@ -636,21 +676,23 @@ static void check_ipv4v6_single_constraint_each(void **glob_state)
 	/* 11: 1 IPv4 range and 1 IPv6 range in a common test case
 	 *     (no overlap)
 	 * --P:127.0.113.0/24--
-	 *      A		B
+	 *      A               B
 	 *
 	 * --P:bfa6::/16--
-	 *    C	   D
+	 *    C    D
 	 */
 	int ret;
-	gnutls_x509_name_constraints_t nc =  ((test_vars_t*)*glob_state)->nc;
-	gnutls_x509_name_constraints_t nc2 = ((test_vars_t*)*glob_state)->nc2;
-	gnutls_datum_t *ip = &(((test_vars_t*)*glob_state)->ip);
+	gnutls_x509_name_constraints_t nc = ((test_vars_t *)*glob_state)->nc;
+	gnutls_x509_name_constraints_t nc2 = ((test_vars_t *)*glob_state)->nc2;
+	gnutls_datum_t *ip = &(((test_vars_t *)*glob_state)->ip);
 
 	parse_cidr("127.0.113.0/24", ip);
-	ret = gnutls_x509_name_constraints_add_permitted(nc, GNUTLS_SAN_IPADDRESS, ip);
+	ret = gnutls_x509_name_constraints_add_permitted(
+		nc, GNUTLS_SAN_IPADDRESS, ip);
 	check_for_error(ret);
 	parse_cidr("bfa6::/16", ip);
-	ret = gnutls_x509_name_constraints_add_permitted(nc2, GNUTLS_SAN_IPADDRESS, ip);
+	ret = gnutls_x509_name_constraints_add_permitted(
+		nc2, GNUTLS_SAN_IPADDRESS, ip);
 	check_for_error(ret);
 	ret = _gnutls_x509_name_constraints_merge(nc, nc2);
 	check_for_error(ret);
@@ -676,8 +718,9 @@ static void check_ipv4v6_single_constraint_each(void **glob_state)
 	check_test_result(ret, IP_REJECTED, ip);
 }
 
-static int setup(void **state) {
-	test_vars_t* test_vars = gnutls_malloc(sizeof(test_vars_t));
+static int setup(void **state)
+{
+	test_vars_t *test_vars = gnutls_malloc(sizeof(test_vars_t));
 	if (test_vars == NULL)
 		return -1;
 	test_vars->ip.size = 0;
@@ -693,8 +736,9 @@ static int setup(void **state) {
 	return 0;
 }
 
-static int teardown(void **state) {
-	test_vars_t* test_vars = *state;
+static int teardown(void **state)
+{
+	test_vars_t *test_vars = *state;
 	gnutls_free(test_vars->ip.data);
 	gnutls_x509_name_constraints_deinit(test_vars->nc);
 	gnutls_x509_name_constraints_deinit(test_vars->nc2);
@@ -705,16 +749,28 @@ static int teardown(void **state) {
 int main(int argc, char **argv)
 {
 	const struct CMUnitTest tests[] = {
-		cmocka_unit_test_setup_teardown(check_generation_reading_basic_checking, setup, teardown),
-		cmocka_unit_test_setup_teardown(check_universal_constraint_checking, setup, teardown),
-		cmocka_unit_test_setup_teardown(check_simple_intersection, setup, teardown),
-		cmocka_unit_test_setup_teardown(check_empty_intersection, setup, teardown),
-		cmocka_unit_test_setup_teardown(check_mediocre_intersection, setup, teardown),
-		cmocka_unit_test_setup_teardown(check_difficult_intersection, setup, teardown),
-		cmocka_unit_test_setup_teardown(check_ipv6_intersection, setup, teardown),
-		cmocka_unit_test_setup_teardown(check_empty_ipv4_intersection_ipv6_remains, setup, teardown),
-		cmocka_unit_test_setup_teardown(check_empty_ipv4v6_intersections, setup, teardown),
-		cmocka_unit_test_setup_teardown(check_ipv4v6_single_constraint_each, setup, teardown)
+		cmocka_unit_test_setup_teardown(
+			check_generation_reading_basic_checking, setup,
+			teardown),
+		cmocka_unit_test_setup_teardown(
+			check_universal_constraint_checking, setup, teardown),
+		cmocka_unit_test_setup_teardown(check_simple_intersection,
+						setup, teardown),
+		cmocka_unit_test_setup_teardown(check_empty_intersection, setup,
+						teardown),
+		cmocka_unit_test_setup_teardown(check_mediocre_intersection,
+						setup, teardown),
+		cmocka_unit_test_setup_teardown(check_difficult_intersection,
+						setup, teardown),
+		cmocka_unit_test_setup_teardown(check_ipv6_intersection, setup,
+						teardown),
+		cmocka_unit_test_setup_teardown(
+			check_empty_ipv4_intersection_ipv6_remains, setup,
+			teardown),
+		cmocka_unit_test_setup_teardown(
+			check_empty_ipv4v6_intersections, setup, teardown),
+		cmocka_unit_test_setup_teardown(
+			check_ipv4v6_single_constraint_each, setup, teardown)
 	};
 	cmocka_run_group_tests(tests, NULL, NULL);
 }

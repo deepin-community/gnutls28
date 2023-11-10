@@ -1,9 +1,9 @@
 /* Test of fwrite() function.
-   Copyright (C) 2011-2021 Free Software Foundation, Inc.
+   Copyright (C) 2011-2023 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 3, or (at your option)
+   the Free Software Foundation, either version 3, or (at your option)
    any later version.
 
    This program is distributed in the hope that it will be useful,
@@ -45,6 +45,7 @@ main (int argc, char **argv)
 
   /* Test that fwrite() on an unbuffered stream sets errno if someone else
      closes the stream fd behind the back of stdio.  */
+  #if !defined __ANDROID__ /* fdsan */
   {
     FILE *fp = fopen (filename, "w");
     char buf[5] = "world";
@@ -57,6 +58,7 @@ main (int argc, char **argv)
     ASSERT (ferror (fp));
     fclose (fp);
   }
+  #endif
 
   /* Test that fwrite() on an unbuffered stream sets errno if the stream
      was constructed with an invalid file descriptor.  */

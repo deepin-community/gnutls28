@@ -2,7 +2,7 @@
 
 
 
-@deftypefun {int} {gnutls_pubkey_get_preferred_hash_algorithm} (gnutls_pubkey_t @var{key}, gnutls_digest_algorithm_t *         @var{hash}, unsigned int * @var{mand})
+@deftypefun {int} {gnutls_pubkey_get_preferred_hash_algorithm} (gnutls_pubkey_t @var{key}, gnutls_digest_algorithm_t * @var{hash}, unsigned int * @var{mand})
 @var{key}: Holds the certificate
 
 @var{hash}: The result of the call with the hash algorithm used for signature

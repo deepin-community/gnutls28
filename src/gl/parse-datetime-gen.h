@@ -82,7 +82,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 576 "parse-datetime.y"
+#line 566 "parse-datetime.y"
 
   intmax_t intval;
   textint textintval;

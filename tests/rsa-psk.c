@@ -18,8 +18,7 @@
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GnuTLS; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
+ * along with GnuTLS.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 /* Tests the RSA-PSK ciphersuites under TLS1.2 */
@@ -72,7 +71,7 @@ static void client(int sd)
 	char buffer[MAX_BUF + 1];
 	gnutls_psk_client_credentials_t pskcred;
 	/* Need to enable anonymous KX specifically. */
-	const gnutls_datum_t key = { (void *) "DEADBEEF", 8 };
+	const gnutls_datum_t key = { (void *)"DEADBEEF", 8 };
 
 	global_init();
 	gnutls_global_set_log_function(tls_log_func);
@@ -92,14 +91,14 @@ static void client(int sd)
 	gnutls_init(&session, GNUTLS_CLIENT);
 
 	/* Use default priorities */
-	gnutls_priority_set_direct(session, "NORMAL:-VERS-ALL:+VERS-TLS1.2:-KX-ALL:+RSA-PSK",
-				   NULL);
+	gnutls_priority_set_direct(
+		session, "NORMAL:-VERS-ALL:+VERS-TLS1.2:-KX-ALL:+RSA-PSK",
+		NULL);
 
 	/* put the anonymous credentials to the current session
 	 */
 	gnutls_credentials_set(session, GNUTLS_CRD_PSK, pskcred);
-	gnutls_credentials_set(session, GNUTLS_CRD_CERTIFICATE,
-				clientx509cred);
+	gnutls_credentials_set(session, GNUTLS_CRD_CERTIFICATE, clientx509cred);
 
 	gnutls_handshake_set_timeout(session, get_timeout());
 	gnutls_transport_set_int(session, sd);
@@ -122,8 +121,7 @@ static void client(int sd)
 	ret = gnutls_record_recv(session, buffer, MAX_BUF);
 	if (ret == 0) {
 		if (debug)
-			success
-			    ("client: Peer has closed the TLS connection\n");
+			success("client: Peer has closed the TLS connection\n");
 		goto end;
 	} else if (ret < 0) {
 		fail("client: Error: %s\n", gnutls_strerror(ret));
@@ -140,7 +138,7 @@ static void client(int sd)
 
 	gnutls_bye(session, GNUTLS_SHUT_RDWR);
 
-      end:
+end:
 
 	close(sd);
 
@@ -157,9 +155,8 @@ static void client(int sd)
 
 #define MAX_BUF 1024
 
-static int
-psk_server_func(gnutls_session_t session, const char *username,
-	gnutls_datum_t * key)
+static int psk_server_func(gnutls_session_t session, const char *username,
+			   gnutls_datum_t *key)
 {
 	if (debug)
 		printf("psk: username %s\n", username);
@@ -203,22 +200,20 @@ static void server(int sd)
 						   psk_server_func);
 	gnutls_psk_set_server_credentials_hint(server_pskcred, "hint");
 	gnutls_certificate_allocate_credentials(&serverx509cred);
-	gnutls_certificate_set_x509_key_mem(serverx509cred,
-					    &server_cert, &server_key,
-					    GNUTLS_X509_FMT_PEM);
+	gnutls_certificate_set_x509_key_mem(serverx509cred, &server_cert,
+					    &server_key, GNUTLS_X509_FMT_PEM);
 
 	gnutls_init(&session, GNUTLS_SERVER);
 
 	/* avoid calling all the priority functions, since the defaults
 	 * are adequate.
 	 */
-	gnutls_priority_set_direct(session, "NORMAL:-VERS-ALL:+VERS-TLS1.2:-KX-ALL:+RSA-PSK",
-				   NULL);
-
+	gnutls_priority_set_direct(
+		session, "NORMAL:-VERS-ALL:+VERS-TLS1.2:-KX-ALL:+RSA-PSK",
+		NULL);
 
 	gnutls_credentials_set(session, GNUTLS_CRD_PSK, server_pskcred);
-	gnutls_credentials_set(session, GNUTLS_CRD_CERTIFICATE,
-				serverx509cred);
+	gnutls_credentials_set(session, GNUTLS_CRD_CERTIFICATE, serverx509cred);
 
 	gnutls_handshake_set_timeout(session, get_timeout());
 	gnutls_transport_set_int(session, sd);
@@ -242,17 +237,16 @@ static void server(int sd)
 
 		if (ret == 0) {
 			if (debug)
-				success
-				    ("server: Peer has closed the GnuTLS connection\n");
+				success("server: Peer has closed the GnuTLS connection\n");
 			break;
 		} else if (ret < 0) {
-			fail("server: Received corrupted data(%d). Closing...\n", ret);
+			fail("server: Received corrupted data(%d). Closing...\n",
+			     ret);
 			break;
 		} else if (ret > 0) {
 			/* echo data back to the client
 			 */
-			gnutls_record_send(session, buffer,
-					   strlen(buffer));
+			gnutls_record_send(session, buffer, strlen(buffer));
 		}
 	}
 	/* do not wait for the peer to close the connection.
@@ -304,4 +298,4 @@ void doit(void)
 	}
 }
 
-#endif				/* _WIN32 */
+#endif /* _WIN32 */

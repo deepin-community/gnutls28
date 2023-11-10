@@ -66,7 +66,6 @@ static void client_log_func(int level, const char *str)
 	fprintf(stderr, "client|<%d>| %s", level, str);
 }
 
-
 #define SESSIONS 2
 #define MAX_BUF 1024
 #define MSG "Hello TLS"
@@ -80,7 +79,7 @@ static void client(int sds[])
 	gnutls_certificate_credentials_t x509_cred;
 	gnutls_session_t session;
 	int t;
-	gnutls_datum_t session_data = {NULL, 0};
+	gnutls_datum_t session_data = { NULL, 0 };
 
 	if (debug) {
 		gnutls_global_set_log_function(client_log_func);
@@ -97,16 +96,22 @@ static void client(int sds[])
 	for (t = 0; t < SESSIONS; t++) {
 		int sd = sds[t];
 
-		assert(gnutls_init(&session, GNUTLS_CLIENT)>=0);
-		assert(gnutls_priority_set_direct(session, PRIORITY, NULL)>=0);
+		assert(gnutls_init(&session, GNUTLS_CLIENT) >= 0);
+		assert(gnutls_priority_set_direct(session, PRIORITY, NULL) >=
+		       0);
 
-		gnutls_credentials_set(session, GNUTLS_CRD_CERTIFICATE, x509_cred);
+		gnutls_credentials_set(session, GNUTLS_CRD_CERTIFICATE,
+				       x509_cred);
 
 		gnutls_transport_set_int(session, sd);
 
 		if (t > 0) {
-			assert(gnutls_session_set_data(session, session_data.data, session_data.size) >= 0);
-			assert(gnutls_record_send_early_data(session, EARLY_MSG, sizeof(EARLY_MSG)) >= 0);
+			assert(gnutls_session_set_data(session,
+						       session_data.data,
+						       session_data.size) >= 0);
+			assert(gnutls_record_send_early_data(
+				       session, EARLY_MSG, sizeof(EARLY_MSG)) >=
+			       0);
 		}
 
 		/* Perform the TLS handshake
@@ -114,8 +119,7 @@ static void client(int sds[])
 		gnutls_handshake_set_timeout(session, get_timeout());
 		do {
 			ret = gnutls_handshake(session);
-		}
-		while (ret < 0 && gnutls_error_is_fatal(ret) == 0);
+		} while (ret < 0 && gnutls_error_is_fatal(ret) == 0);
 
 		if (ret < 0) {
 			fail("client: Handshake failed: %s\n",
@@ -127,9 +131,7 @@ static void client(int sds[])
 
 		if (t == 0) {
 			/* get the session data size */
-			ret =
-			    gnutls_session_get_data2(session,
-						     &session_data);
+			ret = gnutls_session_get_data2(session, &session_data);
 			if (ret < 0)
 				fail("client: Getting resume data failed\n");
 		}
@@ -141,12 +143,12 @@ static void client(int sds[])
 		gnutls_record_send(session, MSG, strlen(MSG));
 
 		do {
-			ret = gnutls_record_recv(session, buffer, sizeof(buffer));
+			ret = gnutls_record_recv(session, buffer,
+						 sizeof(buffer));
 		} while (ret == GNUTLS_E_AGAIN);
 		if (ret == 0) {
 			if (debug)
-				success
-					("client: Peer has closed the TLS connection\n");
+				success("client: Peer has closed the TLS connection\n");
 			goto end;
 		} else if (ret < 0) {
 			fail("client: Error: %s\n", gnutls_strerror(ret));
@@ -159,11 +161,10 @@ static void client(int sds[])
 		gnutls_deinit(session);
 	}
 
- end:
+end:
 	gnutls_free(session_data.data);
 	gnutls_certificate_free_credentials(x509_cred);
 }
-
 
 static pid_t child;
 
@@ -174,8 +175,8 @@ struct storage_st {
 	size_t num_entries;
 };
 
-static int
-storage_add(void *ptr, time_t expires, const gnutls_datum_t *key, const gnutls_datum_t *value)
+static int storage_add(void *ptr, time_t expires, const gnutls_datum_t *key,
+		       const gnutls_datum_t *value)
 {
 	struct storage_st *storage = ptr;
 	gnutls_datum_t *datum;
@@ -183,7 +184,8 @@ storage_add(void *ptr, time_t expires, const gnutls_datum_t *key, const gnutls_d
 
 	for (i = 0; i < storage->num_entries; i++) {
 		if (key->size == storage->entries[i].size &&
-		    memcmp(storage->entries[i].data, key->data, key->size) == 0) {
+		    memcmp(storage->entries[i].data, key->data, key->size) ==
+			    0) {
 			return GNUTLS_E_DB_ENTRY_EXISTS;
 		}
 	}
@@ -206,8 +208,7 @@ storage_add(void *ptr, time_t expires, const gnutls_datum_t *key, const gnutls_d
 	return 0;
 }
 
-static void
-storage_clear(struct storage_st *storage)
+static void storage_clear(struct storage_st *storage)
 {
 	size_t i;
 
@@ -240,8 +241,7 @@ static void server(int sds[])
 
 	gnutls_certificate_allocate_credentials(&x509_cred);
 	gnutls_certificate_set_x509_key_mem(x509_cred, &server_cert,
-					    &server_key,
-					    GNUTLS_X509_FMT_PEM);
+					    &server_key, GNUTLS_X509_FMT_PEM);
 
 	ret = gnutls_anti_replay_init(&anti_replay);
 	if (ret < 0)
@@ -254,11 +254,15 @@ static void server(int sds[])
 
 		success("=== session %d ===\n", t);
 
-		assert(gnutls_init(&session, GNUTLS_SERVER|GNUTLS_ENABLE_EARLY_DATA)>=0);
+		assert(gnutls_init(&session,
+				   GNUTLS_SERVER | GNUTLS_ENABLE_EARLY_DATA) >=
+		       0);
 
-		assert(gnutls_priority_set_direct(session, PRIORITY, NULL)>=0);
+		assert(gnutls_priority_set_direct(session, PRIORITY, NULL) >=
+		       0);
 
-		gnutls_credentials_set(session, GNUTLS_CRD_CERTIFICATE, x509_cred);
+		gnutls_credentials_set(session, GNUTLS_CRD_CERTIFICATE,
+				       x509_cred);
 
 		/* Intentionally overwrite the previous key to cause resumption
 		 * failure. */
@@ -277,8 +281,8 @@ static void server(int sds[])
 
 		if (ret < 0) {
 			gnutls_deinit(session);
-			fail("server[%d]: Handshake has failed (%s)\n\n",
-			     t, gnutls_strerror(ret));
+			fail("server[%d]: Handshake has failed (%s)\n\n", t,
+			     gnutls_strerror(ret));
 		}
 		if (debug)
 			success("server: Handshake was completed\n");
@@ -287,8 +291,10 @@ static void server(int sds[])
 			fail("server: Session unexpectedly resumed (%d)\n", t);
 		}
 
-		if (gnutls_session_get_flags(session) & GNUTLS_SFLAGS_EARLY_DATA) {
-			fail("server: Unexpected early data received (%d)\n", t);
+		if (gnutls_session_get_flags(session) &
+		    GNUTLS_SFLAGS_EARLY_DATA) {
+			fail("server: Unexpected early data received (%d)\n",
+			     t);
 		}
 
 		for (;;) {
@@ -297,12 +303,12 @@ static void server(int sds[])
 
 			if (ret == 0) {
 				if (debug)
-					success
-					    ("server: Peer has closed the GnuTLS connection\n");
+					success("server: Peer has closed the GnuTLS connection\n");
 				break;
 			} else if (ret < 0) {
 				kill(child, SIGTERM);
-				fail("server: Received corrupted data(%d). Closing...\n", ret);
+				fail("server: Received corrupted data(%d). Closing...\n",
+				     ret);
 			} else if (ret > 0) {
 				/* echo data back to the client
 				 */
@@ -375,4 +381,4 @@ void doit(void)
 	}
 }
 
-#endif				/* _WIN32 */
+#endif /* _WIN32 */

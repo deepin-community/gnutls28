@@ -126,6 +126,8 @@ static const struct option long_options[] =
   { "keymatexportsize", required_argument, 0, CHAR_MAX + 39 },
   { "recordsize", required_argument, 0, CHAR_MAX + 40 },
   { "httpdata", required_argument, 0, CHAR_MAX + 41 },
+  { "timeout", required_argument, 0, CHAR_MAX + 42 },
+  { "attime", required_argument, 0, CHAR_MAX + 43 },
   { "version", optional_argument, 0, 'v' },
   { "help", no_argument, 0, 'h' },
   { "more-help", no_argument, 0, '!' },
@@ -367,6 +369,17 @@ process_options (int argc, char **argv)
         opts->arg.httpdata = optarg;
         opts->enabled.httpdata = true;
         break;
+      case CHAR_MAX + 42: /* --timeout */
+        opts->present.timeout = true;
+        opts->arg.timeout = optarg;
+        opts->value.timeout = parse_number(optarg);
+        opts->enabled.timeout = true;
+        break;
+      case CHAR_MAX + 43: /* --attime */
+        opts->present.attime = true;
+        opts->arg.attime = optarg;
+        opts->enabled.attime = true;
+        break;
       case 'v':
         opts->present.version = true;
         opts->arg.version = optarg;
@@ -500,8 +513,8 @@ process_options (int argc, char **argv)
       if (!OPT_ARG_VERSION || !strcmp (OPT_ARG_VERSION, "c"))
         {
           const char str[] =
-            "gnutls-serv 3.7.9\n"
-            "Copyright (C) 2000-2021 Free Software Foundation, and others\n"
+            "gnutls-serv 3.8.1\n"
+            "Copyright (C) 2000-2023 Free Software Foundation, and others\n"
             "This is free software. It is licensed for use, modification and\n"
             "redistribution under the terms of the GNU General Public License,\n"
             "version 3 or later <http://gnu.org/licenses/gpl.html>\n"
@@ -513,15 +526,15 @@ process_options (int argc, char **argv)
       else if (!strcmp (OPT_ARG_VERSION, "v"))
         {
           const char str[] =
-            "gnutls-serv 3.7.9\n";
+            "gnutls-serv 3.8.1\n";
           fprintf (stdout, "%s", str);
           exit(0);
         }
       else if (!strcmp (OPT_ARG_VERSION, "n"))
         {
           const char str[] =
-            "gnutls-serv 3.7.9\n"
-            "Copyright (C) 2000-2021 Free Software Foundation, and others\n"
+            "gnutls-serv 3.8.1\n"
+            "Copyright (C) 2000-2023 Free Software Foundation, and others\n"
             "This is free software. It is licensed for use, modification and\n"
             "redistribution under the terms of the GNU General Public License,\n"
             "version 3 or later <http://gnu.org/licenses/gpl.html>\n"
@@ -627,6 +640,8 @@ usage (FILE *out, int status)
     "				  0 to 16384\n"
     "       --httpdata=file        The data used as HTTP response\n"
     "				- file must pre-exist\n"
+    "       --timeout=num          The timeout period for server\n"
+    "       --attime=str           Perform validation at the timestamp instead of the system time\n"
     "\n"
     "Version, usage and configuration options:\n"
     "\n"

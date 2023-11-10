@@ -16,8 +16,7 @@
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GnuTLS; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
+ * along with GnuTLS.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 #ifdef HAVE_CONFIG_H
@@ -29,7 +28,7 @@
 
 #if defined(_WIN32)
 
-int main()
+int main(void)
 {
 	exit(77);
 }
@@ -65,20 +64,26 @@ static void client_log_func(int level, const char *str)
 	fprintf(stderr, "client|<%d>| %s", level, str);
 }
 
-#define SKIP16(pos, total) { \
-	uint16_t _s; \
-	if (pos+2 > total) fail("error\n"); \
-	_s = (msg->data[pos] << 8) | msg->data[pos+1]; \
-	if ((size_t)(pos+2+_s) > total) fail("error\n"); \
-	pos += 2+_s; \
+#define SKIP16(pos, total)                                       \
+	{                                                        \
+		uint16_t _s;                                     \
+		if (pos + 2 > total)                             \
+			fail("error\n");                         \
+		_s = (msg->data[pos] << 8) | msg->data[pos + 1]; \
+		if ((size_t)(pos + 2 + _s) > total)              \
+			fail("error\n");                         \
+		pos += 2 + _s;                                   \
 	}
 
-#define SKIP8(pos, total) { \
-	uint8_t _s; \
-	if (pos+1 > total) fail("error\n"); \
-	_s = msg->data[pos]; \
-	if ((size_t)(pos+1+_s) > total) fail("error\n"); \
-	pos += 1+_s; \
+#define SKIP8(pos, total)                           \
+	{                                           \
+		uint8_t _s;                         \
+		if (pos + 1 > total)                \
+			fail("error\n");            \
+		_s = msg->data[pos];                \
+		if ((size_t)(pos + 1 + _s) > total) \
+			fail("error\n");            \
+		pos += 1 + _s;                      \
 	}
 
 #define TLS_EXT_STATUS_REQUEST 5
@@ -106,12 +111,13 @@ static void client_log_func(int level, const char *str)
  *      } ServerHello;
  */
 static int handshake_callback(gnutls_session_t session, unsigned int htype,
-	unsigned post, unsigned int incoming, const gnutls_datum_t *msg)
+			      unsigned post, unsigned int incoming,
+			      const gnutls_datum_t *msg)
 {
 	size_t pos = 0;
 	/* A client hello packet. We can get the session ID and figure
 	 * the associated connection. */
-	if (msg->size < HANDSHAKE_SESSION_ID_POS+GNUTLS_MAX_SESSION_ID+2) {
+	if (msg->size < HANDSHAKE_SESSION_ID_POS + GNUTLS_MAX_SESSION_ID + 2) {
 		fail("invalid client hello\n");
 	}
 
@@ -122,24 +128,24 @@ static int handshake_callback(gnutls_session_t session, unsigned int htype,
 	SKIP8(pos, msg->size);
 
 	/* CipherSuite */
-	pos+=2;
+	pos += 2;
 
 	/* CompressionMethod */
 	SKIP8(pos, msg->size);
 
-	if (pos+2 > msg->size)
+	if (pos + 2 > msg->size)
 		fail("invalid client hello\n");
-	pos+=2;
+	pos += 2;
 
 	/* Extension(s) */
 	while (pos < msg->size) {
 		uint16_t type;
 
-		if (pos+4 > msg->size)
+		if (pos + 4 > msg->size)
 			fail("invalid client hello\n");
 
-		type = (msg->data[pos] << 8) | msg->data[pos+1];
-		pos+=2;
+		type = (msg->data[pos] << 8) | msg->data[pos + 1];
+		pos += 2;
 		if (type != TLS_EXT_STATUS_REQUEST) {
 			SKIP16(pos, msg->size);
 		} else { /* found */
@@ -150,8 +156,6 @@ static int handshake_callback(gnutls_session_t session, unsigned int htype,
 
 	return 0;
 }
-
-	
 
 #define MAX_BUF 1024
 
@@ -188,8 +192,7 @@ static void client(int fd, const char *prio)
 	 */
 	do {
 		ret = gnutls_handshake(session);
-	}
-	while (ret < 0 && gnutls_error_is_fatal(ret) == 0);
+	} while (ret < 0 && gnutls_error_is_fatal(ret) == 0);
 
 	if (ret == GNUTLS_E_UNSUPPORTED_SIGNATURE_ALGORITHM) {
 		/* success */
@@ -205,12 +208,12 @@ static void client(int fd, const char *prio)
 
 	if (debug)
 		success("client: TLS version is: %s\n",
-			gnutls_protocol_get_name
-			(gnutls_protocol_get_version(session)));
+			gnutls_protocol_get_name(
+				gnutls_protocol_get_version(session)));
 
 	gnutls_bye(session, GNUTLS_SHUT_WR);
 
-      end:
+end:
 
 	close(fd);
 
@@ -220,7 +223,6 @@ static void client(int fd, const char *prio)
 
 	gnutls_global_deinit();
 }
-
 
 static void server(int fd, const char *prio)
 {
@@ -241,12 +243,12 @@ static void server(int fd, const char *prio)
 
 	gnutls_certificate_allocate_credentials(&x509_cred);
 	gnutls_certificate_set_x509_key_mem(x509_cred, &server_cert,
-					    &server_key,
-					    GNUTLS_X509_FMT_PEM);
+					    &server_key, GNUTLS_X509_FMT_PEM);
 
 	gnutls_init(&session, GNUTLS_SERVER);
 
-	gnutls_handshake_set_hook_function(session, GNUTLS_HANDSHAKE_SERVER_HELLO,
+	gnutls_handshake_set_hook_function(session,
+					   GNUTLS_HANDSHAKE_SERVER_HELLO,
 					   GNUTLS_HOOK_POST,
 					   handshake_callback);
 
@@ -273,14 +275,14 @@ static void server(int fd, const char *prio)
 
 	if (debug)
 		success("server: TLS version is: %s\n",
-			gnutls_protocol_get_name
-			(gnutls_protocol_get_version(session)));
+			gnutls_protocol_get_name(
+				gnutls_protocol_get_version(session)));
 
 	/* do not wait for the peer to close the connection.
 	 */
 	gnutls_bye(session, GNUTLS_SHUT_WR);
 
- end:
+end:
 	close(fd);
 	gnutls_deinit(session);
 
@@ -341,4 +343,4 @@ void doit(void)
 	start("default", "NORMAL");
 }
 
-#endif				/* _WIN32 */
+#endif /* _WIN32 */

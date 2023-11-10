@@ -17,8 +17,7 @@
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GnuTLS; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
+ * along with GnuTLS.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 #ifdef HAVE_CONFIG_H
@@ -67,9 +66,8 @@ void doit(void)
 		filename = "pkcs12-decode/pkcs12_5certs.p12";
 
 	if (debug)
-		success
-		    ("Reading PKCS#12 blob from `%s' using password `%s'.\n",
-		     filename, password);
+		success("Reading PKCS#12 blob from `%s' using password `%s'.\n",
+			filename, password);
 
 	ret = gnutls_load_file(filename, &data);
 	if (ret < 0)
@@ -83,10 +81,9 @@ void doit(void)
 	if (debug)
 		success("Read file OK\n");
 
-	ret =
-	    gnutls_pkcs12_simple_parse(pkcs12, password, &pkey, &chain,
-					&chain_size, &extras, &extras_size,
-					NULL, 0);
+	ret = gnutls_pkcs12_simple_parse(pkcs12, password, &pkey, &chain,
+					 &chain_size, &extras, &extras_size,
+					 NULL, 0);
 	if (ret < 0)
 		fail("pkcs12_simple_parse failed %d: %s\n", ret,
 		     gnutls_strerror(ret));
@@ -110,8 +107,7 @@ void doit(void)
 		success("dn: %s\n", dn);
 
 		dn_size = sizeof(dn);
-		ret =
-		    gnutls_x509_crt_get_issuer_dn(chain[0], dn, &dn_size);
+		ret = gnutls_x509_crt_get_issuer_dn(chain[0], dn, &dn_size);
 		if (ret < 0)
 			fail("crt_get_dn failed %d: %s\n", ret,
 			     gnutls_strerror(ret));
@@ -136,9 +132,8 @@ void doit(void)
 		fail("gnutls_x509_privkey_init failed %d: %s\n", ret,
 		     gnutls_strerror(ret));
 
-	ret =
-	    gnutls_x509_privkey_import2(pkey, &data, GNUTLS_X509_FMT_DER,
-					password, 0);
+	ret = gnutls_x509_privkey_import2(pkey, &data, GNUTLS_X509_FMT_DER,
+					  password, 0);
 	if (ret < 0)
 		fail("gnutls_x509_privkey_import2 failed %d: %s\n", ret,
 		     gnutls_strerror(ret));

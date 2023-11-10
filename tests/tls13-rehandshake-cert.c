@@ -44,8 +44,7 @@ static void tls_log_func(int level, const char *str)
 	fprintf(stderr, "%s|<%d>| %s", side, level, str);
 }
 
-static
-void server_initiated_handshake(void)
+static void server_initiated_handshake(void)
 {
 	/* Server stuff. */
 	gnutls_certificate_credentials_t serverx509cred;
@@ -68,13 +67,12 @@ void server_initiated_handshake(void)
 
 	/* Init server */
 	gnutls_certificate_allocate_credentials(&serverx509cred);
-	gnutls_certificate_set_x509_key_mem(serverx509cred,
-					    &server_cert, &server_key,
-					    GNUTLS_X509_FMT_PEM);
+	gnutls_certificate_set_x509_key_mem(serverx509cred, &server_cert,
+					    &server_key, GNUTLS_X509_FMT_PEM);
 	gnutls_init(&server, GNUTLS_SERVER);
-	gnutls_credentials_set(server, GNUTLS_CRD_CERTIFICATE,
-				serverx509cred);
-	gnutls_priority_set_direct(server, "NORMAL:-VERS-TLS-ALL:+VERS-TLS1.3", NULL);
+	gnutls_credentials_set(server, GNUTLS_CRD_CERTIFICATE, serverx509cred);
+	gnutls_priority_set_direct(server, "NORMAL:-VERS-TLS-ALL:+VERS-TLS1.3",
+				   NULL);
 	gnutls_transport_set_push_function(server, server_push);
 	gnutls_transport_set_pull_function(server, server_pull);
 	gnutls_transport_set_ptr(server, server);
@@ -82,8 +80,7 @@ void server_initiated_handshake(void)
 	/* Init client */
 	gnutls_certificate_allocate_credentials(&clientx509cred);
 	gnutls_init(&client, GNUTLS_CLIENT);
-	gnutls_credentials_set(client, GNUTLS_CRD_CERTIFICATE,
-				clientx509cred);
+	gnutls_credentials_set(client, GNUTLS_CRD_CERTIFICATE, clientx509cred);
 	gnutls_priority_set_direct(client, "NORMAL:+VERS-TLS1.3", NULL);
 	gnutls_transport_set_push_function(client, client_push);
 	gnutls_transport_set_pull_function(client, client_pull);
@@ -127,8 +124,7 @@ void server_initiated_handshake(void)
 	reset_buffers();
 }
 
-static
-void client_initiated_handshake(void)
+static void client_initiated_handshake(void)
 {
 	/* Server stuff. */
 	gnutls_certificate_credentials_t serverx509cred;
@@ -151,13 +147,12 @@ void client_initiated_handshake(void)
 
 	/* Init server */
 	gnutls_certificate_allocate_credentials(&serverx509cred);
-	gnutls_certificate_set_x509_key_mem(serverx509cred,
-					    &server_cert, &server_key,
-					    GNUTLS_X509_FMT_PEM);
+	gnutls_certificate_set_x509_key_mem(serverx509cred, &server_cert,
+					    &server_key, GNUTLS_X509_FMT_PEM);
 	gnutls_init(&server, GNUTLS_SERVER);
-	gnutls_credentials_set(server, GNUTLS_CRD_CERTIFICATE,
-				serverx509cred);
-	gnutls_priority_set_direct(server, "NORMAL:-VERS-TLS-ALL:+VERS-TLS1.3", NULL);
+	gnutls_credentials_set(server, GNUTLS_CRD_CERTIFICATE, serverx509cred);
+	gnutls_priority_set_direct(server, "NORMAL:-VERS-TLS-ALL:+VERS-TLS1.3",
+				   NULL);
 	gnutls_transport_set_push_function(server, server_push);
 	gnutls_transport_set_pull_function(server, server_pull);
 	gnutls_transport_set_ptr(server, server);
@@ -165,8 +160,7 @@ void client_initiated_handshake(void)
 	/* Init client */
 	gnutls_certificate_allocate_credentials(&clientx509cred);
 	gnutls_init(&client, GNUTLS_CLIENT);
-	gnutls_credentials_set(client, GNUTLS_CRD_CERTIFICATE,
-				clientx509cred);
+	gnutls_credentials_set(client, GNUTLS_CRD_CERTIFICATE, clientx509cred);
 	gnutls_priority_set_direct(client, "NORMAL:+VERS-TLS1.3", NULL);
 	gnutls_transport_set_push_function(client, client_push);
 	gnutls_transport_set_pull_function(client, client_pull);

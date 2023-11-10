@@ -15,8 +15,7 @@
 # General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with GnuTLS; if not, write to the Free Software Foundation,
-# Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+# along with GnuTLS.  If not, see <https://www.gnu.org/licenses/>.
 
 : ${srcdir=.}
 : ${P11TOOL=../src/p11tool${EXEEXT}}
@@ -68,8 +67,6 @@ exit_error () {
 	exit 1
 }
 
-skip_if_no_datefudge
-
 # $1: token
 # $2: PIN
 # $3: filename
@@ -116,8 +113,7 @@ verify_certificate_test() {
 	file=$2
 
 	echo -n "* Verifying a certificate... "
-	datefudge -s "2015-10-10" \
-	$CERTTOOL ${ADDITIONAL_PARAM} --verify --load-ca-certificate "$url" --infile "$file" >>"${TMPFILE}" 2>&1
+	$CERTTOOL ${ADDITIONAL_PARAM} --attime "2015-10-10" --verify --load-ca-certificate "$url" --infile "$file" >>"${TMPFILE}" 2>&1
 	if test $? = 0; then
 		echo ok
 	else

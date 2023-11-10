@@ -19,6 +19,7 @@ struct certtool_options
     bool verbose;
     bool infile;
     bool outfile;
+    bool attime;
     bool certificate_info;
     bool pubkey_info;
     bool generate_self_signed;
@@ -109,6 +110,7 @@ struct certtool_options
     const char *debug;
     const char *infile;
     const char *outfile;
+    const char *attime;
     const char *sign_params;
     const char *p12_name;
     const char *key_type;
@@ -152,6 +154,7 @@ struct certtool_options
     bool verbose;
     bool infile;
     bool outfile;
+    bool attime;
     bool certificate_info;
     bool pubkey_info;
     bool generate_self_signed;
@@ -248,6 +251,7 @@ struct certtool_options
 #define HAVE_OPT_VERBOSE certtool_options.present.verbose
 #define HAVE_OPT_INFILE certtool_options.present.infile
 #define HAVE_OPT_OUTFILE certtool_options.present.outfile
+#define HAVE_OPT_ATTIME certtool_options.present.attime
 #define HAVE_OPT_CERTIFICATE_INFO certtool_options.present.certificate_info
 #define HAVE_OPT_PUBKEY_INFO certtool_options.present.pubkey_info
 #define HAVE_OPT_GENERATE_SELF_SIGNED certtool_options.present.generate_self_signed
@@ -335,6 +339,7 @@ struct certtool_options
 #define OPT_ARG_VERBOSE certtool_options.arg.verbose
 #define OPT_ARG_INFILE certtool_options.arg.infile
 #define OPT_ARG_OUTFILE certtool_options.arg.outfile
+#define OPT_ARG_ATTIME certtool_options.arg.attime
 #define OPT_ARG_CERTIFICATE_INFO certtool_options.arg.certificate_info
 #define OPT_ARG_PUBKEY_INFO certtool_options.arg.pubkey_info
 #define OPT_ARG_GENERATE_SELF_SIGNED certtool_options.arg.generate_self_signed
@@ -426,6 +431,7 @@ struct certtool_options
 #define ENABLED_OPT_VERBOSE certtool_options.enabled.verbose
 #define ENABLED_OPT_INFILE certtool_options.enabled.infile
 #define ENABLED_OPT_OUTFILE certtool_options.enabled.outfile
+#define ENABLED_OPT_ATTIME certtool_options.enabled.attime
 #define ENABLED_OPT_CERTIFICATE_INFO certtool_options.enabled.certificate_info
 #define ENABLED_OPT_PUBKEY_INFO certtool_options.enabled.pubkey_info
 #define ENABLED_OPT_GENERATE_SELF_SIGNED certtool_options.enabled.generate_self_signed

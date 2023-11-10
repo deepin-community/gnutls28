@@ -21,7 +21,7 @@
  */
 
 #if HAVE_CONFIG_H
-# include "config.h"
+#include "config.h"
 #endif
 
 #include "ecdsa-compute-k.h"
@@ -29,8 +29,7 @@
 #include "dsa-compute-k.h"
 #include "gnutls_int.h"
 
-static inline int
-_gnutls_ecc_curve_to_dsa_q(mpz_t *q, gnutls_ecc_curve_t curve)
+static inline int _gnutls_ecc_curve_to_dsa_q(mpz_t *q, gnutls_ecc_curve_t curve)
 {
 	switch (curve) {
 #ifdef ENABLE_NON_SUITEB_CURVES
@@ -70,17 +69,14 @@ _gnutls_ecc_curve_to_dsa_q(mpz_t *q, gnutls_ecc_curve_t curve)
 				 16);
 		return 0;
 	default:
-		return gnutls_assert_val(GNUTLS_E_UNSUPPORTED_SIGNATURE_ALGORITHM);
+		return gnutls_assert_val(
+			GNUTLS_E_UNSUPPORTED_SIGNATURE_ALGORITHM);
 	}
 }
 
-int
-_gnutls_ecdsa_compute_k (mpz_t k,
-			 gnutls_ecc_curve_t curve,
-			 const mpz_t x,
-			 gnutls_mac_algorithm_t mac,
-			 const uint8_t *digest,
-			 size_t length)
+int _gnutls_ecdsa_compute_k(mpz_t k, gnutls_ecc_curve_t curve, const mpz_t x,
+			    gnutls_mac_algorithm_t mac, const uint8_t *digest,
+			    size_t length)
 {
 	mpz_t q;
 	int ret;
@@ -89,7 +85,7 @@ _gnutls_ecdsa_compute_k (mpz_t k,
 	if (ret < 0)
 		return gnutls_assert_val(ret);
 
-	ret = _gnutls_dsa_compute_k (k, q, x, mac, digest, length);
+	ret = _gnutls_dsa_compute_k(k, q, x, mac, digest, length);
 	mpz_clear(q);
 	return ret;
 }

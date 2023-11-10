@@ -47,6 +47,7 @@ static const struct option long_options[] =
   { "port", required_argument, 0, 'p' },
   { "starttls-proto", required_argument, 0, CHAR_MAX + 2 },
   { "app-proto", required_argument, 0, CHAR_MAX + 1 },
+  { "attime", required_argument, 0, CHAR_MAX + 3 },
   { "version", optional_argument, 0, 'v' },
   { "help", no_argument, 0, 'h' },
   { "more-help", no_argument, 0, '!' },
@@ -88,6 +89,11 @@ process_options (int argc, char **argv)
         opts->present.starttls_proto = true;
         opts->arg.starttls_proto = optarg;
         opts->enabled.starttls_proto = true;
+        break;
+      case CHAR_MAX + 3: /* --attime */
+        opts->present.attime = true;
+        opts->arg.attime = optarg;
+        opts->enabled.attime = true;
         break;
       case 'v':
         opts->present.version = true;
@@ -188,8 +194,8 @@ process_options (int argc, char **argv)
       if (!OPT_ARG_VERSION || !strcmp (OPT_ARG_VERSION, "c"))
         {
           const char str[] =
-            "gnutls-cli-debug 3.7.9\n"
-            "Copyright (C) 2000-2021 Free Software Foundation, and others\n"
+            "gnutls-cli-debug 3.8.1\n"
+            "Copyright (C) 2000-2023 Free Software Foundation, and others\n"
             "This is free software. It is licensed for use, modification and\n"
             "redistribution under the terms of the GNU General Public License,\n"
             "version 3 or later <http://gnu.org/licenses/gpl.html>\n"
@@ -201,15 +207,15 @@ process_options (int argc, char **argv)
       else if (!strcmp (OPT_ARG_VERSION, "v"))
         {
           const char str[] =
-            "gnutls-cli-debug 3.7.9\n";
+            "gnutls-cli-debug 3.8.1\n";
           fprintf (stdout, "%s", str);
           exit(0);
         }
       else if (!strcmp (OPT_ARG_VERSION, "n"))
         {
           const char str[] =
-            "gnutls-cli-debug 3.7.9\n"
-            "Copyright (C) 2000-2021 Free Software Foundation, and others\n"
+            "gnutls-cli-debug 3.8.1\n"
+            "Copyright (C) 2000-2023 Free Software Foundation, and others\n"
             "This is free software. It is licensed for use, modification and\n"
             "redistribution under the terms of the GNU General Public License,\n"
             "version 3 or later <http://gnu.org/licenses/gpl.html>\n"
@@ -262,6 +268,7 @@ usage (FILE *out, int status)
     "				  0 to 65536\n"
     "       --app-proto            an alias for the 'starttls-proto' option\n"
     "       --starttls-proto=str   The application protocol to be used to obtain the server's certificate (https, ftp, smtp, imap, ldap, xmpp, lmtp, pop3, nntp, sieve, postgres)\n"
+    "       --attime=str           Perform validation at the timestamp instead of the system time\n"
     "\n"
     "Version, usage and configuration options:\n"
     "\n"

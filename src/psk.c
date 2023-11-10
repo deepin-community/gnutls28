@@ -41,7 +41,7 @@ int main(int argc, char **argv)
 #include <gnutls/gnutls.h>
 #include "psktool-options.h"
 
-#include <gnutls/crypto.h>	/* for random */
+#include <gnutls/crypto.h> /* for random */
 
 #include <stdbool.h>
 #include <sys/types.h>
@@ -60,9 +60,8 @@ int main(int argc, char **argv)
 #include "getpass.h"
 #include "xsize.h"
 
-static int write_key(const char *username,
-		     const unsigned char *key, size_t key_size,
-		     const char *passwd_file);
+static int write_key(const char *username, const unsigned char *key,
+		     size_t key_size, const char *passwd_file);
 
 #define MAX_KEY_SIZE 512
 int main(int argc, char **argv)
@@ -119,7 +118,7 @@ int main(int argc, char **argv)
 
 	printf("Generating a random key for user '%s'\n", username);
 
-	ret = gnutls_rnd(GNUTLS_RND_RANDOM, (char *) key, key_size);
+	ret = gnutls_rnd(GNUTLS_RND_RANDOM, (char *)key, key_size);
 	if (ret < 0) {
 		fprintf(stderr, "Not enough randomness\n");
 		exit(1);
@@ -158,8 +157,7 @@ static int filecopy(const char *src, const char *dst)
 			break;
 
 		fputs(line, fp);
-	}
-	while (1);
+	} while (1);
 
 	fclose(fp);
 	fclose(fp2);
@@ -167,9 +165,8 @@ static int filecopy(const char *src, const char *dst)
 	return 0;
 }
 
-static int
-write_key(const char *username, const unsigned char *key, size_t key_size,
-	  const char *passwd_file)
+static int write_key(const char *username, const unsigned char *key,
+		     size_t key_size, const char *passwd_file)
 {
 	FILE *fp;
 	char line[5 * 1024];
@@ -201,8 +198,7 @@ write_key(const char *username, const unsigned char *key, size_t key_size,
 
 	fp = fopen(passwd_file, "w");
 	if (fp == NULL) {
-		fprintf(stderr, "Cannot open '%s' for write\n",
-			passwd_file);
+		fprintf(stderr, "Cannot open '%s' for write\n", passwd_file);
 		(void)remove(tmpname);
 		return -1;
 	}
@@ -276,9 +272,8 @@ write_key(const char *username, const unsigned char *key, size_t key_size,
 		if (pp == NULL)
 			continue;
 
-		if (strncmp(p, (const char *) _username.data,
-			    MAX(_username.size,
-				(unsigned int) (pp - p))) == 0) {
+		if (strncmp(p, (const char *)_username.data,
+			    MAX(_username.size, (unsigned int)(pp - p))) == 0) {
 			put = true;
 			fprintf(fp, "%s:%s\n", _username.data, _key.data);
 		} else {
@@ -290,10 +285,10 @@ write_key(const char *username, const unsigned char *key, size_t key_size,
 		fprintf(fp, "%s:%s\n", _username.data, _key.data);
 	}
 
- out:
+out:
 	if (close_stream(fp) == EOF) {
-		fprintf(stderr, "Error writing %s: %s\n",
-			passwd_file, strerror(errno));
+		fprintf(stderr, "Error writing %s: %s\n", passwd_file,
+			strerror(errno));
 		ret = -1;
 	}
 
@@ -306,4 +301,4 @@ write_key(const char *username, const unsigned char *key, size_t key_size,
 	return ret;
 }
 
-#endif				/* ENABLE_PSK */
+#endif /* ENABLE_PSK */

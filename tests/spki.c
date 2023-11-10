@@ -52,32 +52,31 @@ static void crq_check(void)
 		exit(1);
 	}
 
-	assert(gnutls_x509_privkey_init(&privkey)>=0);
+	assert(gnutls_x509_privkey_init(&privkey) >= 0);
 
-	ret =
-	    gnutls_x509_privkey_generate(privkey, GNUTLS_PK_RSA, 2048, 0);
-	assert(ret>=0);
+	ret = gnutls_x509_privkey_generate(privkey, GNUTLS_PK_RSA, 2048, 0);
+	assert(ret >= 0);
 
-	assert(gnutls_x509_spki_init(&spki)>=0);
+	assert(gnutls_x509_spki_init(&spki) >= 0);
 
 	gnutls_x509_spki_set_rsa_pss_params(spki, GNUTLS_DIG_SHA256, 32);
 
 	ret = gnutls_x509_crq_init(&crq);
 	if (ret < 0) {
-		fprintf(stderr,
-			"gnutls_x509_crq_init: %s\n", gnutls_strerror(ret));
+		fprintf(stderr, "gnutls_x509_crq_init: %s\n",
+			gnutls_strerror(ret));
 		exit(1);
 	}
 
-	assert(gnutls_x509_crq_set_version(crq, 1)>=0);
-	assert(gnutls_x509_crq_set_key(crq, privkey)>=0);
-	assert(gnutls_x509_crq_set_spki(crq, spki, 0)>=0);
+	assert(gnutls_x509_crq_set_version(crq, 1) >= 0);
+	assert(gnutls_x509_crq_set_key(crq, privkey) >= 0);
+	assert(gnutls_x509_crq_set_spki(crq, spki, 0) >= 0);
 
 	assert(gnutls_x509_crq_set_dn_by_oid(crq, GNUTLS_OID_X520_COMMON_NAME,
-						0, "CN-Test", 7)>=0);
+					     0, "CN-Test", 7) >= 0);
 	gnutls_x509_spki_deinit(spki);
 
-	assert(gnutls_x509_crq_sign2(crq, privkey, GNUTLS_DIG_SHA256, 0)>=0);
+	assert(gnutls_x509_crq_sign2(crq, privkey, GNUTLS_DIG_SHA256, 0) >= 0);
 
 	if (debug) {
 		gnutls_x509_crq_print(crq, GNUTLS_CRT_PRINT_ONELINE, &tmp);
@@ -87,25 +86,26 @@ static void crq_check(void)
 	}
 
 	/* read SPKI */
-	assert(gnutls_x509_spki_init(&spki)>=0);
+	assert(gnutls_x509_spki_init(&spki) >= 0);
 
 	ret = gnutls_x509_crq_get_spki(crq, spki, 0);
 	assert(ret >= 0);
 
-	assert(gnutls_x509_spki_get_rsa_pss_params(spki, &dig, &salt_size) >= 0);
+	assert(gnutls_x509_spki_get_rsa_pss_params(spki, &dig, &salt_size) >=
+	       0);
 	assert(salt_size == 32);
 	assert(dig == GNUTLS_DIG_SHA256);
 
 	/* set invalid */
 	gnutls_x509_spki_set_rsa_pss_params(spki, GNUTLS_DIG_SHA256, 1024);
-	assert(gnutls_x509_crq_set_spki(crq, spki, 0) == GNUTLS_E_PK_INVALID_PUBKEY_PARAMS);
+	assert(gnutls_x509_crq_set_spki(crq, spki, 0) ==
+	       GNUTLS_E_PK_INVALID_PUBKEY_PARAMS);
 
 	gnutls_x509_crq_deinit(crq);
 	gnutls_x509_spki_deinit(spki);
 	gnutls_x509_privkey_deinit(privkey);
 	gnutls_global_deinit();
 }
-
 
 static void cert_check(void)
 {
@@ -123,21 +123,20 @@ static void cert_check(void)
 	}
 
 	ret = gnutls_x509_spki_init(&spki);
-	assert(ret>=0);
+	assert(ret >= 0);
 
 	ret = gnutls_x509_crt_init(&crt);
 	if (ret < 0) {
-		fprintf(stderr,
-			"gnutls_x509_crt_init: %s\n", gnutls_strerror(ret));
+		fprintf(stderr, "gnutls_x509_crt_init: %s\n",
+			gnutls_strerror(ret));
 		exit(1);
 	}
 
-	ret =
-	    gnutls_x509_crt_import(crt, &server_ca3_rsa_pss2_cert,
-				   GNUTLS_X509_FMT_PEM);
+	ret = gnutls_x509_crt_import(crt, &server_ca3_rsa_pss2_cert,
+				     GNUTLS_X509_FMT_PEM);
 	if (ret < 0) {
-		fprintf(stderr,
-			"gnutls_x509_crt_import: %s\n", gnutls_strerror(ret));
+		fprintf(stderr, "gnutls_x509_crt_import: %s\n",
+			gnutls_strerror(ret));
 		exit(1);
 	}
 
@@ -151,13 +150,15 @@ static void cert_check(void)
 	ret = gnutls_x509_crt_get_spki(crt, spki, 0);
 	assert(ret >= 0);
 
-	assert(gnutls_x509_spki_get_rsa_pss_params(spki, &dig, &salt_size) >= 0);
+	assert(gnutls_x509_spki_get_rsa_pss_params(spki, &dig, &salt_size) >=
+	       0);
 	assert(salt_size == 32);
 	assert(dig == GNUTLS_DIG_SHA256);
 
 	/* set invalid */
 	gnutls_x509_spki_set_rsa_pss_params(spki, GNUTLS_DIG_SHA256, 1024);
-	assert(gnutls_x509_crt_set_spki(crt, spki, 0) == GNUTLS_E_PK_INVALID_PUBKEY_PARAMS);
+	assert(gnutls_x509_crt_set_spki(crt, spki, 0) ==
+	       GNUTLS_E_PK_INVALID_PUBKEY_PARAMS);
 
 	gnutls_x509_crt_deinit(crt);
 	gnutls_x509_spki_deinit(spki);
@@ -179,21 +180,19 @@ static void key_check(void)
 	}
 
 	ret = gnutls_x509_spki_init(&spki);
-	assert(ret>=0);
+	assert(ret >= 0);
 
 	ret = gnutls_x509_privkey_init(&key);
 	if (ret < 0) {
-		fprintf(stderr,
-			"gnutls_x509_privkey_init: %s\n", gnutls_strerror(ret));
+		fprintf(stderr, "gnutls_x509_privkey_init: %s\n",
+			gnutls_strerror(ret));
 		exit(1);
 	}
 
-	ret =
-	    gnutls_x509_privkey_import(key, &server_ca3_rsa_pss2_key,
-				       GNUTLS_X509_FMT_PEM);
+	ret = gnutls_x509_privkey_import(key, &server_ca3_rsa_pss2_key,
+					 GNUTLS_X509_FMT_PEM);
 	if (ret < 0) {
-		fprintf(stderr,
-			"gnutls_x509_privkey_import: %s\n",
+		fprintf(stderr, "gnutls_x509_privkey_import: %s\n",
 			gnutls_strerror(ret));
 		exit(1);
 	}
@@ -201,19 +200,22 @@ static void key_check(void)
 	ret = gnutls_x509_privkey_get_spki(key, spki, 0);
 	assert(ret >= 0);
 
-	assert(gnutls_x509_spki_get_rsa_pss_params(spki, &dig, &salt_size) >= 0);
+	assert(gnutls_x509_spki_get_rsa_pss_params(spki, &dig, &salt_size) >=
+	       0);
 	assert(salt_size == 32);
 	assert(dig == GNUTLS_DIG_SHA256);
 
 	/* set and get */
 	gnutls_x509_spki_set_rsa_pss_params(spki, GNUTLS_DIG_SHA1, 64);
-	assert(gnutls_x509_spki_get_rsa_pss_params(spki, &dig, &salt_size) >= 0);
+	assert(gnutls_x509_spki_get_rsa_pss_params(spki, &dig, &salt_size) >=
+	       0);
 	assert(salt_size == 64);
 	assert(dig == GNUTLS_DIG_SHA1);
 
 	/* set invalid */
 	gnutls_x509_spki_set_rsa_pss_params(spki, GNUTLS_DIG_SHA1, 1024);
-	assert(gnutls_x509_privkey_set_spki(key, spki, 0) == GNUTLS_E_PK_INVALID_PUBKEY_PARAMS);
+	assert(gnutls_x509_privkey_set_spki(key, spki, 0) ==
+	       GNUTLS_E_PK_INVALID_PUBKEY_PARAMS);
 
 	gnutls_x509_privkey_deinit(key);
 	gnutls_x509_spki_deinit(spki);

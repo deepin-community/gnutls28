@@ -48,11 +48,10 @@ struct gcm_padlock_aes_ctx {
 	size_t rekey_counter;
 };
 
-static void padlock_aes_encrypt(const void *_ctx,
-				size_t length, uint8_t * dst,
-				const uint8_t * src)
+static void padlock_aes_encrypt(const void *_ctx, size_t length, uint8_t *dst,
+				const uint8_t *src)
 {
-	struct padlock_ctx *ctx = (void*)_ctx;
+	struct padlock_ctx *ctx = (void *)_ctx;
 	struct padlock_cipher_data *pce;
 
 	pce = ALIGN16(&ctx->expanded_key);
@@ -62,7 +61,7 @@ static void padlock_aes_encrypt(const void *_ctx,
 }
 
 static void padlock_aes128_set_encrypt_key(struct padlock_ctx *_ctx,
-					const uint8_t * key)
+					   const uint8_t *key)
 {
 	struct padlock_ctx *ctx = _ctx;
 	ctx->enc = 1;
@@ -71,7 +70,7 @@ static void padlock_aes128_set_encrypt_key(struct padlock_ctx *_ctx,
 }
 
 static void padlock_aes256_set_encrypt_key(struct padlock_ctx *_ctx,
-					const uint8_t * key)
+					   const uint8_t *key)
 {
 	struct padlock_ctx *ctx = _ctx;
 	ctx->enc = 1;
@@ -87,9 +86,8 @@ static void aes_gcm_deinit(void *_ctx)
 	gnutls_free(ctx);
 }
 
-static int
-aes_gcm_cipher_init(gnutls_cipher_algorithm_t algorithm, void **_ctx,
-		    int enc)
+static int aes_gcm_cipher_init(gnutls_cipher_algorithm_t algorithm, void **_ctx,
+			       int enc)
 {
 	/* we use key size to distinguish */
 	if (algorithm != GNUTLS_CIPHER_AES_128_GCM &&
@@ -105,17 +103,16 @@ aes_gcm_cipher_init(gnutls_cipher_algorithm_t algorithm, void **_ctx,
 	return 0;
 }
 
-static int
-aes_gcm_cipher_setkey(void *_ctx, const void *key, size_t keysize)
+static int aes_gcm_cipher_setkey(void *_ctx, const void *key, size_t keysize)
 {
 	struct gcm_padlock_aes_ctx *ctx = _ctx;
 
 	if (keysize == 16) {
-		GCM_SET_KEY(&ctx->inner, padlock_aes128_set_encrypt_key, padlock_aes_encrypt,
-			    key);
+		GCM_SET_KEY(&ctx->inner, padlock_aes128_set_encrypt_key,
+			    padlock_aes_encrypt, key);
 	} else if (keysize == 32) {
-		GCM_SET_KEY(&ctx->inner, padlock_aes256_set_encrypt_key, padlock_aes_encrypt,
-			    key);
+		GCM_SET_KEY(&ctx->inner, padlock_aes256_set_encrypt_key,
+			    padlock_aes_encrypt, key);
 	} else
 		return GNUTLS_E_INVALID_REQUEST;
 
@@ -136,9 +133,8 @@ static int aes_gcm_setiv(void *_ctx, const void *iv, size_t iv_size)
 	return 0;
 }
 
-static int
-aes_gcm_encrypt(void *_ctx, const void *src, size_t src_size,
-		void *dst, size_t length)
+static int aes_gcm_encrypt(void *_ctx, const void *src, size_t src_size,
+			   void *dst, size_t length)
 {
 	struct gcm_padlock_aes_ctx *ctx = _ctx;
 	int ret;
@@ -156,9 +152,8 @@ aes_gcm_encrypt(void *_ctx, const void *src, size_t src_size,
 	return 0;
 }
 
-static int
-aes_gcm_decrypt(void *_ctx, const void *src, size_t src_size,
-		void *dst, size_t dst_size)
+static int aes_gcm_decrypt(void *_ctx, const void *src, size_t src_size,
+			   void *dst, size_t dst_size)
 {
 	struct gcm_padlock_aes_ctx *ctx = _ctx;
 

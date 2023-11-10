@@ -18,8 +18,7 @@
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GnuTLS; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
+ * along with GnuTLS.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 #ifdef HAVE_CONFIG_H
@@ -83,9 +82,7 @@ static void client(int sd, const char *prio)
 	gnutls_init(&session, GNUTLS_CLIENT);
 
 	/* Use default priorities */
-	assert(gnutls_priority_set_direct(session,
-					  prio,
-					  NULL) >= 0);
+	assert(gnutls_priority_set_direct(session, prio, NULL) >= 0);
 
 	/* put the anonymous credentials to the current session
 	 */
@@ -111,11 +108,11 @@ static void client(int sd, const char *prio)
 
 	if (debug)
 		success("client: TLS version is: %s\n",
-			gnutls_protocol_get_name
-			(gnutls_protocol_get_version(session)));
+			gnutls_protocol_get_name(
+				gnutls_protocol_get_version(session)));
 
-	ret = gnutls_record_send(session, MSG, sizeof(MSG)-1);
-	if (ret != sizeof(MSG)-1) {
+	ret = gnutls_record_send(session, MSG, sizeof(MSG) - 1);
+	if (ret != sizeof(MSG) - 1) {
 		fail("return value of gnutls_record_send() is bogus\n");
 		exit(1);
 	}
@@ -123,17 +120,16 @@ static void client(int sd, const char *prio)
 	ret = gnutls_record_recv(session, buffer, MAX_BUF);
 	if (ret == 0) {
 		if (debug)
-			success
-			    ("client: Peer has closed the TLS connection\n");
+			success("client: Peer has closed the TLS connection\n");
 		goto end;
 	} else if (ret < 0) {
 		fail("client: Error: %s\n", gnutls_strerror(ret));
 		goto end;
 	}
 
-	if (ret != sizeof(MSG)-1 || memcmp(buffer, MSG, ret) != 0) {
-		fail("client: received data of different size! (expected: %d, have: %d)\n", 
-			(int)strlen(MSG), ret);
+	if (ret != sizeof(MSG) - 1 || memcmp(buffer, MSG, ret) != 0) {
+		fail("client: received data of different size! (expected: %d, have: %d)\n",
+		     (int)strlen(MSG), ret);
 		goto end;
 	}
 
@@ -147,7 +143,7 @@ static void client(int sd, const char *prio)
 
 	gnutls_bye(session, GNUTLS_SHUT_RDWR);
 
-      end:
+end:
 
 	close(sd);
 
@@ -162,7 +158,7 @@ static void client(int sd, const char *prio)
 
 static void server(int sd, const char *prio)
 {
-	const gnutls_datum_t p3 = { (void *) pkcs3, strlen(pkcs3) };
+	const gnutls_datum_t p3 = { (void *)pkcs3, strlen(pkcs3) };
 	gnutls_anon_server_credentials_t anoncred;
 	gnutls_dh_params_t dh_params;
 	int ret;
@@ -182,13 +178,13 @@ static void server(int sd, const char *prio)
 	if (debug)
 		success("Launched, generating DH parameters...\n");
 
-	assert(gnutls_dh_params_init(&dh_params)>=0);
+	assert(gnutls_dh_params_init(&dh_params) >= 0);
 	assert(gnutls_dh_params_import_pkcs3(dh_params, &p3,
-					     GNUTLS_X509_FMT_PEM)>=0);
+					     GNUTLS_X509_FMT_PEM) >= 0);
 
 	gnutls_anon_set_server_dh_params(anoncred, dh_params);
 
-	assert(gnutls_init(&session, GNUTLS_SERVER)>=0);
+	assert(gnutls_init(&session, GNUTLS_SERVER) >= 0);
 
 	assert(gnutls_priority_set_direct(session, prio, NULL) >= 0);
 
@@ -211,8 +207,8 @@ static void server(int sd, const char *prio)
 
 	if (debug)
 		success("server: TLS version is: %s\n",
-			gnutls_protocol_get_name
-			(gnutls_protocol_get_version(session)));
+			gnutls_protocol_get_name(
+				gnutls_protocol_get_version(session)));
 
 	if (debug)
 		print_dh_params_info(session);
@@ -223,11 +219,11 @@ static void server(int sd, const char *prio)
 		if (ret == 0) {
 			gnutls_packet_deinit(packet);
 			if (debug)
-				success
-				    ("server: Peer has closed the GnuTLS connection\n");
+				success("server: Peer has closed the GnuTLS connection\n");
 			break;
 		} else if (ret < 0) {
-			fail("server: Received corrupted data(%d). Closing...\n", ret);
+			fail("server: Received corrupted data(%d). Closing...\n",
+			     ret);
 			break;
 		} else if (ret > 0) {
 			gnutls_datum_t pdata;
@@ -235,8 +231,7 @@ static void server(int sd, const char *prio)
 			gnutls_packet_get(packet, &pdata, NULL);
 			/* echo data back to the client
 			 */
-			gnutls_record_send(session, pdata.data,
-					   pdata.size);
+			gnutls_record_send(session, pdata.data, pdata.size);
 			gnutls_packet_deinit(packet);
 		}
 	}
@@ -257,8 +252,7 @@ static void server(int sd, const char *prio)
 		success("server: finished\n");
 }
 
-static
-void start(const char *name, const char *prio)
+static void start(const char *name, const char *prio)
 {
 	pid_t child;
 	int sockets[2], err;
@@ -281,10 +275,12 @@ void start(const char *name, const char *prio)
 	if (child) {
 		int status;
 		/* parent */
+		close(sockets[1]);
 		server(sockets[0], prio);
 		wait(&status);
 		check_wait_status(status);
 	} else {
+		close(sockets[0]);
 		client(sockets[1], prio);
 		exit(0);
 	}
@@ -292,12 +288,16 @@ void start(const char *name, const char *prio)
 
 void doit(void)
 {
-	start("tls1.2 anon-dh", "NORMAL:-VERS-ALL:+VERS-TLS1.2:-KX-ALL:+ANON-DH");
-	start("tls1.2 anon-ecdh", "NORMAL:-VERS-ALL:+VERS-TLS1.2:-KX-ALL:+ANON-ECDH");
-	start("tls1.3 anon-dh", "NORMAL:-VERS-ALL:+VERS-TLS1.3:+VERS-TLS1.2:-KX-ALL:+ANON-DH");
-	start("tls1.3 anon-ecdh", "NORMAL:-VERS-ALL:+VERS-TLS1.3:+VERS-TLS1.2:-KX-ALL:+ANON-ECDH");
+	start("tls1.2 anon-dh",
+	      "NORMAL:-VERS-ALL:+VERS-TLS1.2:-KX-ALL:+ANON-DH");
+	start("tls1.2 anon-ecdh",
+	      "NORMAL:-VERS-ALL:+VERS-TLS1.2:-KX-ALL:+ANON-ECDH");
+	start("tls1.3 anon-dh",
+	      "NORMAL:-VERS-ALL:+VERS-TLS1.3:+VERS-TLS1.2:-KX-ALL:+ANON-DH");
+	start("tls1.3 anon-ecdh",
+	      "NORMAL:-VERS-ALL:+VERS-TLS1.3:+VERS-TLS1.2:-KX-ALL:+ANON-ECDH");
 	start("default anon-dh", "NORMAL:-KX-ALL:+ANON-DH");
 	start("default anon-ecdh", "NORMAL:-KX-ALL:+ANON-ECDH");
 }
 
-#endif				/* _WIN32 */
+#endif /* _WIN32 */

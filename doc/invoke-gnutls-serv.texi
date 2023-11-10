@@ -85,6 +85,8 @@ None:
 				  0 to 16384
        --httpdata=file        The data used as HTTP response
 				- file must pre-exist
+       --timeout=num          The timeout period for server
+       --attime=str           Perform validation at the timestamp instead of the system time
 
 Version, usage and configuration options:
 
@@ -258,6 +260,16 @@ Print a list of the supported algorithms and modes. If a priority string is give
 This is the ``specify the pkcs #11 provider library'' option.
 This option takes a ArgumentType.FILE argument.
 This will override the default options in /etc/gnutls/pkcs11.conf
+@subheading attime option.
+@anchor{gnutls-serv attime}
+
+This is the ``perform validation at the timestamp instead of the system time'' option.
+This option takes a ArgumentType.STRING argument @file{timestamp}.
+timestamp is an instance in time encoded as Unix time or in a human
+ readable timestring such as "29 Feb 2004", "2004-02-29".
+Full documentation available at 
+<https://www.gnu.org/software/coreutils/manual/html_node/Date-input-formats.html>
+or locally via info '(coreutils) date invocation'.
 @subheading version option (-v).
 @anchor{gnutls-serv version}
 

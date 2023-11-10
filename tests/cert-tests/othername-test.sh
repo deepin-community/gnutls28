@@ -15,8 +15,7 @@
 # General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with GnuTLS; if not, write to the Free Software Foundation,
-# Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+# along with GnuTLS.  If not, see <https://www.gnu.org/licenses/>.
 
 #set -e
 
@@ -33,14 +32,7 @@ export TZ="UTC"
 
 . ${srcdir}/../scripts/common.sh
 
-skip_if_no_datefudge
-
-# Note that in rare cases this test may fail because the
-# time set using datefudge could have changed since the generation
-# (if example the system was busy)
-
-datefudge -s "2007-04-22" \
-	"${CERTTOOL}" --generate-self-signed \
+"${CERTTOOL}" --attime "2007-04-22" --generate-self-signed \
 		--load-privkey "${srcdir}/data/template-test.key" \
 		--template "${srcdir}/templates/template-othername.tmpl" \
 		--outfile ${OUTFILE} 2>/dev/null
@@ -54,11 +46,10 @@ if test "${rc}" != "0"; then
 	exit ${rc}
 fi
 
-datefudge -s "2007-04-22" \
-	"${CERTTOOL}" --generate-self-signed \
-		--load-privkey "${srcdir}/data/template-test.key" \
-		--template "${srcdir}/templates/template-othername-xmpp.tmpl" \
-		--outfile ${OUTFILE} 2>/dev/null
+"${CERTTOOL}" --attime "2007-04-22" --generate-self-signed \
+	--load-privkey "${srcdir}/data/template-test.key" \
+	--template "${srcdir}/templates/template-othername-xmpp.tmpl" \
+	--outfile ${OUTFILE} 2>/dev/null
 
 ${DIFF} "${srcdir}/data/template-othername-xmpp.pem" ${OUTFILE} >/dev/null 2>&1
 rc=$?

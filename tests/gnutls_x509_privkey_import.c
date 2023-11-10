@@ -37,15 +37,12 @@
 #include "cert-common.h"
 #include "utils.h"
 
-#define testfail(fmt, ...) \
-	fail("%s: "fmt, name, ##__VA_ARGS__)
+#define testfail(fmt, ...) fail("%s: " fmt, name, ##__VA_ARGS__)
 
-const gnutls_datum_t raw_data = {
-	(void *) "hello there",
-	11
-};
+const gnutls_datum_t raw_data = { (void *)"hello there", 11 };
 
-static int sign_verify_data(gnutls_x509_privkey_t pkey, gnutls_sign_algorithm_t algo)
+static int sign_verify_data(gnutls_x509_privkey_t pkey,
+			    gnutls_sign_algorithm_t algo)
 {
 	int ret;
 	gnutls_privkey_t privkey;
@@ -59,8 +56,8 @@ static int sign_verify_data(gnutls_x509_privkey_t pkey, gnutls_sign_algorithm_t 
 	if (ret < 0)
 		fail("gnutls_privkey_import_x509\n");
 
-	ret = gnutls_privkey_sign_data2(privkey, algo, 0,
-					&raw_data, &signature);
+	ret = gnutls_privkey_sign_data2(privkey, algo, 0, &raw_data,
+					&signature);
 	if (ret < 0) {
 		ret = -1;
 		goto cleanup;
@@ -74,14 +71,15 @@ static int sign_verify_data(gnutls_x509_privkey_t pkey, gnutls_sign_algorithm_t 
 		fail("gnutls_pubkey_import_privkey\n");
 
 	ret = gnutls_pubkey_verify_data2(pubkey, algo,
-				GNUTLS_VERIFY_ALLOW_BROKEN, &raw_data, &signature);
+					 GNUTLS_VERIFY_ALLOW_BROKEN, &raw_data,
+					 &signature);
 	if (ret < 0) {
 		ret = -1;
 		goto cleanup;
 	}
 
 	ret = 0;
- cleanup:
+cleanup:
 	if (pubkey)
 		gnutls_pubkey_deinit(pubkey);
 	gnutls_privkey_deinit(privkey);
@@ -90,8 +88,9 @@ static int sign_verify_data(gnutls_x509_privkey_t pkey, gnutls_sign_algorithm_t 
 	return ret;
 }
 
-static void load_privkey(const char *name, const gnutls_datum_t *txtkey, gnutls_pk_algorithm_t pk,
-			 gnutls_sign_algorithm_t sig, int exp_key_err)
+static void load_privkey(const char *name, const gnutls_datum_t *txtkey,
+			 gnutls_pk_algorithm_t pk, gnutls_sign_algorithm_t sig,
+			 int exp_key_err)
 {
 	gnutls_x509_privkey_t tmp;
 	int ret;
@@ -103,7 +102,8 @@ static void load_privkey(const char *name, const gnutls_datum_t *txtkey, gnutls_
 	ret = gnutls_x509_privkey_import(tmp, txtkey, GNUTLS_X509_FMT_PEM);
 	if (ret < 0) {
 		if (exp_key_err) {
-			testfail("did not fail in key import, although expected\n");
+			testfail(
+				"did not fail in key import, although expected\n");
 		}
 
 		testfail("gnutls_privkey_import: %s\n", gnutls_strerror(ret));
@@ -115,17 +115,19 @@ static void load_privkey(const char *name, const gnutls_datum_t *txtkey, gnutls_
 
 	ret = gnutls_x509_privkey_verify_params(tmp);
 	if (ret < 0)
-		testfail("gnutls_privkey_verify_params: %s\n", gnutls_strerror(ret));
+		testfail("gnutls_privkey_verify_params: %s\n",
+			 gnutls_strerror(ret));
 
 	sign_verify_data(tmp, sig);
-	
+
 	gnutls_x509_privkey_deinit(tmp);
 
 	return;
 }
 
-static void load_privkey_in_der(const char *name, const gnutls_datum_t *txtkey, gnutls_pk_algorithm_t pk,
-			 gnutls_sign_algorithm_t sig, int exp_key_err)
+static void load_privkey_in_der(const char *name, const gnutls_datum_t *txtkey,
+				gnutls_pk_algorithm_t pk,
+				gnutls_sign_algorithm_t sig, int exp_key_err)
 {
 	gnutls_x509_privkey_t tmp;
 	gnutls_datum_t der;
@@ -137,7 +139,8 @@ static void load_privkey_in_der(const char *name, const gnutls_datum_t *txtkey, 
 
 	ret = gnutls_pem_base64_decode2(NULL, txtkey, &der);
 	if (ret < 0 || der.size == 0) {
-		testfail("could not convert key to DER form: %s\n", gnutls_strerror(ret));
+		testfail("could not convert key to DER form: %s\n",
+			 gnutls_strerror(ret));
 	}
 
 	ret = gnutls_x509_privkey_import(tmp, &der, GNUTLS_X509_FMT_DER);
@@ -145,7 +148,8 @@ static void load_privkey_in_der(const char *name, const gnutls_datum_t *txtkey, 
 
 	if (ret < 0) {
 		if (exp_key_err) {
-			testfail("did not fail in key import, although expected\n");
+			testfail(
+				"did not fail in key import, although expected\n");
 		}
 
 		testfail("gnutls_privkey_import: %s\n", gnutls_strerror(ret));
@@ -157,7 +161,8 @@ static void load_privkey_in_der(const char *name, const gnutls_datum_t *txtkey, 
 
 	ret = gnutls_x509_privkey_verify_params(tmp);
 	if (ret < 0)
-		testfail("gnutls_privkey_verify_params: %s\n", gnutls_strerror(ret));
+		testfail("gnutls_privkey_verify_params: %s\n",
+			 gnutls_strerror(ret));
 
 	sign_verify_data(tmp, sig);
 
@@ -174,39 +179,42 @@ typedef struct test_st {
 	int exp_key_err;
 } test_st;
 
-static const test_st tests[] = {
-	{.name = "ecc key",
-	 .pk = GNUTLS_PK_ECDSA,
-	 .sig = GNUTLS_SIGN_ECDSA_SHA256,
-	 .key = &server_ca3_ecc_key,
-	},
-	{.name = "rsa-sign key",
-	 .pk = GNUTLS_PK_RSA,
-	 .sig = GNUTLS_SIGN_RSA_SHA384,
-	 .key = &server_ca3_key,
-	},
-	{.name = "rsa-pss-sign key (PKCS#8)",
-	 .pk = GNUTLS_PK_RSA_PSS,
-	 .sig = GNUTLS_SIGN_RSA_PSS_SHA256,
-	 .key = &server_ca3_rsa_pss2_key,
-	},
-	{.name = "dsa key",
-	 .pk = GNUTLS_PK_DSA,
-	 .sig = GNUTLS_SIGN_DSA_SHA1,
-	 .key = &dsa_key,
-	},
-	{.name = "ed25519 key (PKCS#8)",
-	 .pk = GNUTLS_PK_EDDSA_ED25519,
-	 .sig = GNUTLS_SIGN_EDDSA_ED25519,
-	 .key = &server_ca3_eddsa_key,
-	}
-};
+static const test_st tests[] = { {
+					 .name = "ecc key",
+					 .pk = GNUTLS_PK_ECDSA,
+					 .sig = GNUTLS_SIGN_ECDSA_SHA256,
+					 .key = &server_ca3_ecc_key,
+				 },
+				 {
+					 .name = "rsa-sign key",
+					 .pk = GNUTLS_PK_RSA,
+					 .sig = GNUTLS_SIGN_RSA_SHA384,
+					 .key = &server_ca3_key,
+				 },
+				 {
+					 .name = "rsa-pss-sign key (PKCS#8)",
+					 .pk = GNUTLS_PK_RSA_PSS,
+					 .sig = GNUTLS_SIGN_RSA_PSS_SHA256,
+					 .key = &server_ca3_rsa_pss2_key,
+				 },
+				 {
+					 .name = "dsa key",
+					 .pk = GNUTLS_PK_DSA,
+					 .sig = GNUTLS_SIGN_DSA_SHA1,
+					 .key = &dsa_key,
+				 },
+				 {
+					 .name = "ed25519 key (PKCS#8)",
+					 .pk = GNUTLS_PK_EDDSA_ED25519,
+					 .sig = GNUTLS_SIGN_EDDSA_ED25519,
+					 .key = &server_ca3_eddsa_key,
+				 } };
 
 void doit(void)
 {
 	unsigned int i;
 
-	for (i=0;i<sizeof(tests)/sizeof(tests[0]);i++) {
+	for (i = 0; i < sizeof(tests) / sizeof(tests[0]); i++) {
 		success("checking: %s\n", tests[i].name);
 
 		load_privkey(tests[i].name, tests[i].key, tests[i].pk,
@@ -214,7 +222,7 @@ void doit(void)
 
 		success("checking: %s in der form\n", tests[i].name);
 		load_privkey_in_der(tests[i].name, tests[i].key, tests[i].pk,
-			     tests[i].sig, tests[i].exp_key_err);
+				    tests[i].sig, tests[i].exp_key_err);
 	}
 
 	gnutls_global_deinit();

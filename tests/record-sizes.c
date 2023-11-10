@@ -16,8 +16,7 @@
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GnuTLS; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
+ * along with GnuTLS.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 #ifdef HAVE_CONFIG_H
@@ -51,8 +50,7 @@ void doit(void)
 {
 	/* Server stuff. */
 	gnutls_anon_server_credentials_t s_anoncred;
-	const gnutls_datum_t p3 =
-	    { (unsigned char *) pkcs3, strlen(pkcs3) };
+	const gnutls_datum_t p3 = { (unsigned char *)pkcs3, strlen(pkcs3) };
 	static gnutls_dh_params_t dh_params;
 	gnutls_session_t server;
 	int sret = GNUTLS_E_AGAIN;
@@ -79,9 +77,10 @@ void doit(void)
 	gnutls_dh_params_import_pkcs3(dh_params, &p3, GNUTLS_X509_FMT_PEM);
 	gnutls_anon_set_server_dh_params(s_anoncred, dh_params);
 	gnutls_init(&server, GNUTLS_SERVER);
-	gnutls_priority_set_direct(server,
-				   "NONE:+VERS-TLS1.2:+ARCFOUR-128:+MD5:+MAC-ALL:+SIGN-ALL:+COMP-NULL:+ANON-DH",
-				   NULL);
+	gnutls_priority_set_direct(
+		server,
+		"NONE:+VERS-TLS1.2:+ARCFOUR-128:+MD5:+MAC-ALL:+SIGN-ALL:+COMP-NULL:+ANON-DH",
+		NULL);
 	gnutls_credentials_set(server, GNUTLS_CRD_ANON, s_anoncred);
 	gnutls_transport_set_push_function(server, server_push);
 	gnutls_transport_set_pull_function(server, server_pull);
@@ -90,9 +89,10 @@ void doit(void)
 	/* Init client */
 	gnutls_anon_allocate_client_credentials(&c_anoncred);
 	gnutls_init(&client, GNUTLS_CLIENT);
-	gnutls_priority_set_direct(client,
-				   "NONE:+VERS-TLS1.2:+CIPHER-ALL:+ARCFOUR-128:+MD5:+MAC-ALL:+SIGN-ALL:+COMP-NULL:+ANON-DH",
-				   NULL);
+	gnutls_priority_set_direct(
+		client,
+		"NONE:+VERS-TLS1.2:+CIPHER-ALL:+ARCFOUR-128:+MD5:+MAC-ALL:+SIGN-ALL:+COMP-NULL:+ANON-DH",
+		NULL);
 	gnutls_credentials_set(client, GNUTLS_CRD_ANON, c_anoncred);
 	gnutls_transport_set_push_function(client, client_push);
 	gnutls_transport_set_pull_function(client, client_pull);
@@ -109,26 +109,26 @@ void doit(void)
 	/* try the maximum allowed */
 	ret = gnutls_record_send(client, b1, MAX_BUF);
 	if (ret < 0) {
-		fprintf(stderr, "Error sending %d bytes: %s\n",
-			(int) MAX_BUF, gnutls_strerror(ret));
+		fprintf(stderr, "Error sending %d bytes: %s\n", (int)MAX_BUF,
+			gnutls_strerror(ret));
 		exit(1);
 	}
 
 	if (ret != MAX_BUF) {
-		fprintf(stderr, "Couldn't send %d bytes\n", (int) MAX_BUF);
+		fprintf(stderr, "Couldn't send %d bytes\n", (int)MAX_BUF);
 		exit(1);
 	}
 
 	ret = gnutls_record_recv(server, buffer, MAX_BUF);
 	if (ret < 0) {
-		fprintf(stderr, "Error receiving %d bytes: %s\n",
-			(int) MAX_BUF, gnutls_strerror(ret));
+		fprintf(stderr, "Error receiving %d bytes: %s\n", (int)MAX_BUF,
+			gnutls_strerror(ret));
 		exit(1);
 	}
 
 	if (ret != MAX_BUF) {
 		fprintf(stderr, "Couldn't receive %d bytes, received %d\n",
-			(int) MAX_BUF, ret);
+			(int)MAX_BUF, ret);
 		exit(1);
 	}
 
@@ -144,8 +144,6 @@ void doit(void)
 	if (debug)
 		fputs("\n", stdout);
 
-
-
 	gnutls_bye(client, GNUTLS_SHUT_RDWR);
 	gnutls_bye(server, GNUTLS_SHUT_RDWR);
 
@@ -159,4 +157,3 @@ void doit(void)
 
 	gnutls_global_deinit();
 }
-
