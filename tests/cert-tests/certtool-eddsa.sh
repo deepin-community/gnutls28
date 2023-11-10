@@ -15,8 +15,7 @@
 # General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with GnuTLS; if not, write to the Free Software Foundation,
-# Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+# along with GnuTLS.  If not, see <https://www.gnu.org/licenses/>.
 
 #set -e
 
@@ -124,11 +123,8 @@ rm -f "${TMPFILE}" "${TMPFILE2}"
 rm -f "${KEYFILE}"
 
 
-skip_if_no_datefudge
-
 # Test certificate chain using Ed25519
-datefudge "2017-7-6" \
-${VALGRIND} "${CERTTOOL}" --verify-chain --infile ${srcdir}/data/chain-eddsa.pem
+${VALGRIND} "${CERTTOOL}" --attime "2017-7-6" --verify-chain --infile ${srcdir}/data/chain-eddsa.pem
 
 if test $? != 0; then
 	echo "There was an issue verifying the Ed25519 chain"

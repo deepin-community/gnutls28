@@ -10947,7 +10947,7 @@ gnutls_x509_crl_list_import2 (<em class="parameter"><code><a class="link" href="
                               <em class="parameter"><code>const <a class="link" href="gnutls-gnutls.html#gnutls-datum-t" title="gnutls_datum_t"><span class="type">gnutls_datum_t</span></a> *data</code></em>,
                               <em class="parameter"><code><a class="link" href="gnutls-gnutls.html#gnutls-x509-crt-fmt-t" title="enum gnutls_x509_crt_fmt_t"><span class="type">gnutls_x509_crt_fmt_t</span></a> format</code></em>,
                               <em class="parameter"><code>unsigned <span class="type">int</span> flags</code></em>);</pre>
-<p>This function will convert the given PEM encoded CRL list
+<p>This function will convert the given CRL list
 to the native gnutls_x509_crl_t format. The output will be stored
 in <em class="parameter"><code>crls</code></em>
 .  They will be automatically initialized.</p>
@@ -10974,7 +10974,7 @@ CRL".</p>
 </tr>
 <tr>
 <td class="parameter_name"><p>data</p></td>
-<td class="parameter_description"><p>The PEM encoded CRL.</p></td>
+<td class="parameter_description"><p>The CRL data.</p></td>
 <td class="parameter_annotations"> </td>
 </tr>
 <tr>
@@ -11005,7 +11005,7 @@ gnutls_x509_crl_list_import (<em class="parameter"><code><a class="link" href="g
                              <em class="parameter"><code>const <a class="link" href="gnutls-gnutls.html#gnutls-datum-t" title="gnutls_datum_t"><span class="type">gnutls_datum_t</span></a> *data</code></em>,
                              <em class="parameter"><code><a class="link" href="gnutls-gnutls.html#gnutls-x509-crt-fmt-t" title="enum gnutls_x509_crt_fmt_t"><span class="type">gnutls_x509_crt_fmt_t</span></a> format</code></em>,
                              <em class="parameter"><code>unsigned <span class="type">int</span> flags</code></em>);</pre>
-<p>This function will convert the given PEM encoded CRL list
+<p>This function will convert the given CRL list
 to the native gnutls_x509_crl_t format. The output will be stored
 in <em class="parameter"><code>crls</code></em>
 .  They will be automatically initialized.</p>
@@ -11031,7 +11031,7 @@ in <em class="parameter"><code>crls</code></em>
 </tr>
 <tr>
 <td class="parameter_name"><p>data</p></td>
-<td class="parameter_description"><p>The PEM encoded CRLs</p></td>
+<td class="parameter_description"><p>The CRL data</p></td>
 <td class="parameter_annotations"> </td>
 </tr>
 <tr>
@@ -11749,12 +11749,14 @@ negative error value.</p>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-PROFILE-TO-VFLAGS:CAPS"></a><h3>GNUTLS_PROFILE_TO_VFLAGS()</h3>
-<pre class="programlisting">#define             GNUTLS_PROFILE_TO_VFLAGS(x)</pre>
+<pre class="programlisting">#define GNUTLS_PROFILE_TO_VFLAGS(x) (((unsigned)x) &lt;&lt; 24)
+</pre>
 </div>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-VFLAGS-TO-PROFILE:CAPS"></a><h3>GNUTLS_VFLAGS_TO_PROFILE()</h3>
-<pre class="programlisting">#define             GNUTLS_VFLAGS_TO_PROFILE(x)</pre>
+<pre class="programlisting">#define GNUTLS_VFLAGS_TO_PROFILE(x) ((((unsigned)x) &gt;&gt; 24) &amp; 0xff)
+</pre>
 </div>
 <hr>
 <div class="refsect2">
@@ -12291,7 +12293,7 @@ it a certificate marked for any purpose will not match.</p>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-PKCS-CIPHER-MASK:CAPS"></a><h3>GNUTLS_PKCS_CIPHER_MASK()</h3>
-<pre class="programlisting">#define GNUTLS_PKCS_CIPHER_MASK(x) ((x)&amp;(~(GNUTLS_PKCS_NULL_PASSWORD)))
+<pre class="programlisting">#define GNUTLS_PKCS_CIPHER_MASK(x) ((x) &amp; (~(GNUTLS_PKCS_NULL_PASSWORD)))
 </pre>
 </div>
 <hr>
@@ -17352,7 +17354,7 @@ gnutls_x509_trust_list_remove_cas (<em class="parameter"><code><a class="link" h
 from the trusted list.</p>
 <p>Note that this function can accept certificates and authorities
 not yet known. In that case they will be kept in a separate
-black list that will be used during certificate verification.
+block list that will be used during certificate verification.
 Unlike <a class="link" href="gnutls-x509.html#gnutls-x509-trust-list-add-cas" title="gnutls_x509_trust_list_add_cas ()"><code class="function">gnutls_x509_trust_list_add_cas()</code></a> there is no deinitialization
 restriction for  certificate list provided in this function.</p>
 <div class="refsect3">
@@ -18079,7 +18081,7 @@ gnutls_x509_trust_list_remove_trust_file
                                 <em class="parameter"><code>const <span class="type">char</span> *ca_file</code></em>,
                                 <em class="parameter"><code><a class="link" href="gnutls-gnutls.html#gnutls-x509-crt-fmt-t" title="enum gnutls_x509_crt_fmt_t"><span class="type">gnutls_x509_crt_fmt_t</span></a> type</code></em>);</pre>
 <p>This function will remove the given certificate authorities
-from the trusted list, and add them into a black list when needed. 
+from the trusted list, and add them into a block list when needed. 
 PKCS 11 URLs are also accepted, instead
 of files, by this function.</p>
 <p>See also <a class="link" href="gnutls-x509.html#gnutls-x509-trust-list-remove-cas" title="gnutls_x509_trust_list_remove_cas ()"><code class="function">gnutls_x509_trust_list_remove_cas()</code></a>.</p>
@@ -18125,7 +18127,7 @@ gnutls_x509_trust_list_remove_trust_mem
                                 <em class="parameter"><code>const <a class="link" href="gnutls-gnutls.html#gnutls-datum-t" title="gnutls_datum_t"><span class="type">gnutls_datum_t</span></a> *cas</code></em>,
                                 <em class="parameter"><code><a class="link" href="gnutls-gnutls.html#gnutls-x509-crt-fmt-t" title="enum gnutls_x509_crt_fmt_t"><span class="type">gnutls_x509_crt_fmt_t</span></a> type</code></em>);</pre>
 <p>This function will remove the provided certificate authorities
-from the trusted list, and add them into a black list when needed. </p>
+from the trusted list, and add them into a block list when needed. </p>
 <p>See also <a class="link" href="gnutls-x509.html#gnutls-x509-trust-list-remove-cas" title="gnutls_x509_trust_list_remove_cas ()"><code class="function">gnutls_x509_trust_list_remove_cas()</code></a>.</p>
 <div class="refsect3">
 <a name="gnutls-x509-trust-list-remove-trust-mem.parameters"></a><h4>Parameters</h4>
@@ -18461,13 +18463,13 @@ negative error value.</p>
 <a name="gnutls-x509.other_details"></a><h2>Types and Values</h2>
 <div class="refsect2">
 <a name="GNUTLS-OID-X520-COUNTRY-NAME:CAPS"></a><h3>GNUTLS_OID_X520_COUNTRY_NAME</h3>
-<pre class="programlisting">#define GNUTLS_OID_X520_COUNTRY_NAME		"2.5.4.6"
+<pre class="programlisting">#define GNUTLS_OID_X520_COUNTRY_NAME "2.5.4.6"
 </pre>
 </div>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-OID-X520-ORGANIZATION-NAME:CAPS"></a><h3>GNUTLS_OID_X520_ORGANIZATION_NAME</h3>
-<pre class="programlisting">#define GNUTLS_OID_X520_ORGANIZATION_NAME "2.5.4.10"
+<pre class="programlisting">#define GNUTLS_OID_X520_ORGANIZATION_NAME "2.5.4.10"
 </pre>
 </div>
 <hr>
@@ -18479,199 +18481,199 @@ negative error value.</p>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-OID-X520-COMMON-NAME:CAPS"></a><h3>GNUTLS_OID_X520_COMMON_NAME</h3>
-<pre class="programlisting">#define GNUTLS_OID_X520_COMMON_NAME		"2.5.4.3"
+<pre class="programlisting">#define GNUTLS_OID_X520_COMMON_NAME "2.5.4.3"
 </pre>
 </div>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-OID-X520-LOCALITY-NAME:CAPS"></a><h3>GNUTLS_OID_X520_LOCALITY_NAME</h3>
-<pre class="programlisting">#define GNUTLS_OID_X520_LOCALITY_NAME		"2.5.4.7"
+<pre class="programlisting">#define GNUTLS_OID_X520_LOCALITY_NAME "2.5.4.7"
 </pre>
 </div>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-OID-X520-STATE-OR-PROVINCE-NAME:CAPS"></a><h3>GNUTLS_OID_X520_STATE_OR_PROVINCE_NAME</h3>
-<pre class="programlisting">#define GNUTLS_OID_X520_STATE_OR_PROVINCE_NAME "2.5.4.8"
+<pre class="programlisting">#define GNUTLS_OID_X520_STATE_OR_PROVINCE_NAME "2.5.4.8"
 </pre>
 </div>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-OID-X520-INITIALS:CAPS"></a><h3>GNUTLS_OID_X520_INITIALS</h3>
-<pre class="programlisting">#define GNUTLS_OID_X520_INITIALS		"2.5.4.43"
+<pre class="programlisting">#define GNUTLS_OID_X520_INITIALS "2.5.4.43"
 </pre>
 </div>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-OID-X520-GENERATION-QUALIFIER:CAPS"></a><h3>GNUTLS_OID_X520_GENERATION_QUALIFIER</h3>
-<pre class="programlisting">#define GNUTLS_OID_X520_GENERATION_QUALIFIER "2.5.4.44"
+<pre class="programlisting">#define GNUTLS_OID_X520_GENERATION_QUALIFIER "2.5.4.44"
 </pre>
 </div>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-OID-X520-SURNAME:CAPS"></a><h3>GNUTLS_OID_X520_SURNAME</h3>
-<pre class="programlisting">#define GNUTLS_OID_X520_SURNAME			"2.5.4.4"
+<pre class="programlisting">#define GNUTLS_OID_X520_SURNAME "2.5.4.4"
 </pre>
 </div>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-OID-X520-GIVEN-NAME:CAPS"></a><h3>GNUTLS_OID_X520_GIVEN_NAME</h3>
-<pre class="programlisting">#define GNUTLS_OID_X520_GIVEN_NAME		"2.5.4.42"
+<pre class="programlisting">#define GNUTLS_OID_X520_GIVEN_NAME "2.5.4.42"
 </pre>
 </div>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-OID-X520-TITLE:CAPS"></a><h3>GNUTLS_OID_X520_TITLE</h3>
-<pre class="programlisting">#define GNUTLS_OID_X520_TITLE			"2.5.4.12"
+<pre class="programlisting">#define GNUTLS_OID_X520_TITLE "2.5.4.12"
 </pre>
 </div>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-OID-X520-DN-QUALIFIER:CAPS"></a><h3>GNUTLS_OID_X520_DN_QUALIFIER</h3>
-<pre class="programlisting">#define GNUTLS_OID_X520_DN_QUALIFIER		"2.5.4.46"
+<pre class="programlisting">#define GNUTLS_OID_X520_DN_QUALIFIER "2.5.4.46"
 </pre>
 </div>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-OID-X520-PSEUDONYM:CAPS"></a><h3>GNUTLS_OID_X520_PSEUDONYM</h3>
-<pre class="programlisting">#define GNUTLS_OID_X520_PSEUDONYM		"2.5.4.65"
+<pre class="programlisting">#define GNUTLS_OID_X520_PSEUDONYM "2.5.4.65"
 </pre>
 </div>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-OID-X520-POSTALCODE:CAPS"></a><h3>GNUTLS_OID_X520_POSTALCODE</h3>
-<pre class="programlisting">#define GNUTLS_OID_X520_POSTALCODE              "2.5.4.17"
+<pre class="programlisting">#define GNUTLS_OID_X520_POSTALCODE "2.5.4.17"
 </pre>
 </div>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-OID-X520-NAME:CAPS"></a><h3>GNUTLS_OID_X520_NAME</h3>
-<pre class="programlisting">#define GNUTLS_OID_X520_NAME                    "2.5.4.41"
+<pre class="programlisting">#define GNUTLS_OID_X520_NAME "2.5.4.41"
 </pre>
 </div>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-OID-LDAP-DC:CAPS"></a><h3>GNUTLS_OID_LDAP_DC</h3>
-<pre class="programlisting">#define GNUTLS_OID_LDAP_DC			"0.9.2342.19200300.100.1.25"
+<pre class="programlisting">#define GNUTLS_OID_LDAP_DC "0.9.2342.19200300.100.1.25"
 </pre>
 </div>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-OID-LDAP-UID:CAPS"></a><h3>GNUTLS_OID_LDAP_UID</h3>
-<pre class="programlisting">#define GNUTLS_OID_LDAP_UID			"0.9.2342.19200300.100.1.1"
+<pre class="programlisting">#define GNUTLS_OID_LDAP_UID "0.9.2342.19200300.100.1.1"
 </pre>
 </div>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-OID-PKCS9-EMAIL:CAPS"></a><h3>GNUTLS_OID_PKCS9_EMAIL</h3>
-<pre class="programlisting">#define GNUTLS_OID_PKCS9_EMAIL			"1.2.840.113549.1.9.1"
+<pre class="programlisting">#define GNUTLS_OID_PKCS9_EMAIL "1.2.840.113549.1.9.1"
 </pre>
 </div>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-OID-PKIX-DATE-OF-BIRTH:CAPS"></a><h3>GNUTLS_OID_PKIX_DATE_OF_BIRTH</h3>
-<pre class="programlisting">#define GNUTLS_OID_PKIX_DATE_OF_BIRTH		"1.3.6.1.5.5.7.9.1"
+<pre class="programlisting">#define GNUTLS_OID_PKIX_DATE_OF_BIRTH "1.3.6.1.5.5.7.9.1"
 </pre>
 </div>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-OID-PKIX-PLACE-OF-BIRTH:CAPS"></a><h3>GNUTLS_OID_PKIX_PLACE_OF_BIRTH</h3>
-<pre class="programlisting">#define GNUTLS_OID_PKIX_PLACE_OF_BIRTH		"1.3.6.1.5.5.7.9.2"
+<pre class="programlisting">#define GNUTLS_OID_PKIX_PLACE_OF_BIRTH "1.3.6.1.5.5.7.9.2"
 </pre>
 </div>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-OID-PKIX-GENDER:CAPS"></a><h3>GNUTLS_OID_PKIX_GENDER</h3>
-<pre class="programlisting">#define GNUTLS_OID_PKIX_GENDER			"1.3.6.1.5.5.7.9.3"
+<pre class="programlisting">#define GNUTLS_OID_PKIX_GENDER "1.3.6.1.5.5.7.9.3"
 </pre>
 </div>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-OID-PKIX-COUNTRY-OF-CITIZENSHIP:CAPS"></a><h3>GNUTLS_OID_PKIX_COUNTRY_OF_CITIZENSHIP</h3>
-<pre class="programlisting">#define GNUTLS_OID_PKIX_COUNTRY_OF_CITIZENSHIP "1.3.6.1.5.5.7.9.4"
+<pre class="programlisting">#define GNUTLS_OID_PKIX_COUNTRY_OF_CITIZENSHIP "1.3.6.1.5.5.7.9.4"
 </pre>
 </div>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-OID-PKIX-COUNTRY-OF-RESIDENCE:CAPS"></a><h3>GNUTLS_OID_PKIX_COUNTRY_OF_RESIDENCE</h3>
-<pre class="programlisting">#define GNUTLS_OID_PKIX_COUNTRY_OF_RESIDENCE "1.3.6.1.5.5.7.9.5"
+<pre class="programlisting">#define GNUTLS_OID_PKIX_COUNTRY_OF_RESIDENCE "1.3.6.1.5.5.7.9.5"
 </pre>
 </div>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-KP-TLS-WWW-SERVER:CAPS"></a><h3>GNUTLS_KP_TLS_WWW_SERVER</h3>
-<pre class="programlisting">#define GNUTLS_KP_TLS_WWW_SERVER		"1.3.6.1.5.5.7.3.1"
+<pre class="programlisting">#define GNUTLS_KP_TLS_WWW_SERVER "1.3.6.1.5.5.7.3.1"
 </pre>
 </div>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-KP-TLS-WWW-CLIENT:CAPS"></a><h3>GNUTLS_KP_TLS_WWW_CLIENT</h3>
-<pre class="programlisting">#define GNUTLS_KP_TLS_WWW_CLIENT                "1.3.6.1.5.5.7.3.2"
+<pre class="programlisting">#define GNUTLS_KP_TLS_WWW_CLIENT "1.3.6.1.5.5.7.3.2"
 </pre>
 </div>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-KP-CODE-SIGNING:CAPS"></a><h3>GNUTLS_KP_CODE_SIGNING</h3>
-<pre class="programlisting">#define GNUTLS_KP_CODE_SIGNING			"1.3.6.1.5.5.7.3.3"
+<pre class="programlisting">#define GNUTLS_KP_CODE_SIGNING "1.3.6.1.5.5.7.3.3"
 </pre>
 </div>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-KP-MS-SMART-CARD-LOGON:CAPS"></a><h3>GNUTLS_KP_MS_SMART_CARD_LOGON</h3>
-<pre class="programlisting">#define GNUTLS_KP_MS_SMART_CARD_LOGON		"1.3.6.1.4.1.311.20.2.2"
+<pre class="programlisting">#define GNUTLS_KP_MS_SMART_CARD_LOGON "1.3.6.1.4.1.311.20.2.2"
 </pre>
 </div>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-KP-EMAIL-PROTECTION:CAPS"></a><h3>GNUTLS_KP_EMAIL_PROTECTION</h3>
-<pre class="programlisting">#define GNUTLS_KP_EMAIL_PROTECTION		"1.3.6.1.5.5.7.3.4"
+<pre class="programlisting">#define GNUTLS_KP_EMAIL_PROTECTION "1.3.6.1.5.5.7.3.4"
 </pre>
 </div>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-KP-TIME-STAMPING:CAPS"></a><h3>GNUTLS_KP_TIME_STAMPING</h3>
-<pre class="programlisting">#define GNUTLS_KP_TIME_STAMPING			"1.3.6.1.5.5.7.3.8"
+<pre class="programlisting">#define GNUTLS_KP_TIME_STAMPING "1.3.6.1.5.5.7.3.8"
 </pre>
 </div>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-KP-OCSP-SIGNING:CAPS"></a><h3>GNUTLS_KP_OCSP_SIGNING</h3>
-<pre class="programlisting">#define GNUTLS_KP_OCSP_SIGNING			"1.3.6.1.5.5.7.3.9"
+<pre class="programlisting">#define GNUTLS_KP_OCSP_SIGNING "1.3.6.1.5.5.7.3.9"
 </pre>
 </div>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-KP-IPSEC-IKE:CAPS"></a><h3>GNUTLS_KP_IPSEC_IKE</h3>
-<pre class="programlisting">#define GNUTLS_KP_IPSEC_IKE			"1.3.6.1.5.5.7.3.17"
+<pre class="programlisting">#define GNUTLS_KP_IPSEC_IKE "1.3.6.1.5.5.7.3.17"
 </pre>
 </div>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-KP-ANY:CAPS"></a><h3>GNUTLS_KP_ANY</h3>
-<pre class="programlisting">#define GNUTLS_KP_ANY				"2.5.29.37.0"
+<pre class="programlisting">#define GNUTLS_KP_ANY "2.5.29.37.0"
 </pre>
 </div>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-KP-FLAG-DISALLOW-ANY:CAPS"></a><h3>GNUTLS_KP_FLAG_DISALLOW_ANY</h3>
-<pre class="programlisting">#define GNUTLS_KP_FLAG_DISALLOW_ANY		1
+<pre class="programlisting">#define GNUTLS_KP_FLAG_DISALLOW_ANY 1
 </pre>
 </div>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-OID-AIA:CAPS"></a><h3>GNUTLS_OID_AIA</h3>
-<pre class="programlisting">#define GNUTLS_OID_AIA				"1.3.6.1.5.5.7.1.1"
+<pre class="programlisting">#define GNUTLS_OID_AIA "1.3.6.1.5.5.7.1.1"
 </pre>
 </div>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-OID-AD-OCSP:CAPS"></a><h3>GNUTLS_OID_AD_OCSP</h3>
-<pre class="programlisting">#define GNUTLS_OID_AD_OCSP			"1.3.6.1.5.5.7.48.1"
+<pre class="programlisting">#define GNUTLS_OID_AD_OCSP "1.3.6.1.5.5.7.48.1"
 </pre>
 </div>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-OID-AD-CAISSUERS:CAPS"></a><h3>GNUTLS_OID_AD_CAISSUERS</h3>
-<pre class="programlisting">#define GNUTLS_OID_AD_CAISSUERS			"1.3.6.1.5.5.7.48.2"
+<pre class="programlisting">#define GNUTLS_OID_AD_CAISSUERS "1.3.6.1.5.5.7.48.2"
 </pre>
 </div>
 <hr>
@@ -18689,13 +18691,13 @@ negative error value.</p>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-FSAN-ENCODE-OCTET-STRING:CAPS"></a><h3>GNUTLS_FSAN_ENCODE_OCTET_STRING</h3>
-<pre class="programlisting">#define GNUTLS_FSAN_ENCODE_OCTET_STRING (1&lt;&lt;1)
+<pre class="programlisting">#define GNUTLS_FSAN_ENCODE_OCTET_STRING (1 &lt;&lt; 1)
 </pre>
 </div>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-FSAN-ENCODE-UTF8-STRING:CAPS"></a><h3>GNUTLS_FSAN_ENCODE_UTF8_STRING</h3>
-<pre class="programlisting">#define GNUTLS_FSAN_ENCODE_UTF8_STRING (1&lt;&lt;2)
+<pre class="programlisting">#define GNUTLS_FSAN_ENCODE_UTF8_STRING (1 &lt;&lt; 2)
 </pre>
 </div>
 <hr>
@@ -19169,7 +19171,7 @@ negative error value.</p>
 <hr>
 <div class="refsect2">
 <a name="gnutls-x509-crl-iter-t"></a><h3>gnutls_x509_crl_iter_t</h3>
-<pre class="programlisting">typedef struct gnutls_x509_crl_iter * gnutls_x509_crl_iter_t;
+<pre class="programlisting">typedef struct gnutls_x509_crl_iter *gnutls_x509_crl_iter_t;
 </pre>
 </div>
 <hr>
@@ -19351,8 +19353,7 @@ with mismatching salt length with digest length, as mandated in RFC 8446
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-VERIFY-ALLOW-BROKEN:CAPS"></a><h3>GNUTLS_VERIFY_ALLOW_BROKEN</h3>
-<pre class="programlisting">#define GNUTLS_VERIFY_ALLOW_BROKEN (GNUTLS_VERIFY_ALLOW_SIGN_RSA_MD2|GNUTLS_VERIFY_ALLOW_SIGN_RSA_MD5)
-</pre>
+<pre class="programlisting">#define             GNUTLS_VERIFY_ALLOW_BROKEN</pre>
 </div>
 <hr>
 <div class="refsect2">

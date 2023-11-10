@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2000-2021 Free Software Foundation, Inc.
+ * Copyright (C) 2000-2022 Free Software Foundation, Inc.
  *
  * This file is part of LIBTASN1.
  *
@@ -20,7 +20,7 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+# include <config.h>
 #endif
 
 #include <string.h>		/* for strverscmp */

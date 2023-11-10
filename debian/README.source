@@ -1,6 +1,0 @@
-Rebuilding PDF documentation:
-
-apt-get install texlive-latex-base texlive-fonts-recommended \
-  texlive-generic-recommended
-
-make pdf

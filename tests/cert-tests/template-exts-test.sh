@@ -15,8 +15,7 @@
 # General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with GnuTLS; if not, write to the Free Software Foundation,
-# Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+# along with GnuTLS.  If not, see <https://www.gnu.org/licenses/>.
 
 #set -e
 
@@ -33,13 +32,10 @@ export TZ="UTC"
 
 . ${srcdir}/../scripts/common.sh
 
-skip_if_no_datefudge
-
-datefudge -s "2007-04-22" \
-	"${CERTTOOL}" --generate-self-signed \
-		--load-privkey "${srcdir}/data/template-test.key" \
-		--template "${srcdir}/templates/arb-extensions.tmpl" \
-		--outfile $OUTFILE #2>/dev/null
+"${CERTTOOL}" --attime "2007-04-22" --generate-self-signed \
+	--load-privkey "${srcdir}/data/template-test.key" \
+	--template "${srcdir}/templates/arb-extensions.tmpl" \
+	--outfile $OUTFILE #2>/dev/null
 
 ${DIFF} "${srcdir}/data/arb-extensions.pem" $OUTFILE #>/dev/null 2>&1
 rc=$?
@@ -53,11 +49,10 @@ fi
 rm -f "$OUTFILE"
 
 # Test adding critical extensions only
-datefudge -s "2007-04-22" \
-	"${CERTTOOL}" --generate-self-signed \
-		--load-privkey "${srcdir}/data/template-test.key" \
-		--template "${srcdir}/templates/crit-extensions.tmpl" \
-		--outfile $OUTFILE #2>/dev/null
+"${CERTTOOL}" --attime "2007-04-22" --generate-self-signed \
+	--load-privkey "${srcdir}/data/template-test.key" \
+	--template "${srcdir}/templates/crit-extensions.tmpl" \
+	--outfile $OUTFILE #2>/dev/null
 
 ${DIFF} "${srcdir}/data/crit-extensions.pem" $OUTFILE #>/dev/null 2>&1
 rc=$?
@@ -70,11 +65,10 @@ fi
 
 rm -f "$OUTFILE"
 
-datefudge -s "2007-04-22" \
-	"${CERTTOOL}" --generate-request \
-		--load-privkey "${srcdir}/data/template-test.key" \
-		--template "${srcdir}/templates/arb-extensions.tmpl" \
-		2>/dev/null | grep -v "Algorithm Security Level" >$OUTFILE
+"${CERTTOOL}" --attime "2007-04-22" --generate-request \
+	--load-privkey "${srcdir}/data/template-test.key" \
+	--template "${srcdir}/templates/arb-extensions.tmpl" \
+	2>/dev/null | grep -v "Algorithm Security Level" >$OUTFILE
 
 ${DIFF} "${srcdir}/data/arb-extensions.csr" $OUTFILE #>/dev/null 2>&1
 rc=$?

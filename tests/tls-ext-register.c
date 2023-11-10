@@ -16,8 +16,7 @@
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GnuTLS; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
+ * along with GnuTLS.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 /* Parts copied from GnuTLS example programs. */
@@ -62,20 +61,17 @@ static void tls_log_func(int level, const char *str)
 	fprintf(stderr, "%s|<%d>| %s", side, level, str);
 }
 
-#define TLSEXT_TYPE_SAMPLE						0xF1
+#define TLSEXT_TYPE_SAMPLE 0xF1
 
-static int TLSEXT_TYPE_client_sent			= 0;
-static int TLSEXT_TYPE_client_received		= 0;
-static int TLSEXT_TYPE_server_sent			= 0;
-static int TLSEXT_TYPE_server_received		= 0;
+static int TLSEXT_TYPE_client_sent = 0;
+static int TLSEXT_TYPE_client_received = 0;
+static int TLSEXT_TYPE_server_sent = 0;
+static int TLSEXT_TYPE_server_received = 0;
 
-static const unsigned char ext_data[] =
-{
-	0xFE,
-	0xED
-};
+static const unsigned char ext_data[] = { 0xFE, 0xED };
 
-static int ext_recv_client_params(gnutls_session_t session, const unsigned char *buf, size_t buflen)
+static int ext_recv_client_params(gnutls_session_t session,
+				  const unsigned char *buf, size_t buflen)
 {
 	if (buflen != sizeof(ext_data))
 		fail("ext_recv_client_params: Invalid input buffer length\n");
@@ -90,14 +86,16 @@ static int ext_recv_client_params(gnutls_session_t session, const unsigned char 
 	return 0; //Success
 }
 
-static int ext_send_client_params(gnutls_session_t session, gnutls_buffer_t extdata)
+static int ext_send_client_params(gnutls_session_t session,
+				  gnutls_buffer_t extdata)
 {
 	TLSEXT_TYPE_client_sent = 1;
 	gnutls_buffer_append_data(extdata, ext_data, sizeof(ext_data));
 	return sizeof(ext_data);
 }
 
-static int ext_recv_server_params(gnutls_session_t session, const unsigned char *buf, size_t buflen)
+static int ext_recv_server_params(gnutls_session_t session,
+				  const unsigned char *buf, size_t buflen)
 {
 	if (buflen != sizeof(ext_data))
 		fail("ext_recv_server_params: Invalid input buffer length\n");
@@ -110,7 +108,8 @@ static int ext_recv_server_params(gnutls_session_t session, const unsigned char 
 	return 0; //Success
 }
 
-static int ext_send_server_params(gnutls_session_t session, gnutls_buffer_t extdata)
+static int ext_send_server_params(gnutls_session_t session,
+				  gnutls_buffer_t extdata)
 {
 	TLSEXT_TYPE_server_sent = 1;
 	gnutls_buffer_append_data(extdata, ext_data, sizeof(ext_data));
@@ -131,7 +130,9 @@ static void client(int sd, const char *prio)
 	side = "client";
 
 	/* extensions are registered globally */
-	ret = gnutls_ext_register("ext_client", TLSEXT_TYPE_SAMPLE, GNUTLS_EXT_TLS, ext_recv_client_params, ext_send_client_params, NULL, NULL, NULL);
+	ret = gnutls_ext_register("ext_client", TLSEXT_TYPE_SAMPLE,
+				  GNUTLS_EXT_TLS, ext_recv_client_params,
+				  ext_send_client_params, NULL, NULL, NULL);
 	assert(ret >= 0);
 
 	gnutls_certificate_allocate_credentials(&clientx509cred);
@@ -144,8 +145,7 @@ static void client(int sd, const char *prio)
 
 	/* put the anonymous credentials to the current session
 	 */
-	gnutls_credentials_set(session, GNUTLS_CRD_CERTIFICATE,
-				clientx509cred);
+	gnutls_credentials_set(session, GNUTLS_CRD_CERTIFICATE, clientx509cred);
 
 	gnutls_transport_set_int(session, sd);
 	gnutls_handshake_set_timeout(session, get_timeout());
@@ -189,46 +189,42 @@ end:
  */
 
 static unsigned char server_cert_pem[] =
-    "-----BEGIN CERTIFICATE-----\n"
-    "MIICVjCCAcGgAwIBAgIERiYdMTALBgkqhkiG9w0BAQUwGTEXMBUGA1UEAxMOR251\n"
-    "VExTIHRlc3QgQ0EwHhcNMDcwNDE4MTMyOTIxWhcNMDgwNDE3MTMyOTIxWjA3MRsw\n"
-    "GQYDVQQKExJHbnVUTFMgdGVzdCBzZXJ2ZXIxGDAWBgNVBAMTD3Rlc3QuZ251dGxz\n"
-    "Lm9yZzCBnDALBgkqhkiG9w0BAQEDgYwAMIGIAoGA17pcr6MM8C6pJ1aqU46o63+B\n"
-    "dUxrmL5K6rce+EvDasTaDQC46kwTHzYWk95y78akXrJutsoKiFV1kJbtple8DDt2\n"
-    "DZcevensf9Op7PuFZKBroEjOd35znDET/z3IrqVgbtm2jFqab7a+n2q9p/CgMyf1\n"
-    "tx2S5Zacc1LWn9bIjrECAwEAAaOBkzCBkDAMBgNVHRMBAf8EAjAAMBoGA1UdEQQT\n"
-    "MBGCD3Rlc3QuZ251dGxzLm9yZzATBgNVHSUEDDAKBggrBgEFBQcDATAPBgNVHQ8B\n"
-    "Af8EBQMDB6AAMB0GA1UdDgQWBBTrx0Vu5fglyoyNgw106YbU3VW0dTAfBgNVHSME\n"
-    "GDAWgBTpPBz7rZJu5gakViyi4cBTJ8jylTALBgkqhkiG9w0BAQUDgYEAaFEPTt+7\n"
-    "bzvBuOf7+QmeQcn29kT6Bsyh1RHJXf8KTk5QRfwp6ogbp94JQWcNQ/S7YDFHglD1\n"
-    "AwUNBRXwd3riUsMnsxgeSDxYBfJYbDLeohNBsqaPDJb7XailWbMQKfAbFQ8cnOxg\n"
-    "rOKLUQRWJ0K3HyXRMhbqjdLIaQiCvQLuizo=\n" "-----END CERTIFICATE-----\n";
+	"-----BEGIN CERTIFICATE-----\n"
+	"MIICVjCCAcGgAwIBAgIERiYdMTALBgkqhkiG9w0BAQUwGTEXMBUGA1UEAxMOR251\n"
+	"VExTIHRlc3QgQ0EwHhcNMDcwNDE4MTMyOTIxWhcNMDgwNDE3MTMyOTIxWjA3MRsw\n"
+	"GQYDVQQKExJHbnVUTFMgdGVzdCBzZXJ2ZXIxGDAWBgNVBAMTD3Rlc3QuZ251dGxz\n"
+	"Lm9yZzCBnDALBgkqhkiG9w0BAQEDgYwAMIGIAoGA17pcr6MM8C6pJ1aqU46o63+B\n"
+	"dUxrmL5K6rce+EvDasTaDQC46kwTHzYWk95y78akXrJutsoKiFV1kJbtple8DDt2\n"
+	"DZcevensf9Op7PuFZKBroEjOd35znDET/z3IrqVgbtm2jFqab7a+n2q9p/CgMyf1\n"
+	"tx2S5Zacc1LWn9bIjrECAwEAAaOBkzCBkDAMBgNVHRMBAf8EAjAAMBoGA1UdEQQT\n"
+	"MBGCD3Rlc3QuZ251dGxzLm9yZzATBgNVHSUEDDAKBggrBgEFBQcDATAPBgNVHQ8B\n"
+	"Af8EBQMDB6AAMB0GA1UdDgQWBBTrx0Vu5fglyoyNgw106YbU3VW0dTAfBgNVHSME\n"
+	"GDAWgBTpPBz7rZJu5gakViyi4cBTJ8jylTALBgkqhkiG9w0BAQUDgYEAaFEPTt+7\n"
+	"bzvBuOf7+QmeQcn29kT6Bsyh1RHJXf8KTk5QRfwp6ogbp94JQWcNQ/S7YDFHglD1\n"
+	"AwUNBRXwd3riUsMnsxgeSDxYBfJYbDLeohNBsqaPDJb7XailWbMQKfAbFQ8cnOxg\n"
+	"rOKLUQRWJ0K3HyXRMhbqjdLIaQiCvQLuizo=\n"
+	"-----END CERTIFICATE-----\n";
 
-const gnutls_datum_t server_cert = { server_cert_pem,
-	sizeof(server_cert_pem)
-};
+const gnutls_datum_t server_cert = { server_cert_pem, sizeof(server_cert_pem) };
 
 static unsigned char server_key_pem[] =
-    "-----BEGIN RSA PRIVATE KEY-----\n"
-    "MIICXAIBAAKBgQDXulyvowzwLqknVqpTjqjrf4F1TGuYvkrqtx74S8NqxNoNALjq\n"
-    "TBMfNhaT3nLvxqResm62ygqIVXWQlu2mV7wMO3YNlx696ex/06ns+4VkoGugSM53\n"
-    "fnOcMRP/PciupWBu2baMWppvtr6far2n8KAzJ/W3HZLllpxzUtaf1siOsQIDAQAB\n"
-    "AoGAYAFyKkAYC/PYF8e7+X+tsVCHXppp8AoP8TEZuUqOZz/AArVlle/ROrypg5kl\n"
-    "8YunrvUdzH9R/KZ7saNZlAPLjZyFG9beL/am6Ai7q7Ma5HMqjGU8kTEGwD7K+lbG\n"
-    "iomokKMOl+kkbY/2sI5Czmbm+/PqLXOjtVc5RAsdbgvtmvkCQQDdV5QuU8jap8Hs\n"
-    "Eodv/tLJ2z4+SKCV2k/7FXSKWe0vlrq0cl2qZfoTUYRnKRBcWxc9o92DxK44wgPi\n"
-    "oMQS+O7fAkEA+YG+K9e60sj1K4NYbMPAbYILbZxORDecvP8lcphvwkOVUqbmxOGh\n"
-    "XRmTZUuhBrJhJKKf6u7gf3KWlPl6ShKEbwJASC118cF6nurTjuLf7YKARDjNTEws\n"
-    "qZEeQbdWYINAmCMj0RH2P0mvybrsXSOD5UoDAyO7aWuqkHGcCLv6FGG+qwJAOVqq\n"
-    "tXdUucl6GjOKKw5geIvRRrQMhb/m5scb+5iw8A4LEEHPgGiBaF5NtJZLALgWfo5n\n"
-    "hmC8+G8F0F78znQtPwJBANexu+Tg5KfOnzSILJMo3oXiXhf5PqXIDmbN0BKyCKAQ\n"
-    "LfkcEcUbVfmDaHpvzwY9VEaoMOKVLitETXdNSxVpvWM=\n"
-    "-----END RSA PRIVATE KEY-----\n";
+	"-----BEGIN RSA PRIVATE KEY-----\n"
+	"MIICXAIBAAKBgQDXulyvowzwLqknVqpTjqjrf4F1TGuYvkrqtx74S8NqxNoNALjq\n"
+	"TBMfNhaT3nLvxqResm62ygqIVXWQlu2mV7wMO3YNlx696ex/06ns+4VkoGugSM53\n"
+	"fnOcMRP/PciupWBu2baMWppvtr6far2n8KAzJ/W3HZLllpxzUtaf1siOsQIDAQAB\n"
+	"AoGAYAFyKkAYC/PYF8e7+X+tsVCHXppp8AoP8TEZuUqOZz/AArVlle/ROrypg5kl\n"
+	"8YunrvUdzH9R/KZ7saNZlAPLjZyFG9beL/am6Ai7q7Ma5HMqjGU8kTEGwD7K+lbG\n"
+	"iomokKMOl+kkbY/2sI5Czmbm+/PqLXOjtVc5RAsdbgvtmvkCQQDdV5QuU8jap8Hs\n"
+	"Eodv/tLJ2z4+SKCV2k/7FXSKWe0vlrq0cl2qZfoTUYRnKRBcWxc9o92DxK44wgPi\n"
+	"oMQS+O7fAkEA+YG+K9e60sj1K4NYbMPAbYILbZxORDecvP8lcphvwkOVUqbmxOGh\n"
+	"XRmTZUuhBrJhJKKf6u7gf3KWlPl6ShKEbwJASC118cF6nurTjuLf7YKARDjNTEws\n"
+	"qZEeQbdWYINAmCMj0RH2P0mvybrsXSOD5UoDAyO7aWuqkHGcCLv6FGG+qwJAOVqq\n"
+	"tXdUucl6GjOKKw5geIvRRrQMhb/m5scb+5iw8A4LEEHPgGiBaF5NtJZLALgWfo5n\n"
+	"hmC8+G8F0F78znQtPwJBANexu+Tg5KfOnzSILJMo3oXiXhf5PqXIDmbN0BKyCKAQ\n"
+	"LfkcEcUbVfmDaHpvzwY9VEaoMOKVLitETXdNSxVpvWM=\n"
+	"-----END RSA PRIVATE KEY-----\n";
 
-const gnutls_datum_t server_key = { server_key_pem,
-	sizeof(server_key_pem)
-};
-
+const gnutls_datum_t server_key = { server_key_pem, sizeof(server_key_pem) };
 
 static void server(int sd, const char *prio)
 {
@@ -245,18 +241,19 @@ static void server(int sd, const char *prio)
 	side = "server";
 
 	gnutls_certificate_allocate_credentials(&serverx509cred);
-	gnutls_certificate_set_x509_key_mem(serverx509cred,
-					    &server_cert, &server_key,
-					    GNUTLS_X509_FMT_PEM);
+	gnutls_certificate_set_x509_key_mem(serverx509cred, &server_cert,
+					    &server_key, GNUTLS_X509_FMT_PEM);
 
 	gnutls_init(&session, GNUTLS_SERVER);
 
 	assert(gnutls_priority_set_direct(session, prio, NULL) >= 0);
 
-	gnutls_credentials_set(session, GNUTLS_CRD_CERTIFICATE,
-				serverx509cred);
+	gnutls_credentials_set(session, GNUTLS_CRD_CERTIFICATE, serverx509cred);
 
-	assert(gnutls_ext_register("ext_server", TLSEXT_TYPE_SAMPLE, GNUTLS_EXT_TLS, ext_recv_server_params, ext_send_server_params, NULL, NULL, NULL)>=0);
+	assert(gnutls_ext_register("ext_server", TLSEXT_TYPE_SAMPLE,
+				   GNUTLS_EXT_TLS, ext_recv_server_params,
+				   ext_send_server_params, NULL, NULL,
+				   NULL) >= 0);
 
 	gnutls_transport_set_int(session, sd);
 	gnutls_handshake_set_timeout(session, get_timeout());
@@ -288,8 +285,7 @@ static void server(int sd, const char *prio)
 		success("server: finished\n");
 }
 
-static
-void start(const char *prio)
+static void start(const char *prio)
 {
 	pid_t child1, child2;
 	int sockets[2];
@@ -298,10 +294,10 @@ void start(const char *prio)
 	success("trying %s\n", prio);
 
 	signal(SIGPIPE, SIG_IGN);
-	TLSEXT_TYPE_client_sent			= 0;
-	TLSEXT_TYPE_client_received		= 0;
-	TLSEXT_TYPE_server_sent			= 0;
-	TLSEXT_TYPE_server_received		= 0;
+	TLSEXT_TYPE_client_sent = 0;
+	TLSEXT_TYPE_client_received = 0;
+	TLSEXT_TYPE_server_sent = 0;
+	TLSEXT_TYPE_server_received = 0;
 
 	err = socketpair(AF_UNIX, SOCK_STREAM, 0, sockets);
 	if (err == -1) {
@@ -354,13 +350,17 @@ void doit(void)
 	start("NORMAL");
 
 	/* check whether we can crash the library by adding many extensions */
-	for (i=0;i<64;i++) {
-		ret = gnutls_ext_register("ext_serverxx", TLSEXT_TYPE_SAMPLE+i+1, GNUTLS_EXT_TLS, ext_recv_server_params, ext_send_server_params, NULL, NULL, NULL);
+	for (i = 0; i < 64; i++) {
+		ret = gnutls_ext_register(
+			"ext_serverxx", TLSEXT_TYPE_SAMPLE + i + 1,
+			GNUTLS_EXT_TLS, ext_recv_server_params,
+			ext_send_server_params, NULL, NULL, NULL);
 		if (ret < 0) {
-			success("failed registering extension no %d (expected)\n", i+1);
+			success("failed registering extension no %d (expected)\n",
+				i + 1);
 			break;
 		}
 	}
 }
 
-#endif				/* _WIN32 */
+#endif /* _WIN32 */

@@ -35,13 +35,11 @@
 #include "ocsp-common.h"
 #include "utils.h"
 
-#define testfail(fmt, ...) \
-	fail("%s: "fmt, name, ##__VA_ARGS__)
+#define testfail(fmt, ...) fail("%s: " fmt, name, ##__VA_ARGS__)
 
 static void load_list(const char *name, const gnutls_datum_t *txt,
-		      unsigned int nocsps,
-		      int format,
-		      unsigned flags, int exp_err)
+		      unsigned int nocsps, int format, unsigned flags,
+		      int exp_err)
 {
 	gnutls_ocsp_resp_t *ocsps;
 	unsigned int i, size;
@@ -51,15 +49,17 @@ static void load_list(const char *name, const gnutls_datum_t *txt,
 	if (ret < 0) {
 		if (exp_err == ret)
 			return;
-		testfail("gnutls_x509_crt_list_import: %s\n", gnutls_strerror(ret));
+		testfail("gnutls_x509_crt_list_import: %s\n",
+			 gnutls_strerror(ret));
 	}
 
-	for (i=0;i<size;i++)
+	for (i = 0; i < size; i++)
 		gnutls_ocsp_resp_deinit(ocsps[i]);
 	gnutls_free(ocsps);
 
 	if (size != nocsps)
-		testfail("imported number (%d) doesn't match expected (%d)\n", size, nocsps);
+		testfail("imported number (%d) doesn't match expected (%d)\n",
+			 size, nocsps);
 
 	return;
 }
@@ -205,52 +205,44 @@ static const char bad_long_chain_pem[] = /* second response is broken */
 	"Y1MQ72SnfrzYSQw6BB85CurB6iou3Q+eM4o4g/+xGEuDo0Ne/8ir\n"
 	"-----END OCSP RESPONSE-----\n";
 
-static const gnutls_datum_t long_chain = {
-	(void*)long_chain_pem, sizeof(long_chain_pem)-1
-};
+static const gnutls_datum_t long_chain = { (void *)long_chain_pem,
+					   sizeof(long_chain_pem) - 1 };
 
-static const gnutls_datum_t bad_long_chain = {
-	(void*)bad_long_chain_pem, sizeof(bad_long_chain_pem)-1
-};
+static const gnutls_datum_t bad_long_chain = { (void *)bad_long_chain_pem,
+					       sizeof(bad_long_chain_pem) - 1 };
 
-static const gnutls_datum_t no_chain = {
-	(void*)" ", 1
-};
+static const gnutls_datum_t no_chain = { (void *)" ", 1 };
 
 static const test_st tests[] = {
-	{.name = "load no ocsps",
-	 .ocsps = &no_chain,
-	 .nocsps = 0,
-	 .flags = 0,
-	 .format = GNUTLS_X509_FMT_PEM,
-	 .exp_err = GNUTLS_E_REQUESTED_DATA_NOT_AVAILABLE
-	},
-	{.name = "load of 3 ocsps, with expected failure",
-	 .ocsps = &bad_long_chain,
-	 .nocsps = 3,
-	 .flags = 0,
-	 .format = GNUTLS_X509_FMT_PEM,
-	 .exp_err = GNUTLS_E_ASN1_TAG_ERROR
-	},
-	{.name = "load 3 ocsps",
-	 .ocsps = &long_chain,
-	 .nocsps = 3,
-	 .format = GNUTLS_X509_FMT_PEM,
-	 .flags = 0
-	},
-	{.name = "load 1 DER ocsp",
-	 .ocsps = &ocsp_subca3_unknown,
-	 .nocsps = 1,
-	 .format = GNUTLS_X509_FMT_DER,
-	 .flags = 0
-	}
+	{ .name = "load no ocsps",
+	  .ocsps = &no_chain,
+	  .nocsps = 0,
+	  .flags = 0,
+	  .format = GNUTLS_X509_FMT_PEM,
+	  .exp_err = GNUTLS_E_REQUESTED_DATA_NOT_AVAILABLE },
+	{ .name = "load of 3 ocsps, with expected failure",
+	  .ocsps = &bad_long_chain,
+	  .nocsps = 3,
+	  .flags = 0,
+	  .format = GNUTLS_X509_FMT_PEM,
+	  .exp_err = GNUTLS_E_ASN1_TAG_ERROR },
+	{ .name = "load 3 ocsps",
+	  .ocsps = &long_chain,
+	  .nocsps = 3,
+	  .format = GNUTLS_X509_FMT_PEM,
+	  .flags = 0 },
+	{ .name = "load 1 DER ocsp",
+	  .ocsps = &ocsp_subca3_unknown,
+	  .nocsps = 1,
+	  .format = GNUTLS_X509_FMT_DER,
+	  .flags = 0 }
 };
 
 void doit(void)
 {
 	unsigned int i;
 
-	for (i=0;i<sizeof(tests)/sizeof(tests[0]);i++) {
+	for (i = 0; i < sizeof(tests) / sizeof(tests[0]); i++) {
 		success("checking: %s\n", tests[i].name);
 
 		load_list(tests[i].name, tests[i].ocsps, tests[i].nocsps,

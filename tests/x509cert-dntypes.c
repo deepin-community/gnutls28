@@ -16,8 +16,7 @@
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GnuTLS; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
+ * along with GnuTLS.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 #ifdef HAVE_CONFIG_H
@@ -90,8 +89,8 @@ static unsigned char ca_pem[] =
 	"vVTcHQ7jwGQ2/SvikndFQ53zi2j9o/jTOiFv29rEOeHu67UAiFSi2A==\n"
 	"-----END CERTIFICATE-----\n";
 
-const gnutls_datum_t server = { server_pem, sizeof(server_pem)-1 };
-const gnutls_datum_t ca = { ca_pem, sizeof(ca_pem)-1 };
+const gnutls_datum_t server = { server_pem, sizeof(server_pem) - 1 };
+const gnutls_datum_t ca = { ca_pem, sizeof(ca_pem) - 1 };
 
 void doit(void)
 {
@@ -108,15 +107,13 @@ void doit(void)
 
 	gnutls_x509_crt_init(&server_crt);
 
-	ret =
-	    gnutls_x509_crt_import(server_crt, &server, GNUTLS_X509_FMT_PEM);
+	ret = gnutls_x509_crt_import(server_crt, &server, GNUTLS_X509_FMT_PEM);
 	if (ret < 0)
 		fail("gnutls_x509_crt_import");
 
 	gnutls_x509_crt_init(&ca_crt);
 
-	ret =
-	    gnutls_x509_crt_import(ca_crt, &ca, GNUTLS_X509_FMT_PEM);
+	ret = gnutls_x509_crt_import(ca_crt, &ca, GNUTLS_X509_FMT_PEM);
 	if (ret < 0)
 		fail("gnutls_x509_crt_import");
 

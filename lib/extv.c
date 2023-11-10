@@ -27,9 +27,8 @@
 
 /* Iterates through all extensions found, and calls the cb()
  * function with their data */
-int _gnutls_extv_parse(void *ctx,
-		       gnutls_ext_raw_process_func cb,
-		       const uint8_t * data, int data_size)
+int _gnutls_extv_parse(void *ctx, gnutls_ext_raw_process_func cb,
+		       const uint8_t *data, int data_size)
 {
 	int next, ret;
 	int pos = 0;
@@ -46,7 +45,9 @@ int _gnutls_extv_parse(void *ctx,
 
 	DECR_LENGTH_RET(data_size, next, GNUTLS_E_UNEXPECTED_EXTENSIONS_LENGTH);
 
-	if (next == 0 && data_size == 0) /* field is present, but has zero length? Ignore it. */
+	if (next == 0 &&
+	    data_size ==
+		    0) /* field is present, but has zero length? Ignore it. */
 		return 0;
 	else if (data_size > 0) /* forbid unaccounted data */
 		return gnutls_assert_val(GNUTLS_E_UNEXPECTED_EXTENSIONS_LENGTH);
@@ -60,15 +61,15 @@ int _gnutls_extv_parse(void *ctx,
 		size = _gnutls_read_uint16(&data[pos]);
 		pos += 2;
 
-		DECR_LENGTH_RET(next, size, GNUTLS_E_UNEXPECTED_EXTENSIONS_LENGTH);
+		DECR_LENGTH_RET(next, size,
+				GNUTLS_E_UNEXPECTED_EXTENSIONS_LENGTH);
 		sdata = &data[pos];
 		pos += size;
 
 		ret = cb(ctx, tls_id, sdata, size);
 		if (ret < 0)
 			return gnutls_assert_val(ret);
-	}
-	while (next > 2);
+	} while (next > 2);
 
 	/* forbid leftovers */
 	if (next > 0)
@@ -112,7 +113,8 @@ int gnutls_ext_raw_parse(void *ctx, gnutls_ext_raw_process_func cb,
 		DECR_LEN(size, HANDSHAKE_SESSION_ID_POS);
 
 		if (p[0] != 0x03)
-			return gnutls_assert_val(GNUTLS_E_UNSUPPORTED_VERSION_PACKET);
+			return gnutls_assert_val(
+				GNUTLS_E_UNSUPPORTED_VERSION_PACKET);
 
 		p += HANDSHAKE_SESSION_ID_POS;
 
@@ -138,7 +140,8 @@ int gnutls_ext_raw_parse(void *ctx, gnutls_ext_raw_process_func cb,
 		p += len;
 
 		if (size == 0)
-			return gnutls_assert_val(GNUTLS_E_REQUESTED_DATA_NOT_AVAILABLE);
+			return gnutls_assert_val(
+				GNUTLS_E_REQUESTED_DATA_NOT_AVAILABLE);
 
 		return _gnutls_extv_parse(ctx, cb, p, size);
 	} else if (flags & GNUTLS_EXT_RAW_FLAG_DTLS_CLIENT_HELLO) {
@@ -149,7 +152,8 @@ int gnutls_ext_raw_parse(void *ctx, gnutls_ext_raw_process_func cb,
 		DECR_LEN(size, HANDSHAKE_SESSION_ID_POS);
 
 		if (p[0] != 254)
-			return gnutls_assert_val(GNUTLS_E_UNSUPPORTED_VERSION_PACKET);
+			return gnutls_assert_val(
+				GNUTLS_E_UNSUPPORTED_VERSION_PACKET);
 
 		p += HANDSHAKE_SESSION_ID_POS;
 
@@ -182,7 +186,8 @@ int gnutls_ext_raw_parse(void *ctx, gnutls_ext_raw_process_func cb,
 		p += len;
 
 		if (size == 0)
-			return gnutls_assert_val(GNUTLS_E_REQUESTED_DATA_NOT_AVAILABLE);
+			return gnutls_assert_val(
+				GNUTLS_E_REQUESTED_DATA_NOT_AVAILABLE);
 
 		return _gnutls_extv_parse(ctx, cb, p, size);
 	}
@@ -197,10 +202,8 @@ int gnutls_ext_raw_parse(void *ctx, gnutls_ext_raw_process_func cb,
  *  * On success the number of bytes appended (always positive), or zero if not sent
  *  * On failure, a negative error code.
  */
-int _gnutls_extv_append(gnutls_buffer_st *buf,
-			uint16_t tls_id,
-		        void *ctx,
-		        int (*cb)(void *ctx, gnutls_buffer_st *buf))
+int _gnutls_extv_append(gnutls_buffer_st *buf, uint16_t tls_id, void *ctx,
+			int (*cb)(void *ctx, gnutls_buffer_st *buf))
 {
 	int size_pos, appended, ret;
 	size_t size_prev;
@@ -230,13 +233,11 @@ int _gnutls_extv_append(gnutls_buffer_st *buf,
 			appended = 0;
 
 		/* write the real size */
-		_gnutls_write_uint16(appended,
-				     &buf->data[size_pos]);
+		_gnutls_write_uint16(appended, &buf->data[size_pos]);
 	} else if (appended == 0) {
-		buf->length -= 4;	/* reset type and size */
+		buf->length -= 4; /* reset type and size */
 		return 0;
 	}
 
 	return appended + 4;
 }
-

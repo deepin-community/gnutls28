@@ -15,8 +15,7 @@
 # General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with GnuTLS; if not, write to the Free Software Foundation,
-# Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+# along with GnuTLS.  If not, see <https://www.gnu.org/licenses/>.
 
 #set -e
 
@@ -34,11 +33,8 @@ fi
 
 . ${srcdir}/scripts/common.sh
 
-skip_if_no_datefudge
-
 #try verification
-datefudge -s "2010-10-10" \
-${VALGRIND} "${CERTTOOL}" --verify-allow-broken --inder --p7-verify --infile "${srcdir}/data/test1.cat" --load-certificate "${srcdir}/data/pkcs7-cat-ca.pem"
+${VALGRIND} "${CERTTOOL}" --attime "2010-10-10" --verify-allow-broken --inder --p7-verify --infile "${srcdir}/data/test1.cat" --load-certificate "${srcdir}/data/pkcs7-cat-ca.pem"
 rc=$?
 
 if test "${rc}" = "0"; then
@@ -46,8 +42,7 @@ if test "${rc}" = "0"; then
 	exit 1
 fi
 
-datefudge -s "2016-10-10" \
-${VALGRIND} "${CERTTOOL}" --verify-allow-broken --inder --p7-verify --infile "${srcdir}/data/test1.cat" --load-certificate "${srcdir}/data/pkcs7-cat-ca.pem"
+${VALGRIND} "${CERTTOOL}" --attime "2016-10-10" --verify-allow-broken --inder --p7-verify --infile "${srcdir}/data/test1.cat" --load-certificate "${srcdir}/data/pkcs7-cat-ca.pem"
 rc=$?
 
 if test "${rc}" != "0"; then

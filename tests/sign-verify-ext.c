@@ -16,8 +16,7 @@
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GnuTLS; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
+ * along with GnuTLS.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 /* This tests the gnutls_privkey_import_ext2() APIs */
@@ -31,9 +30,9 @@
 #include <string.h>
 #include <sys/types.h>
 #ifndef _WIN32
-# include <netinet/in.h>
-# include <sys/socket.h>
-# include <arpa/inet.h>
+#include <netinet/in.h>
+#include <sys/socket.h>
+#include <arpa/inet.h>
 #endif
 #include <unistd.h>
 #include <gnutls/gnutls.h>
@@ -49,46 +48,42 @@ static void tls_log_func(int level, const char *str)
 
 /* sha1 hash of "hello" string */
 const gnutls_datum_t sha1_hash_data = {
-	(void *)
-	    "\xaa\xf4\xc6\x1d\xdc\xc5\xe8\xa2\xda\xbe"
-	    "\xde\x0f\x3b\x48\x2c\xd9\xae\xa9\x43\x4d",
+	(void *)"\xaa\xf4\xc6\x1d\xdc\xc5\xe8\xa2\xda\xbe"
+		"\xde\x0f\x3b\x48\x2c\xd9\xae\xa9\x43\x4d",
 	20
 };
 
 const gnutls_datum_t sha256_hash_data = {
-	(void *)
-	    "\x2c\xf2\x4d\xba\x5f\xb0\xa3\x0e\x26\xe8\x3b\x2a\xc5\xb9\xe2\x9e"
-	    "\x1b\x16\x1e\x5c\x1f\xa7\x42\x5e\x73\x04\x33\x62\x93\x8b\x98\x24",
+	(void *)"\x2c\xf2\x4d\xba\x5f\xb0\xa3\x0e\x26\xe8\x3b\x2a\xc5\xb9\xe2\x9e"
+		"\x1b\x16\x1e\x5c\x1f\xa7\x42\x5e\x73\x04\x33\x62\x93\x8b\x98\x24",
 	32
 };
 
-const gnutls_datum_t raw_data = {
-	(void *) "hello",
-	5
-};
-
+const gnutls_datum_t raw_data = { (void *)"hello", 5 };
 
 struct key_cb_data {
 	gnutls_privkey_t rkey; /* the real thing */
 };
 
-static
-int key_cb_sign_func (gnutls_privkey_t key, void* userdata, const gnutls_datum_t * data,
-	gnutls_datum_t * signature)
+static int key_cb_sign_func(gnutls_privkey_t key, void *userdata,
+			    const gnutls_datum_t *data,
+			    gnutls_datum_t *signature)
 {
 	struct key_cb_data *p = userdata;
-	
-	return gnutls_privkey_sign_hash(p->rkey, 0, GNUTLS_PRIVKEY_SIGN_FLAG_TLS1_RSA, data, signature);
+
+	return gnutls_privkey_sign_hash(
+		p->rkey, 0, GNUTLS_PRIVKEY_SIGN_FLAG_TLS1_RSA, data, signature);
 }
 
-static void key_cb_deinit_func(gnutls_privkey_t key, void* userdata)
+static void key_cb_deinit_func(gnutls_privkey_t key, void *userdata)
 {
 	struct key_cb_data *p = userdata;
 	gnutls_privkey_deinit(p->rkey);
 	free(userdata);
 }
 
-static gnutls_privkey_t load_virt_privkey(const gnutls_datum_t *txtkey, gnutls_pk_algorithm_t pk)
+static gnutls_privkey_t load_virt_privkey(const gnutls_datum_t *txtkey,
+					  gnutls_pk_algorithm_t pk)
 {
 	gnutls_privkey_t privkey;
 	struct key_cb_data *userdata;
@@ -107,21 +102,23 @@ static gnutls_privkey_t load_virt_privkey(const gnutls_datum_t *txtkey, gnutls_p
 	if (ret < 0)
 		fail("gnutls_privkey_init\n");
 
-	ret =
-	    gnutls_privkey_import_x509_raw(userdata->rkey, txtkey, GNUTLS_X509_FMT_PEM, NULL, 0);
+	ret = gnutls_privkey_import_x509_raw(userdata->rkey, txtkey,
+					     GNUTLS_X509_FMT_PEM, NULL, 0);
 	if (ret < 0)
 		fail("gnutls_privkey_import\n");
 
-	ret = gnutls_privkey_import_ext2(privkey, pk, userdata, key_cb_sign_func, NULL, key_cb_deinit_func, GNUTLS_PRIVKEY_IMPORT_AUTO_RELEASE);
-	if (ret < 0)	
+	ret = gnutls_privkey_import_ext2(privkey, pk, userdata,
+					 key_cb_sign_func, NULL,
+					 key_cb_deinit_func,
+					 GNUTLS_PRIVKEY_IMPORT_AUTO_RELEASE);
+	if (ret < 0)
 		fail("gnutls_privkey_import_ext2\n");
 
 	return privkey;
 }
 
 #define tests common_key_tests
-#define testfail(fmt, ...) \
-	fail("%s: "fmt, tests[i].name, ##__VA_ARGS__)
+#define testfail(fmt, ...) fail("%s: " fmt, tests[i].name, ##__VA_ARGS__)
 
 void doit(void)
 {
@@ -141,10 +138,12 @@ void doit(void)
 		gnutls_global_set_log_level(6);
 
 	for (i = 0; i < sizeof(tests) / sizeof(tests[0]); i++) {
-		if (tests[i].pk == GNUTLS_PK_RSA_PSS || tests[i].pk == GNUTLS_PK_EDDSA_ED25519)
+		if (tests[i].pk == GNUTLS_PK_RSA_PSS ||
+		    tests[i].pk == GNUTLS_PK_EDDSA_ED25519)
 			continue;
 
-		success("testing: %s - %s\n", tests[i].name, gnutls_sign_algorithm_get_name(tests[i].sigalgo));
+		success("testing: %s - %s\n", tests[i].name,
+			gnutls_sign_algorithm_get_name(tests[i].sigalgo));
 
 		if (tests[i].digest == GNUTLS_DIG_SHA1) {
 			hash_data = &sha1_hash_data;
@@ -158,31 +157,37 @@ void doit(void)
 		if (ret < 0)
 			testfail("gnutls_privkey_init\n");
 
-		ret = gnutls_privkey_sign_hash(privkey, tests[i].digest, tests[i].sign_flags,
-						hash_data, &signature2);
+		ret = gnutls_privkey_sign_hash(privkey, tests[i].digest,
+					       tests[i].sign_flags, hash_data,
+					       &signature2);
 		if (ret < 0)
 			testfail("gnutls_privkey_sign_hash\n");
 
-		ret = gnutls_privkey_sign_data(privkey, tests[i].digest, tests[i].sign_flags,
-						&raw_data, &signature);
+		ret = gnutls_privkey_sign_data(privkey, tests[i].digest,
+					       tests[i].sign_flags, &raw_data,
+					       &signature);
 		if (ret < 0)
 			testfail("gnutls_x509_privkey_sign_hash\n");
 
-		ret = gnutls_pubkey_import_x509_raw(pubkey, &tests[i].cert, GNUTLS_X509_FMT_PEM, 0);
+		ret = gnutls_pubkey_import_x509_raw(pubkey, &tests[i].cert,
+						    GNUTLS_X509_FMT_PEM, 0);
 		if (ret < 0)
 			testfail("gnutls_x509_pubkey_import\n");
 
-		ret =
-		    gnutls_pubkey_verify_hash2(pubkey, tests[i].sigalgo, GNUTLS_VERIFY_ALLOW_SIGN_WITH_SHA1, hash_data,
-					      &signature);
+		ret = gnutls_pubkey_verify_hash2(
+			pubkey, tests[i].sigalgo,
+			GNUTLS_VERIFY_ALLOW_SIGN_WITH_SHA1, hash_data,
+			&signature);
 		if (ret < 0)
 			testfail("gnutls_pubkey_verify_hash2\n");
 
-		ret =
-		    gnutls_pubkey_verify_hash2(pubkey, tests[i].sigalgo, GNUTLS_VERIFY_ALLOW_SIGN_WITH_SHA1, hash_data,
-					      &signature2);
+		ret = gnutls_pubkey_verify_hash2(
+			pubkey, tests[i].sigalgo,
+			GNUTLS_VERIFY_ALLOW_SIGN_WITH_SHA1, hash_data,
+			&signature2);
 		if (ret < 0)
-			testfail("gnutls_pubkey_verify_hash2-1 (hashed data)\n");
+			testfail(
+				"gnutls_pubkey_verify_hash2-1 (hashed data)\n");
 
 		/* test the raw interface */
 		gnutls_free(signature.data);
@@ -190,47 +195,41 @@ void doit(void)
 
 		if (gnutls_pubkey_get_pk_algorithm(pubkey, NULL) ==
 		    GNUTLS_PK_RSA) {
-
-			ret =
-			    gnutls_privkey_sign_hash(privkey,
-						     tests[i].digest,
-						     GNUTLS_PRIVKEY_SIGN_FLAG_TLS1_RSA,
-						     hash_data,
-						     &signature);
+			ret = gnutls_privkey_sign_hash(
+				privkey, tests[i].digest,
+				GNUTLS_PRIVKEY_SIGN_FLAG_TLS1_RSA, hash_data,
+				&signature);
 			if (ret < 0)
 				testfail("gnutls_privkey_sign_hash: %s\n",
-				     gnutls_strerror(ret));
+					 gnutls_strerror(ret));
 
-			sign_algo =
-			    gnutls_pk_to_sign
-			    (gnutls_pubkey_get_pk_algorithm(pubkey, NULL),
-			     tests[i].digest);
+			sign_algo = gnutls_pk_to_sign(
+				gnutls_pubkey_get_pk_algorithm(pubkey, NULL),
+				tests[i].digest);
 
-			ret =
-			    gnutls_pubkey_verify_hash2(pubkey, sign_algo,
-							GNUTLS_PUBKEY_VERIFY_FLAG_TLS1_RSA,
-							hash_data,
-							&signature);
+			ret = gnutls_pubkey_verify_hash2(
+				pubkey, sign_algo,
+				GNUTLS_PUBKEY_VERIFY_FLAG_TLS1_RSA, hash_data,
+				&signature);
 			if (ret < 0)
-				testfail("gnutls_pubkey_verify_hash-3 (raw hashed data)\n");
+				testfail(
+					"gnutls_pubkey_verify_hash-3 (raw hashed data)\n");
 
 			gnutls_free(signature.data);
 			/* test the legacy API */
-			ret =
-			    gnutls_privkey_sign_raw_data(privkey, 0,
-							 hash_data,
-							 &signature);
+			ret = gnutls_privkey_sign_raw_data(
+				privkey, 0, hash_data, &signature);
 			if (ret < 0)
 				testfail("gnutls_privkey_sign_raw_data: %s\n",
-				     gnutls_strerror(ret));
+					 gnutls_strerror(ret));
 
-			ret =
-			    gnutls_pubkey_verify_hash2(pubkey, sign_algo,
-							GNUTLS_PUBKEY_VERIFY_FLAG_TLS1_RSA,
-							hash_data,
-							&signature);
+			ret = gnutls_pubkey_verify_hash2(
+				pubkey, sign_algo,
+				GNUTLS_PUBKEY_VERIFY_FLAG_TLS1_RSA, hash_data,
+				&signature);
 			if (ret < 0)
-				testfail("gnutls_pubkey_verify_hash-4 (legacy raw hashed data)\n");
+				testfail(
+					"gnutls_pubkey_verify_hash-4 (legacy raw hashed data)\n");
 		}
 		gnutls_free(signature.data);
 		gnutls_free(signature2.data);

@@ -44,13 +44,15 @@ static void tls_log_func(int level, const char *str)
 }
 
 #define MAX_BUF 1024
-#define MSG "Hello TLS, and hi and how are you and more data here... and more... and even more and even more more data..."
+#define MSG \
+	"Hello TLS, and hi and how are you and more data here... and more... and even more and even more more data..."
 
 static unsigned key_update_msg_inc = 0;
 static unsigned key_update_msg_out = 0;
 
 static int hsk_callback(gnutls_session_t session, unsigned int htype,
-			unsigned post, unsigned int incoming, const gnutls_datum_t *msg)
+			unsigned post, unsigned int incoming,
+			const gnutls_datum_t *msg)
 {
 	assert(post == GNUTLS_HOOK_PRE);
 
@@ -87,16 +89,13 @@ static void run(const char *name, unsigned test)
 
 	/* Init server */
 	assert(gnutls_certificate_allocate_credentials(&scred) >= 0);
-	assert(gnutls_certificate_set_x509_key_mem(scred,
-						   &server_ca3_localhost_cert,
-						   &server_ca3_key,
-						   GNUTLS_X509_FMT_PEM) >= 0);
+	assert(gnutls_certificate_set_x509_key_mem(
+		       scred, &server_ca3_localhost_cert, &server_ca3_key,
+		       GNUTLS_X509_FMT_PEM) >= 0);
 
 	assert(gnutls_init(&server, GNUTLS_SERVER) >= 0);
-	ret =
-	    gnutls_priority_set_direct(server,
-				       "NORMAL:-VERS-TLS-ALL:+VERS-TLS1.3",
-				       NULL);
+	ret = gnutls_priority_set_direct(
+		server, "NORMAL:-VERS-TLS-ALL:+VERS-TLS1.3", NULL);
 	if (ret < 0)
 		exit(1);
 
@@ -107,14 +106,12 @@ static void run(const char *name, unsigned test)
 
 	/* Init client */
 	assert(gnutls_certificate_allocate_credentials(&ccred) >= 0);
-	assert(gnutls_certificate_set_x509_trust_mem
-	       (ccred, &ca3_cert, GNUTLS_X509_FMT_PEM) >= 0);
+	assert(gnutls_certificate_set_x509_trust_mem(ccred, &ca3_cert,
+						     GNUTLS_X509_FMT_PEM) >= 0);
 
 	gnutls_init(&client, GNUTLS_CLIENT);
-	ret =
-	    gnutls_priority_set_direct(client,
-				       "NORMAL:-VERS-TLS-ALL:+VERS-TLS1.3",
-				       NULL);
+	ret = gnutls_priority_set_direct(
+		client, "NORMAL:-VERS-TLS-ALL:+VERS-TLS1.3", NULL);
 	assert(ret >= 0);
 
 	ret = gnutls_credentials_set(client, GNUTLS_CRD_CERTIFICATE, ccred);
@@ -124,7 +121,6 @@ static void run(const char *name, unsigned test)
 	gnutls_transport_set_push_function(client, client_push);
 	gnutls_transport_set_pull_function(client, client_pull);
 	gnutls_transport_set_ptr(client, client);
-
 
 	HANDSHAKE(client, server);
 	if (debug)
@@ -231,8 +227,10 @@ static void run(const char *name, unsigned test)
 
 		success("%s: callbacks are called\n", name);
 
-		gnutls_handshake_set_hook_function(client, -1, GNUTLS_HOOK_PRE, hsk_callback);
-		gnutls_handshake_set_hook_function(server, -1, GNUTLS_HOOK_PRE, hsk_callback);
+		gnutls_handshake_set_hook_function(client, -1, GNUTLS_HOOK_PRE,
+						   hsk_callback);
+		gnutls_handshake_set_hook_function(server, -1, GNUTLS_HOOK_PRE,
+						   hsk_callback);
 
 		do {
 			ret = gnutls_session_key_update(client, GNUTLS_KU_PEER);
@@ -249,7 +247,6 @@ static void run(const char *name, unsigned test)
 		assert(key_update_msg_out == 2);
 		break;
 	}
-
 
 	gnutls_bye(client, GNUTLS_SHUT_WR);
 	gnutls_bye(server, GNUTLS_SHUT_WR);
@@ -272,5 +269,5 @@ void doit(void)
 	run("single", 4);
 	run("single", 5);
 	run("single", 6);
-	run("all", 0);			/* all one after each other */
+	run("all", 0); /* all one after each other */
 }

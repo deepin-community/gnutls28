@@ -35,7 +35,6 @@
  */
 int _x509_encode_provable_seed(gnutls_x509_privkey_t pkey, gnutls_datum_t *der)
 {
-
 	asn1_node c2;
 	int ret, result;
 	const char *oid;
@@ -44,15 +43,15 @@ int _x509_encode_provable_seed(gnutls_x509_privkey_t pkey, gnutls_datum_t *der)
 	if (oid == NULL)
 		return gnutls_assert_val(GNUTLS_E_INVALID_REQUEST);
 
-	if ((result =
-	     asn1_create_element(_gnutls_get_gnutls_asn(),
-				 "GNUTLS.ProvableSeed",
-				 &c2)) != ASN1_SUCCESS) {
+	if ((result = asn1_create_element(_gnutls_get_gnutls_asn(),
+					  "GNUTLS.ProvableSeed", &c2)) !=
+	    ASN1_SUCCESS) {
 		gnutls_assert();
 		return _gnutls_asn2err(result);
 	}
 
-	result = asn1_write_value(c2, "seed", pkey->params.seed, pkey->params.seed_size);
+	result = asn1_write_value(c2, "seed", pkey->params.seed,
+				  pkey->params.seed_size);
 	if (result != ASN1_SUCCESS) {
 		gnutls_assert();
 		ret = _gnutls_asn2err(result);
@@ -74,7 +73,7 @@ int _x509_encode_provable_seed(gnutls_x509_privkey_t pkey, gnutls_datum_t *der)
 
 	ret = 0;
 
- cleanup:
+cleanup:
 	asn1_delete_structure2(&c2, ASN1_DELETE_FLAG_ZEROIZE);
 	return ret;
 }
@@ -82,19 +81,18 @@ int _x509_encode_provable_seed(gnutls_x509_privkey_t pkey, gnutls_datum_t *der)
 /* This function decodes a DER encoded form of seed and a hash algorithm, as in
  * RFC8479.
  */
-int _x509_decode_provable_seed(gnutls_x509_privkey_t pkey, const gnutls_datum_t *der)
+int _x509_decode_provable_seed(gnutls_x509_privkey_t pkey,
+			       const gnutls_datum_t *der)
 {
-
 	asn1_node c2;
 	int ret, result;
 	char oid[MAX_OID_SIZE];
 	int oid_size;
-	gnutls_datum_t seed = {NULL, 0};
+	gnutls_datum_t seed = { NULL, 0 };
 
-	if ((result =
-	     asn1_create_element(_gnutls_get_gnutls_asn(),
-				 "GNUTLS.ProvableSeed",
-				 &c2)) != ASN1_SUCCESS) {
+	if ((result = asn1_create_element(_gnutls_get_gnutls_asn(),
+					  "GNUTLS.ProvableSeed", &c2)) !=
+	    ASN1_SUCCESS) {
 		gnutls_assert();
 		return _gnutls_asn2err(result);
 	}
@@ -117,7 +115,9 @@ int _x509_decode_provable_seed(gnutls_x509_privkey_t pkey, const gnutls_datum_t 
 		pkey->params.seed_size = seed.size;
 	} else {
 		ret = 0; /* ignore struct */
-		_gnutls_debug_log("%s: ignoring ProvableSeed due to very long params\n", __func__);
+		_gnutls_debug_log(
+			"%s: ignoring ProvableSeed due to very long params\n",
+			__func__);
 		goto cleanup;
 	}
 
@@ -134,7 +134,7 @@ int _x509_decode_provable_seed(gnutls_x509_privkey_t pkey, const gnutls_datum_t 
 
 	ret = 0;
 
- cleanup:
+cleanup:
 	gnutls_free(seed.data);
 	asn1_delete_structure2(&c2, ASN1_DELETE_FLAG_ZEROIZE);
 	return ret;

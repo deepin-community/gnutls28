@@ -30,22 +30,22 @@
 #include "hello_ext_lib.h"
 
 static int _gnutls_server_name_recv_params(gnutls_session_t session,
-					   const uint8_t * data,
+					   const uint8_t *data,
 					   size_t data_size);
 static int _gnutls_server_name_send_params(gnutls_session_t session,
-					   gnutls_buffer_st * extdata);
+					   gnutls_buffer_st *extdata);
 
-int
-_gnutls_server_name_set_raw(gnutls_session_t session,
-			    gnutls_server_name_type_t type,
-			    const void *name, size_t name_length);
+int _gnutls_server_name_set_raw(gnutls_session_t session,
+				gnutls_server_name_type_t type,
+				const void *name, size_t name_length);
 
 const hello_ext_entry_st ext_mod_server_name = {
 	.name = "Server Name Indication",
 	.tls_id = 0,
 	.gid = GNUTLS_EXTENSION_SERVER_NAME,
-	.validity = GNUTLS_EXT_FLAG_TLS | GNUTLS_EXT_FLAG_DTLS | GNUTLS_EXT_FLAG_CLIENT_HELLO |
-		    GNUTLS_EXT_FLAG_EE | GNUTLS_EXT_FLAG_TLS12_SERVER_HELLO,
+	.validity = GNUTLS_EXT_FLAG_TLS | GNUTLS_EXT_FLAG_DTLS |
+		    GNUTLS_EXT_FLAG_CLIENT_HELLO | GNUTLS_EXT_FLAG_EE |
+		    GNUTLS_EXT_FLAG_TLS12_SERVER_HELLO,
 	.client_parse_point = GNUTLS_EXT_MANDATORY,
 	.server_parse_point = GNUTLS_EXT_MANDATORY,
 	.recv_func = _gnutls_server_name_recv_params,
@@ -65,19 +65,21 @@ const hello_ext_entry_st ext_mod_server_name = {
  * in the session then it sends the extension to the peer.
  *
  */
-static int
-_gnutls_server_name_recv_params(gnutls_session_t session,
-				const uint8_t * data, size_t data_size)
+static int _gnutls_server_name_recv_params(gnutls_session_t session,
+					   const uint8_t *data,
+					   size_t data_size)
 {
 	const unsigned char *p;
 	uint16_t len, type;
 	gnutls_datum_t name;
 
 	if (session->security_parameters.entity == GNUTLS_SERVER) {
-		DECR_LENGTH_RET(data_size, 2, GNUTLS_E_UNEXPECTED_PACKET_LENGTH);
+		DECR_LENGTH_RET(data_size, 2,
+				GNUTLS_E_UNEXPECTED_PACKET_LENGTH);
 		len = _gnutls_read_uint16(data);
 		if (len == 0)
-			return gnutls_assert_val(GNUTLS_E_UNEXPECTED_PACKET_LENGTH);
+			return gnutls_assert_val(
+				GNUTLS_E_UNEXPECTED_PACKET_LENGTH);
 
 		if (len != data_size) {
 			gnutls_assert();
@@ -96,35 +98,35 @@ _gnutls_server_name_recv_params(gnutls_session_t session,
 			p += 2;
 
 			if (len == 0) {
-				_gnutls_handshake_log
-				    ("HSK[%p]: Received server name size of zero\n",
-				     session);
-				return gnutls_assert_val(GNUTLS_E_UNEXPECTED_PACKET_LENGTH);
+				_gnutls_handshake_log(
+					"HSK[%p]: Received server name size of zero\n",
+					session);
+				return gnutls_assert_val(
+					GNUTLS_E_UNEXPECTED_PACKET_LENGTH);
 			}
 
 			DECR_LEN(data_size, len);
 
 			if (type == 0) { /* NAME_DNS */
-				if (!_gnutls_dnsname_is_valid((char*)p, len)) {
-					_gnutls_handshake_log
-					    ("HSK[%p]: Server name is not acceptable: '%.*s'\n",
-					     session, (int) len, p);
-					return gnutls_assert_val(GNUTLS_E_RECEIVED_DISALLOWED_NAME);
+				if (!_gnutls_dnsname_is_valid((char *)p, len)) {
+					_gnutls_handshake_log(
+						"HSK[%p]: Server name is not acceptable: '%.*s'\n",
+						session, (int)len, p);
+					return gnutls_assert_val(
+						GNUTLS_E_RECEIVED_DISALLOWED_NAME);
 				}
 
-				name.data = (void*)p;
+				name.data = (void *)p;
 				name.size = len;
 
-				_gnutls_hello_ext_unset_priv(session, GNUTLS_EXTENSION_SERVER_NAME);
-				return _gnutls_hello_ext_set_datum(session,
-					     GNUTLS_EXTENSION_SERVER_NAME,
-					     &name);
+				_gnutls_hello_ext_unset_priv(
+					session, GNUTLS_EXTENSION_SERVER_NAME);
+				return _gnutls_hello_ext_set_datum(
+					session, GNUTLS_EXTENSION_SERVER_NAME,
+					&name);
 			}
 			p += len;
-
 		}
-
-
 	}
 
 	return 0;
@@ -132,16 +134,14 @@ _gnutls_server_name_recv_params(gnutls_session_t session,
 
 /* returns data_size or a negative number on failure
  */
-static int
-_gnutls_server_name_send_params(gnutls_session_t session,
-				gnutls_buffer_st * extdata)
+static int _gnutls_server_name_send_params(gnutls_session_t session,
+					   gnutls_buffer_st *extdata)
 {
 	int total_size = 0, ret;
 	gnutls_datum_t name;
 
-	ret =
-	    _gnutls_hello_ext_get_datum(session, GNUTLS_EXTENSION_SERVER_NAME,
-					&name);
+	ret = _gnutls_hello_ext_get_datum(session, GNUTLS_EXTENSION_SERVER_NAME,
+					  &name);
 	if (ret < 0)
 		return 0;
 
@@ -157,9 +157,7 @@ _gnutls_server_name_send_params(gnutls_session_t session,
 
 		/* UINT16: write total size of all names
 		 */
-		ret =
-		    _gnutls_buffer_append_prefix(extdata, 16,
-						 total_size - 2);
+		ret = _gnutls_buffer_append_prefix(extdata, 16, total_size - 2);
 		if (ret < 0)
 			return gnutls_assert_val(ret);
 
@@ -167,17 +165,15 @@ _gnutls_server_name_send_params(gnutls_session_t session,
 		 * UINT16: size of the first name
 		 * LEN: the actual server name.
 		 */
-		ret =
-		    _gnutls_buffer_append_prefix(extdata, 8, 0);
+		ret = _gnutls_buffer_append_prefix(extdata, 8, 0);
 		if (ret < 0)
 			return gnutls_assert_val(ret);
 
-		_gnutls_debug_log("HSK[%p]: sent server name: '%.*s'\n", session, name.size, name.data);
+		_gnutls_debug_log("HSK[%p]: sent server name: '%.*s'\n",
+				  session, name.size, name.data);
 
-		ret =
-		    _gnutls_buffer_append_data_prefix
-			    (extdata, 16,
-			     name.data, name.size);
+		ret = _gnutls_buffer_append_data_prefix(extdata, 16, name.data,
+							name.size);
 		if (ret < 0)
 			return gnutls_assert_val(ret);
 	} else {
@@ -216,10 +212,9 @@ _gnutls_server_name_send_params(gnutls_session_t session,
  *  decoding error %GNUTLS_E_IDNA_ERROR is returned, otherwise a negative
  *  error code is returned.
  **/
-int
-gnutls_server_name_get(gnutls_session_t session, void *data,
-		       size_t * data_length,
-		       unsigned int *type, unsigned int indx)
+int gnutls_server_name_get(gnutls_session_t session, void *data,
+			   size_t *data_length, unsigned int *type,
+			   unsigned int indx)
 {
 	char *_data = data;
 	gnutls_datum_t name;
@@ -233,8 +228,8 @@ gnutls_server_name_get(gnutls_session_t session, void *data,
 	if (indx != 0)
 		return GNUTLS_E_REQUESTED_DATA_NOT_AVAILABLE;
 
-	ret =
-	    _gnutls_hello_ext_get_datum(session, GNUTLS_EXTENSION_SERVER_NAME, &name);
+	ret = _gnutls_hello_ext_get_datum(session, GNUTLS_EXTENSION_SERVER_NAME,
+					  &name);
 	if (ret < 0) {
 		gnutls_assert();
 		return GNUTLS_E_REQUESTED_DATA_NOT_AVAILABLE;
@@ -246,7 +241,8 @@ gnutls_server_name_get(gnutls_session_t session, void *data,
 
 	*type = GNUTLS_NAME_DNS;
 
-	if (*data_length > name.size) { /* greater since we need one extra byte for the null */
+	if (*data_length >
+	    name.size) { /* greater since we need one extra byte for the null */
 		*data_length = name.size;
 		memcpy(data, name.data, *data_length);
 
@@ -260,15 +256,14 @@ gnutls_server_name_get(gnutls_session_t session, void *data,
 	}
 
 	ret = 0;
- cleanup:
+cleanup:
 	return ret;
 }
 
 /* This does not do any conversion not perform any check */
-int
-_gnutls_server_name_set_raw(gnutls_session_t session,
-			    gnutls_server_name_type_t type,
-			    const void *name, size_t name_length)
+int _gnutls_server_name_set_raw(gnutls_session_t session,
+				gnutls_server_name_type_t type,
+				const void *name, size_t name_length)
 {
 	int ret;
 	gnutls_datum_t dname;
@@ -279,10 +274,11 @@ _gnutls_server_name_set_raw(gnutls_session_t session,
 
 	_gnutls_hello_ext_unset_priv(session, GNUTLS_EXTENSION_SERVER_NAME);
 
-	dname.data = (void*)name;
+	dname.data = (void *)name;
 	dname.size = name_length;
 
-	ret = _gnutls_hello_ext_set_datum(session, GNUTLS_EXTENSION_SERVER_NAME, &dname);
+	ret = _gnutls_hello_ext_set_datum(session, GNUTLS_EXTENSION_SERVER_NAME,
+					  &dname);
 	if (ret < 0)
 		return gnutls_assert_val(ret);
 
@@ -312,13 +308,12 @@ _gnutls_server_name_set_raw(gnutls_session_t session,
  * Returns: On success, %GNUTLS_E_SUCCESS (0) is returned,
  *   otherwise a negative error code is returned.
  **/
-int
-gnutls_server_name_set(gnutls_session_t session,
-		       gnutls_server_name_type_t type,
-		       const void *name, size_t name_length)
+int gnutls_server_name_set(gnutls_session_t session,
+			   gnutls_server_name_type_t type, const void *name,
+			   size_t name_length)
 {
 	int ret;
-	gnutls_datum_t idn_name = {NULL,0};
+	gnutls_datum_t idn_name = { NULL, 0 };
 
 	if (session->security_parameters.entity == GNUTLS_SERVER) {
 		gnutls_assert();
@@ -326,14 +321,17 @@ gnutls_server_name_set(gnutls_session_t session,
 	}
 
 	if (name_length == 0) { /* unset extension */
-		_gnutls_hello_ext_unset_priv(session, GNUTLS_EXTENSION_SERVER_NAME);
+		_gnutls_hello_ext_unset_priv(session,
+					     GNUTLS_EXTENSION_SERVER_NAME);
 		return 0;
 	}
 
 	ret = gnutls_idna_map(name, name_length, &idn_name, 0);
 	if (ret < 0) {
-		 _gnutls_debug_log("unable to convert name %s to IDNA2008 format\n", (char*)name);
-		 return ret;
+		_gnutls_debug_log(
+			"unable to convert name %s to IDNA2008 format\n",
+			(char *)name);
+		return ret;
 	}
 
 	name = idn_name.data;
@@ -350,19 +348,15 @@ unsigned _gnutls_server_name_matches_resumed(gnutls_session_t session)
 	gnutls_datum_t name1, name2;
 	int ret;
 
-	ret =
-	    _gnutls_hello_ext_get_datum(session,
-					GNUTLS_EXTENSION_SERVER_NAME,
-					&name1);
+	ret = _gnutls_hello_ext_get_datum(session, GNUTLS_EXTENSION_SERVER_NAME,
+					  &name1);
 	if (ret < 0) { /* no server name in this session */
 		name1.data = NULL;
 		name1.size = 0;
 	}
 
-	ret =
-	    _gnutls_hello_ext_get_resumed_datum(session,
-						GNUTLS_EXTENSION_SERVER_NAME,
-						&name2);
+	ret = _gnutls_hello_ext_get_resumed_datum(
+		session, GNUTLS_EXTENSION_SERVER_NAME, &name2);
 	if (ret < 0) { /* no server name in this session */
 		name2.data = NULL;
 		name2.size = 0;

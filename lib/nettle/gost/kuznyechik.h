@@ -28,7 +28,7 @@
 
    You should have received copies of the GNU General Public License and
    the GNU Lesser General Public License along with this program.  If
-   not, see http://www.gnu.org/licenses/.
+   not, see https://www.gnu.org/licenses/.
 */
 
 #ifndef GNUTLS_LIB_NETTLE_KUZNYECHIK_H_INCLUDED
@@ -53,28 +53,20 @@ extern "C" {
 #define KUZNYECHIK_SUBKEYS_SIZE (16 * 10)
 #define KUZNYECHIK_BLOCK_SIZE 16
 
-struct kuznyechik_ctx
-{
-  uint8_t key[KUZNYECHIK_SUBKEYS_SIZE];
-  uint8_t dekey[KUZNYECHIK_SUBKEYS_SIZE];
+struct kuznyechik_ctx {
+	uint8_t key[KUZNYECHIK_SUBKEYS_SIZE];
+	uint8_t dekey[KUZNYECHIK_SUBKEYS_SIZE];
 };
 
-void
-kuznyechik_set_key(struct kuznyechik_ctx *ctx, const uint8_t *key);
+void kuznyechik_set_key(struct kuznyechik_ctx *ctx, const uint8_t *key);
 
-void
-kuznyechik_encrypt(const struct kuznyechik_ctx *ctx,
-		   size_t length, uint8_t *dst,
-		   const uint8_t *src);
-void
-kuznyechik_decrypt(const struct kuznyechik_ctx *ctx,
-		   size_t length, uint8_t *dst,
-		   const uint8_t *src);
+void kuznyechik_encrypt(const struct kuznyechik_ctx *ctx, size_t length,
+			uint8_t *dst, const uint8_t *src);
+void kuznyechik_decrypt(const struct kuznyechik_ctx *ctx, size_t length,
+			uint8_t *dst, const uint8_t *src);
 
 #ifdef __cplusplus
 }
 #endif
-
 #endif
-
 #endif /* GNUTLS_LIB_NETTLE_KUZNYECHIK_H_INCLUDED */

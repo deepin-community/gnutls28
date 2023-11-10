@@ -14,8 +14,7 @@
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GnuTLS; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
+ * along with GnuTLS.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 #ifdef HAVE_CONFIG_H
@@ -73,7 +72,7 @@ static void dump(const char *name, uint8_t *data, unsigned data_size)
 	unsigned i;
 
 	fprintf(stderr, "%s", name);
-	for (i=0;i<data_size;i++)
+	for (i = 0; i < data_size; i++)
 		fprintf(stderr, "%.2x", (unsigned)data[i]);
 	fprintf(stderr, "\n");
 }
@@ -118,9 +117,10 @@ static void client(int fd)
 	gnutls_init(&session, GNUTLS_CLIENT);
 
 	/* Use default priorities */
-	ret = gnutls_priority_set_direct(session,
-				   "NONE:+VERS-TLS1.0:+AES-128-CBC:+SHA1:+SIGN-ALL:+COMP-NULL:+ANON-DH:+ANON-ECDH:+CURVE-ALL",
-				   &err);
+	ret = gnutls_priority_set_direct(
+		session,
+		"NONE:+VERS-TLS1.0:+AES-128-CBC:+SHA1:+SIGN-ALL:+COMP-NULL:+ANON-DH:+ANON-ECDH:+CURVE-ALL",
+		&err);
 	if (ret < 0) {
 		fail("client: priority set failed (%s): %s\n",
 		     gnutls_strerror(ret), err);
@@ -137,8 +137,7 @@ static void client(int fd)
 	 */
 	do {
 		ret = gnutls_handshake(session);
-	}
-	while (ret < 0 && gnutls_error_is_fatal(ret) == 0);
+	} while (ret < 0 && gnutls_error_is_fatal(ret) == 0);
 
 	if (ret < 0) {
 		fail("client: Handshake failed: %s\n", strerror(ret));
@@ -150,28 +149,30 @@ static void client(int fd)
 
 	if (debug)
 		success("client: TLS version is: %s\n",
-			gnutls_protocol_get_name
-			(gnutls_protocol_get_version(session)));
+			gnutls_protocol_get_name(
+				gnutls_protocol_get_version(session)));
 
 	ret = gnutls_cipher_get(session);
 	if (ret != GNUTLS_CIPHER_AES_128_CBC) {
-		fprintf(stderr, "negotiated unexpected cipher: %s\n", gnutls_cipher_get_name(ret));
+		fprintf(stderr, "negotiated unexpected cipher: %s\n",
+			gnutls_cipher_get_name(ret));
 		exit(1);
 	}
 
 	ret = gnutls_mac_get(session);
 	if (ret != GNUTLS_MAC_SHA1) {
-		fprintf(stderr, "negotiated unexpected mac: %s\n", gnutls_mac_get_name(ret));
+		fprintf(stderr, "negotiated unexpected mac: %s\n",
+			gnutls_mac_get_name(ret));
 		exit(1);
 	}
 
 	iv_size = 16;
 	hash_size = 20;
 	key_size = 16;
-	block_size = 2*hash_size + 2*key_size + 2 *iv_size;
+	block_size = 2 * hash_size + 2 * key_size + 2 * iv_size;
 
 	ret = gnutls_prf(session, 13, "key expansion", 1, 0, NULL, block_size,
-			 (void*)key_material);
+			 (void *)key_material);
 	if (ret < 0) {
 		fprintf(stderr, "error in %d\n", __LINE__);
 		gnutls_perror(ret);
@@ -180,7 +181,8 @@ static void client(int fd)
 	p = key_material;
 
 	/* check whether the key material matches our calculations */
-	ret = gnutls_record_get_state(session, 0, &mac_key, &iv, &cipher_key, wseq_number);
+	ret = gnutls_record_get_state(session, 0, &mac_key, &iv, &cipher_key,
+				      wseq_number);
 	if (ret < 0) {
 		fprintf(stderr, "error in %d\n", __LINE__);
 		gnutls_perror(ret);
@@ -193,7 +195,8 @@ static void client(int fd)
 		exit(1);
 	}
 
-	ret = gnutls_record_get_state(session, 1, &read_mac_key, &read_iv, &read_cipher_key, rseq_number);
+	ret = gnutls_record_get_state(session, 1, &read_mac_key, &read_iv,
+				      &read_cipher_key, rseq_number);
 	if (ret < 0) {
 		fprintf(stderr, "error in %d\n", __LINE__);
 		gnutls_perror(ret);
@@ -206,39 +209,43 @@ static void client(int fd)
 		exit(1);
 	}
 
-	if (hash_size != mac_key.size || memcmp(p, mac_key.data, hash_size) != 0) {
+	if (hash_size != mac_key.size ||
+	    memcmp(p, mac_key.data, hash_size) != 0) {
 		dump("MAC:", mac_key.data, mac_key.size);
 		dump("Block:", key_material, block_size);
 		fprintf(stderr, "error in %d\n", __LINE__);
 		exit(1);
 	}
-	p+= hash_size;
+	p += hash_size;
 
-	if (hash_size != read_mac_key.size || memcmp(p, read_mac_key.data, hash_size) != 0) {
+	if (hash_size != read_mac_key.size ||
+	    memcmp(p, read_mac_key.data, hash_size) != 0) {
 		dump("MAC:", read_mac_key.data, read_mac_key.size);
 		dump("Block:", key_material, block_size);
 		fprintf(stderr, "error in %d\n", __LINE__);
 		exit(1);
 	}
-	p+= hash_size;
+	p += hash_size;
 
-	if (key_size != cipher_key.size || memcmp(p, cipher_key.data, key_size) != 0) {
+	if (key_size != cipher_key.size ||
+	    memcmp(p, cipher_key.data, key_size) != 0) {
 		fprintf(stderr, "error in %d\n", __LINE__);
 		exit(1);
 	}
-	p+= key_size;
+	p += key_size;
 
-	if (key_size != read_cipher_key.size || memcmp(p, read_cipher_key.data, key_size) != 0) {
+	if (key_size != read_cipher_key.size ||
+	    memcmp(p, read_cipher_key.data, key_size) != 0) {
 		fprintf(stderr, "error in %d\n", __LINE__);
 		exit(1);
 	}
-	p+= key_size;
+	p += key_size;
 
 	if (iv_size != iv.size || memcmp(p, iv.data, iv_size) != 0) {
 		fprintf(stderr, "error in %d\n", __LINE__);
 		exit(1);
 	}
-	p+=iv_size;
+	p += iv_size;
 
 	if (iv_size != read_iv.size || memcmp(p, read_iv.data, iv_size) != 0) {
 		fprintf(stderr, "error in %d\n", __LINE__);
@@ -246,14 +253,15 @@ static void client(int fd)
 	}
 
 	/* check sequence numbers */
-	for (i=0;i<5;i++) {
+	for (i = 0; i < 5; i++) {
 		ret = gnutls_record_send(session, "hello", 5);
 		if (ret < 0) {
 			fail("gnutls_record_send: %s\n", gnutls_strerror(ret));
 		}
 	}
 
-	ret = gnutls_record_get_state(session, 0, NULL, NULL, NULL, wseq_number);
+	ret = gnutls_record_get_state(session, 0, NULL, NULL, NULL,
+				      wseq_number);
 	if (ret < 0) {
 		fprintf(stderr, "error in %d\n", __LINE__);
 		gnutls_perror(ret);
@@ -266,7 +274,8 @@ static void client(int fd)
 		exit(1);
 	}
 
-	ret = gnutls_record_get_state(session, 1, NULL, NULL, NULL, rseq_number);
+	ret = gnutls_record_get_state(session, 1, NULL, NULL, NULL,
+				      rseq_number);
 	if (ret < 0) {
 		fprintf(stderr, "error in %d\n", __LINE__);
 		gnutls_perror(ret);
@@ -296,8 +305,7 @@ static void server(int fd)
 	gnutls_anon_server_credentials_t anoncred;
 	gnutls_dh_params_t dh_params;
 	char buf[128];
-	const gnutls_datum_t p3 =
-	    { (unsigned char *) pkcs3, strlen(pkcs3) };
+	const gnutls_datum_t p3 = { (unsigned char *)pkcs3, strlen(pkcs3) };
 
 	/* this must be called once in the program
 	 */
@@ -318,8 +326,9 @@ static void server(int fd)
 	/* avoid calling all the priority functions, since the defaults
 	 * are adequate.
 	 */
-	ret = gnutls_priority_set_direct(session,
-				   "NORMAL:+ANON-DH:+ANON-ECDH:-VERS-ALL:+VERS-TLS1.0", NULL);
+	ret = gnutls_priority_set_direct(
+		session, "NORMAL:+ANON-DH:+ANON-ECDH:-VERS-ALL:+VERS-TLS1.0",
+		NULL);
 	if (ret < 0) {
 		fail("server: priority set failed (%s)\n\n",
 		     gnutls_strerror(ret));
@@ -332,8 +341,7 @@ static void server(int fd)
 
 	do {
 		ret = gnutls_handshake(session);
-	}
-	while (ret < 0 && gnutls_error_is_fatal(ret) == 0);
+	} while (ret < 0 && gnutls_error_is_fatal(ret) == 0);
 	if (ret < 0) {
 		close(fd);
 		gnutls_deinit(session);
@@ -346,12 +354,12 @@ static void server(int fd)
 
 	if (debug)
 		success("server: TLS version is: %s\n",
-			gnutls_protocol_get_name
-			(gnutls_protocol_get_version(session)));
+			gnutls_protocol_get_name(
+				gnutls_protocol_get_version(session)));
 
 	do {
 		ret = gnutls_record_recv(session, buf, sizeof(buf));
-	} while(ret > 0);
+	} while (ret > 0);
 
 	if (ret < 0) {
 		fail("error: %s\n", gnutls_strerror(ret));
@@ -410,4 +418,4 @@ void doit(void)
 	start();
 }
 
-#endif				/* _WIN32 */
+#endif /* _WIN32 */

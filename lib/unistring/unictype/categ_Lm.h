@@ -1,6 +1,30 @@
 /* DO NOT EDIT! GENERATED AUTOMATICALLY! */
 /* Categories of Unicode characters.  */
-/* Generated automatically by gen-uni-tables.c for Unicode 9.0.0.  */
+/* Generated automatically by gen-uni-tables.c for Unicode 15.0.0.  */
+
+/* Copyright (C) 2000-2022 Free Software Foundation, Inc.
+
+   This file is free software.
+   It is dual-licensed under "the GNU LGPLv3+ or the GNU GPLv2+".
+   You can redistribute it and/or modify it under either
+     - the terms of the GNU Lesser General Public License as published
+       by the Free Software Foundation, either version 3, or (at your
+       option) any later version, or
+     - the terms of the GNU General Public License as published by the
+       Free Software Foundation; either version 2, or (at your option)
+       any later version, or
+     - the same dual license "the GNU LGPLv3+ or the GNU GPLv2+".
+
+   This file is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   Lesser General Public License and the GNU General Public License
+   for more details.
+
+   You should have received a copy of the GNU Lesser General Public
+   License and of the GNU General Public License along with this
+   program.  If not, see <https://www.gnu.org/licenses/>.  */
+
 #define header_0 16
 #define header_2 9
 #define header_3 127
@@ -11,7 +35,7 @@ struct
     int header[1];
     int level1[2];
     short level2[2 << 7];
-    unsigned int level3[22 << 4];
+    unsigned int level3[27 << 4];
   }
 u_categ_Lm =
 {
@@ -152,60 +176,59 @@ u_categ_Lm =
        -1,
        -1,
        -1,
-       -1,
-       -1,
-       -1,
-       -1,
-       -1,
-       -1,
-       -1,
-       -1,
-       -1,
-       -1,
-       -1,
-       -1,
-       -1,
-       -1,
-       -1,
-       -1,
-       -1,
-       -1,
-       -1,
-       -1,
-       -1,
-       -1,
-       -1,
-       -1,
-       -1,
-       -1,
-       -1,
-       -1,
-       -1,
-       -1,
-       -1,
-       -1,
-       -1,
-       -1,
-       -1,
-       -1,
-       -1,
-       -1,
-       -1,
-       -1,
-       -1,
-       -1,
-       -1,
-       -1,
-       -1,
-       -1,
-       -1,
-       -1,
-       -1,
-       -1,
         3 +   256 * sizeof (short) / sizeof (int) +   320,
+       -1,
+       -1,
+       -1,
+       -1,
+       -1,
+       -1,
+       -1,
+       -1,
+       -1,
+       -1,
+       -1,
+       -1,
+       -1,
+       -1,
+       -1,
+       -1,
+       -1,
+       -1,
+       -1,
+       -1,
+       -1,
+       -1,
+       -1,
+       -1,
+       -1,
+       -1,
+       -1,
+       -1,
+       -1,
+       -1,
+       -1,
+       -1,
+       -1,
+       -1,
+       -1,
+       -1,
+       -1,
+       -1,
+       -1,
+       -1,
+       -1,
+       -1,
+       -1,
+       -1,
+       -1,
+       -1,
+       -1,
+       -1,
        -1,
         3 +   256 * sizeof (short) / sizeof (int) +   336,
        -1,
+        3 +   256 * sizeof (short) / sizeof (int) +   352,
        -1,
        -1,
        -1,
@@ -237,6 +260,7 @@ u_categ_Lm =
        -1,
        -1,
        -1,
+        3 +   256 * sizeof (short) / sizeof (int) +   368,
        -1,
        -1,
        -1,
@@ -261,11 +285,11 @@ u_categ_Lm =
        -1,
        -1,
        -1,
+        3 +   256 * sizeof (short) / sizeof (int) +   384,
        -1,
+        3 +   256 * sizeof (short) / sizeof (int) +   400,
        -1,
-       -1,
-       -1,
-       -1,
+        3 +   256 * sizeof (short) / sizeof (int) +   416,
        -1,
        -1,
        -1,
@@ -292,7 +316,7 @@ u_categ_Lm =
     0x00000000U, 0x00000000U, 0x00000000U, 0x00000000U,
     0x00000000U, 0x00000000U, 0x00000000U, 0x04300000U,
     0x04000000U, 0x00000110U, 0x00000000U, 0x00000000U,
-    0x00000000U, 0x00000000U, 0x00000000U, 0x00000000U,
+    0x00000000U, 0x00000000U, 0x00000200U, 0x00000000U,
     0x00000000U, 0x00000000U, 0x00000000U, 0x00020000U,
     0x00000000U, 0x00000000U, 0x00000000U, 0x00000000U,
     0x00000000U, 0x00000000U, 0x00000040U, 0x00000000U,
@@ -346,14 +370,14 @@ u_categ_Lm =
     0x00001000U, 0x00000000U, 0x00000000U, 0x80000000U,
     0x30000000U, 0x00000000U, 0x00000000U, 0x00000000U,
     0xFF800000U, 0x00000000U, 0x00000000U, 0x00010000U,
-    0x00000100U, 0x00000000U, 0x00000000U, 0x03000000U,
+    0x00000100U, 0x00000000U, 0x00000000U, 0x031C0000U,
     0x00000000U, 0x00000000U, 0x00000000U, 0x00000000U,
     0x00000000U, 0x00000000U, 0x00000000U, 0x00000000U,
     0x00000000U, 0x00000000U, 0x00000000U, 0x00000000U,
     0x00000000U, 0x00000000U, 0x00008000U, 0x00000040U,
     0x00000000U, 0x00000000U, 0x00000000U, 0x00010000U,
     0x00000000U, 0x00000000U, 0x20000000U, 0x00180000U,
-    0x00000000U, 0x00000000U, 0xF0000000U, 0x00000000U,
+    0x00000000U, 0x00000000U, 0xF0000000U, 0x00000200U,
     0x00000000U, 0x00000000U, 0x00000000U, 0x00000000U,
     0x00000000U, 0x00000000U, 0x00000000U, 0x00000000U,
     0x00000000U, 0x00000000U, 0x00000000U, 0x00000000U,
@@ -361,11 +385,31 @@ u_categ_Lm =
     0xC0000000U, 0x00000000U, 0x00000000U, 0x00000000U,
     0x00000000U, 0x00000000U, 0x00000000U, 0x00000000U,
     0x00000000U, 0x00000000U, 0x00000000U, 0x00000000U,
+    0x00000000U, 0x00000000U, 0x00000000U, 0x00000000U,
+    0xFFFFFFBFU, 0x07FDFFFFU, 0x00000000U, 0x00000000U,
+    0x00000000U, 0x00000000U, 0x00000000U, 0x00000000U,
+    0x00000000U, 0x00000000U, 0x00000000U, 0x00000000U,
     0x00000000U, 0x00000000U, 0x0000000FU, 0x00000000U,
     0x00000000U, 0x00000000U, 0x00000000U, 0x00000000U,
     0x00000000U, 0x00000000U, 0x00000000U, 0x00000000U,
     0x00000000U, 0x00000000U, 0x00000000U, 0x00000000U,
     0x00000000U, 0x00000000U, 0x00000000U, 0x00000000U,
-    0xFFF80000U, 0x00000000U, 0x00000000U, 0x00000001U
+    0xFFF80000U, 0x00000000U, 0x00000000U, 0x0000000BU,
+    0x00000000U, 0x00000000U, 0x00000000U, 0x00000000U,
+    0x00000000U, 0x00000000U, 0x00000000U, 0x00000000U,
+    0x00000000U, 0x00000000U, 0x00000000U, 0x00000000U,
+    0x00000000U, 0x00000000U, 0x00000000U, 0x6FEF0000U,
+    0x00000000U, 0xFFFF0000U, 0xFFFFFFFFU, 0x00003FFFU,
+    0x00000000U, 0x00000000U, 0x00000000U, 0x00000000U,
+    0x00000000U, 0x3F800000U, 0x00000000U, 0x00000000U,
+    0x00000000U, 0x00000000U, 0x00000000U, 0x00000000U,
+    0x00000000U, 0x00000000U, 0x00000000U, 0x00000000U,
+    0x00000000U, 0x00000000U, 0x00000000U, 0x00000800U,
+    0x00000000U, 0x00000000U, 0x00000000U, 0x00000000U,
+    0x00000000U, 0x00000000U, 0x00000000U, 0x00000000U,
+    0x00000000U, 0x00000000U, 0x00000000U, 0x00000000U,
+    0x00000000U, 0x00000000U, 0x00000000U, 0x00000000U,
+    0x00000000U, 0x00000000U, 0x00000800U, 0x00000000U,
+    0x00000000U, 0x00000000U, 0x00000000U, 0x00000000U
   }
 };

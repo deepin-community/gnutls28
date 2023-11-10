@@ -16,8 +16,7 @@
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GnuTLS; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
+ * along with GnuTLS.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 #ifdef HAVE_CONFIG_H
@@ -29,7 +28,7 @@
 
 #if defined(_WIN32)
 
-int main()
+int main(void)
 {
 	exit(77);
 }
@@ -69,7 +68,8 @@ static void client_log_func(int level, const char *str)
 static int sent = 0;
 
 static int handshake_callback(gnutls_session_t session, unsigned int htype,
-	unsigned post, unsigned int incoming, const gnutls_datum_t *msg)
+			      unsigned post, unsigned int incoming,
+			      const gnutls_datum_t *msg)
 {
 	if (htype != GNUTLS_HANDSHAKE_NEW_SESSION_TICKET)
 		return 0;
@@ -79,7 +79,7 @@ static int handshake_callback(gnutls_session_t session, unsigned int htype,
 	sent = 1;
 	return 0;
 }
-	
+
 #define MAX_BUF 1024
 
 static void client(int fd, const char *prio)
@@ -97,9 +97,9 @@ static void client(int fd, const char *prio)
 
 	gnutls_certificate_allocate_credentials(&x509_cred);
 
-	assert(gnutls_init(&session, GNUTLS_CLIENT)>=0);
+	assert(gnutls_init(&session, GNUTLS_CLIENT) >= 0);
 
-	assert(gnutls_priority_set_direct(session, prio, NULL)>=0);
+	assert(gnutls_priority_set_direct(session, prio, NULL) >= 0);
 
 	gnutls_credentials_set(session, GNUTLS_CRD_CERTIFICATE, x509_cred);
 
@@ -107,8 +107,7 @@ static void client(int fd, const char *prio)
 
 	do {
 		ret = gnutls_handshake(session);
-	}
-	while (ret < 0 && gnutls_error_is_fatal(ret) == 0);
+	} while (ret < 0 && gnutls_error_is_fatal(ret) == 0);
 
 	if (ret < 0) {
 		fail("client: Handshake failed: %s\n", gnutls_strerror(ret));
@@ -120,8 +119,8 @@ static void client(int fd, const char *prio)
 
 	if (debug)
 		success("client: TLS version is: %s\n",
-			gnutls_protocol_get_name
-			(gnutls_protocol_get_version(session)));
+			gnutls_protocol_get_name(
+				gnutls_protocol_get_version(session)));
 
 	gnutls_bye(session, GNUTLS_SHUT_WR);
 
@@ -133,7 +132,6 @@ static void client(int fd, const char *prio)
 
 	gnutls_global_deinit();
 }
-
 
 /* These are global */
 pid_t child;
@@ -163,24 +161,25 @@ static void server(int fd, const char *prio)
 		gnutls_global_set_log_level(4711);
 	}
 
-	assert(gnutls_certificate_allocate_credentials(&x509_cred)>=0);
+	assert(gnutls_certificate_allocate_credentials(&x509_cred) >= 0);
 	assert(gnutls_certificate_set_x509_key_mem(x509_cred, &server_cert,
-					    &server_key,
-					    GNUTLS_X509_FMT_PEM)>=0);
+						   &server_key,
+						   GNUTLS_X509_FMT_PEM) >= 0);
 
-	assert(gnutls_init(&session, GNUTLS_SERVER)>=0);
+	assert(gnutls_init(&session, GNUTLS_SERVER) >= 0);
 
-	assert(gnutls_session_ticket_key_generate(&skey)>=0);
+	assert(gnutls_session_ticket_key_generate(&skey) >= 0);
 	assert(gnutls_session_ticket_enable_server(session, &skey) >= 0);
 
-	gnutls_handshake_set_hook_function(session, GNUTLS_HANDSHAKE_NEW_SESSION_TICKET,
+	gnutls_handshake_set_hook_function(session,
+					   GNUTLS_HANDSHAKE_NEW_SESSION_TICKET,
 					   GNUTLS_HOOK_POST,
 					   handshake_callback);
 
 	/* avoid calling all the priority functions, since the defaults
 	 * are adequate.
 	 */
-	assert(gnutls_priority_set_direct(session, prio, NULL)>=0);
+	assert(gnutls_priority_set_direct(session, prio, NULL) >= 0);
 
 	gnutls_credentials_set(session, GNUTLS_CRD_CERTIFICATE, x509_cred);
 
@@ -200,8 +199,8 @@ static void server(int fd, const char *prio)
 
 	if (debug)
 		success("server: TLS version is: %s\n",
-			gnutls_protocol_get_name
-			(gnutls_protocol_get_version(session)));
+			gnutls_protocol_get_name(
+				gnutls_protocol_get_version(session)));
 
 	if (sent == 0) {
 		fail("client: didn't send new sessiont ticket\n");
@@ -212,7 +211,7 @@ static void server(int fd, const char *prio)
 	 */
 	gnutls_bye(session, GNUTLS_SHUT_WR);
 
- end:
+end:
 	close(fd);
 	gnutls_deinit(session);
 	gnutls_free(skey.data);
@@ -230,8 +229,7 @@ static void ch_handler(int sig)
 	return;
 }
 
-static
-void start(const char *prio)
+static void start(const char *prio)
 {
 	int fd[2];
 	int ret, status = 0;
@@ -276,4 +274,4 @@ void doit(void)
 	start("NORMAL");
 }
 
-#endif				/* _WIN32 */
+#endif /* _WIN32 */

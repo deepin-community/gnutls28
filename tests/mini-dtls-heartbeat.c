@@ -16,8 +16,7 @@
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GnuTLS; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
+ * along with GnuTLS.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 #ifdef HAVE_CONFIG_H
@@ -29,7 +28,7 @@
 
 #if defined(_WIN32) || !defined(ENABLE_HEARTBEAT)
 
-int main()
+int main(void)
 {
 	exit(77);
 }
@@ -72,7 +71,6 @@ static pid_t child;
 
 #define MAX_BUF 1024
 
-
 static void client(int fd, int server_init)
 {
 	gnutls_session_t session;
@@ -97,9 +95,10 @@ static void client(int fd, int server_init)
 	gnutls_dtls_set_mtu(session, 1500);
 
 	/* Use default priorities */
-	gnutls_priority_set_direct(session,
-				   "NONE:+VERS-DTLS1.0:+CIPHER-ALL:+MAC-ALL:+SIGN-ALL:+COMP-ALL:+ANON-ECDH:+CURVE-ALL",
-				   NULL);
+	gnutls_priority_set_direct(
+		session,
+		"NONE:+VERS-DTLS1.0:+CIPHER-ALL:+MAC-ALL:+SIGN-ALL:+COMP-ALL:+ANON-ECDH:+CURVE-ALL",
+		NULL);
 
 	/* put the anonymous credentials to the current session
 	 */
@@ -111,8 +110,7 @@ static void client(int fd, int server_init)
 	 */
 	do {
 		ret = gnutls_handshake(session);
-	}
-	while (ret < 0 && gnutls_error_is_fatal(ret) == 0);
+	} while (ret < 0 && gnutls_error_is_fatal(ret) == 0);
 
 	if (ret < 0) {
 		fail("client: Handshake failed\n");
@@ -125,19 +123,17 @@ static void client(int fd, int server_init)
 
 	if (debug)
 		success("client: DTLS version is: %s\n",
-			gnutls_protocol_get_name
-			(gnutls_protocol_get_version(session)));
+			gnutls_protocol_get_name(
+				gnutls_protocol_get_version(session)));
 
 	if (!server_init) {
 		do {
-			ret =
-			    gnutls_record_recv(session, buffer,
-						sizeof(buffer));
+			ret = gnutls_record_recv(session, buffer,
+						 sizeof(buffer));
 
 			if (ret == GNUTLS_E_HEARTBEAT_PING_RECEIVED) {
 				if (debug)
-					success
-					    ("Ping received. Replying with pong.\n");
+					success("Ping received. Replying with pong.\n");
 				ret2 = gnutls_heartbeat_pong(session, 0);
 				if (ret2 < 0) {
 					fail("pong: %s\n",
@@ -145,9 +141,8 @@ static void client(int fd, int server_init)
 					exit(1);
 				}
 			}
-		}
-		while (ret == GNUTLS_E_AGAIN || ret == GNUTLS_E_INTERRUPTED
-			|| ret == GNUTLS_E_HEARTBEAT_PING_RECEIVED);
+		} while (ret == GNUTLS_E_AGAIN || ret == GNUTLS_E_INTERRUPTED ||
+			 ret == GNUTLS_E_HEARTBEAT_PING_RECEIVED);
 
 		if (ret < 0) {
 			fail("recv: %s\n", gnutls_strerror(ret));
@@ -155,15 +150,12 @@ static void client(int fd, int server_init)
 		}
 	} else {
 		do {
-			ret =
-			    gnutls_heartbeat_ping(session, 256, 5,
-						  GNUTLS_HEARTBEAT_WAIT);
+			ret = gnutls_heartbeat_ping(session, 256, 5,
+						    GNUTLS_HEARTBEAT_WAIT);
 
 			if (debug)
 				success("Ping sent.\n");
-		}
-		while (ret == GNUTLS_E_AGAIN
-			|| ret == GNUTLS_E_INTERRUPTED);
+		} while (ret == GNUTLS_E_AGAIN || ret == GNUTLS_E_INTERRUPTED);
 
 		if (ret < 0) {
 			fail("ping: %s\n", gnutls_strerror(ret));
@@ -182,8 +174,6 @@ static void client(int fd, int server_init)
 	gnutls_global_deinit();
 }
 
-
-
 static gnutls_session_t initialize_tls_session(void)
 {
 	gnutls_session_t session;
@@ -195,9 +185,10 @@ static gnutls_session_t initialize_tls_session(void)
 	/* avoid calling all the priority functions, since the defaults
 	 * are adequate.
 	 */
-	gnutls_priority_set_direct(session,
-				   "NONE:+VERS-DTLS1.0:+CIPHER-ALL:+MAC-ALL:+SIGN-ALL:+COMP-ALL:+ANON-ECDH:+CURVE-ALL",
-				   NULL);
+	gnutls_priority_set_direct(
+		session,
+		"NONE:+VERS-DTLS1.0:+CIPHER-ALL:+MAC-ALL:+SIGN-ALL:+COMP-ALL:+ANON-ECDH:+CURVE-ALL",
+		NULL);
 
 	return session;
 }
@@ -235,8 +226,7 @@ static void server(int fd, int server_init)
 
 	do {
 		ret = gnutls_handshake(session);
-	}
-	while (ret < 0 && gnutls_error_is_fatal(ret) == 0);
+	} while (ret < 0 && gnutls_error_is_fatal(ret) == 0);
 	if (ret < 0) {
 		close(fd);
 		gnutls_deinit(session);
@@ -249,22 +239,20 @@ static void server(int fd, int server_init)
 
 	if (debug)
 		success("server: TLS version is: %s\n",
-			gnutls_protocol_get_name
-			(gnutls_protocol_get_version(session)));
+			gnutls_protocol_get_name(
+				gnutls_protocol_get_version(session)));
 
 	/* see the Getting peer's information example */
 	/* print_info(session); */
 
 	if (server_init) {
 		do {
-			ret =
-			    gnutls_record_recv(session, buffer,
-						sizeof(buffer));
+			ret = gnutls_record_recv(session, buffer,
+						 sizeof(buffer));
 
 			if (ret == GNUTLS_E_HEARTBEAT_PING_RECEIVED) {
 				if (debug)
-					success
-					    ("Ping received. Replying with pong.\n");
+					success("Ping received. Replying with pong.\n");
 				ret2 = gnutls_heartbeat_pong(session, 0);
 				if (ret2 < 0) {
 					fail("pong: %s\n",
@@ -272,20 +260,16 @@ static void server(int fd, int server_init)
 					terminate();
 				}
 			}
-		}
-		while (ret == GNUTLS_E_AGAIN || ret == GNUTLS_E_INTERRUPTED
-			|| ret == GNUTLS_E_HEARTBEAT_PING_RECEIVED);
+		} while (ret == GNUTLS_E_AGAIN || ret == GNUTLS_E_INTERRUPTED ||
+			 ret == GNUTLS_E_HEARTBEAT_PING_RECEIVED);
 	} else {
 		do {
-			ret =
-			    gnutls_heartbeat_ping(session, 256, 5,
-						  GNUTLS_HEARTBEAT_WAIT);
+			ret = gnutls_heartbeat_ping(session, 256, 5,
+						    GNUTLS_HEARTBEAT_WAIT);
 
 			if (debug)
 				success("Ping sent.\n");
-		}
-		while (ret == GNUTLS_E_AGAIN
-			|| ret == GNUTLS_E_INTERRUPTED);
+		} while (ret == GNUTLS_E_AGAIN || ret == GNUTLS_E_INTERRUPTED);
 
 		if (ret < 0) {
 			fail("ping: %s\n", gnutls_strerror(ret));
@@ -348,4 +332,4 @@ void doit(void)
 	start(1);
 }
 
-#endif				/* _WIN32 */
+#endif /* _WIN32 */

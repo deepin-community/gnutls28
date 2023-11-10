@@ -679,6 +679,10 @@
 <td class="function_name"><a class="link" href="gnutls-openpgp.html#GNUTLS-OPENPGP-V4-FINGERPRINT-SIZE:CAPS" title="GNUTLS_OPENPGP_V4_FINGERPRINT_SIZE">GNUTLS_OPENPGP_V4_FINGERPRINT_SIZE</a></td>
 </tr>
 <tr>
+<td class="typedef_keyword">typedef</td>
+<td class="function_name"><a class="link" href="gnutls-openpgp.html#gnutls-openpgp-keyid-t" title="gnutls_openpgp_keyid_t">gnutls_openpgp_keyid_t</a></td>
+</tr>
+<tr>
 <td class="define_keyword">#define</td>
 <td class="function_name"><a class="link" href="gnutls-openpgp.html#GNUTLS-OPENPGP-MASTER-KEYID-IDX:CAPS" title="GNUTLS_OPENPGP_MASTER_KEYID_IDX">GNUTLS_OPENPGP_MASTER_KEYID_IDX</a></td>
 </tr>
@@ -813,7 +817,7 @@ gnutls_openpgp_crt_get_expiration_time
 <a name="gnutls-openpgp-crt-get-key-id"></a><h3>gnutls_openpgp_crt_get_key_id ()</h3>
 <pre class="programlisting"><span class="returnvalue">int</span>
 gnutls_openpgp_crt_get_key_id (<em class="parameter"><code><a class="link" href="gnutls-gnutls.html#gnutls-openpgp-crt-t" title="gnutls_openpgp_crt_t"><span class="type">gnutls_openpgp_crt_t</span></a> key</code></em>,
-                               <em class="parameter"><code><span class="type">gnutls_openpgp_keyid_t</span> keyid</code></em>);</pre>
+                               <em class="parameter"><code><a class="link" href="gnutls-openpgp.html#gnutls-openpgp-keyid-t" title="gnutls_openpgp_keyid_t"><span class="type">gnutls_openpgp_keyid_t</span></a> keyid</code></em>);</pre>
 <div class="warning"><p><code class="literal">gnutls_openpgp_crt_get_key_id</code> is deprecated and should not be used in newly-written code.</p></div>
 </div>
 <hr>
@@ -861,7 +865,7 @@ gnutls_openpgp_crt_get_subkey_count (<em class="parameter"><code><a class="link"
 <a name="gnutls-openpgp-crt-get-subkey-idx"></a><h3>gnutls_openpgp_crt_get_subkey_idx ()</h3>
 <pre class="programlisting"><span class="returnvalue">int</span>
 gnutls_openpgp_crt_get_subkey_idx (<em class="parameter"><code><a class="link" href="gnutls-gnutls.html#gnutls-openpgp-crt-t" title="gnutls_openpgp_crt_t"><span class="type">gnutls_openpgp_crt_t</span></a> key</code></em>,
-                                   <em class="parameter"><code>const <span class="type">gnutls_openpgp_keyid_t</span> keyid</code></em>);</pre>
+                                   <em class="parameter"><code>const <a class="link" href="gnutls-openpgp.html#gnutls-openpgp-keyid-t" title="gnutls_openpgp_keyid_t"><span class="type">gnutls_openpgp_keyid_t</span></a> keyid</code></em>);</pre>
 <div class="warning"><p><code class="literal">gnutls_openpgp_crt_get_subkey_idx</code> is deprecated and should not be used in newly-written code.</p></div>
 </div>
 <hr>
@@ -907,7 +911,7 @@ gnutls_openpgp_crt_get_subkey_expiration_time
 <pre class="programlisting"><span class="returnvalue">int</span>
 gnutls_openpgp_crt_get_subkey_id (<em class="parameter"><code><a class="link" href="gnutls-gnutls.html#gnutls-openpgp-crt-t" title="gnutls_openpgp_crt_t"><span class="type">gnutls_openpgp_crt_t</span></a> key</code></em>,
                                   <em class="parameter"><code>unsigned <span class="type">int</span> idx</code></em>,
-                                  <em class="parameter"><code><span class="type">gnutls_openpgp_keyid_t</span> keyid</code></em>);</pre>
+                                  <em class="parameter"><code><a class="link" href="gnutls-openpgp.html#gnutls-openpgp-keyid-t" title="gnutls_openpgp_keyid_t"><span class="type">gnutls_openpgp_keyid_t</span></a> keyid</code></em>);</pre>
 <div class="warning"><p><code class="literal">gnutls_openpgp_crt_get_subkey_id</code> is deprecated and should not be used in newly-written code.</p></div>
 </div>
 <hr>
@@ -969,7 +973,7 @@ gnutls_openpgp_crt_get_pk_rsa_raw (<em class="parameter"><code><a class="link" h
 <pre class="programlisting"><span class="returnvalue">int</span>
 gnutls_openpgp_crt_get_preferred_key_id
                                (<em class="parameter"><code><a class="link" href="gnutls-gnutls.html#gnutls-openpgp-crt-t" title="gnutls_openpgp_crt_t"><span class="type">gnutls_openpgp_crt_t</span></a> key</code></em>,
-                                <em class="parameter"><code><span class="type">gnutls_openpgp_keyid_t</span> keyid</code></em>);</pre>
+                                <em class="parameter"><code><a class="link" href="gnutls-openpgp.html#gnutls-openpgp-keyid-t" title="gnutls_openpgp_keyid_t"><span class="type">gnutls_openpgp_keyid_t</span></a> keyid</code></em>);</pre>
 <div class="warning"><p><code class="literal">gnutls_openpgp_crt_get_preferred_key_id</code> is deprecated and should not be used in newly-written code.</p></div>
 </div>
 <hr>
@@ -978,7 +982,7 @@ gnutls_openpgp_crt_get_preferred_key_id
 <pre class="programlisting"><span class="returnvalue">int</span>
 gnutls_openpgp_crt_set_preferred_key_id
                                (<em class="parameter"><code><a class="link" href="gnutls-gnutls.html#gnutls-openpgp-crt-t" title="gnutls_openpgp_crt_t"><span class="type">gnutls_openpgp_crt_t</span></a> key</code></em>,
-                                <em class="parameter"><code>const <span class="type">gnutls_openpgp_keyid_t</span> keyid</code></em>);</pre>
+                                <em class="parameter"><code>const <a class="link" href="gnutls-openpgp.html#gnutls-openpgp-keyid-t" title="gnutls_openpgp_keyid_t"><span class="type">gnutls_openpgp_keyid_t</span></a> keyid</code></em>);</pre>
 <div class="warning"><p><code class="literal">gnutls_openpgp_crt_set_preferred_key_id</code> is deprecated and should not be used in newly-written code.</p></div>
 </div>
 <hr>
@@ -1048,7 +1052,7 @@ gnutls_openpgp_privkey_get_subkey_fingerprint
 <a name="gnutls-openpgp-privkey-get-key-id"></a><h3>gnutls_openpgp_privkey_get_key_id ()</h3>
 <pre class="programlisting"><span class="returnvalue">int</span>
 gnutls_openpgp_privkey_get_key_id (<em class="parameter"><code><a class="link" href="gnutls-gnutls.html#gnutls-openpgp-privkey-t" title="gnutls_openpgp_privkey_t"><span class="type">gnutls_openpgp_privkey_t</span></a> key</code></em>,
-                                   <em class="parameter"><code><span class="type">gnutls_openpgp_keyid_t</span> keyid</code></em>);</pre>
+                                   <em class="parameter"><code><a class="link" href="gnutls-openpgp.html#gnutls-openpgp-keyid-t" title="gnutls_openpgp_keyid_t"><span class="type">gnutls_openpgp_keyid_t</span></a> keyid</code></em>);</pre>
 <div class="warning"><p><code class="literal">gnutls_openpgp_privkey_get_key_id</code> is deprecated and should not be used in newly-written code.</p></div>
 </div>
 <hr>
@@ -1064,7 +1068,7 @@ gnutls_openpgp_privkey_get_subkey_count
 <a name="gnutls-openpgp-privkey-get-subkey-idx"></a><h3>gnutls_openpgp_privkey_get_subkey_idx ()</h3>
 <pre class="programlisting"><span class="returnvalue">int</span>
 gnutls_openpgp_privkey_get_subkey_idx (<em class="parameter"><code><a class="link" href="gnutls-gnutls.html#gnutls-openpgp-privkey-t" title="gnutls_openpgp_privkey_t"><span class="type">gnutls_openpgp_privkey_t</span></a> key</code></em>,
-                                       <em class="parameter"><code>const <span class="type">gnutls_openpgp_keyid_t</span> keyid</code></em>);</pre>
+                                       <em class="parameter"><code>const <a class="link" href="gnutls-openpgp.html#gnutls-openpgp-keyid-t" title="gnutls_openpgp_keyid_t"><span class="type">gnutls_openpgp_keyid_t</span></a> keyid</code></em>);</pre>
 <div class="warning"><p><code class="literal">gnutls_openpgp_privkey_get_subkey_idx</code> is deprecated and should not be used in newly-written code.</p></div>
 </div>
 <hr>
@@ -1109,7 +1113,7 @@ gnutls_openpgp_privkey_get_subkey_expiration_time
 <pre class="programlisting"><span class="returnvalue">int</span>
 gnutls_openpgp_privkey_get_subkey_id (<em class="parameter"><code><a class="link" href="gnutls-gnutls.html#gnutls-openpgp-privkey-t" title="gnutls_openpgp_privkey_t"><span class="type">gnutls_openpgp_privkey_t</span></a> key</code></em>,
                                       <em class="parameter"><code>unsigned <span class="type">int</span> idx</code></em>,
-                                      <em class="parameter"><code><span class="type">gnutls_openpgp_keyid_t</span> keyid</code></em>);</pre>
+                                      <em class="parameter"><code><a class="link" href="gnutls-openpgp.html#gnutls-openpgp-keyid-t" title="gnutls_openpgp_keyid_t"><span class="type">gnutls_openpgp_keyid_t</span></a> keyid</code></em>);</pre>
 <div class="warning"><p><code class="literal">gnutls_openpgp_privkey_get_subkey_id</code> is deprecated and should not be used in newly-written code.</p></div>
 </div>
 <hr>
@@ -1204,7 +1208,7 @@ gnutls_openpgp_privkey_export2 (<em class="parameter"><code><a class="link" href
 <pre class="programlisting"><span class="returnvalue">int</span>
 gnutls_openpgp_privkey_set_preferred_key_id
                                (<em class="parameter"><code><a class="link" href="gnutls-gnutls.html#gnutls-openpgp-privkey-t" title="gnutls_openpgp_privkey_t"><span class="type">gnutls_openpgp_privkey_t</span></a> key</code></em>,
-                                <em class="parameter"><code>const <span class="type">gnutls_openpgp_keyid_t</span> keyid</code></em>);</pre>
+                                <em class="parameter"><code>const <a class="link" href="gnutls-openpgp.html#gnutls-openpgp-keyid-t" title="gnutls_openpgp_keyid_t"><span class="type">gnutls_openpgp_keyid_t</span></a> keyid</code></em>);</pre>
 <div class="warning"><p><code class="literal">gnutls_openpgp_privkey_set_preferred_key_id</code> is deprecated and should not be used in newly-written code.</p></div>
 </div>
 <hr>
@@ -1213,7 +1217,7 @@ gnutls_openpgp_privkey_set_preferred_key_id
 <pre class="programlisting"><span class="returnvalue">int</span>
 gnutls_openpgp_privkey_get_preferred_key_id
                                (<em class="parameter"><code><a class="link" href="gnutls-gnutls.html#gnutls-openpgp-privkey-t" title="gnutls_openpgp_privkey_t"><span class="type">gnutls_openpgp_privkey_t</span></a> key</code></em>,
-                                <em class="parameter"><code><span class="type">gnutls_openpgp_keyid_t</span> keyid</code></em>);</pre>
+                                <em class="parameter"><code><a class="link" href="gnutls-openpgp.html#gnutls-openpgp-keyid-t" title="gnutls_openpgp_keyid_t"><span class="type">gnutls_openpgp_keyid_t</span></a> keyid</code></em>);</pre>
 <div class="warning"><p><code class="literal">gnutls_openpgp_privkey_get_preferred_key_id</code> is deprecated and should not be used in newly-written code.</p></div>
 </div>
 <hr>
@@ -1221,7 +1225,7 @@ gnutls_openpgp_privkey_get_preferred_key_id
 <a name="gnutls-openpgp-crt-get-auth-subkey"></a><h3>gnutls_openpgp_crt_get_auth_subkey ()</h3>
 <pre class="programlisting"><span class="returnvalue">int</span>
 gnutls_openpgp_crt_get_auth_subkey (<em class="parameter"><code><a class="link" href="gnutls-gnutls.html#gnutls-openpgp-crt-t" title="gnutls_openpgp_crt_t"><span class="type">gnutls_openpgp_crt_t</span></a> crt</code></em>,
-                                    <em class="parameter"><code><span class="type">gnutls_openpgp_keyid_t</span> keyid</code></em>,
+                                    <em class="parameter"><code><a class="link" href="gnutls-openpgp.html#gnutls-openpgp-keyid-t" title="gnutls_openpgp_keyid_t"><span class="type">gnutls_openpgp_keyid_t</span></a> keyid</code></em>,
                                     <em class="parameter"><code>unsigned <span class="type">int</span> flag</code></em>);</pre>
 <div class="warning"><p><code class="literal">gnutls_openpgp_crt_get_auth_subkey</code> is deprecated and should not be used in newly-written code.</p></div>
 </div>
@@ -1253,7 +1257,7 @@ gnutls_openpgp_keyring_import (<em class="parameter"><code><a class="link" href=
 <a name="gnutls-openpgp-keyring-check-id"></a><h3>gnutls_openpgp_keyring_check_id ()</h3>
 <pre class="programlisting"><span class="returnvalue">int</span>
 gnutls_openpgp_keyring_check_id (<em class="parameter"><code><a class="link" href="gnutls-gnutls.html#gnutls-openpgp-keyring-t" title="gnutls_openpgp_keyring_t"><span class="type">gnutls_openpgp_keyring_t</span></a> ring</code></em>,
-                                 <em class="parameter"><code>const <span class="type">gnutls_openpgp_keyid_t</span> keyid</code></em>,
+                                 <em class="parameter"><code>const <a class="link" href="gnutls-openpgp.html#gnutls-openpgp-keyid-t" title="gnutls_openpgp_keyid_t"><span class="type">gnutls_openpgp_keyid_t</span></a> keyid</code></em>,
                                  <em class="parameter"><code>unsigned <span class="type">int</span> flags</code></em>);</pre>
 <div class="warning"><p><code class="literal">gnutls_openpgp_keyring_check_id</code> is deprecated and should not be used in newly-written code.</p></div>
 </div>
@@ -1490,6 +1494,12 @@ gnutls_certificate_set_openpgp_keyring_file
 <div class="refsect2">
 <a name="GNUTLS-OPENPGP-V4-FINGERPRINT-SIZE:CAPS"></a><h3>GNUTLS_OPENPGP_V4_FINGERPRINT_SIZE</h3>
 <pre class="programlisting">#define GNUTLS_OPENPGP_V4_FINGERPRINT_SIZE 20
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gnutls-openpgp-keyid-t"></a><h3>gnutls_openpgp_keyid_t</h3>
+<pre class="programlisting">typedef unsigned char gnutls_openpgp_keyid_t[GNUTLS_OPENPGP_KEYID_SIZE];
 </pre>
 </div>
 <hr>

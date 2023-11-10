@@ -1,3 +1,72 @@
+gnutls28 (3.8.1-4) unstable; urgency=medium
+
+  * Fix autopkgtest for 32 bit archs.
+  * Fix building twice from the same source. Closes: #1044384,#1049512
+  * Drop orphaned debian/libgnutlsxx30.install and delete related (.a/.so)
+    files in dh_autoinstall override, fixing dead symlink for libgnutlsxx.so.
+    Closes: #1050058
+
+ -- Andreas Metzler <ametzler@debian.org>  Sat, 19 Aug 2023 11:28:08 +0200
+
+gnutls28 (3.8.1-3) unstable; urgency=low
+
+  * 50-0001-Fix-build-on-GNU-Hurd.patch (Thanks, Samuel Thibault) from
+    upstream git master.
+  * Fix rdep FTBFS due to removal of GNUTLS_NO_EXTENSIONS macro with
+    50-0002-Move-the-GNUTLS_NO_EXTENSIONS-compatibility-define-t.patch from
+    upstream MR 1766 (Thanks, Adrian Bunk)
+
+ -- Andreas Metzler <ametzler@debian.org>  Mon, 07 Aug 2023 18:33:31 +0200
+
+gnutls28 (3.8.1-2) unstable; urgency=low
+
+  * Also use datefudge instead of faketime for autopkgtest.
+  * Upload to unstable.
+
+ -- Andreas Metzler <ametzler@debian.org>  Sun, 06 Aug 2023 11:13:35 +0200
+
+gnutls28 (3.8.1-1) experimental; urgency=medium
+
+  * New upstream version.
+    + Bump symbol file info.
+
+ -- Andreas Metzler <ametzler@debian.org>  Sat, 05 Aug 2023 10:59:29 +0200
+
+gnutls28 (3.8.0+git20230713-1) experimental; urgency=medium
+
+  * New upstream git snapshot c4023afde53241aedbb94108aa10fda9bd05ee82.
+    + Update copyright file.
+    + Switch back to datefudge. faketime using fork() instead of exex() breaks
+      the cleanup scripting in the testsuite. This together with upstream
+      changes Closes: #1037917
+      Most tests do not rely on datefudge/faketime anymore but use -attime so
+      we would still have meaningful testsuite coverage without datefudge.
+    + Update autopkgtest for new upstream.
+
+ -- Andreas Metzler <ametzler@debian.org>  Sat, 15 Jul 2023 13:40:58 +0200
+
+gnutls28 (3.8.0+git20230529-1) experimental; urgency=medium
+
+  * New upstream git snapshot 0a8115000f2353dcabcfdc0caccbb0f2c3d6f512.
+    + Update libgnutls30 symbol file.
+    + Unfuzz patches.
+
+ -- Andreas Metzler <ametzler@debian.org>  Sun, 04 Jun 2023 13:06:50 +0200
+
+gnutls28 (3.8.0+git20230413-1) experimental; urgency=medium
+
+  * New upstream git snapshot bfbcb238465baffc6a6695c0e593c9a25cf7cb51.
+    + Unfuzz patches, drop superfluous patches.
+    + Guile wrapper split off, adapt packaging.
+    + Use faketime instead of datefudge. Closes: #1031553
+    + Update copyright file.
+    + Update symbol file.
+    + Stop shipping legacy C++ library (libgnutlsxx30). This functionality is
+      now provided as a header-only library and there are no rdeps in Debian.
+  * Clean up debian/rules.
+
+ -- Andreas Metzler <ametzler@debian.org>  Sat, 29 Apr 2023 11:51:27 +0200
+
 gnutls28 (3.7.9-2) unstable; urgency=medium
 
   * CI: Do not try to run tests/ktls.sh, it uses a helper binary. (Plus gnutls

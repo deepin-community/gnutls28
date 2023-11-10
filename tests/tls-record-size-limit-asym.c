@@ -16,8 +16,7 @@
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GnuTLS; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
+ * along with GnuTLS.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 #ifdef HAVE_CONFIG_H
@@ -110,11 +109,11 @@ static void start(const struct test_st *test)
 						   server_pull_timeout_func);
 	gnutls_transport_set_ptr(server, server);
 
-
 	/* Init client */
 	assert(gnutls_certificate_allocate_credentials(&clientx509cred) >= 0);
 
-	assert(gnutls_certificate_set_x509_trust_mem(clientx509cred, &ca2_cert, GNUTLS_X509_FMT_PEM) >= 0);
+	assert(gnutls_certificate_set_x509_trust_mem(clientx509cred, &ca2_cert,
+						     GNUTLS_X509_FMT_PEM) >= 0);
 
 	assert(gnutls_init(&client, GNUTLS_CLIENT) >= 0);
 
@@ -142,8 +141,8 @@ static void start(const struct test_st *test)
 		exit(1);
 	}
 	if (ret != (int)test->server_exp.size)
-		fail("server: unexpected record size sent: %d (%d)\n",
-		     ret, (int)test->server_exp.size);
+		fail("server: unexpected record size sent: %d (%d)\n", ret,
+		     (int)test->server_exp.size);
 	success("server: did not send a %d-byte packet\n",
 		(int)test->server_exp.size);
 
@@ -161,8 +160,8 @@ static void start(const struct test_st *test)
 		exit(1);
 	}
 	if (ret != (int)test->client_exp.size)
-		fail("client: unexpected record size sent: %d (%d)\n",
-		     ret, (int)test->client_exp.size);
+		fail("client: unexpected record size sent: %d (%d)\n", ret,
+		     (int)test->client_exp.size);
 	success("client: did not send a %d-byte packet\n",
 		(int)test->server_max_size + 1);
 
@@ -190,88 +189,88 @@ static void start(const struct test_st *test)
 
 static const struct test_st tests[] = {
 	{
-		.prio = "NORMAL:-VERS-ALL:+VERS-TLS1.2",
-		.server_max_size = 512,
-		.client_max_size = 16384,
-		.server_exp = {
+	 .prio = "NORMAL:-VERS-ALL:+VERS-TLS1.2",
+	 .server_max_size = 512,
+	 .client_max_size = 16384,
+	 .server_exp = {
 			.error = 0,
 			.size = 16384,
-		},
-		.client_exp = {
+			},
+	 .client_exp = {
 			.error = 0,
 			.size = 512,
-		}
-	},
+			}
+	 },
 	{
-		.prio = "NORMAL:-VERS-ALL:+VERS-TLS1.2",
-		.server_max_size = 16384,
-		.client_max_size = 512,
-		.server_exp = {
+	 .prio = "NORMAL:-VERS-ALL:+VERS-TLS1.2",
+	 .server_max_size = 16384,
+	 .client_max_size = 512,
+	 .server_exp = {
 			.error = 0,
 			.size = 512,
-		},
-		.client_exp = {
+			},
+	 .client_exp = {
 			.error = 0,
 			.size = 16384,
-		}
-	},
+			}
+	 },
 	{
-		.prio = "NORMAL:-VERS-ALL:+VERS-TLS1.3",
-		.server_max_size = 512,
-		.client_max_size = 16384,
-		.server_exp = {
+	 .prio = "NORMAL:-VERS-ALL:+VERS-TLS1.3",
+	 .server_max_size = 512,
+	 .client_max_size = 16384,
+	 .server_exp = {
 			.error = 0,
 			.size = 16384,
-		},
-		.client_exp = {
+			},
+	 .client_exp = {
 			.error = 0,
 			.size = 512,
-		}
-	},
+			}
+	 },
 	{
-		.prio = "NORMAL:-VERS-ALL:+VERS-TLS1.3",
-		.server_max_size = 16384,
-		.client_max_size = 512,
-		.server_exp = {
+	 .prio = "NORMAL:-VERS-ALL:+VERS-TLS1.3",
+	 .server_max_size = 16384,
+	 .client_max_size = 512,
+	 .server_exp = {
 			.error = 0,
 			.size = 512,
-		},
-		.client_exp = {
+			},
+	 .client_exp = {
 			.error = 0,
 			.size = 16384,
-		}
-	},
+			}
+	 },
 	{
-		.prio = "NORMAL",
-		.server_max_size = 512,
-		.client_max_size = 16384,
-		.server_exp = {
+	 .prio = "NORMAL",
+	 .server_max_size = 512,
+	 .client_max_size = 16384,
+	 .server_exp = {
 			.error = 0,
 			.size = 16384,
-		},
-		.client_exp = {
+			},
+	 .client_exp = {
 			.error = 0,
 			.size = 512,
-		}
-	},
+			}
+	 },
 	{
-		.prio = "NORMAL",
-		.server_max_size = 16384,
-		.client_max_size = 512,
-		.server_exp = {
+	 .prio = "NORMAL",
+	 .server_max_size = 16384,
+	 .client_max_size = 512,
+	 .server_exp = {
 			.error = 0,
 			.size = 512,
-		},
-		.client_exp = {
+			},
+	 .client_exp = {
 			.error = 0,
 			.size = 16384,
-		}
-	}
+			}
+	 }
 };
 
 void doit(void)
 {
 	size_t i;
-	for (i = 0; i < sizeof(tests)/sizeof(tests[0]); i++)
+	for (i = 0; i < sizeof(tests) / sizeof(tests[0]); i++)
 		start(&tests[i]);
 }

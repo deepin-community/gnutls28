@@ -47,34 +47,35 @@
 #include "tls13/session_ticket.h"
 
 static int pack_certificate_auth_info(gnutls_session_t,
-				      gnutls_buffer_st * packed_session);
+				      gnutls_buffer_st *packed_session);
 static int unpack_certificate_auth_info(gnutls_session_t,
-					gnutls_buffer_st * packed_session);
+					gnutls_buffer_st *packed_session);
 
+#ifdef ENABLE_SRP
 static int unpack_srp_auth_info(gnutls_session_t session,
-				gnutls_buffer_st * packed_session);
+				gnutls_buffer_st *packed_session);
 static int pack_srp_auth_info(gnutls_session_t session,
-			      gnutls_buffer_st * packed_session);
+			      gnutls_buffer_st *packed_session);
+#endif
 
 static int unpack_psk_auth_info(gnutls_session_t session,
-				gnutls_buffer_st * packed_session);
+				gnutls_buffer_st *packed_session);
 static int pack_psk_auth_info(gnutls_session_t session,
-			      gnutls_buffer_st * packed_session);
+			      gnutls_buffer_st *packed_session);
 
 static int unpack_anon_auth_info(gnutls_session_t session,
-				 gnutls_buffer_st * packed_session);
+				 gnutls_buffer_st *packed_session);
 static int pack_anon_auth_info(gnutls_session_t session,
-			       gnutls_buffer_st * packed_session);
+			       gnutls_buffer_st *packed_session);
 
 static int unpack_security_parameters(gnutls_session_t session,
-				      gnutls_buffer_st * packed_session);
+				      gnutls_buffer_st *packed_session);
 static int pack_security_parameters(gnutls_session_t session,
-				    gnutls_buffer_st * packed_session);
+				    gnutls_buffer_st *packed_session);
 static int tls13_unpack_security_parameters(gnutls_session_t session,
-					    gnutls_buffer_st * packed_session);
+					    gnutls_buffer_st *packed_session);
 static int tls13_pack_security_parameters(gnutls_session_t session,
-					  gnutls_buffer_st * packed_session);
-
+					  gnutls_buffer_st *packed_session);
 
 /* Since auth_info structures contain malloced data, this function
  * is required in order to pack these structures in a vector in
@@ -84,9 +85,8 @@ static int tls13_pack_security_parameters(gnutls_session_t session,
  *
  * The data will be in a platform independent format.
  */
-int
-_gnutls_session_pack(gnutls_session_t session,
-		     gnutls_datum_t * packed_session)
+int _gnutls_session_pack(gnutls_session_t session,
+			 gnutls_datum_t *packed_session)
 {
 	int ret;
 	gnutls_buffer_st sb;
@@ -98,7 +98,6 @@ _gnutls_session_pack(gnutls_session_t session,
 	}
 
 	_gnutls_buffer_init(&sb);
-
 
 	id = gnutls_auth_get_type(session);
 
@@ -145,7 +144,6 @@ _gnutls_session_pack(gnutls_session_t session,
 	default:
 		ret = gnutls_assert_val(GNUTLS_E_INTERNAL_ERROR);
 		goto fail;
-
 	}
 
 	/* Auth_info structures copied. Now copy security_parameters_st. 
@@ -156,7 +154,6 @@ _gnutls_session_pack(gnutls_session_t session,
 		gnutls_assert();
 		goto fail;
 	}
-
 
 	if (session->security_parameters.pversion->tls13_sem) {
 		ret = tls13_pack_security_parameters(session, &sb);
@@ -177,17 +174,15 @@ _gnutls_session_pack(gnutls_session_t session,
 
 	return _gnutls_buffer_to_datum(&sb, packed_session, 0);
 
-      fail:
+fail:
 	_gnutls_buffer_clear(&sb);
 	return ret;
 }
 
-
 /* Load session data from a buffer.
  */
-int
-_gnutls_session_unpack(gnutls_session_t session,
-		       const gnutls_datum_t * packed_session)
+int _gnutls_session_unpack(gnutls_session_t session,
+			   const gnutls_datum_t *packed_session)
 {
 	int ret;
 	gnutls_buffer_st sb;
@@ -202,9 +197,8 @@ _gnutls_session_unpack(gnutls_session_t session,
 		return GNUTLS_E_INTERNAL_ERROR;
 	}
 
-	ret =
-	    _gnutls_buffer_append_data(&sb, packed_session->data,
-				       packed_session->size);
+	ret = _gnutls_buffer_append_data(&sb, packed_session->data,
+					 packed_session->size);
 	if (ret < 0) {
 		gnutls_assert();
 		return ret;
@@ -220,11 +214,10 @@ _gnutls_session_unpack(gnutls_session_t session,
 		goto error;
 	}
 
-	BUFFER_POP_NUM(&sb,
-		       session->internals.resumed_security_parameters.
-		       timestamp);
+	BUFFER_POP_NUM(
+		&sb, session->internals.resumed_security_parameters.timestamp);
 	BUFFER_POP_NUM(&sb, expire_time);
-	(void) expire_time;
+	(void)expire_time;
 	BUFFER_POP(&sb, &id, 1);
 
 	switch (id) {
@@ -266,7 +259,6 @@ _gnutls_session_unpack(gnutls_session_t session,
 		gnutls_assert();
 		ret = GNUTLS_E_INTERNAL_ERROR;
 		goto error;
-
 	}
 
 	/* Auth_info structures copied. Now copy security_parameters_st. 
@@ -297,7 +289,7 @@ _gnutls_session_unpack(gnutls_session_t session,
 
 	ret = 0;
 
-      error:
+error:
 	_gnutls_buffer_clear(&sb);
 
 	return ret;
@@ -322,8 +314,8 @@ _gnutls_session_unpack(gnutls_session_t session,
  * If we didn't receive any NST then we cannot resume a TLS 1.3 session and hence
  * its nonsense to store all that info.
  */
-static int
-tls13_pack_security_parameters(gnutls_session_t session, gnutls_buffer_st *ps)
+static int tls13_pack_security_parameters(gnutls_session_t session,
+					  gnutls_buffer_st *ps)
 {
 	int ret = 0;
 	uint32_t length = 0;
@@ -338,23 +330,18 @@ tls13_pack_security_parameters(gnutls_session_t session, gnutls_buffer_st *ps)
 		length += 4;
 		BUFFER_APPEND_NUM(ps, ticket->age_add);
 		length += 4;
-		BUFFER_APPEND_PFX1(ps,
-				   ticket->nonce,
-				   ticket->nonce_size);
+		BUFFER_APPEND_PFX1(ps, ticket->nonce, ticket->nonce_size);
 		length += (1 + ticket->nonce_size);
-		BUFFER_APPEND_PFX4(ps,
-				   ticket->ticket.data,
+		BUFFER_APPEND_PFX4(ps, ticket->ticket.data,
 				   ticket->ticket.size);
 		length += (4 + ticket->ticket.size);
-		BUFFER_APPEND_PFX1(ps,
-				   ticket->resumption_master_secret,
+		BUFFER_APPEND_PFX1(ps, ticket->resumption_master_secret,
 				   ticket->prf->output_size);
 		length += (1 + ticket->prf->output_size);
 		BUFFER_APPEND_TS(ps, ticket->arrival_time);
 		length += 12;
-		BUFFER_APPEND_NUM(ps,
-				  session->security_parameters.
-				  max_early_data_size);
+		BUFFER_APPEND_NUM(
+			ps, session->security_parameters.max_early_data_size);
 		length += 4;
 
 		/* Overwrite the length field */
@@ -364,8 +351,8 @@ tls13_pack_security_parameters(gnutls_session_t session, gnutls_buffer_st *ps)
 	return ret;
 }
 
-static int
-tls13_unpack_security_parameters(gnutls_session_t session, gnutls_buffer_st *ps)
+static int tls13_unpack_security_parameters(gnutls_session_t session,
+					    gnutls_buffer_st *ps)
 {
 	uint32_t ttl_len;
 	tls13_ticket_st *ticket = &session->internals.tls13_ticket;
@@ -380,9 +367,9 @@ tls13_unpack_security_parameters(gnutls_session_t session, gnutls_buffer_st *ps)
 
 		ret = _gnutls_buffer_pop_datum_prefix8(ps, &t);
 		if (ret < 0 || t.size > sizeof(ticket->nonce)) {
-			    ret = GNUTLS_E_PARSING_ERROR;
-			    gnutls_assert();
-			    goto error;
+			ret = GNUTLS_E_PARSING_ERROR;
+			gnutls_assert();
+			goto error;
 		}
 		ticket->nonce_size = t.size;
 		memcpy(ticket->nonce, t.data, t.size);
@@ -390,23 +377,26 @@ tls13_unpack_security_parameters(gnutls_session_t session, gnutls_buffer_st *ps)
 		BUFFER_POP_DATUM(ps, &ticket->ticket);
 
 		ret = _gnutls_buffer_pop_datum_prefix8(ps, &t);
-		if (ret < 0 || t.size > sizeof(ticket->resumption_master_secret)) {
-			    ret = GNUTLS_E_PARSING_ERROR;
-			    gnutls_assert();
-			    goto error;
+		if (ret < 0 ||
+		    t.size > sizeof(ticket->resumption_master_secret)) {
+			ret = GNUTLS_E_PARSING_ERROR;
+			gnutls_assert();
+			goto error;
 		}
 		memcpy(ticket->resumption_master_secret, t.data, t.size);
 
-		if (unlikely(session->internals.resumed_security_parameters.prf == NULL ||
-		    session->internals.resumed_security_parameters.prf->output_size != t.size))
+		if (unlikely(session->internals.resumed_security_parameters
+					     .prf == NULL ||
+			     session->internals.resumed_security_parameters.prf
+					     ->output_size != t.size))
 			return gnutls_assert_val(GNUTLS_E_INTERNAL_ERROR);
 
-		ticket->prf = session->internals.resumed_security_parameters.prf;
+		ticket->prf =
+			session->internals.resumed_security_parameters.prf;
 
 		BUFFER_POP_TS(ps, ticket->arrival_time);
-		BUFFER_POP_NUM(ps,
-			       session->security_parameters.
-			       max_early_data_size);
+		BUFFER_POP_NUM(
+			ps, session->security_parameters.max_early_data_size);
 	}
 
 error:
@@ -435,12 +425,13 @@ error:
  *      x bytes the certificate
  *       and so on...
  */
-static int
-pack_certificate_auth_info(gnutls_session_t session, gnutls_buffer_st * ps)
+static int pack_certificate_auth_info(gnutls_session_t session,
+				      gnutls_buffer_st *ps)
 {
 	unsigned int i;
 	int cur_size, ret;
-	cert_auth_info_t info = _gnutls_get_auth_info(session, GNUTLS_CRD_CERTIFICATE);
+	cert_auth_info_t info =
+		_gnutls_get_auth_info(session, GNUTLS_CRD_CERTIFICATE);
 	int size_offset;
 
 	size_offset = ps->length;
@@ -448,7 +439,6 @@ pack_certificate_auth_info(gnutls_session_t session, gnutls_buffer_st * ps)
 	cur_size = ps->length;
 
 	if (info) {
-
 		BUFFER_APPEND_NUM(ps, info->dh.secret_bits);
 		BUFFER_APPEND_PFX4(ps, info->dh.prime.data,
 				   info->dh.prime.size);
@@ -461,36 +451,28 @@ pack_certificate_auth_info(gnutls_session_t session, gnutls_buffer_st * ps)
 
 		for (i = 0; i < info->ncerts; i++) {
 			BUFFER_APPEND_PFX4(ps,
-					   info->raw_certificate_list[i].
-					   data,
-					   info->raw_certificate_list[i].
-					   size);
+					   info->raw_certificate_list[i].data,
+					   info->raw_certificate_list[i].size);
 		}
 
 		BUFFER_APPEND_NUM(ps, info->nocsp);
 
 		for (i = 0; i < info->nocsp; i++) {
-			BUFFER_APPEND_PFX4(ps,
-					   info->raw_ocsp_list[i].
-					   data,
-					   info->raw_ocsp_list[i].
-					   size);
+			BUFFER_APPEND_PFX4(ps, info->raw_ocsp_list[i].data,
+					   info->raw_ocsp_list[i].size);
 		}
 	}
 
 	/* write the real size */
-	_gnutls_write_uint32(ps->length - cur_size,
-			     ps->data + size_offset);
+	_gnutls_write_uint32(ps->length - cur_size, ps->data + size_offset);
 
 	return 0;
 }
 
-
 /* Upack certificate info.
  */
-static int
-unpack_certificate_auth_info(gnutls_session_t session,
-			     gnutls_buffer_st * ps)
+static int unpack_certificate_auth_info(gnutls_session_t session,
+					gnutls_buffer_st *ps)
 {
 	int ret;
 	unsigned int i = 0, j = 0;
@@ -502,13 +484,12 @@ unpack_certificate_auth_info(gnutls_session_t session,
 	BUFFER_POP_NUM(ps, pack_size);
 
 	if (pack_size == 0)
-		return 0;	/* nothing to be done */
+		return 0; /* nothing to be done */
 
 	/* client and server have the same auth_info here
 	 */
-	ret =
-	    _gnutls_auth_info_init(session, GNUTLS_CRD_CERTIFICATE,
-				  sizeof(cert_auth_info_st), 1);
+	ret = _gnutls_auth_info_init(session, GNUTLS_CRD_CERTIFICATE,
+				     sizeof(cert_auth_info_st), 1);
 	if (ret < 0) {
 		gnutls_assert();
 		return ret;
@@ -528,7 +509,7 @@ unpack_certificate_auth_info(gnutls_session_t session,
 
 	if (info->ncerts > 0) {
 		info->raw_certificate_list =
-		    gnutls_calloc(info->ncerts, sizeof(gnutls_datum_t));
+			gnutls_calloc(info->ncerts, sizeof(gnutls_datum_t));
 		if (info->raw_certificate_list == NULL) {
 			gnutls_assert();
 			ret = GNUTLS_E_MEMORY_ERROR;
@@ -546,7 +527,7 @@ unpack_certificate_auth_info(gnutls_session_t session,
 
 	if (info->nocsp > 0) {
 		info->raw_ocsp_list =
-		    gnutls_calloc(info->nocsp, sizeof(gnutls_datum_t));
+			gnutls_calloc(info->nocsp, sizeof(gnutls_datum_t));
 		if (info->raw_ocsp_list == NULL) {
 			gnutls_assert();
 			ret = GNUTLS_E_MEMORY_ERROR;
@@ -561,7 +542,7 @@ unpack_certificate_auth_info(gnutls_session_t session,
 
 	return 0;
 
-      error:
+error:
 	if (info) {
 		_gnutls_free_datum(&info->dh.prime);
 		_gnutls_free_datum(&info->dh.generator);
@@ -578,7 +559,6 @@ unpack_certificate_auth_info(gnutls_session_t session,
 	}
 
 	return ret;
-
 }
 
 #ifdef ENABLE_SRP
@@ -590,10 +570,10 @@ unpack_certificate_auth_info(gnutls_session_t session,
  *      4 bytes the size of the SRP username (x)
  *      x bytes the SRP username
  */
-static int
-pack_srp_auth_info(gnutls_session_t session, gnutls_buffer_st * ps)
+static int pack_srp_auth_info(gnutls_session_t session, gnutls_buffer_st *ps)
 {
-	srp_server_auth_info_t info = _gnutls_get_auth_info(session, GNUTLS_CRD_SRP);
+	srp_server_auth_info_t info =
+		_gnutls_get_auth_info(session, GNUTLS_CRD_SRP);
 	int len, ret;
 	int size_offset;
 	size_t cur_size;
@@ -602,7 +582,8 @@ pack_srp_auth_info(gnutls_session_t session, gnutls_buffer_st * ps)
 	if (info) {
 		if (info->username) {
 			username = info->username;
-			len = strlen(info->username) + 1; /* include the terminating null */
+			len = strlen(info->username) +
+			      1; /* include the terminating null */
 		} else {
 			username = "\0";
 			len = 1;
@@ -617,15 +598,12 @@ pack_srp_auth_info(gnutls_session_t session, gnutls_buffer_st * ps)
 	BUFFER_APPEND_PFX4(ps, username, len);
 
 	/* write the real size */
-	_gnutls_write_uint32(ps->length - cur_size,
-			     ps->data + size_offset);
+	_gnutls_write_uint32(ps->length - cur_size, ps->data + size_offset);
 
 	return 0;
 }
 
-
-static int
-unpack_srp_auth_info(gnutls_session_t session, gnutls_buffer_st * ps)
+static int unpack_srp_auth_info(gnutls_session_t session, gnutls_buffer_st *ps)
 {
 	size_t username_size;
 	int ret;
@@ -656,11 +634,10 @@ unpack_srp_auth_info(gnutls_session_t session, gnutls_buffer_st * ps)
 
 	ret = 0;
 
-      error:
+error:
 	return ret;
 }
 #endif
-
 
 #ifdef ENABLE_ANON
 /* Packs the ANON session authentication data.
@@ -677,8 +654,7 @@ unpack_srp_auth_info(gnutls_session_t session, gnutls_buffer_st * ps)
  *      4 bytes the size of the public key
  *      x bytes the public key
  */
-static int
-pack_anon_auth_info(gnutls_session_t session, gnutls_buffer_st * ps)
+static int pack_anon_auth_info(gnutls_session_t session, gnutls_buffer_st *ps)
 {
 	int cur_size, ret;
 	anon_auth_info_t info = _gnutls_get_auth_info(session, GNUTLS_CRD_ANON);
@@ -699,15 +675,12 @@ pack_anon_auth_info(gnutls_session_t session, gnutls_buffer_st * ps)
 	}
 
 	/* write the real size */
-	_gnutls_write_uint32(ps->length - cur_size,
-			     ps->data + size_offset);
+	_gnutls_write_uint32(ps->length - cur_size, ps->data + size_offset);
 
 	return 0;
 }
 
-
-static int
-unpack_anon_auth_info(gnutls_session_t session, gnutls_buffer_st * ps)
+static int unpack_anon_auth_info(gnutls_session_t session, gnutls_buffer_st *ps)
 {
 	int ret;
 	size_t pack_size;
@@ -716,13 +689,12 @@ unpack_anon_auth_info(gnutls_session_t session, gnutls_buffer_st * ps)
 	BUFFER_POP_NUM(ps, pack_size);
 
 	if (pack_size == 0)
-		return 0;	/* nothing to be done */
+		return 0; /* nothing to be done */
 
 	/* client and server have the same auth_info here
 	 */
-	ret =
-	    _gnutls_auth_info_init(session, GNUTLS_CRD_ANON,
-				  sizeof(anon_auth_info_st), 1);
+	ret = _gnutls_auth_info_init(session, GNUTLS_CRD_ANON,
+				     sizeof(anon_auth_info_st), 1);
 	if (ret < 0) {
 		gnutls_assert();
 		return ret;
@@ -740,7 +712,7 @@ unpack_anon_auth_info(gnutls_session_t session, gnutls_buffer_st * ps)
 
 	return 0;
 
-      error:
+error:
 	if (info) {
 		_gnutls_free_datum(&info->dh.prime);
 		_gnutls_free_datum(&info->dh.generator);
@@ -749,7 +721,7 @@ unpack_anon_auth_info(gnutls_session_t session, gnutls_buffer_st * ps)
 
 	return ret;
 }
-#endif				/* ANON */
+#endif /* ANON */
 
 #ifdef ENABLE_PSK
 /* Packs the PSK session authentication data.
@@ -769,8 +741,7 @@ unpack_anon_auth_info(gnutls_session_t session, gnutls_buffer_st * ps)
  *      4 bytes the size of the public key
  *      x bytes the public key
  */
-static int
-pack_psk_auth_info(gnutls_session_t session, gnutls_buffer_st * ps)
+static int pack_psk_auth_info(gnutls_session_t session, gnutls_buffer_st *ps)
 {
 	psk_auth_info_t info;
 	int username_len;
@@ -800,22 +771,19 @@ pack_psk_auth_info(gnutls_session_t session, gnutls_buffer_st * ps)
 			   info->dh.public_key.size);
 
 	/* write the real size */
-	_gnutls_write_uint32(ps->length - cur_size,
-			     ps->data + size_offset);
+	_gnutls_write_uint32(ps->length - cur_size, ps->data + size_offset);
 	return 0;
 }
 
-static int
-unpack_psk_auth_info(gnutls_session_t session, gnutls_buffer_st * ps)
+static int unpack_psk_auth_info(gnutls_session_t session, gnutls_buffer_st *ps)
 {
 	size_t username_size, hint_size;
 	int ret;
 	psk_auth_info_t info;
 	unsigned pack_size;
 
-	ret =
-	    _gnutls_auth_info_init(session, GNUTLS_CRD_PSK,
-				  sizeof(psk_auth_info_st), 1);
+	ret = _gnutls_auth_info_init(session, GNUTLS_CRD_PSK,
+				     sizeof(psk_auth_info_st), 1);
 	if (ret < 0) {
 		gnutls_assert();
 		return ret;
@@ -861,7 +829,7 @@ unpack_psk_auth_info(gnutls_session_t session, gnutls_buffer_st * ps)
 
 	ret = 0;
 
-      error:
+error:
 	_gnutls_free_datum(&info->dh.prime);
 	_gnutls_free_datum(&info->dh.generator);
 	_gnutls_free_datum(&info->dh.public_key);
@@ -870,19 +838,17 @@ unpack_psk_auth_info(gnutls_session_t session, gnutls_buffer_st * ps)
 }
 #endif
 
-
 /* Packs the security parameters.
  */
-static int
-pack_security_parameters(gnutls_session_t session, gnutls_buffer_st * ps)
+static int pack_security_parameters(gnutls_session_t session,
+				    gnutls_buffer_st *ps)
 {
-
 	int ret;
 	int size_offset;
 	size_t cur_size;
 
-	if (session->security_parameters.epoch_read
-	    != session->security_parameters.epoch_write &&
+	if (session->security_parameters.epoch_read !=
+		    session->security_parameters.epoch_write &&
 	    !(session->internals.hsk_flags & HSK_EARLY_START_USED)) {
 		gnutls_assert();
 		return GNUTLS_E_UNAVAILABLE_DURING_HANDSHAKE;
@@ -903,13 +869,10 @@ pack_security_parameters(gnutls_session_t session, gnutls_buffer_st * ps)
 	BUFFER_APPEND_NUM(ps, session->security_parameters.entity);
 	BUFFER_APPEND_NUM(ps, session->security_parameters.prf->id);
 
-	BUFFER_APPEND_NUM(ps,
-			  session->security_parameters.client_auth_type);
-	BUFFER_APPEND_NUM(ps,
-			  session->security_parameters.server_auth_type);
+	BUFFER_APPEND_NUM(ps, session->security_parameters.client_auth_type);
+	BUFFER_APPEND_NUM(ps, session->security_parameters.server_auth_type);
 
-	BUFFER_APPEND(ps, &session->security_parameters.session_id_size,
-		      1);
+	BUFFER_APPEND(ps, &session->security_parameters.session_id_size, 1);
 	BUFFER_APPEND(ps, session->security_parameters.session_id,
 		      session->security_parameters.session_id_size);
 
@@ -923,56 +886,56 @@ pack_security_parameters(gnutls_session_t session, gnutls_buffer_st * ps)
 	/* if we are under TLS 1.3 do not pack keys or params negotiated using an extension
 	 * they are not necessary */
 	if (!session->security_parameters.pversion->tls13_sem) {
-		BUFFER_APPEND_PFX1(ps, session->security_parameters.master_secret,
-			      GNUTLS_MASTER_SIZE);
-		BUFFER_APPEND_PFX1(ps, session->security_parameters.client_random,
-			      GNUTLS_RANDOM_SIZE);
-		BUFFER_APPEND_PFX1(ps, session->security_parameters.server_random,
-			      GNUTLS_RANDOM_SIZE);
+		BUFFER_APPEND_PFX1(ps,
+				   session->security_parameters.master_secret,
+				   GNUTLS_MASTER_SIZE);
+		BUFFER_APPEND_PFX1(ps,
+				   session->security_parameters.client_random,
+				   GNUTLS_RANDOM_SIZE);
+		BUFFER_APPEND_PFX1(ps,
+				   session->security_parameters.server_random,
+				   GNUTLS_RANDOM_SIZE);
 
 		/* reset max_record_recv_size if it was negotiated
 		 * using the record_size_limit extension */
-		if (session->internals.hsk_flags & HSK_RECORD_SIZE_LIMIT_NEGOTIATED) {
+		if (session->internals.hsk_flags &
+		    HSK_RECORD_SIZE_LIMIT_NEGOTIATED) {
 			BUFFER_APPEND_NUM(ps,
-					  session->security_parameters.
-					  max_user_record_send_size);
+					  session->security_parameters
+						  .max_user_record_send_size);
 			BUFFER_APPEND_NUM(ps,
-					  session->security_parameters.
-					  max_user_record_recv_size);
+					  session->security_parameters
+						  .max_user_record_recv_size);
 		} else {
-			BUFFER_APPEND_NUM(ps,
-					  session->security_parameters.
-					  max_record_recv_size);
-			BUFFER_APPEND_NUM(ps,
-					  session->security_parameters.
-					  max_record_send_size);
+			BUFFER_APPEND_NUM(ps, session->security_parameters
+						      .max_record_recv_size);
+			BUFFER_APPEND_NUM(ps, session->security_parameters
+						      .max_record_send_size);
 		}
 
 		if (session->security_parameters.grp) {
-			BUFFER_APPEND_NUM(ps, session->security_parameters.grp->id);
+			BUFFER_APPEND_NUM(ps,
+					  session->security_parameters.grp->id);
 		} else {
 			BUFFER_APPEND_NUM(ps, 0);
 		}
 
-		BUFFER_APPEND_NUM(ps,
-				  session->security_parameters.server_sign_algo);
-		BUFFER_APPEND_NUM(ps,
-				  session->security_parameters.client_sign_algo);
-		BUFFER_APPEND_NUM(ps,
-				  session->security_parameters.ext_master_secret);
-		BUFFER_APPEND_NUM(ps,
-				  session->security_parameters.etm);
+		BUFFER_APPEND_NUM(
+			ps, session->security_parameters.server_sign_algo);
+		BUFFER_APPEND_NUM(
+			ps, session->security_parameters.client_sign_algo);
+		BUFFER_APPEND_NUM(
+			ps, session->security_parameters.ext_master_secret);
+		BUFFER_APPEND_NUM(ps, session->security_parameters.etm);
 	}
 
-
-	_gnutls_write_uint32(ps->length - cur_size,
-			     ps->data + size_offset);
+	_gnutls_write_uint32(ps->length - cur_size, ps->data + size_offset);
 
 	return 0;
 }
 
-static int
-unpack_security_parameters(gnutls_session_t session, gnutls_buffer_st * ps)
+static int unpack_security_parameters(gnutls_session_t session,
+				      gnutls_buffer_st *ps)
 {
 	size_t pack_size;
 	int ret;
@@ -986,55 +949,50 @@ unpack_security_parameters(gnutls_session_t session, gnutls_buffer_st * ps)
 	if (pack_size == 0)
 		return GNUTLS_E_INVALID_REQUEST;
 
-	timestamp =
-	    session->internals.resumed_security_parameters.timestamp;
+	timestamp = session->internals.resumed_security_parameters.timestamp;
 	memset(&session->internals.resumed_security_parameters, 0,
 	       sizeof(session->internals.resumed_security_parameters));
-	session->internals.resumed_security_parameters.timestamp =
-	    timestamp;
+	session->internals.resumed_security_parameters.timestamp = timestamp;
 
 	BUFFER_POP_NUM(ps,
-		       session->internals.resumed_security_parameters.
-		       entity);
+		       session->internals.resumed_security_parameters.entity);
 
 	BUFFER_POP_NUM(ps, version);
-	session->internals.resumed_security_parameters.prf = mac_to_entry(version);
+	session->internals.resumed_security_parameters.prf =
+		mac_to_entry(version);
 	if (session->internals.resumed_security_parameters.prf == NULL)
 		return gnutls_assert_val(GNUTLS_E_INVALID_REQUEST);
 
-	BUFFER_POP_NUM(ps,
-		       session->internals.resumed_security_parameters.
-		       client_auth_type);
-	BUFFER_POP_NUM(ps,
-		       session->internals.resumed_security_parameters.
-		       server_auth_type);
+	BUFFER_POP_NUM(ps, session->internals.resumed_security_parameters
+				   .client_auth_type);
+	BUFFER_POP_NUM(ps, session->internals.resumed_security_parameters
+				   .server_auth_type);
 
-	BUFFER_POP(ps,
-		   &session->internals.resumed_security_parameters.
-		   session_id_size, 1);
+	BUFFER_POP(
+		ps,
+		&session->internals.resumed_security_parameters.session_id_size,
+		1);
 
-	BUFFER_POP(ps,
-		   session->internals.resumed_security_parameters.
-		   session_id,
-		   session->internals.resumed_security_parameters.
-		   session_id_size);
+	BUFFER_POP(
+		ps, session->internals.resumed_security_parameters.session_id,
+		session->internals.resumed_security_parameters.session_id_size);
 
 	BUFFER_POP_NUM(ps, version);
 	session->internals.resumed_security_parameters.pversion =
-	    version_to_entry(version);
-	if (session->internals.resumed_security_parameters.pversion ==
-	    NULL)
+		version_to_entry(version);
+	if (session->internals.resumed_security_parameters.pversion == NULL)
 		return gnutls_assert_val(GNUTLS_E_INVALID_REQUEST);
 
-	BUFFER_POP_NUM(ps,
-		       session->internals.resumed_security_parameters.
-		       client_ctype);
-	BUFFER_POP_NUM(ps,
-		       session->internals.resumed_security_parameters.
-		       server_ctype);
+	BUFFER_POP_NUM(
+		ps,
+		session->internals.resumed_security_parameters.client_ctype);
+	BUFFER_POP_NUM(
+		ps,
+		session->internals.resumed_security_parameters.server_ctype);
 
 	BUFFER_POP(ps, cs, 2);
-	session->internals.resumed_security_parameters.cs = ciphersuite_to_entry(cs);
+	session->internals.resumed_security_parameters.cs =
+		ciphersuite_to_entry(cs);
 	if (session->internals.resumed_security_parameters.cs == NULL)
 		return gnutls_assert_val(GNUTLS_E_INVALID_REQUEST);
 
@@ -1047,7 +1005,9 @@ unpack_security_parameters(gnutls_session_t session, gnutls_buffer_st * ps)
 			goto error;
 		}
 		if (t.size == GNUTLS_MASTER_SIZE)
-			memcpy(session->internals.resumed_security_parameters.master_secret, t.data, t.size);
+			memcpy(session->internals.resumed_security_parameters
+				       .master_secret,
+			       t.data, t.size);
 
 		/* client random */
 		ret = _gnutls_buffer_pop_datum_prefix8(ps, &t);
@@ -1057,7 +1017,9 @@ unpack_security_parameters(gnutls_session_t session, gnutls_buffer_st * ps)
 			goto error;
 		}
 		if (t.size == GNUTLS_RANDOM_SIZE)
-			memcpy(session->internals.resumed_security_parameters.client_random, t.data, t.size);
+			memcpy(session->internals.resumed_security_parameters
+				       .client_random,
+			       t.data, t.size);
 
 		/* server random */
 		ret = _gnutls_buffer_pop_datum_prefix8(ps, &t);
@@ -1067,44 +1029,45 @@ unpack_security_parameters(gnutls_session_t session, gnutls_buffer_st * ps)
 			goto error;
 		}
 		if (t.size == GNUTLS_RANDOM_SIZE)
-			memcpy(session->internals.resumed_security_parameters.server_random, t.data, t.size);
-
+			memcpy(session->internals.resumed_security_parameters
+				       .server_random,
+			       t.data, t.size);
 
 		BUFFER_POP_NUM(ps,
-			       session->internals.resumed_security_parameters.
-			       max_record_send_size);
+			       session->internals.resumed_security_parameters
+				       .max_record_send_size);
 		BUFFER_POP_NUM(ps,
-			       session->internals.resumed_security_parameters.
-			       max_record_recv_size);
+			       session->internals.resumed_security_parameters
+				       .max_record_recv_size);
 
 		BUFFER_POP_NUM(ps, ret);
-		session->internals.resumed_security_parameters.grp = _gnutls_id_to_group(ret);
+		session->internals.resumed_security_parameters.grp =
+			_gnutls_id_to_group(ret);
 		/* it can be null */
 
 		BUFFER_POP_NUM(ps,
-			       session->internals.resumed_security_parameters.
-			       server_sign_algo);
+			       session->internals.resumed_security_parameters
+				       .server_sign_algo);
 		BUFFER_POP_NUM(ps,
-			       session->internals.resumed_security_parameters.
-			       client_sign_algo);
+			       session->internals.resumed_security_parameters
+				       .client_sign_algo);
 		BUFFER_POP_NUM(ps,
-			       session->internals.resumed_security_parameters.
-			       ext_master_secret);
-		BUFFER_POP_NUM(ps,
-			       session->internals.resumed_security_parameters.
-			       etm);
+			       session->internals.resumed_security_parameters
+				       .ext_master_secret);
+		BUFFER_POP_NUM(
+			ps, session->internals.resumed_security_parameters.etm);
 
-		if (session->internals.resumed_security_parameters.
-		    max_record_recv_size == 0
-		    || session->internals.resumed_security_parameters.
-		    max_record_send_size == 0) {
+		if (session->internals.resumed_security_parameters
+				    .max_record_recv_size == 0 ||
+		    session->internals.resumed_security_parameters
+				    .max_record_send_size == 0) {
 			return gnutls_assert_val(GNUTLS_E_INTERNAL_ERROR);
 		}
 	}
 
 	ret = 0;
 
-      error:
+error:
 	return ret;
 }
 
@@ -1128,15 +1091,14 @@ unpack_security_parameters(gnutls_session_t session, gnutls_buffer_st * ps)
  * Returns: On success, %GNUTLS_E_SUCCESS (0) is returned, otherwise
  *   an error code is returned.
  **/
-int
-gnutls_session_set_premaster(gnutls_session_t session, unsigned int entity,
-			     gnutls_protocol_t version,
-			     gnutls_kx_algorithm_t kx,
-			     gnutls_cipher_algorithm_t cipher,
-			     gnutls_mac_algorithm_t mac,
-			     gnutls_compression_method_t comp,
-			     const gnutls_datum_t * master,
-			     const gnutls_datum_t * session_id)
+int gnutls_session_set_premaster(gnutls_session_t session, unsigned int entity,
+				 gnutls_protocol_t version,
+				 gnutls_kx_algorithm_t kx,
+				 gnutls_cipher_algorithm_t cipher,
+				 gnutls_mac_algorithm_t mac,
+				 gnutls_compression_method_t comp,
+				 const gnutls_datum_t *master,
+				 const gnutls_datum_t *session_id)
 {
 	int ret;
 	uint8_t cs[2];
@@ -1146,53 +1108,55 @@ gnutls_session_set_premaster(gnutls_session_t session, unsigned int entity,
 
 	session->internals.resumed_security_parameters.entity = entity;
 
-	ret =
-	    _gnutls_cipher_suite_get_id(kx, cipher, mac, cs);
+	ret = _gnutls_cipher_suite_get_id(kx, cipher, mac, cs);
 	if (ret < 0)
 		return gnutls_assert_val(ret);
 
-	session->internals.resumed_security_parameters.cs = ciphersuite_to_entry(cs);
+	session->internals.resumed_security_parameters.cs =
+		ciphersuite_to_entry(cs);
 	if (session->internals.resumed_security_parameters.cs == NULL)
 		return gnutls_assert_val(GNUTLS_E_INVALID_REQUEST);
 
 	session->internals.resumed_security_parameters.client_ctype =
-			DEFAULT_CERT_TYPE;
+		DEFAULT_CERT_TYPE;
 	session->internals.resumed_security_parameters.server_ctype =
-			DEFAULT_CERT_TYPE;
+		DEFAULT_CERT_TYPE;
 	session->internals.resumed_security_parameters.pversion =
-	    version_to_entry(version);
-	if (session->internals.resumed_security_parameters.pversion ==
-	    NULL)
+		version_to_entry(version);
+	if (session->internals.resumed_security_parameters.pversion == NULL)
 		return gnutls_assert_val(GNUTLS_E_INVALID_REQUEST);
 
-	if (session->internals.resumed_security_parameters.pversion->selectable_prf)
-		session->internals.resumed_security_parameters.prf = mac_to_entry(session->internals.resumed_security_parameters.cs->prf);
+	if (session->internals.resumed_security_parameters.pversion
+		    ->selectable_prf)
+		session->internals.resumed_security_parameters
+			.prf = mac_to_entry(
+			session->internals.resumed_security_parameters.cs->prf);
 	else
-		session->internals.resumed_security_parameters.prf = mac_to_entry(GNUTLS_MAC_MD5_SHA1);
+		session->internals.resumed_security_parameters.prf =
+			mac_to_entry(GNUTLS_MAC_MD5_SHA1);
 	if (session->internals.resumed_security_parameters.prf == NULL)
 		return gnutls_assert_val(GNUTLS_E_INVALID_REQUEST);
 
 	if (master->size != GNUTLS_MASTER_SIZE)
 		return gnutls_assert_val(GNUTLS_E_INVALID_REQUEST);
 
-	memcpy(session->internals.resumed_security_parameters.
-	       master_secret, master->data, master->size);
+	memcpy(session->internals.resumed_security_parameters.master_secret,
+	       master->data, master->size);
 
 	if (session_id->size > GNUTLS_MAX_SESSION_ID)
 		return gnutls_assert_val(GNUTLS_E_INVALID_REQUEST);
 
 	session->internals.resumed_security_parameters.session_id_size =
-	    session_id->size;
+		session_id->size;
 	memcpy(session->internals.resumed_security_parameters.session_id,
 	       session_id->data, session_id->size);
 
-	session->internals.resumed_security_parameters.
-	    max_record_send_size =
-	    session->internals.resumed_security_parameters.
-	    max_record_recv_size = DEFAULT_MAX_RECORD_SIZE;
+	session->internals.resumed_security_parameters.max_record_send_size =
+		session->internals.resumed_security_parameters
+			.max_record_recv_size = DEFAULT_MAX_RECORD_SIZE;
 
 	session->internals.resumed_security_parameters.timestamp =
-	    gnutls_time(0);
+		gnutls_time(0);
 
 	session->internals.resumed_security_parameters.grp = 0;
 

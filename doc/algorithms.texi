@@ -535,33 +535,6 @@
 @item TLS_@-ECDH_@-ANON_@-ARCFOUR_@-128_@-SHA1
 @tab 0xC0 0x16
 @tab TLS1.0
-@item TLS_@-SRP_@-SHA_@-3DES_@-EDE_@-CBC_@-SHA1
-@tab 0xC0 0x1A
-@tab TLS1.0
-@item TLS_@-SRP_@-SHA_@-AES_@-128_@-CBC_@-SHA1
-@tab 0xC0 0x1D
-@tab TLS1.0
-@item TLS_@-SRP_@-SHA_@-AES_@-256_@-CBC_@-SHA1
-@tab 0xC0 0x20
-@tab TLS1.0
-@item TLS_@-SRP_@-SHA_@-DSS_@-3DES_@-EDE_@-CBC_@-SHA1
-@tab 0xC0 0x1C
-@tab TLS1.0
-@item TLS_@-SRP_@-SHA_@-RSA_@-3DES_@-EDE_@-CBC_@-SHA1
-@tab 0xC0 0x1B
-@tab TLS1.0
-@item TLS_@-SRP_@-SHA_@-DSS_@-AES_@-128_@-CBC_@-SHA1
-@tab 0xC0 0x1F
-@tab TLS1.0
-@item TLS_@-SRP_@-SHA_@-RSA_@-AES_@-128_@-CBC_@-SHA1
-@tab 0xC0 0x1E
-@tab TLS1.0
-@item TLS_@-SRP_@-SHA_@-DSS_@-AES_@-256_@-CBC_@-SHA1
-@tab 0xC0 0x22
-@tab TLS1.0
-@item TLS_@-SRP_@-SHA_@-RSA_@-AES_@-256_@-CBC_@-SHA1
-@tab 0xC0 0x21
-@tab TLS1.0
 @item TLS_@-GOSTR341112_@-256_@-28147_@-CNT_@-IMIT
 @tab 0xC1 0x02
 @tab TLS1.2
@@ -664,9 +637,6 @@
 @item RSA-PSK
 @item DHE-PSK
 @item ECDHE-PSK
-@item SRP-DSS
-@item SRP-RSA
-@item SRP
 @item ANON-DH
 @item ANON-ECDH
 @item VKO-GOST-12

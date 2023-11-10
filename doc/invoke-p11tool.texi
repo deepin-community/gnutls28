@@ -100,7 +100,7 @@ Writing objects:
        --mark-wrap            Marks the generated key to be a wrapping key
        --mark-trusted         Marks the object to be written as trusted
 				- prohibits the option 'mark-distrusted'
-       --mark-distrusted      When retrieving objects, it requires the objects to be distrusted (blacklisted)
+       --mark-distrusted      When retrieving objects, it requires the objects to be distrusted
 				- prohibits the option 'mark-trusted'
        --mark-decrypt         Marks the object to be written for decryption
        --mark-sign            Marks the object to be written for signature generation
@@ -412,7 +412,7 @@ Marks the object to be generated/written with the CKA_TRUST flag.
 @subsubheading mark-distrusted option.
 @anchor{p11tool mark-distrusted}
 
-This is the ``when retrieving objects, it requires the objects to be distrusted (blacklisted)'' option.
+This is the ``when retrieving objects, it requires the objects to be distrusted'' option.
 
 @noindent
 This option has some usage constraints.  It:

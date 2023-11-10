@@ -28,7 +28,7 @@
 
 #if defined(_WIN32)
 
-int main()
+int main(void)
 {
 	exit(77);
 }
@@ -92,7 +92,10 @@ static void client(int fd)
 
 	gnutls_handshake_set_timeout(session, get_timeout());
 
-	ret = gnutls_priority_set_direct(session, "NORMAL:-VERS-ALL:+VERS-TLS1.3:+VERS-TLS1.2:+VERS-TLS1.0", NULL);
+	ret = gnutls_priority_set_direct(
+		session,
+		"NORMAL:-VERS-ALL:+VERS-TLS1.3:+VERS-TLS1.2:+VERS-TLS1.0",
+		NULL);
 	if (ret < 0)
 		fail("cannot set TLS 1.3 priorities\n");
 
@@ -106,13 +109,13 @@ static void client(int fd)
 	 */
 	do {
 		ret = gnutls_handshake(session);
-	}
-	while (ret < 0 && gnutls_error_is_fatal(ret) == 0);
+	} while (ret < 0 && gnutls_error_is_fatal(ret) == 0);
 
 	/* try if gnutls_reauth() would fail as expected */
 	ret = gnutls_reauth(session, 0);
 	if (ret != GNUTLS_E_INVALID_REQUEST)
-		fail("server: gnutls_reauth did not fail as expected: %s", gnutls_strerror(ret));
+		fail("server: gnutls_reauth did not fail as expected: %s",
+		     gnutls_strerror(ret));
 
 	close(fd);
 
@@ -128,10 +131,13 @@ static unsigned server_hello_ok = 0;
 #define TLS_EXT_POST_HANDSHAKE 49
 
 static int hellos_callback(gnutls_session_t session, unsigned int htype,
-	unsigned post, unsigned int incoming, const gnutls_datum_t *msg)
+			   unsigned post, unsigned int incoming,
+			   const gnutls_datum_t *msg)
 {
-	if (htype == GNUTLS_HANDSHAKE_SERVER_HELLO && post == GNUTLS_HOOK_POST) {
-		if (find_server_extension(msg, TLS_EXT_POST_HANDSHAKE, NULL, NULL)) {
+	if (htype == GNUTLS_HANDSHAKE_SERVER_HELLO &&
+	    post == GNUTLS_HOOK_POST) {
+		if (find_server_extension(msg, TLS_EXT_POST_HANDSHAKE, NULL,
+					  NULL)) {
 			fail("Post handshake extension seen in server hello!\n");
 		}
 		server_hello_ok = 1;
@@ -167,15 +173,13 @@ static void server(int fd)
 
 	gnutls_certificate_allocate_credentials(&x509_cred);
 	gnutls_certificate_set_x509_key_mem(x509_cred, &server_cert,
-					    &server_key,
-					    GNUTLS_X509_FMT_PEM);
+					    &server_key, GNUTLS_X509_FMT_PEM);
 
 	gnutls_init(&session, GNUTLS_SERVER);
 
 	gnutls_handshake_set_timeout(session, get_timeout());
 	gnutls_handshake_set_hook_function(session, GNUTLS_HANDSHAKE_ANY,
-					   GNUTLS_HOOK_BOTH,
-					   hellos_callback);
+					   GNUTLS_HOOK_BOTH, hellos_callback);
 
 	/* avoid calling all the priority functions, since the defaults
 	 * are adequate.
@@ -193,7 +197,8 @@ static void server(int fd)
 		}
 	} while (ret < 0 && gnutls_error_is_fatal(ret) == 0);
 
-	if ((gnutls_session_get_flags(session) & GNUTLS_SFLAGS_POST_HANDSHAKE_AUTH)) {
+	if ((gnutls_session_get_flags(session) &
+	     GNUTLS_SFLAGS_POST_HANDSHAKE_AUTH)) {
 		fail("server: session flags did contain GNUTLS_SFLAGS_POST_HANDSHAKE_AUTH\n");
 	}
 
@@ -204,7 +209,8 @@ static void server(int fd)
 	/* try if gnutls_reauth() would fail as expected */
 	ret = gnutls_reauth(session, 0);
 	if (ret != GNUTLS_E_INVALID_REQUEST)
-		fail("server: gnutls_reauth did not fail as expected: %s", gnutls_strerror(ret));
+		fail("server: gnutls_reauth did not fail as expected: %s",
+		     gnutls_strerror(ret));
 
 	close(fd);
 	gnutls_deinit(session);
@@ -259,4 +265,4 @@ void doit(void)
 	}
 }
 
-#endif				/* _WIN32 */
+#endif /* _WIN32 */

@@ -37,10 +37,12 @@
 #include <read-file.h>
 #include <socket.h>
 #include <minmax.h>
+#include "parse-datetime.h"
 
 #include <ocsptool-common.h>
 #include "ocsptool-options.h"
 #include "certtool-common.h"
+#include "common.h"
 
 FILE *outfile;
 static unsigned int incert_format, outcert_format;
@@ -79,7 +81,7 @@ gnutls_session_t init_tls_session(const char *host)
 	return NULL;
 }
 
-int do_handshake(socket_st * socket)
+int do_handshake(socket_st *socket)
 {
 	return -1;
 }
@@ -98,16 +100,15 @@ static void request_info(void)
 	}
 
 	if (HAVE_OPT(LOAD_REQUEST))
-		dat.data =
-		    (void *) read_file(OPT_ARG(LOAD_REQUEST), RF_BINARY, &size);
+		dat.data = (void *)read_file(OPT_ARG(LOAD_REQUEST), RF_BINARY,
+					     &size);
 	else
-		dat.data = (void *) fread_file(infile, 0, &size);
+		dat.data = (void *)fread_file(infile, 0, &size);
 	if (dat.data == NULL) {
 		fprintf(stderr, "error reading request\n");
 		app_exit(1);
 	}
 	dat.size = size;
-
 
 	ret = gnutls_ocsp_req_import(req, &dat);
 	free(dat.data);
@@ -119,8 +120,7 @@ static void request_info(void)
 
 	ret = gnutls_ocsp_req_print(req, GNUTLS_OCSP_PRINT_FULL, &dat);
 	if (ret != 0) {
-		fprintf(stderr, "ocsp_req_print: %s\n",
-			gnutls_strerror(ret));
+		fprintf(stderr, "ocsp_req_print: %s\n", gnutls_strerror(ret));
 		app_exit(1);
 	}
 
@@ -133,7 +133,8 @@ static void request_info(void)
 		}
 
 		if (outcert_format == GNUTLS_X509_FMT_PEM) {
-			fprintf(stderr, "Cannot export requests into PEM form\n");
+			fprintf(stderr,
+				"Cannot export requests into PEM form\n");
 			app_exit(1);
 		} else {
 			fwrite(rbuf.data, 1, rbuf.size, outfile);
@@ -149,7 +150,7 @@ static void request_info(void)
 	gnutls_ocsp_req_deinit(req);
 }
 
-static void _response_info(const gnutls_datum_t * data, unsigned force_print)
+static void _response_info(const gnutls_datum_t *data, unsigned force_print)
 {
 	gnutls_ocsp_resp_t resp;
 	int ret;
@@ -162,8 +163,7 @@ static void _response_info(const gnutls_datum_t * data, unsigned force_print)
 
 	ret = gnutls_ocsp_resp_init(&resp);
 	if (ret < 0) {
-		fprintf(stderr, "ocsp_resp_init: %s\n",
-			gnutls_strerror(ret));
+		fprintf(stderr, "ocsp_resp_init: %s\n", gnutls_strerror(ret));
 		app_exit(1);
 	}
 
@@ -180,16 +180,13 @@ static void _response_info(const gnutls_datum_t * data, unsigned force_print)
 	}
 
 	if (ENABLED_OPT(VERBOSE))
-		ret =
-		    gnutls_ocsp_resp_print(resp, GNUTLS_OCSP_PRINT_FULL,
-					   &buf);
+		ret = gnutls_ocsp_resp_print(resp, GNUTLS_OCSP_PRINT_FULL,
+					     &buf);
 	else
-		ret =
-		    gnutls_ocsp_resp_print(resp, GNUTLS_OCSP_PRINT_COMPACT,
-					   &buf);
+		ret = gnutls_ocsp_resp_print(resp, GNUTLS_OCSP_PRINT_COMPACT,
+					     &buf);
 	if (ret != 0) {
-		fprintf(stderr, "ocsp_resp_print: %s\n",
-			gnutls_strerror(ret));
+		fprintf(stderr, "ocsp_resp_print: %s\n", gnutls_strerror(ret));
 		app_exit(1);
 	}
 
@@ -212,7 +209,8 @@ static void _response_info(const gnutls_datum_t * data, unsigned force_print)
 	}
 
 	if (force_print || !HAVE_OPT(OUTFILE)) {
-		ret = gnutls_ocsp_resp_export2(resp, &rbuf, GNUTLS_X509_FMT_PEM);
+		ret = gnutls_ocsp_resp_export2(resp, &rbuf,
+					       GNUTLS_X509_FMT_PEM);
 		if (ret < 0) {
 			fprintf(stderr, "error exporting response: %s\n",
 				gnutls_strerror(ret));
@@ -234,10 +232,10 @@ static void response_info(void)
 	size_t size;
 
 	if (HAVE_OPT(LOAD_RESPONSE))
-		dat.data =
-		    (void *) read_file(OPT_ARG(LOAD_RESPONSE), RF_BINARY, &size);
+		dat.data = (void *)read_file(OPT_ARG(LOAD_RESPONSE), RF_BINARY,
+					     &size);
 	else
-		dat.data = (void *) fread_file(infile, 0, &size);
+		dat.data = (void *)fread_file(infile, 0, &size);
 	if (dat.data == NULL) {
 		fprintf(stderr, "error reading response\n");
 		app_exit(1);
@@ -284,9 +282,8 @@ static void generate_request(gnutls_datum_t *nonce)
 	gnutls_free(dat.data);
 }
 
-
-static int _verify_response(gnutls_datum_t * data, gnutls_datum_t * nonce,
-	gnutls_x509_crt_t signer, unsigned print_resp)
+static int _verify_response(gnutls_datum_t *data, gnutls_datum_t *nonce,
+			    gnutls_x509_crt_t signer, unsigned print_resp)
 {
 	gnutls_ocsp_resp_t resp;
 	int ret;
@@ -295,12 +292,11 @@ static int _verify_response(gnutls_datum_t * data, gnutls_datum_t * nonce,
 	gnutls_x509_trust_list_t list;
 	unsigned int x509_ncas = 0;
 	unsigned verify;
-	gnutls_datum_t dat;
+	gnutls_datum_t dat = { NULL, 0 };
 
 	ret = gnutls_ocsp_resp_init(&resp);
 	if (ret < 0) {
-		fprintf(stderr, "ocsp_resp_init: %s\n",
-			gnutls_strerror(ret));
+		fprintf(stderr, "ocsp_resp_init: %s\n", gnutls_strerror(ret));
 		app_exit(1);
 	}
 
@@ -312,9 +308,8 @@ static int _verify_response(gnutls_datum_t * data, gnutls_datum_t * nonce,
 	}
 
 	if (print_resp) {
-		ret =
-		    gnutls_ocsp_resp_print(resp, GNUTLS_OCSP_PRINT_COMPACT,
-					   &dat);
+		ret = gnutls_ocsp_resp_print(resp, GNUTLS_OCSP_PRINT_COMPACT,
+					     &dat);
 		if (ret < 0) {
 			fprintf(stderr, "ocsp_resp_print: %s\n",
 				gnutls_strerror(ret));
@@ -335,9 +330,10 @@ static int _verify_response(gnutls_datum_t * data, gnutls_datum_t * nonce,
 			app_exit(1);
 		}
 
-		if (rnonce.size != nonce->size || memcmp(nonce->data, rnonce.data,
-			nonce->size) != 0) {
-			fprintf(stderr, "nonce in the response doesn't match\n");
+		if (rnonce.size != nonce->size ||
+		    memcmp(nonce->data, rnonce.data, nonce->size) != 0) {
+			fprintf(stderr,
+				"nonce in the response doesn't match\n");
 			app_exit(1);
 		}
 
@@ -345,8 +341,8 @@ static int _verify_response(gnutls_datum_t * data, gnutls_datum_t * nonce,
 	}
 
 	if (HAVE_OPT(LOAD_TRUST)) {
-		dat.data =
-		    (void *) read_file(OPT_ARG(LOAD_TRUST), RF_BINARY, &size);
+		dat.data = (void *)read_file(OPT_ARG(LOAD_TRUST), RF_BINARY,
+					     &size);
 		if (dat.data == NULL) {
 			fprintf(stderr, "error reading --load-trust: %s\n",
 				OPT_ARG(LOAD_TRUST));
@@ -361,15 +357,15 @@ static int _verify_response(gnutls_datum_t * data, gnutls_datum_t * nonce,
 			app_exit(1);
 		}
 
-		ret =
-		    gnutls_x509_crt_list_import2(&x509_ca_list, &x509_ncas,
-						 &dat, GNUTLS_X509_FMT_PEM,
-						 0);
+		ret = gnutls_x509_crt_list_import2(&x509_ca_list, &x509_ncas,
+						   &dat, GNUTLS_X509_FMT_PEM,
+						   0);
 		if (ret < 0 || x509_ncas < 1) {
 			fprintf(stderr, "error parsing CAs: %s\n",
 				gnutls_strerror(ret));
 			app_exit(1);
 		}
+		gnutls_free(dat.data);
 
 		if (HAVE_OPT(VERBOSE)) {
 			unsigned int i;
@@ -377,10 +373,9 @@ static int _verify_response(gnutls_datum_t * data, gnutls_datum_t * nonce,
 			for (i = 0; i < x509_ncas; i++) {
 				gnutls_datum_t out;
 
-				ret =
-				    gnutls_x509_crt_print(x509_ca_list[i],
-							  GNUTLS_CRT_PRINT_ONELINE,
-							  &out);
+				ret = gnutls_x509_crt_print(
+					x509_ca_list[i],
+					GNUTLS_CRT_PRINT_ONELINE, &out);
 				if (ret < 0) {
 					fprintf(stderr,
 						"gnutls_x509_crt_print: %s\n",
@@ -388,16 +383,14 @@ static int _verify_response(gnutls_datum_t * data, gnutls_datum_t * nonce,
 					app_exit(1);
 				}
 
-				printf("%d: %.*s\n", i, out.size,
-				       out.data);
+				printf("%d: %.*s\n", i, out.size, out.data);
 				gnutls_free(out.data);
 			}
 			printf("\n");
 		}
 
-		ret =
-		    gnutls_x509_trust_list_add_cas(list, x509_ca_list,
-						   x509_ncas, 0);
+		ret = gnutls_x509_trust_list_add_cas(list, x509_ca_list,
+						     x509_ncas, 0);
 		if (ret < 0) {
 			fprintf(stderr, "gnutls_x509_trust_add_cas: %s\n",
 				gnutls_strerror(ret));
@@ -405,8 +398,7 @@ static int _verify_response(gnutls_datum_t * data, gnutls_datum_t * nonce,
 		}
 
 		if (HAVE_OPT(VERBOSE))
-			fprintf(stdout, "Loaded %d trust anchors\n",
-				x509_ncas);
+			fprintf(stdout, "Loaded %d trust anchors\n", x509_ncas);
 
 		ret = gnutls_ocsp_resp_verify(resp, list, &verify, vflags);
 		if (ret < 0) {
@@ -414,17 +406,16 @@ static int _verify_response(gnutls_datum_t * data, gnutls_datum_t * nonce,
 				gnutls_strerror(ret));
 			app_exit(1);
 		}
+		gnutls_x509_trust_list_deinit(list, 1);
+		gnutls_free(x509_ca_list);
 	} else if (signer) {
 		if (HAVE_OPT(VERBOSE)) {
 			gnutls_datum_t out;
 
-			ret =
-			    gnutls_x509_crt_print(signer,
-						  GNUTLS_CRT_PRINT_ONELINE,
-						  &out);
+			ret = gnutls_x509_crt_print(
+				signer, GNUTLS_CRT_PRINT_ONELINE, &out);
 			if (ret < 0) {
-				fprintf(stderr,
-					"gnutls_x509_crt_print: %s\n",
+				fprintf(stderr, "gnutls_x509_crt_print: %s\n",
 					gnutls_strerror(ret));
 				app_exit(1);
 			}
@@ -434,12 +425,10 @@ static int _verify_response(gnutls_datum_t * data, gnutls_datum_t * nonce,
 			printf("\n");
 		}
 
-		ret =
-		    gnutls_ocsp_resp_verify_direct(resp, signer, &verify,
-						   vflags);
+		ret = gnutls_ocsp_resp_verify_direct(resp, signer, &verify,
+						     vflags);
 		if (ret < 0) {
-			fprintf(stderr,
-				"\nVerifying OCSP Response: %s\n",
+			fprintf(stderr, "\nVerifying OCSP Response: %s\n",
 				gnutls_strerror(ret));
 			app_exit(1);
 		}
@@ -459,8 +448,7 @@ static int _verify_response(gnutls_datum_t * data, gnutls_datum_t * nonce,
 
 #define MAX_CHAIN_SIZE 8
 
-static
-unsigned load_chain(gnutls_x509_crt_t chain[MAX_CHAIN_SIZE])
+static unsigned load_chain(gnutls_x509_crt_t chain[MAX_CHAIN_SIZE])
 {
 	if (HAVE_OPT(LOAD_CHAIN)) {
 		common_info_st info;
@@ -480,7 +468,7 @@ unsigned load_chain(gnutls_x509_crt_t chain[MAX_CHAIN_SIZE])
 			app_exit(1);
 		}
 
-		for (i=0;i<list_size;i++)
+		for (i = 0; i < list_size; i++)
 			chain[i] = list[i];
 		gnutls_free(list);
 		return list_size;
@@ -521,10 +509,10 @@ static void verify_response(gnutls_datum_t *nonce)
 	unsigned chain_size = 0, i;
 
 	if (HAVE_OPT(LOAD_RESPONSE))
-		dat.data =
-		    (void *) read_file(OPT_ARG(LOAD_RESPONSE), RF_BINARY, &size);
+		dat.data = (void *)read_file(OPT_ARG(LOAD_RESPONSE), RF_BINARY,
+					     &size);
 	else
-		dat.data = (void *) fread_file(infile, 0, &size);
+		dat.data = (void *)fread_file(infile, 0, &size);
 	if (dat.data == NULL) {
 		fprintf(stderr, "error reading response\n");
 		app_exit(1);
@@ -545,7 +533,7 @@ static void verify_response(gnutls_datum_t *nonce)
 
 		v = _verify_response(&dat, nonce, signer, 1);
 
-		for (i=0;i<chain_size;i++)
+		for (i = 0; i < chain_size; i++)
 			gnutls_x509_crt_deinit(chain[i]);
 	} else if (HAVE_OPT(LOAD_TRUST)) {
 		v = _verify_response(&dat, nonce, NULL, 1);
@@ -553,7 +541,8 @@ static void verify_response(gnutls_datum_t *nonce)
 		memset(&info, 0, sizeof(info));
 		info.verbose = verbose;
 		if (!HAVE_OPT(LOAD_SIGNER)) {
-			fprintf(stderr, "Missing option --load-signer or --load-chain\n");
+			fprintf(stderr,
+				"Missing option --load-signer or --load-chain\n");
 			app_exit(1);
 		}
 		info.cert = OPT_ARG(LOAD_SIGNER);
@@ -586,17 +575,18 @@ static void ask_server(const char *url)
 
 	if (chain_size > 2 && HAVE_OPT(OUTFILE)) {
 		if (outcert_format != GNUTLS_X509_FMT_PEM) {
-			fprintf(stderr, "error: You cannot combine --outfile when more than 2 certificates are found in a chain\n");
+			fprintf(stderr,
+				"error: You cannot combine --outfile when more than 2 certificates are found in a chain\n");
 			fprintf(stderr, "Did you mean to use --outpem?\n");
 			app_exit(1);
 		}
 	}
 
 	counter = chain_size;
-	while(counter > 1) {
+	while (counter > 1) {
 		if (ENABLED_OPT(NONCE)) {
-			ret =
-			    gnutls_rnd(GNUTLS_RND_NONCE, nonce.data, nonce.size);
+			ret = gnutls_rnd(GNUTLS_RND_NONCE, nonce.data,
+					 nonce.size);
 			if (ret < 0) {
 				fprintf(stderr, "gnutls_rnd: %s\n",
 					gnutls_strerror(ret));
@@ -607,8 +597,8 @@ static void ask_server(const char *url)
 			n = NULL;
 		}
 
-		ret =
-		    send_ocsp_request(url, chain[idx], chain[idx+1], &resp_data, n);
+		ret = send_ocsp_request(url, chain[idx], chain[idx + 1],
+					&resp_data, n);
 		if (ret < 0) {
 			fprintf(stderr, "Cannot send OCSP request\n");
 			app_exit(1);
@@ -623,13 +613,14 @@ static void ask_server(const char *url)
 			info.verbose = verbose;
 			info.cert = OPT_ARG(LOAD_SIGNER);
 
-			v = _verify_response(&resp_data, n, load_cert(1, &info), 0);
+			v = _verify_response(&resp_data, n, load_cert(1, &info),
+					     0);
 		} else {
 			if (!HAVE_OPT(LOAD_CHAIN))
 				fprintf(stderr,
 					"\nAssuming response's signer = issuer (use --load-signer to override).\n");
 
-			v = _verify_response(&resp_data, n, chain[idx+1], 0);
+			v = _verify_response(&resp_data, n, chain[idx + 1], 0);
 		}
 
 		total_v += v;
@@ -640,7 +631,7 @@ static void ask_server(const char *url)
 		printf("\n");
 	}
 
-	for (idx = 0;idx<chain_size;idx++) {
+	for (idx = 0; idx < chain_size; idx++) {
 		gnutls_x509_crt_deinit(chain[idx]);
 	}
 
@@ -661,6 +652,18 @@ int main(int argc, char **argv)
 
 	gnutls_global_set_log_function(tls_log_func);
 	gnutls_global_set_log_level(OPT_VALUE_DEBUG);
+
+	if (ENABLED_OPT(ATTIME)) {
+		struct timespec r;
+
+		if (!parse_datetime(&r, OPT_ARG(ATTIME), NULL)) {
+			fprintf(stderr,
+				"%s option value %s is not a valid time\n",
+				"attime", OPT_ARG(ATTIME));
+			app_exit(1);
+		}
+		set_system_time(&r);
+	}
 
 	if (ENABLED_OPT(INDER))
 		incert_format = GNUTLS_X509_FMT_DER;
@@ -709,7 +712,8 @@ int main(int argc, char **argv)
 		verify_response(NULL);
 	else if (HAVE_OPT(ASK)) {
 		if ((!HAVE_OPT(LOAD_CERT)) && (!HAVE_OPT(LOAD_CHAIN))) {
-			fprintf(stderr, "This option required --load-chain or --load-cert\n");
+			fprintf(stderr,
+				"This option required --load-chain or --load-cert\n");
 			app_exit(1);
 		}
 		ask_server(OPT_ARG(ASK));

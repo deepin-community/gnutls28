@@ -15,8 +15,7 @@
 # General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with GnuTLS; if not, write to the Free Software Foundation,
-# Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+# along with GnuTLS.  If not, see <https://www.gnu.org/licenses/>.
 
 #set -e
 
@@ -36,8 +35,6 @@ OUTFILE=out-pkcs7.$$.tmp
 
 . ${srcdir}/../scripts/common.sh
 
-skip_if_no_datefudge
-
 # test the --smime-to-p7 functionality
 ${VAGRLIND} "${CERTTOOL}" --smime-to-p7 --infile "${srcdir}/data/pkcs7.smime" --outfile ${OUTFILE}
 rc=$?
@@ -47,8 +44,7 @@ if test "${rc}" != "0"; then
 fi
 
 
-datefudge -s "2017-4-6" \
-${VALGRIND} "${CERTTOOL}" --p7-verify --load-certificate "${srcdir}/../../doc/credentials/x509/cert-rsa.pem" <"${OUTFILE}"
+${VALGRIND} "${CERTTOOL}" --attime "2017-04-06" --p7-verify --load-certificate "${srcdir}/../../doc/credentials/x509/cert-rsa.pem" <"${OUTFILE}"
 rc=$?
 
 if test "${rc}" != "0"; then

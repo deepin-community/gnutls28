@@ -72,30 +72,23 @@ static pid_t child;
 #define MAX_BUF 1024
 #define MSG "Hello TLS"
 
-static int
-keylog_func(gnutls_session_t session,
-	    const char *label,
-	    const gnutls_datum_t *secret)
+static int keylog_func(gnutls_session_t session, const char *label,
+		       const gnutls_datum_t *secret)
 {
 	unsigned int *call_count = gnutls_session_get_ptr(session);
-	static const char *exp_labels[] = {
-		"CLIENT_HANDSHAKE_TRAFFIC_SECRET",
-		"SERVER_HANDSHAKE_TRAFFIC_SECRET",
-		"EXPORTER_SECRET",
-		"CLIENT_TRAFFIC_SECRET_0",
-		"SERVER_TRAFFIC_SECRET_0"
-	};
+	static const char *exp_labels[] = { "CLIENT_HANDSHAKE_TRAFFIC_SECRET",
+					    "SERVER_HANDSHAKE_TRAFFIC_SECRET",
+					    "EXPORTER_SECRET",
+					    "CLIENT_TRAFFIC_SECRET_0",
+					    "SERVER_TRAFFIC_SECRET_0" };
 
-	if (*call_count >= sizeof(exp_labels)/sizeof(exp_labels[0]))
-		fail("unexpected secret at call count %u\n",
-		     *call_count);
+	if (*call_count >= sizeof(exp_labels) / sizeof(exp_labels[0]))
+		fail("unexpected secret at call count %u\n", *call_count);
 
 	if (strcmp(label, exp_labels[*call_count]) != 0)
-		fail("unexpected %s at call count %u\n",
-		     label, *call_count);
+		fail("unexpected %s at call count %u\n", label, *call_count);
 	else if (debug)
-		success("received %s at call count %u\n",
-			label, *call_count);
+		success("received %s at call count %u\n", label, *call_count);
 
 	(*call_count)++;
 	return 0;
@@ -135,7 +128,7 @@ static void client(int fd, const char *prio, unsigned int exp_call_count)
 	}
 
 	ret = gnutls_credentials_set(session, GNUTLS_CRD_CERTIFICATE,
-				clientx509cred);
+				     clientx509cred);
 	if (ret < 0)
 		exit(1);
 
@@ -148,8 +141,7 @@ static void client(int fd, const char *prio, unsigned int exp_call_count)
 	 */
 	do {
 		ret = gnutls_handshake(session);
-	}
-	while (ret < 0 && gnutls_error_is_fatal(ret) == 0);
+	} while (ret < 0 && gnutls_error_is_fatal(ret) == 0);
 
 	if (ret < 0)
 		fail("client: Handshake failed: %s\n", gnutls_strerror(ret));
@@ -160,8 +152,8 @@ static void client(int fd, const char *prio, unsigned int exp_call_count)
 
 	if (debug)
 		success("client: TLS version is: %s\n",
-			gnutls_protocol_get_name
-			(gnutls_protocol_get_version(session)));
+			gnutls_protocol_get_name(
+				gnutls_protocol_get_version(session)));
 
 	gnutls_record_send(session, MSG, strlen(MSG));
 
@@ -170,8 +162,7 @@ static void client(int fd, const char *prio, unsigned int exp_call_count)
 	} while (ret == GNUTLS_E_AGAIN);
 	if (ret == 0) {
 		if (debug)
-			success
-				("client: Peer has closed the TLS connection\n");
+			success("client: Peer has closed the TLS connection\n");
 	} else if (ret < 0) {
 		fail("client: Error: %s\n", gnutls_strerror(ret));
 	}
@@ -185,8 +176,8 @@ static void client(int fd, const char *prio, unsigned int exp_call_count)
 	}
 
 	if (call_count != exp_call_count)
-		fail("secret hook is not called %u times (%u)\n",
-		     call_count, exp_call_count);
+		fail("secret hook is not called %u times (%u)\n", call_count,
+		     exp_call_count);
 
 	gnutls_bye(session, GNUTLS_SHUT_WR);
 
@@ -225,19 +216,19 @@ static void server(int fd, const char *prio, unsigned int exp_call_count)
 	/* avoid calling all the priority functions, since the defaults
 	 * are adequate.
 	 */
-	ret = gnutls_priority_set_direct(session,
-					 "NORMAL:-VERS-ALL:+VERS-TLS1.3:-KX-ALL:-SIGN-ALL:+SIGN-RSA-PSS-RSAE-SHA384:-GROUP-ALL:+GROUP-SECP256R1", NULL);
+	ret = gnutls_priority_set_direct(
+		session,
+		"NORMAL:-VERS-ALL:+VERS-TLS1.3:-KX-ALL:-SIGN-ALL:+SIGN-RSA-PSS-RSAE-SHA384:-GROUP-ALL:+GROUP-SECP256R1",
+		NULL);
 	if (ret < 0) {
 		fail("server: priority set failed (%s)\n\n",
 		     gnutls_strerror(ret));
 		terminate();
 	}
 
-	gnutls_certificate_set_x509_key_mem(serverx509cred,
-					    &server_cert, &server_key,
-					    GNUTLS_X509_FMT_PEM);
-	gnutls_credentials_set(session, GNUTLS_CRD_CERTIFICATE,
-				serverx509cred);
+	gnutls_certificate_set_x509_key_mem(serverx509cred, &server_cert,
+					    &server_key, GNUTLS_X509_FMT_PEM);
+	gnutls_credentials_set(session, GNUTLS_CRD_CERTIFICATE, serverx509cred);
 
 	gnutls_transport_set_int(session, fd);
 
@@ -245,8 +236,7 @@ static void server(int fd, const char *prio, unsigned int exp_call_count)
 
 	do {
 		ret = gnutls_handshake(session);
-	}
-	while (ret < 0 && gnutls_error_is_fatal(ret) == 0);
+	} while (ret < 0 && gnutls_error_is_fatal(ret) == 0);
 	if (ret < 0) {
 		close(fd);
 		gnutls_deinit(session);
@@ -259,8 +249,8 @@ static void server(int fd, const char *prio, unsigned int exp_call_count)
 	}
 	if (debug)
 		success("server: TLS version is: %s\n",
-			gnutls_protocol_get_name
-			(gnutls_protocol_get_version(session)));
+			gnutls_protocol_get_name(
+				gnutls_protocol_get_version(session)));
 
 	memset(buffer, 0, MAX_BUF + 1);
 
@@ -276,13 +266,12 @@ static void server(int fd, const char *prio, unsigned int exp_call_count)
 	} else if (ret > 0) {
 		/* echo data back to the client
 		 */
-		gnutls_record_send(session, buffer,
-				   strlen(buffer));
+		gnutls_record_send(session, buffer, strlen(buffer));
 	}
 
 	if (call_count != exp_call_count)
-		fail("secret hook is not called %u times (%u)\n",
-		     call_count, exp_call_count);
+		fail("secret hook is not called %u times (%u)\n", call_count,
+		     exp_call_count);
 
 	/* do not wait for the peer to close the connection.
 	 */
@@ -310,8 +299,7 @@ static void terminate(void)
 	exit(1);
 }
 
-static void
-run(const char *prio, unsigned int exp_call_count)
+static void run(const char *prio, unsigned int exp_call_count)
 {
 	int fd[2];
 	int ret;
@@ -350,4 +338,4 @@ void doit(void)
 	run("NORMAL:-VERS-ALL:+VERS-TLS1.3", 5);
 }
 
-#endif				/* _WIN32 */
+#endif /* _WIN32 */

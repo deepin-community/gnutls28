@@ -2,7 +2,7 @@
 
 
 
-@deftypefun {void} {gnutls_tdb_set_store_commitment_func} (gnutls_tdb_t @var{tdb}, gnutls_tdb_store_commitment_func        @var{cstore})
+@deftypefun {void} {gnutls_tdb_set_store_commitment_func} (gnutls_tdb_t @var{tdb}, gnutls_tdb_store_commitment_func @var{cstore})
 @var{tdb}: The trust storage
 
 @var{cstore}: The commitment storage function

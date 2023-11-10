@@ -28,7 +28,7 @@
 
    You should have received copies of the GNU General Public License and
    the GNU Lesser General Public License along with this program.  If
-   not, see http://www.gnu.org/licenses/.
+   not, see https://www.gnu.org/licenses/.
 */
 
 #ifndef NETTLE_ACPKM_H_INCLUDED
@@ -42,27 +42,24 @@ extern "C" {
 
 #define acpkm_crypt _gnutls_acpkm_crypt
 
-struct acpkm_ctx
-{
-  size_t N;
-  size_t pos;
+struct acpkm_ctx {
+	size_t N;
+	size_t pos;
 };
 
-#define ACPKM_CTX(type) \
-{ struct acpkm_ctx ctx; type cipher; }
+#define ACPKM_CTX(type)               \
+	{                             \
+		struct acpkm_ctx ctx; \
+		type cipher;          \
+	}
 
 #define ACPKM_KEY_SIZE 32
 
-void acpkm_crypt(struct acpkm_ctx *ctx,
-		 void *cipher,
-		 nettle_cipher_func *encrypt,
-		 nettle_set_key_func *set_key,
-		 size_t length, uint8_t *dst,
-		 const uint8_t *src);
+void acpkm_crypt(struct acpkm_ctx *ctx, void *cipher,
+		 nettle_cipher_func *encrypt, nettle_set_key_func *set_key,
+		 size_t length, uint8_t *dst, const uint8_t *src);
 
 #ifdef __cplusplus
 }
 #endif
-
 #endif /* NETTLE_ACPKM_H_INCLUDED */
-

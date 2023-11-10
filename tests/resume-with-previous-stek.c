@@ -49,21 +49,19 @@ int main(int argc, char **argv)
 unsigned num_stek_rotations;
 
 static void stek_rotation_callback(const gnutls_datum_t *prev_key,
-		const gnutls_datum_t *new_key,
-		uint64_t t)
+				   const gnutls_datum_t *new_key, uint64_t t)
 {
 	num_stek_rotations++;
 	success("STEK was rotated!\n");
 }
 
-static int client_handshake(gnutls_session_t session, gnutls_datum_t *session_data,
-			    int resume)
+static int client_handshake(gnutls_session_t session,
+			    gnutls_datum_t *session_data, int resume)
 {
 	int ret;
 
 	if (resume) {
-		if ((ret = gnutls_session_set_data(session,
-						   session_data->data,
+		if ((ret = gnutls_session_set_data(session, session_data->data,
 						   session_data->size)) < 0) {
 			fail("client: Could not get session data\n");
 		}
@@ -85,7 +83,8 @@ static int client_handshake(gnutls_session_t session, gnutls_datum_t *session_da
 		success("client: Success: Session was NOT resumed\n");
 
 	if (!resume) {
-		if ((ret = gnutls_session_get_data2(session, session_data)) < 0) {
+		if ((ret = gnutls_session_get_data2(session, session_data)) <
+		    0) {
 			fail("client: Could not get session data\n");
 		}
 	}
@@ -104,10 +103,11 @@ static void client(int fd, int *resume, unsigned rounds, const char *prio)
 	gnutls_certificate_credentials_t clientx509cred = NULL;
 
 	for (unsigned i = 0; i < rounds; i++) {
-		assert(gnutls_certificate_allocate_credentials(&clientx509cred)>=0);
+		assert(gnutls_certificate_allocate_credentials(
+			       &clientx509cred) >= 0);
 
-		assert(gnutls_init(&session, GNUTLS_CLIENT)>=0);
-		assert(gnutls_priority_set_direct(session, prio, NULL)>=0);
+		assert(gnutls_init(&session, GNUTLS_CLIENT) >= 0);
+		assert(gnutls_priority_set_direct(session, prio, NULL) >= 0);
 
 		gnutls_credentials_set(session, GNUTLS_CRD_CERTIFICATE,
 				       clientx509cred);
@@ -116,8 +116,7 @@ static void client(int fd, int *resume, unsigned rounds, const char *prio)
 		gnutls_handshake_set_timeout(session, get_timeout());
 
 		/* Perform TLS handshake and obtain session ticket */
-		if (client_handshake(session, &session_data,
-				     resume[i]) < 0)
+		if (client_handshake(session, &session_data, resume[i]) < 0)
 			return;
 
 		if (clientx509cred) {
@@ -127,13 +126,15 @@ static void client(int fd, int *resume, unsigned rounds, const char *prio)
 
 		gnutls_deinit(session);
 	}
+
+	gnutls_free(session_data.data);
 }
 
-typedef void (* gnutls_stek_rotation_callback_t) (const gnutls_datum_t *prev_key,
-		const gnutls_datum_t *new_key,
-		uint64_t t);
-void _gnutls_set_session_ticket_key_rotation_callback(gnutls_session_t session,
-		gnutls_stek_rotation_callback_t cb);
+typedef void (*gnutls_stek_rotation_callback_t)(const gnutls_datum_t *prev_key,
+						const gnutls_datum_t *new_key,
+						uint64_t t);
+void _gnutls_set_session_ticket_key_rotation_callback(
+	gnutls_session_t session, gnutls_stek_rotation_callback_t cb);
 
 static void server(int fd, unsigned rounds, const char *prio)
 {
@@ -149,38 +150,45 @@ static void server(int fd, unsigned rounds, const char *prio)
 	}
 
 	for (unsigned i = 0; i < rounds; i++) {
-		assert(gnutls_init(&session, GNUTLS_SERVER)>=0);
+		assert(gnutls_init(&session, GNUTLS_SERVER) >= 0);
 
-		assert(gnutls_certificate_allocate_credentials(&serverx509cred)>=0);
-		retval = gnutls_certificate_set_x509_key_mem(serverx509cred,
-						&server_cert, &server_key,
-						GNUTLS_X509_FMT_PEM);
+		assert(gnutls_certificate_allocate_credentials(
+			       &serverx509cred) >= 0);
+		retval = gnutls_certificate_set_x509_key_mem(
+			serverx509cred, &server_cert, &server_key,
+			GNUTLS_X509_FMT_PEM);
 		if (retval < 0)
-			fail("error setting key: %s\n", gnutls_strerror(retval));
+			fail("error setting key: %s\n",
+			     gnutls_strerror(retval));
 
-		assert(gnutls_priority_set_direct(session, prio, NULL)>=0);
-		gnutls_credentials_set(session, GNUTLS_CRD_CERTIFICATE, serverx509cred);
+		assert(gnutls_priority_set_direct(session, prio, NULL) >= 0);
+		gnutls_credentials_set(session, GNUTLS_CRD_CERTIFICATE,
+				       serverx509cred);
 
 		gnutls_db_set_cache_expiration(session, TICKET_EXPIRATION);
-		_gnutls_set_session_ticket_key_rotation_callback(session, stek_rotation_callback);
+		_gnutls_set_session_ticket_key_rotation_callback(
+			session, stek_rotation_callback);
 
-		retval = gnutls_session_ticket_enable_server(session,
-							     &session_ticket_key);
+		retval = gnutls_session_ticket_enable_server(
+			session, &session_ticket_key);
 		if (retval != GNUTLS_E_SUCCESS) {
-			fail("server: Could not enable session tickets: %s\n", gnutls_strerror(retval));
+			fail("server: Could not enable session tickets: %s\n",
+			     gnutls_strerror(retval));
 		}
 
 		gnutls_transport_set_int(session, fd);
 		gnutls_handshake_set_timeout(session, get_timeout());
 
-		virt_sec_sleep(TICKET_ROTATION_PERIOD-1);
+		virt_sec_sleep(TICKET_ROTATION_PERIOD - 1);
 
 		do {
 			retval = gnutls_handshake(session);
-		} while (retval == GNUTLS_E_AGAIN || retval == GNUTLS_E_INTERRUPTED);
+		} while (retval == GNUTLS_E_AGAIN ||
+			 retval == GNUTLS_E_INTERRUPTED);
 
 		if (retval < 0) {
-			fail("server: Handshake failed: %s\n", gnutls_strerror(retval));
+			fail("server: Handshake failed: %s\n",
+			     gnutls_strerror(retval));
 		} else {
 			success("server: Handshake was completed\n");
 		}
@@ -197,7 +205,8 @@ static void server(int fd, unsigned rounds, const char *prio)
 	}
 
 	if (num_stek_rotations != 3)
-		fail("STEK should be rotated exactly three times (%d)!\n", num_stek_rotations);
+		fail("STEK should be rotated exactly three times (%d)!\n",
+		     num_stek_rotations);
 
 	if (serverx509cred)
 		gnutls_certificate_free_credentials(serverx509cred);
@@ -247,11 +256,12 @@ void doit(void)
 	signal(SIGPIPE, SIG_IGN);
 
 	num_stek_rotations = 0;
-	run("tls1.2 resumption", "NORMAL:-VERS-ALL:+VERS-TLS1.2:+VERS-TLS1.1:+VERS-TLS1.0", resume, 3);
+	run("tls1.2 resumption",
+	    "NORMAL:-VERS-ALL:+VERS-TLS1.2:+VERS-TLS1.1:+VERS-TLS1.0", resume,
+	    3);
 
 	num_stek_rotations = 0;
 	run("tls1.3 resumption", "NORMAL:-VERS-ALL:+VERS-TLS1.3", resume, 3);
 }
 
 #endif
-

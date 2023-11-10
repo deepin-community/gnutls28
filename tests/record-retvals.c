@@ -16,8 +16,7 @@
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GnuTLS; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
+ * along with GnuTLS.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 #ifdef HAVE_CONFIG_H
@@ -29,7 +28,7 @@
 
 #if defined(_WIN32)
 
-int main()
+int main(void)
 {
 	exit(77);
 }
@@ -66,58 +65,54 @@ static void client_log_func(int level, const char *str)
 }
 
 static unsigned char server_cert_pem[] =
-    "-----BEGIN CERTIFICATE-----\n"
-    "MIICVjCCAcGgAwIBAgIERiYdMTALBgkqhkiG9w0BAQUwGTEXMBUGA1UEAxMOR251\n"
-    "VExTIHRlc3QgQ0EwHhcNMDcwNDE4MTMyOTIxWhcNMDgwNDE3MTMyOTIxWjA3MRsw\n"
-    "GQYDVQQKExJHbnVUTFMgdGVzdCBzZXJ2ZXIxGDAWBgNVBAMTD3Rlc3QuZ251dGxz\n"
-    "Lm9yZzCBnDALBgkqhkiG9w0BAQEDgYwAMIGIAoGA17pcr6MM8C6pJ1aqU46o63+B\n"
-    "dUxrmL5K6rce+EvDasTaDQC46kwTHzYWk95y78akXrJutsoKiFV1kJbtple8DDt2\n"
-    "DZcevensf9Op7PuFZKBroEjOd35znDET/z3IrqVgbtm2jFqab7a+n2q9p/CgMyf1\n"
-    "tx2S5Zacc1LWn9bIjrECAwEAAaOBkzCBkDAMBgNVHRMBAf8EAjAAMBoGA1UdEQQT\n"
-    "MBGCD3Rlc3QuZ251dGxzLm9yZzATBgNVHSUEDDAKBggrBgEFBQcDATAPBgNVHQ8B\n"
-    "Af8EBQMDB6AAMB0GA1UdDgQWBBTrx0Vu5fglyoyNgw106YbU3VW0dTAfBgNVHSME\n"
-    "GDAWgBTpPBz7rZJu5gakViyi4cBTJ8jylTALBgkqhkiG9w0BAQUDgYEAaFEPTt+7\n"
-    "bzvBuOf7+QmeQcn29kT6Bsyh1RHJXf8KTk5QRfwp6ogbp94JQWcNQ/S7YDFHglD1\n"
-    "AwUNBRXwd3riUsMnsxgeSDxYBfJYbDLeohNBsqaPDJb7XailWbMQKfAbFQ8cnOxg\n"
-    "rOKLUQRWJ0K3HyXRMhbqjdLIaQiCvQLuizo=\n" "-----END CERTIFICATE-----\n";
+	"-----BEGIN CERTIFICATE-----\n"
+	"MIICVjCCAcGgAwIBAgIERiYdMTALBgkqhkiG9w0BAQUwGTEXMBUGA1UEAxMOR251\n"
+	"VExTIHRlc3QgQ0EwHhcNMDcwNDE4MTMyOTIxWhcNMDgwNDE3MTMyOTIxWjA3MRsw\n"
+	"GQYDVQQKExJHbnVUTFMgdGVzdCBzZXJ2ZXIxGDAWBgNVBAMTD3Rlc3QuZ251dGxz\n"
+	"Lm9yZzCBnDALBgkqhkiG9w0BAQEDgYwAMIGIAoGA17pcr6MM8C6pJ1aqU46o63+B\n"
+	"dUxrmL5K6rce+EvDasTaDQC46kwTHzYWk95y78akXrJutsoKiFV1kJbtple8DDt2\n"
+	"DZcevensf9Op7PuFZKBroEjOd35znDET/z3IrqVgbtm2jFqab7a+n2q9p/CgMyf1\n"
+	"tx2S5Zacc1LWn9bIjrECAwEAAaOBkzCBkDAMBgNVHRMBAf8EAjAAMBoGA1UdEQQT\n"
+	"MBGCD3Rlc3QuZ251dGxzLm9yZzATBgNVHSUEDDAKBggrBgEFBQcDATAPBgNVHQ8B\n"
+	"Af8EBQMDB6AAMB0GA1UdDgQWBBTrx0Vu5fglyoyNgw106YbU3VW0dTAfBgNVHSME\n"
+	"GDAWgBTpPBz7rZJu5gakViyi4cBTJ8jylTALBgkqhkiG9w0BAQUDgYEAaFEPTt+7\n"
+	"bzvBuOf7+QmeQcn29kT6Bsyh1RHJXf8KTk5QRfwp6ogbp94JQWcNQ/S7YDFHglD1\n"
+	"AwUNBRXwd3riUsMnsxgeSDxYBfJYbDLeohNBsqaPDJb7XailWbMQKfAbFQ8cnOxg\n"
+	"rOKLUQRWJ0K3HyXRMhbqjdLIaQiCvQLuizo=\n"
+	"-----END CERTIFICATE-----\n";
 
-const gnutls_datum_t server_cert = { server_cert_pem,
-	sizeof(server_cert_pem)
-};
+const gnutls_datum_t server_cert = { server_cert_pem, sizeof(server_cert_pem) };
 
 static unsigned char server_key_pem[] =
-    "-----BEGIN RSA PRIVATE KEY-----\n"
-    "MIICXAIBAAKBgQDXulyvowzwLqknVqpTjqjrf4F1TGuYvkrqtx74S8NqxNoNALjq\n"
-    "TBMfNhaT3nLvxqResm62ygqIVXWQlu2mV7wMO3YNlx696ex/06ns+4VkoGugSM53\n"
-    "fnOcMRP/PciupWBu2baMWppvtr6far2n8KAzJ/W3HZLllpxzUtaf1siOsQIDAQAB\n"
-    "AoGAYAFyKkAYC/PYF8e7+X+tsVCHXppp8AoP8TEZuUqOZz/AArVlle/ROrypg5kl\n"
-    "8YunrvUdzH9R/KZ7saNZlAPLjZyFG9beL/am6Ai7q7Ma5HMqjGU8kTEGwD7K+lbG\n"
-    "iomokKMOl+kkbY/2sI5Czmbm+/PqLXOjtVc5RAsdbgvtmvkCQQDdV5QuU8jap8Hs\n"
-    "Eodv/tLJ2z4+SKCV2k/7FXSKWe0vlrq0cl2qZfoTUYRnKRBcWxc9o92DxK44wgPi\n"
-    "oMQS+O7fAkEA+YG+K9e60sj1K4NYbMPAbYILbZxORDecvP8lcphvwkOVUqbmxOGh\n"
-    "XRmTZUuhBrJhJKKf6u7gf3KWlPl6ShKEbwJASC118cF6nurTjuLf7YKARDjNTEws\n"
-    "qZEeQbdWYINAmCMj0RH2P0mvybrsXSOD5UoDAyO7aWuqkHGcCLv6FGG+qwJAOVqq\n"
-    "tXdUucl6GjOKKw5geIvRRrQMhb/m5scb+5iw8A4LEEHPgGiBaF5NtJZLALgWfo5n\n"
-    "hmC8+G8F0F78znQtPwJBANexu+Tg5KfOnzSILJMo3oXiXhf5PqXIDmbN0BKyCKAQ\n"
-    "LfkcEcUbVfmDaHpvzwY9VEaoMOKVLitETXdNSxVpvWM=\n"
-    "-----END RSA PRIVATE KEY-----\n";
+	"-----BEGIN RSA PRIVATE KEY-----\n"
+	"MIICXAIBAAKBgQDXulyvowzwLqknVqpTjqjrf4F1TGuYvkrqtx74S8NqxNoNALjq\n"
+	"TBMfNhaT3nLvxqResm62ygqIVXWQlu2mV7wMO3YNlx696ex/06ns+4VkoGugSM53\n"
+	"fnOcMRP/PciupWBu2baMWppvtr6far2n8KAzJ/W3HZLllpxzUtaf1siOsQIDAQAB\n"
+	"AoGAYAFyKkAYC/PYF8e7+X+tsVCHXppp8AoP8TEZuUqOZz/AArVlle/ROrypg5kl\n"
+	"8YunrvUdzH9R/KZ7saNZlAPLjZyFG9beL/am6Ai7q7Ma5HMqjGU8kTEGwD7K+lbG\n"
+	"iomokKMOl+kkbY/2sI5Czmbm+/PqLXOjtVc5RAsdbgvtmvkCQQDdV5QuU8jap8Hs\n"
+	"Eodv/tLJ2z4+SKCV2k/7FXSKWe0vlrq0cl2qZfoTUYRnKRBcWxc9o92DxK44wgPi\n"
+	"oMQS+O7fAkEA+YG+K9e60sj1K4NYbMPAbYILbZxORDecvP8lcphvwkOVUqbmxOGh\n"
+	"XRmTZUuhBrJhJKKf6u7gf3KWlPl6ShKEbwJASC118cF6nurTjuLf7YKARDjNTEws\n"
+	"qZEeQbdWYINAmCMj0RH2P0mvybrsXSOD5UoDAyO7aWuqkHGcCLv6FGG+qwJAOVqq\n"
+	"tXdUucl6GjOKKw5geIvRRrQMhb/m5scb+5iw8A4LEEHPgGiBaF5NtJZLALgWfo5n\n"
+	"hmC8+G8F0F78znQtPwJBANexu+Tg5KfOnzSILJMo3oXiXhf5PqXIDmbN0BKyCKAQ\n"
+	"LfkcEcUbVfmDaHpvzwY9VEaoMOKVLitETXdNSxVpvWM=\n"
+	"-----END RSA PRIVATE KEY-----\n";
 
-const gnutls_datum_t server_key = { server_key_pem,
-	sizeof(server_key_pem)
-};
-
+const gnutls_datum_t server_key = { server_key_pem, sizeof(server_key_pem) };
 
 /* A very basic TLS client, with anonymous authentication.
  */
 
-#define MAX_BUF 24*1024
+#define MAX_BUF 24 * 1024
 
 static void client(int fd, const char *prio, int ign)
 {
 	int ret;
 	unsigned i;
 	char buffer[MAX_BUF + 1];
-	const char* err;
+	const char *err;
 	gnutls_anon_client_credentials_t anoncred;
 	gnutls_certificate_credentials_t x509_cred;
 	gnutls_session_t session;
@@ -156,8 +151,7 @@ static void client(int fd, const char *prio, int ign)
 	 */
 	do {
 		ret = gnutls_handshake(session);
-	}
-	while (ret < 0 && gnutls_error_is_fatal(ret) == 0);
+	} while (ret < 0 && gnutls_error_is_fatal(ret) == 0);
 
 	if (ret < 0) {
 		fail("client (%s): Handshake has failed (%s)\n\n", prio,
@@ -170,23 +164,24 @@ static void client(int fd, const char *prio, int ign)
 
 	if (debug)
 		success("client: TLS version is: %s\n",
-			gnutls_protocol_get_name
-			(gnutls_protocol_get_version(session)));
+			gnutls_protocol_get_name(
+				gnutls_protocol_get_version(session)));
 
 	/* Test sending */
 	for (i = 1; i < 16384; i++) {
 		do {
 			ret = gnutls_record_send(session, buffer, i);
-		} while (ret == GNUTLS_E_AGAIN
-			 || ret == GNUTLS_E_INTERRUPTED);
+		} while (ret == GNUTLS_E_AGAIN || ret == GNUTLS_E_INTERRUPTED);
 
 		if (ret < 0) {
-			fail("server (%s): Error sending %d byte packet: %s\n", prio, i, gnutls_strerror(ret));
+			fail("server (%s): Error sending %d byte packet: %s\n",
+			     prio, i, gnutls_strerror(ret));
 			exit(1);
 		}
 
 		if (ret > 0 && ret != (int)i) {
-			fail("server (%s): Error sending %d byte packet: sent: %d\n", prio, i, ret);
+			fail("server (%s): Error sending %d byte packet: sent: %d\n",
+			     prio, i, ret);
 			exit(1);
 		}
 	}
@@ -198,19 +193,20 @@ static void client(int fd, const char *prio, int ign)
 	} while (ret == GNUTLS_E_AGAIN || ret == GNUTLS_E_INTERRUPTED);
 
 	if (ret < 0) {
-		fail("server (%s): Error sending %d byte packet: %s\n",
-		     prio, i, gnutls_strerror(ret));
+		fail("server (%s): Error sending %d byte packet: %s\n", prio, i,
+		     gnutls_strerror(ret));
 		exit(1);
 	} else if (ign == 0 && ret != 16384) {
-		fail("server (%s): Error sending %d byte packet; sent %d bytes instead of 16384\n", prio, i, ret);
+		fail("server (%s): Error sending %d byte packet; sent %d bytes instead of 16384\n",
+		     prio, i, ret);
 		exit(1);
 	}
 
 	memset(buffer, 0xff, sizeof(buffer));
 	ret = gnutls_record_send(session, buffer, 4);
 	if (ret < 0) {
-		fail("server (%s): Error sending 4 byte packet: %s\n",
-		     prio, gnutls_strerror(ret));
+		fail("server (%s): Error sending 4 byte packet: %s\n", prio,
+		     gnutls_strerror(ret));
 		exit(1);
 	}
 
@@ -221,14 +217,12 @@ static void client(int fd, const char *prio, int ign)
 	do {
 		do {
 			ret = gnutls_record_recv(session, buffer, MAX_BUF);
-		} while (ret == GNUTLS_E_AGAIN
-			 || ret == GNUTLS_E_INTERRUPTED);
+		} while (ret == GNUTLS_E_AGAIN || ret == GNUTLS_E_INTERRUPTED);
 	} while (ret > 0);
 
 	if (ret == 0) {
 		if (debug)
-			success
-			    ("client: Peer has closed the TLS connection\n");
+			success("client: Peer has closed the TLS connection\n");
 		goto end;
 	} else if (ret < 0) {
 		if (ret != 0) {
@@ -239,7 +233,7 @@ static void client(int fd, const char *prio, int ign)
 
 	gnutls_bye(session, GNUTLS_SHUT_WR);
 
-      end:
+end:
 
 	close(fd);
 
@@ -250,7 +244,6 @@ static void client(int fd, const char *prio, int ign)
 
 	gnutls_global_deinit();
 }
-
 
 /* These are global */
 pid_t child;
@@ -266,7 +259,7 @@ static void server(int fd, const char *prio, int ign)
 {
 	int ret;
 	unsigned i;
-	const char* err;
+	const char *err;
 	char buffer[MAX_BUF + 1];
 	gnutls_session_t session;
 	gnutls_anon_server_credentials_t anoncred;
@@ -284,8 +277,7 @@ static void server(int fd, const char *prio, int ign)
 
 	gnutls_certificate_allocate_credentials(&x509_cred);
 	gnutls_certificate_set_x509_key_mem(x509_cred, &server_cert,
-					    &server_key,
-					    GNUTLS_X509_FMT_PEM);
+					    &server_key, GNUTLS_X509_FMT_PEM);
 
 	gnutls_anon_allocate_server_credentials(&anoncred);
 
@@ -307,8 +299,7 @@ static void server(int fd, const char *prio, int ign)
 
 	do {
 		ret = gnutls_handshake(session);
-	}
-	while (ret < 0 && gnutls_error_is_fatal(ret) == 0);
+	} while (ret < 0 && gnutls_error_is_fatal(ret) == 0);
 	if (ret < 0) {
 		close(fd);
 		gnutls_deinit(session);
@@ -321,8 +312,8 @@ static void server(int fd, const char *prio, int ign)
 
 	if (debug)
 		success("server: TLS version is: %s\n",
-			gnutls_protocol_get_name
-			(gnutls_protocol_get_version(session)));
+			gnutls_protocol_get_name(
+				gnutls_protocol_get_version(session)));
 
 	/* Here we do both a receive and a send test because if valgrind
 	 * detects an error on the peer, the main process will never know.
@@ -333,13 +324,13 @@ static void server(int fd, const char *prio, int ign)
 	do {
 		do {
 			ret = gnutls_record_recv(session, buffer, MAX_BUF);
-		} while (ret == GNUTLS_E_AGAIN
-			 || ret == GNUTLS_E_INTERRUPTED);
+		} while (ret == GNUTLS_E_AGAIN || ret == GNUTLS_E_INTERRUPTED);
 		if (ret > 0 && ret != (int)i) {
 			if (ret == 4 && (uint8_t)buffer[0] == 0xff) {
 				break;
 			} else {
-				fail("error receiving message[%d]: ret: %d\n", i, ret);
+				fail("error receiving message[%d]: ret: %d\n",
+				     i, ret);
 			}
 		}
 		i++;
@@ -354,11 +345,11 @@ static void server(int fd, const char *prio, int ign)
 	for (i = 1; i < 16384; i++) {
 		do {
 			ret = gnutls_record_send(session, buffer, i);
-		} while (ret == GNUTLS_E_AGAIN
-			 || ret == GNUTLS_E_INTERRUPTED);
+		} while (ret == GNUTLS_E_AGAIN || ret == GNUTLS_E_INTERRUPTED);
 
 		if (ret < 0) {
-			fail("server (%s): Error sending %d byte packet: %s\n", prio, i, gnutls_strerror(ret));
+			fail("server (%s): Error sending %d byte packet: %s\n",
+			     prio, i, gnutls_strerror(ret));
 			terminate();
 		}
 	}
@@ -370,11 +361,12 @@ static void server(int fd, const char *prio, int ign)
 	} while (ret == GNUTLS_E_AGAIN || ret == GNUTLS_E_INTERRUPTED);
 
 	if (ret < 0) {
-		fail("server (%s): Error sending %d byte packet: %s\n",
-		     prio, i, gnutls_strerror(ret));
+		fail("server (%s): Error sending %d byte packet: %s\n", prio, i,
+		     gnutls_strerror(ret));
 		terminate();
 	} else if (ign == 0 && ret != 16384) {
-		fail("server (%s): Error sending %d byte packet; sent %d bytes instead of 16384\n", prio, i, ret);
+		fail("server (%s): Error sending %d byte packet; sent %d bytes instead of 16384\n",
+		     prio, i, ret);
 		terminate();
 	}
 
@@ -423,15 +415,22 @@ static void start(const char *prio, int ign)
 	}
 }
 
-#define AES_CBC "NONE:+VERS-TLS1.0:-CIPHER-ALL:+AES-128-CBC:+SHA1:+SIGN-ALL:+COMP-NULL:+ANON-ECDH:+CURVE-ALL"
-#define AES_CBC_SHA256 "NONE:+VERS-TLS1.2:-CIPHER-ALL:+RSA:+AES-128-CBC:+AES-256-CBC:+SHA256:+SIGN-ALL:+COMP-NULL:+ANON-ECDH:+CURVE-ALL"
-#define AES_GCM "NONE:+VERS-TLS1.2:-CIPHER-ALL:+RSA:+AES-128-GCM:+MAC-ALL:+SIGN-ALL:+COMP-NULL:+ANON-ECDH:+CURVE-ALL"
-#define TLS13_AES_GCM "NONE:+VERS-TLS1.3:-CIPHER-ALL:+RSA:+AES-128-GCM:+MAC-ALL:+SIGN-ALL:+COMP-NULL:+CURVE-ALL"
+#define AES_CBC \
+	"NONE:+VERS-TLS1.0:-CIPHER-ALL:+AES-128-CBC:+SHA1:+SIGN-ALL:+COMP-NULL:+ANON-ECDH:+CURVE-ALL"
+#define AES_CBC_SHA256 \
+	"NONE:+VERS-TLS1.2:-CIPHER-ALL:+RSA:+AES-128-CBC:+AES-256-CBC:+SHA256:+SIGN-ALL:+COMP-NULL:+ANON-ECDH:+CURVE-ALL"
+#define AES_GCM \
+	"NONE:+VERS-TLS1.2:-CIPHER-ALL:+RSA:+AES-128-GCM:+MAC-ALL:+SIGN-ALL:+COMP-NULL:+ANON-ECDH:+CURVE-ALL"
+#define TLS13_AES_GCM \
+	"NONE:+VERS-TLS1.3:-CIPHER-ALL:+RSA:+AES-128-GCM:+MAC-ALL:+SIGN-ALL:+COMP-NULL:+CURVE-ALL"
 
-#define ARCFOUR_SHA1 "NONE:+VERS-TLS1.0:-CIPHER-ALL:+ARCFOUR-128:+SHA1:+SIGN-ALL:+COMP-NULL:+ANON-ECDH:+CURVE-ALL"
-#define ARCFOUR_MD5 "NONE:+VERS-TLS1.0:-CIPHER-ALL:+ARCFOUR-128:+MD5:+SIGN-ALL:+COMP-NULL:+ANON-ECDH:+CURVE-ALL:+RSA"
+#define ARCFOUR_SHA1 \
+	"NONE:+VERS-TLS1.0:-CIPHER-ALL:+ARCFOUR-128:+SHA1:+SIGN-ALL:+COMP-NULL:+ANON-ECDH:+CURVE-ALL"
+#define ARCFOUR_MD5 \
+	"NONE:+VERS-TLS1.0:-CIPHER-ALL:+ARCFOUR-128:+MD5:+SIGN-ALL:+COMP-NULL:+ANON-ECDH:+CURVE-ALL:+RSA"
 
-#define NULL_SHA1 "NONE:+VERS-TLS1.0:-CIPHER-ALL:+NULL:+SHA1:+SIGN-ALL:+COMP-NULL:+ANON-ECDH:+RSA:+CURVE-ALL"
+#define NULL_SHA1 \
+	"NONE:+VERS-TLS1.0:-CIPHER-ALL:+NULL:+SHA1:+SIGN-ALL:+COMP-NULL:+ANON-ECDH:+RSA:+CURVE-ALL"
 
 static void ch_handler(int sig)
 {
@@ -458,4 +457,4 @@ void doit(void)
 	}
 }
 
-#endif				/* _WIN32 */
+#endif /* _WIN32 */

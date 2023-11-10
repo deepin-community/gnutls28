@@ -46,94 +46,95 @@ static const struct option long_options[] =
   { "verbose", no_argument, 0, 'V' },
   { "infile", required_argument, 0, CHAR_MAX + 1 },
   { "outfile", required_argument, 0, CHAR_MAX + 2 },
+  { "attime", required_argument, 0, CHAR_MAX + 3 },
   { "certificate-info", no_argument, 0, 'i' },
-  { "pubkey-info", no_argument, 0, CHAR_MAX + 3 },
+  { "pubkey-info", no_argument, 0, CHAR_MAX + 4 },
   { "generate-self-signed", no_argument, 0, 's' },
   { "generate-certificate", no_argument, 0, 'c' },
-  { "generate-proxy", no_argument, 0, CHAR_MAX + 4 },
+  { "generate-proxy", no_argument, 0, CHAR_MAX + 5 },
   { "update-certificate", no_argument, 0, 'u' },
-  { "fingerprint", no_argument, 0, CHAR_MAX + 5 },
-  { "key-id", no_argument, 0, CHAR_MAX + 6 },
-  { "certificate-pubkey", no_argument, 0, CHAR_MAX + 7 },
-  { "v1", no_argument, 0, CHAR_MAX + 8 },
-  { "sign-params", required_argument, 0, CHAR_MAX + 9 },
-  { "crq-info", no_argument, 0, CHAR_MAX + 10 },
+  { "fingerprint", no_argument, 0, CHAR_MAX + 6 },
+  { "key-id", no_argument, 0, CHAR_MAX + 7 },
+  { "certificate-pubkey", no_argument, 0, CHAR_MAX + 8 },
+  { "v1", no_argument, 0, CHAR_MAX + 9 },
+  { "sign-params", required_argument, 0, CHAR_MAX + 10 },
+  { "crq-info", no_argument, 0, CHAR_MAX + 11 },
   { "generate-request", no_argument, 0, 'q' },
-  { "no-crq-extensions", no_argument, 0, CHAR_MAX + 11 },
-  { "p12-info", no_argument, 0, CHAR_MAX + 12 },
-  { "p12-name", required_argument, 0, CHAR_MAX + 13 },
-  { "to-p12", no_argument, 0, CHAR_MAX + 14 },
+  { "no-crq-extensions", no_argument, 0, CHAR_MAX + 12 },
+  { "p12-info", no_argument, 0, CHAR_MAX + 13 },
+  { "p12-name", required_argument, 0, CHAR_MAX + 14 },
+  { "to-p12", no_argument, 0, CHAR_MAX + 15 },
   { "key-info", no_argument, 0, 'k' },
-  { "p8-info", no_argument, 0, CHAR_MAX + 15 },
-  { "to-rsa", no_argument, 0, CHAR_MAX + 16 },
+  { "p8-info", no_argument, 0, CHAR_MAX + 16 },
+  { "to-rsa", no_argument, 0, CHAR_MAX + 17 },
   { "generate-privkey", no_argument, 0, 'p' },
-  { "key-type", required_argument, 0, CHAR_MAX + 17 },
-  { "bits", required_argument, 0, CHAR_MAX + 18 },
-  { "curve", required_argument, 0, CHAR_MAX + 19 },
-  { "sec-param", required_argument, 0, CHAR_MAX + 20 },
-  { "to-p8", no_argument, 0, CHAR_MAX + 21 },
+  { "key-type", required_argument, 0, CHAR_MAX + 18 },
+  { "bits", required_argument, 0, CHAR_MAX + 19 },
+  { "curve", required_argument, 0, CHAR_MAX + 20 },
+  { "sec-param", required_argument, 0, CHAR_MAX + 21 },
+  { "to-p8", no_argument, 0, CHAR_MAX + 22 },
   { "pkcs8", no_argument, 0, '8' },
-  { "provable", no_argument, 0, CHAR_MAX + 22 },
-  { "verify-provable-privkey", no_argument, 0, CHAR_MAX + 23 },
-  { "seed", required_argument, 0, CHAR_MAX + 24 },
+  { "provable", no_argument, 0, CHAR_MAX + 23 },
+  { "verify-provable-privkey", no_argument, 0, CHAR_MAX + 24 },
+  { "seed", required_argument, 0, CHAR_MAX + 25 },
   { "crl-info", no_argument, 0, 'l' },
-  { "generate-crl", no_argument, 0, CHAR_MAX + 25 },
-  { "verify-crl", no_argument, 0, CHAR_MAX + 26 },
+  { "generate-crl", no_argument, 0, CHAR_MAX + 26 },
+  { "verify-crl", no_argument, 0, CHAR_MAX + 27 },
   { "verify-chain", no_argument, 0, 'e' },
-  { "verify", no_argument, 0, CHAR_MAX + 27 },
-  { "verify-hostname", required_argument, 0, CHAR_MAX + 28 },
-  { "verify-email", required_argument, 0, CHAR_MAX + 29 },
-  { "verify-purpose", required_argument, 0, CHAR_MAX + 30 },
-  { "verify-allow-broken", no_argument, 0, CHAR_MAX + 31 },
-  { "verify-profile", required_argument, 0, CHAR_MAX + 32 },
-  { "p7-generate", no_argument, 0, CHAR_MAX + 33 },
-  { "p7-sign", no_argument, 0, CHAR_MAX + 34 },
-  { "p7-detached-sign", no_argument, 0, CHAR_MAX + 35 },
-  { "p7-include-cert", no_argument, 0, CHAR_MAX + 36 },
-  { "no-p7-include-cert", no_argument, 0, CHAR_MAX + 37 },
-  { "p7-time", no_argument, 0, CHAR_MAX + 38 },
-  { "no-p7-time", no_argument, 0, CHAR_MAX + 39 },
-  { "p7-show-data", no_argument, 0, CHAR_MAX + 40 },
-  { "no-p7-show-data", no_argument, 0, CHAR_MAX + 41 },
-  { "p7-info", no_argument, 0, CHAR_MAX + 42 },
-  { "p7-verify", no_argument, 0, CHAR_MAX + 43 },
-  { "smime-to-p7", no_argument, 0, CHAR_MAX + 44 },
-  { "generate-dh-params", no_argument, 0, CHAR_MAX + 45 },
-  { "get-dh-params", no_argument, 0, CHAR_MAX + 46 },
-  { "dh-info", no_argument, 0, CHAR_MAX + 47 },
-  { "load-privkey", required_argument, 0, CHAR_MAX + 48 },
-  { "load-pubkey", required_argument, 0, CHAR_MAX + 49 },
-  { "load-request", required_argument, 0, CHAR_MAX + 50 },
-  { "load-certificate", required_argument, 0, CHAR_MAX + 51 },
-  { "load-ca-privkey", required_argument, 0, CHAR_MAX + 52 },
-  { "load-ca-certificate", required_argument, 0, CHAR_MAX + 53 },
-  { "load-crl", required_argument, 0, CHAR_MAX + 54 },
-  { "load-data", required_argument, 0, CHAR_MAX + 55 },
-  { "password", required_argument, 0, CHAR_MAX + 56 },
-  { "null-password", no_argument, 0, CHAR_MAX + 57 },
-  { "empty-password", no_argument, 0, CHAR_MAX + 58 },
-  { "hex-numbers", no_argument, 0, CHAR_MAX + 59 },
-  { "cprint", no_argument, 0, CHAR_MAX + 60 },
-  { "rsa", no_argument, 0, CHAR_MAX + 61 },
-  { "dsa", no_argument, 0, CHAR_MAX + 62 },
-  { "ecc", no_argument, 0, CHAR_MAX + 63 },
-  { "ecdsa", no_argument, 0, CHAR_MAX + 64 },
-  { "hash", required_argument, 0, CHAR_MAX + 65 },
-  { "salt-size", required_argument, 0, CHAR_MAX + 66 },
-  { "inder", no_argument, 0, CHAR_MAX + 67 },
-  { "inraw", no_argument, 0, CHAR_MAX + 69 },
-  { "no-inder", no_argument, 0, CHAR_MAX + 68 },
-  { "outder", no_argument, 0, CHAR_MAX + 70 },
-  { "outraw", no_argument, 0, CHAR_MAX + 72 },
-  { "no-outder", no_argument, 0, CHAR_MAX + 71 },
-  { "disable-quick-random", no_argument, 0, CHAR_MAX + 73 },
-  { "template", required_argument, 0, CHAR_MAX + 74 },
-  { "stdout-info", no_argument, 0, CHAR_MAX + 75 },
-  { "ask-pass", no_argument, 0, CHAR_MAX + 76 },
-  { "pkcs-cipher", required_argument, 0, CHAR_MAX + 77 },
-  { "provider", required_argument, 0, CHAR_MAX + 78 },
-  { "text", no_argument, 0, CHAR_MAX + 79 },
-  { "no-text", no_argument, 0, CHAR_MAX + 80 },
+  { "verify", no_argument, 0, CHAR_MAX + 28 },
+  { "verify-hostname", required_argument, 0, CHAR_MAX + 29 },
+  { "verify-email", required_argument, 0, CHAR_MAX + 30 },
+  { "verify-purpose", required_argument, 0, CHAR_MAX + 31 },
+  { "verify-allow-broken", no_argument, 0, CHAR_MAX + 32 },
+  { "verify-profile", required_argument, 0, CHAR_MAX + 33 },
+  { "p7-generate", no_argument, 0, CHAR_MAX + 34 },
+  { "p7-sign", no_argument, 0, CHAR_MAX + 35 },
+  { "p7-detached-sign", no_argument, 0, CHAR_MAX + 36 },
+  { "p7-include-cert", no_argument, 0, CHAR_MAX + 37 },
+  { "no-p7-include-cert", no_argument, 0, CHAR_MAX + 38 },
+  { "p7-time", no_argument, 0, CHAR_MAX + 39 },
+  { "no-p7-time", no_argument, 0, CHAR_MAX + 40 },
+  { "p7-show-data", no_argument, 0, CHAR_MAX + 41 },
+  { "no-p7-show-data", no_argument, 0, CHAR_MAX + 42 },
+  { "p7-info", no_argument, 0, CHAR_MAX + 43 },
+  { "p7-verify", no_argument, 0, CHAR_MAX + 44 },
+  { "smime-to-p7", no_argument, 0, CHAR_MAX + 45 },
+  { "generate-dh-params", no_argument, 0, CHAR_MAX + 46 },
+  { "get-dh-params", no_argument, 0, CHAR_MAX + 47 },
+  { "dh-info", no_argument, 0, CHAR_MAX + 48 },
+  { "load-privkey", required_argument, 0, CHAR_MAX + 49 },
+  { "load-pubkey", required_argument, 0, CHAR_MAX + 50 },
+  { "load-request", required_argument, 0, CHAR_MAX + 51 },
+  { "load-certificate", required_argument, 0, CHAR_MAX + 52 },
+  { "load-ca-privkey", required_argument, 0, CHAR_MAX + 53 },
+  { "load-ca-certificate", required_argument, 0, CHAR_MAX + 54 },
+  { "load-crl", required_argument, 0, CHAR_MAX + 55 },
+  { "load-data", required_argument, 0, CHAR_MAX + 56 },
+  { "password", required_argument, 0, CHAR_MAX + 57 },
+  { "null-password", no_argument, 0, CHAR_MAX + 58 },
+  { "empty-password", no_argument, 0, CHAR_MAX + 59 },
+  { "hex-numbers", no_argument, 0, CHAR_MAX + 60 },
+  { "cprint", no_argument, 0, CHAR_MAX + 61 },
+  { "rsa", no_argument, 0, CHAR_MAX + 62 },
+  { "dsa", no_argument, 0, CHAR_MAX + 63 },
+  { "ecc", no_argument, 0, CHAR_MAX + 64 },
+  { "ecdsa", no_argument, 0, CHAR_MAX + 65 },
+  { "hash", required_argument, 0, CHAR_MAX + 66 },
+  { "salt-size", required_argument, 0, CHAR_MAX + 67 },
+  { "inder", no_argument, 0, CHAR_MAX + 68 },
+  { "inraw", no_argument, 0, CHAR_MAX + 70 },
+  { "no-inder", no_argument, 0, CHAR_MAX + 69 },
+  { "outder", no_argument, 0, CHAR_MAX + 71 },
+  { "outraw", no_argument, 0, CHAR_MAX + 73 },
+  { "no-outder", no_argument, 0, CHAR_MAX + 72 },
+  { "disable-quick-random", no_argument, 0, CHAR_MAX + 74 },
+  { "template", required_argument, 0, CHAR_MAX + 75 },
+  { "stdout-info", no_argument, 0, CHAR_MAX + 76 },
+  { "ask-pass", no_argument, 0, CHAR_MAX + 77 },
+  { "pkcs-cipher", required_argument, 0, CHAR_MAX + 78 },
+  { "provider", required_argument, 0, CHAR_MAX + 79 },
+  { "text", no_argument, 0, CHAR_MAX + 80 },
+  { "no-text", no_argument, 0, CHAR_MAX + 81 },
   { "version", optional_argument, 0, 'v' },
   { "help", no_argument, 0, 'h' },
   { "more-help", no_argument, 0, '!' },
@@ -175,11 +176,16 @@ process_options (int argc, char **argv)
         opts->arg.outfile = optarg;
         opts->enabled.outfile = true;
         break;
+      case CHAR_MAX + 3: /* --attime */
+        opts->present.attime = true;
+        opts->arg.attime = optarg;
+        opts->enabled.attime = true;
+        break;
       case 'i':
         opts->present.certificate_info = true;
         opts->enabled.certificate_info = true;
         break;
-      case CHAR_MAX + 3: /* --pubkey-info */
+      case CHAR_MAX + 4: /* --pubkey-info */
         opts->present.pubkey_info = true;
         opts->enabled.pubkey_info = true;
         break;
@@ -191,7 +197,7 @@ process_options (int argc, char **argv)
         opts->present.generate_certificate = true;
         opts->enabled.generate_certificate = true;
         break;
-      case CHAR_MAX + 4: /* --generate-proxy */
+      case CHAR_MAX + 5: /* --generate-proxy */
         opts->present.generate_proxy = true;
         opts->enabled.generate_proxy = true;
         break;
@@ -199,28 +205,28 @@ process_options (int argc, char **argv)
         opts->present.update_certificate = true;
         opts->enabled.update_certificate = true;
         break;
-      case CHAR_MAX + 5: /* --fingerprint */
+      case CHAR_MAX + 6: /* --fingerprint */
         opts->present.fingerprint = true;
         opts->enabled.fingerprint = true;
         break;
-      case CHAR_MAX + 6: /* --key-id */
+      case CHAR_MAX + 7: /* --key-id */
         opts->present.key_id = true;
         opts->enabled.key_id = true;
         break;
-      case CHAR_MAX + 7: /* --certificate-pubkey */
+      case CHAR_MAX + 8: /* --certificate-pubkey */
         opts->present.certificate_pubkey = true;
         opts->enabled.certificate_pubkey = true;
         break;
-      case CHAR_MAX + 8: /* --v1 */
+      case CHAR_MAX + 9: /* --v1 */
         opts->present.v1 = true;
         opts->enabled.v1 = true;
         break;
-      case CHAR_MAX + 9: /* --sign-params */
+      case CHAR_MAX + 10: /* --sign-params */
         opts->present.sign_params = true;
         opts->arg.sign_params = optarg;
         opts->enabled.sign_params = true;
         break;
-      case CHAR_MAX + 10: /* --crq-info */
+      case CHAR_MAX + 11: /* --crq-info */
         opts->present.crq_info = true;
         opts->enabled.crq_info = true;
         break;
@@ -228,20 +234,20 @@ process_options (int argc, char **argv)
         opts->present.generate_request = true;
         opts->enabled.generate_request = true;
         break;
-      case CHAR_MAX + 11: /* --no-crq-extensions */
+      case CHAR_MAX + 12: /* --no-crq-extensions */
         opts->present.no_crq_extensions = true;
         opts->enabled.no_crq_extensions = true;
         break;
-      case CHAR_MAX + 12: /* --p12-info */
+      case CHAR_MAX + 13: /* --p12-info */
         opts->present.p12_info = true;
         opts->enabled.p12_info = true;
         break;
-      case CHAR_MAX + 13: /* --p12-name */
+      case CHAR_MAX + 14: /* --p12-name */
         opts->present.p12_name = true;
         opts->arg.p12_name = optarg;
         opts->enabled.p12_name = true;
         break;
-      case CHAR_MAX + 14: /* --to-p12 */
+      case CHAR_MAX + 15: /* --to-p12 */
         opts->present.to_p12 = true;
         opts->enabled.to_p12 = true;
         break;
@@ -249,11 +255,11 @@ process_options (int argc, char **argv)
         opts->present.key_info = true;
         opts->enabled.key_info = true;
         break;
-      case CHAR_MAX + 15: /* --p8-info */
+      case CHAR_MAX + 16: /* --p8-info */
         opts->present.p8_info = true;
         opts->enabled.p8_info = true;
         break;
-      case CHAR_MAX + 16: /* --to-rsa */
+      case CHAR_MAX + 17: /* --to-rsa */
         opts->present.to_rsa = true;
         opts->enabled.to_rsa = true;
         break;
@@ -261,28 +267,28 @@ process_options (int argc, char **argv)
         opts->present.generate_privkey = true;
         opts->enabled.generate_privkey = true;
         break;
-      case CHAR_MAX + 17: /* --key-type */
+      case CHAR_MAX + 18: /* --key-type */
         opts->present.key_type = true;
         opts->arg.key_type = optarg;
         opts->enabled.key_type = true;
         break;
-      case CHAR_MAX + 18: /* --bits */
+      case CHAR_MAX + 19: /* --bits */
         opts->present.bits = true;
         opts->arg.bits = optarg;
         opts->value.bits = parse_number(optarg);
         opts->enabled.bits = true;
         break;
-      case CHAR_MAX + 19: /* --curve */
+      case CHAR_MAX + 20: /* --curve */
         opts->present.curve = true;
         opts->arg.curve = optarg;
         opts->enabled.curve = true;
         break;
-      case CHAR_MAX + 20: /* --sec-param */
+      case CHAR_MAX + 21: /* --sec-param */
         opts->present.sec_param = true;
         opts->arg.sec_param = optarg;
         opts->enabled.sec_param = true;
         break;
-      case CHAR_MAX + 21: /* --to-p8 */
+      case CHAR_MAX + 22: /* --to-p8 */
         opts->present.to_p8 = true;
         opts->enabled.to_p8 = true;
         break;
@@ -290,15 +296,15 @@ process_options (int argc, char **argv)
         opts->present.pkcs8 = true;
         opts->enabled.pkcs8 = true;
         break;
-      case CHAR_MAX + 22: /* --provable */
+      case CHAR_MAX + 23: /* --provable */
         opts->present.provable = true;
         opts->enabled.provable = true;
         break;
-      case CHAR_MAX + 23: /* --verify-provable-privkey */
+      case CHAR_MAX + 24: /* --verify-provable-privkey */
         opts->present.verify_provable_privkey = true;
         opts->enabled.verify_provable_privkey = true;
         break;
-      case CHAR_MAX + 24: /* --seed */
+      case CHAR_MAX + 25: /* --seed */
         opts->present.seed = true;
         opts->arg.seed = optarg;
         opts->enabled.seed = true;
@@ -307,11 +313,11 @@ process_options (int argc, char **argv)
         opts->present.crl_info = true;
         opts->enabled.crl_info = true;
         break;
-      case CHAR_MAX + 25: /* --generate-crl */
+      case CHAR_MAX + 26: /* --generate-crl */
         opts->present.generate_crl = true;
         opts->enabled.generate_crl = true;
         break;
-      case CHAR_MAX + 26: /* --verify-crl */
+      case CHAR_MAX + 27: /* --verify-crl */
         opts->present.verify_crl = true;
         opts->enabled.verify_crl = true;
         break;
@@ -319,229 +325,229 @@ process_options (int argc, char **argv)
         opts->present.verify_chain = true;
         opts->enabled.verify_chain = true;
         break;
-      case CHAR_MAX + 27: /* --verify */
+      case CHAR_MAX + 28: /* --verify */
         opts->present.verify = true;
         opts->enabled.verify = true;
         break;
-      case CHAR_MAX + 28: /* --verify-hostname */
+      case CHAR_MAX + 29: /* --verify-hostname */
         opts->present.verify_hostname = true;
         opts->arg.verify_hostname = optarg;
         opts->enabled.verify_hostname = true;
         break;
-      case CHAR_MAX + 29: /* --verify-email */
+      case CHAR_MAX + 30: /* --verify-email */
         opts->present.verify_email = true;
         opts->arg.verify_email = optarg;
         opts->enabled.verify_email = true;
         break;
-      case CHAR_MAX + 30: /* --verify-purpose */
+      case CHAR_MAX + 31: /* --verify-purpose */
         opts->present.verify_purpose = true;
         opts->arg.verify_purpose = optarg;
         opts->enabled.verify_purpose = true;
         break;
-      case CHAR_MAX + 31: /* --verify-allow-broken */
+      case CHAR_MAX + 32: /* --verify-allow-broken */
         opts->present.verify_allow_broken = true;
         opts->enabled.verify_allow_broken = true;
         break;
-      case CHAR_MAX + 32: /* --verify-profile */
+      case CHAR_MAX + 33: /* --verify-profile */
         opts->present.verify_profile = true;
         opts->arg.verify_profile = optarg;
         opts->enabled.verify_profile = true;
         break;
-      case CHAR_MAX + 33: /* --p7-generate */
+      case CHAR_MAX + 34: /* --p7-generate */
         opts->present.p7_generate = true;
         opts->enabled.p7_generate = true;
         break;
-      case CHAR_MAX + 34: /* --p7-sign */
+      case CHAR_MAX + 35: /* --p7-sign */
         opts->present.p7_sign = true;
         opts->enabled.p7_sign = true;
         break;
-      case CHAR_MAX + 35: /* --p7-detached-sign */
+      case CHAR_MAX + 36: /* --p7-detached-sign */
         opts->present.p7_detached_sign = true;
         opts->enabled.p7_detached_sign = true;
         break;
-      case CHAR_MAX + 36: /* --p7-include-cert */
+      case CHAR_MAX + 37: /* --p7-include-cert */
         opts->present.p7_include_cert = true;
         opts->enabled.p7_include_cert = true;
         break;
-      case CHAR_MAX + 37: /* --no-p7-include-cert */
+      case CHAR_MAX + 38: /* --no-p7-include-cert */
         opts->present.p7_include_cert = true;
         opts->enabled.p7_include_cert = false;
         break;
-      case CHAR_MAX + 38: /* --p7-time */
+      case CHAR_MAX + 39: /* --p7-time */
         opts->present.p7_time = true;
         opts->enabled.p7_time = true;
         break;
-      case CHAR_MAX + 39: /* --no-p7-time */
+      case CHAR_MAX + 40: /* --no-p7-time */
         opts->present.p7_time = true;
         opts->enabled.p7_time = false;
         break;
-      case CHAR_MAX + 40: /* --p7-show-data */
+      case CHAR_MAX + 41: /* --p7-show-data */
         opts->present.p7_show_data = true;
         opts->enabled.p7_show_data = true;
         break;
-      case CHAR_MAX + 41: /* --no-p7-show-data */
+      case CHAR_MAX + 42: /* --no-p7-show-data */
         opts->present.p7_show_data = true;
         opts->enabled.p7_show_data = false;
         break;
-      case CHAR_MAX + 42: /* --p7-info */
+      case CHAR_MAX + 43: /* --p7-info */
         opts->present.p7_info = true;
         opts->enabled.p7_info = true;
         break;
-      case CHAR_MAX + 43: /* --p7-verify */
+      case CHAR_MAX + 44: /* --p7-verify */
         opts->present.p7_verify = true;
         opts->enabled.p7_verify = true;
         break;
-      case CHAR_MAX + 44: /* --smime-to-p7 */
+      case CHAR_MAX + 45: /* --smime-to-p7 */
         opts->present.smime_to_p7 = true;
         opts->enabled.smime_to_p7 = true;
         break;
-      case CHAR_MAX + 45: /* --generate-dh-params */
+      case CHAR_MAX + 46: /* --generate-dh-params */
         opts->present.generate_dh_params = true;
         opts->enabled.generate_dh_params = true;
         break;
-      case CHAR_MAX + 46: /* --get-dh-params */
+      case CHAR_MAX + 47: /* --get-dh-params */
         opts->present.get_dh_params = true;
         opts->enabled.get_dh_params = true;
         break;
-      case CHAR_MAX + 47: /* --dh-info */
+      case CHAR_MAX + 48: /* --dh-info */
         opts->present.dh_info = true;
         opts->enabled.dh_info = true;
         break;
-      case CHAR_MAX + 48: /* --load-privkey */
+      case CHAR_MAX + 49: /* --load-privkey */
         opts->present.load_privkey = true;
         opts->arg.load_privkey = optarg;
         opts->enabled.load_privkey = true;
         break;
-      case CHAR_MAX + 49: /* --load-pubkey */
+      case CHAR_MAX + 50: /* --load-pubkey */
         opts->present.load_pubkey = true;
         opts->arg.load_pubkey = optarg;
         opts->enabled.load_pubkey = true;
         break;
-      case CHAR_MAX + 50: /* --load-request */
+      case CHAR_MAX + 51: /* --load-request */
         opts->present.load_request = true;
         opts->arg.load_request = optarg;
         opts->enabled.load_request = true;
         break;
-      case CHAR_MAX + 51: /* --load-certificate */
+      case CHAR_MAX + 52: /* --load-certificate */
         opts->present.load_certificate = true;
         opts->arg.load_certificate = optarg;
         opts->enabled.load_certificate = true;
         break;
-      case CHAR_MAX + 52: /* --load-ca-privkey */
+      case CHAR_MAX + 53: /* --load-ca-privkey */
         opts->present.load_ca_privkey = true;
         opts->arg.load_ca_privkey = optarg;
         opts->enabled.load_ca_privkey = true;
         break;
-      case CHAR_MAX + 53: /* --load-ca-certificate */
+      case CHAR_MAX + 54: /* --load-ca-certificate */
         opts->present.load_ca_certificate = true;
         opts->arg.load_ca_certificate = optarg;
         opts->enabled.load_ca_certificate = true;
         break;
-      case CHAR_MAX + 54: /* --load-crl */
+      case CHAR_MAX + 55: /* --load-crl */
         opts->present.load_crl = true;
         opts->arg.load_crl = optarg;
         opts->enabled.load_crl = true;
         break;
-      case CHAR_MAX + 55: /* --load-data */
+      case CHAR_MAX + 56: /* --load-data */
         opts->present.load_data = true;
         opts->arg.load_data = optarg;
         opts->enabled.load_data = true;
         break;
-      case CHAR_MAX + 56: /* --password */
+      case CHAR_MAX + 57: /* --password */
         opts->present.password = true;
         opts->arg.password = optarg;
         opts->enabled.password = true;
         break;
-      case CHAR_MAX + 57: /* --null-password */
+      case CHAR_MAX + 58: /* --null-password */
         opts->present.null_password = true;
         opts->enabled.null_password = true;
         break;
-      case CHAR_MAX + 58: /* --empty-password */
+      case CHAR_MAX + 59: /* --empty-password */
         opts->present.empty_password = true;
         opts->enabled.empty_password = true;
         break;
-      case CHAR_MAX + 59: /* --hex-numbers */
+      case CHAR_MAX + 60: /* --hex-numbers */
         opts->present.hex_numbers = true;
         opts->enabled.hex_numbers = true;
         break;
-      case CHAR_MAX + 60: /* --cprint */
+      case CHAR_MAX + 61: /* --cprint */
         opts->present.cprint = true;
         opts->enabled.cprint = true;
         break;
-      case CHAR_MAX + 61: /* --rsa */
+      case CHAR_MAX + 62: /* --rsa */
         opts->present.rsa = true;
         opts->enabled.rsa = true;
         break;
-      case CHAR_MAX + 62: /* --dsa */
+      case CHAR_MAX + 63: /* --dsa */
         opts->present.dsa = true;
         opts->enabled.dsa = true;
         break;
-      case CHAR_MAX + 63: /* --ecc */
-      case CHAR_MAX + 64: /* --ecdsa */
+      case CHAR_MAX + 64: /* --ecc */
+      case CHAR_MAX + 65: /* --ecdsa */
         opts->present.ecc = true;
         opts->enabled.ecc = true;
         break;
-      case CHAR_MAX + 65: /* --hash */
+      case CHAR_MAX + 66: /* --hash */
         opts->present.hash = true;
         opts->arg.hash = optarg;
         opts->enabled.hash = true;
         break;
-      case CHAR_MAX + 66: /* --salt-size */
+      case CHAR_MAX + 67: /* --salt-size */
         opts->present.salt_size = true;
         opts->arg.salt_size = optarg;
         opts->value.salt_size = parse_number(optarg);
         opts->enabled.salt_size = true;
         break;
-      case CHAR_MAX + 67: /* --inder */
-      case CHAR_MAX + 69: /* --inraw */
+      case CHAR_MAX + 68: /* --inder */
+      case CHAR_MAX + 70: /* --inraw */
         opts->present.inder = true;
         opts->enabled.inder = true;
         break;
-      case CHAR_MAX + 68: /* --no-inder */
+      case CHAR_MAX + 69: /* --no-inder */
         opts->present.inder = true;
         opts->enabled.inder = false;
         break;
-      case CHAR_MAX + 70: /* --outder */
-      case CHAR_MAX + 72: /* --outraw */
+      case CHAR_MAX + 71: /* --outder */
+      case CHAR_MAX + 73: /* --outraw */
         opts->present.outder = true;
         opts->enabled.outder = true;
         break;
-      case CHAR_MAX + 71: /* --no-outder */
+      case CHAR_MAX + 72: /* --no-outder */
         opts->present.outder = true;
         opts->enabled.outder = false;
         break;
-      case CHAR_MAX + 73: /* --disable-quick-random */
+      case CHAR_MAX + 74: /* --disable-quick-random */
         opts->present.disable_quick_random = true;
         opts->enabled.disable_quick_random = true;
         break;
-      case CHAR_MAX + 74: /* --template */
+      case CHAR_MAX + 75: /* --template */
         opts->present.template = true;
         opts->arg.template = optarg;
         opts->enabled.template = true;
         break;
-      case CHAR_MAX + 75: /* --stdout-info */
+      case CHAR_MAX + 76: /* --stdout-info */
         opts->present.stdout_info = true;
         opts->enabled.stdout_info = true;
         break;
-      case CHAR_MAX + 76: /* --ask-pass */
+      case CHAR_MAX + 77: /* --ask-pass */
         opts->present.ask_pass = true;
         opts->enabled.ask_pass = true;
         break;
-      case CHAR_MAX + 77: /* --pkcs-cipher */
+      case CHAR_MAX + 78: /* --pkcs-cipher */
         opts->present.pkcs_cipher = true;
         opts->arg.pkcs_cipher = optarg;
         opts->enabled.pkcs_cipher = true;
         break;
-      case CHAR_MAX + 78: /* --provider */
+      case CHAR_MAX + 79: /* --provider */
         opts->present.provider = true;
         opts->arg.provider = optarg;
         opts->enabled.provider = true;
         break;
-      case CHAR_MAX + 79: /* --text */
+      case CHAR_MAX + 80: /* --text */
         opts->present.text = true;
         opts->enabled.text = true;
         break;
-      case CHAR_MAX + 80: /* --no-text */
+      case CHAR_MAX + 81: /* --no-text */
         opts->present.text = true;
         opts->enabled.text = false;
         break;
@@ -653,8 +659,8 @@ process_options (int argc, char **argv)
       if (!OPT_ARG_VERSION || !strcmp (OPT_ARG_VERSION, "c"))
         {
           const char str[] =
-            "certtool 3.7.9\n"
-            "Copyright (C) 2000-2021 Free Software Foundation, and others\n"
+            "certtool 3.8.1\n"
+            "Copyright (C) 2000-2023 Free Software Foundation, and others\n"
             "This is free software. It is licensed for use, modification and\n"
             "redistribution under the terms of the GNU General Public License,\n"
             "version 3 or later <http://gnu.org/licenses/gpl.html>\n"
@@ -666,15 +672,15 @@ process_options (int argc, char **argv)
       else if (!strcmp (OPT_ARG_VERSION, "v"))
         {
           const char str[] =
-            "certtool 3.7.9\n";
+            "certtool 3.8.1\n";
           fprintf (stdout, "%s", str);
           exit(0);
         }
       else if (!strcmp (OPT_ARG_VERSION, "n"))
         {
           const char str[] =
-            "certtool 3.7.9\n"
-            "Copyright (C) 2000-2021 Free Software Foundation, and others\n"
+            "certtool 3.8.1\n"
+            "Copyright (C) 2000-2023 Free Software Foundation, and others\n"
             "This is free software. It is licensed for use, modification and\n"
             "redistribution under the terms of the GNU General Public License,\n"
             "version 3 or later <http://gnu.org/licenses/gpl.html>\n"
@@ -725,6 +731,7 @@ usage (FILE *out, int status)
     "       --infile=file          Input file\n"
     "				- file must pre-exist\n"
     "       --outfile=str          Output file\n"
+    "       --attime=str           Perform validation at the timestamp instead of the system time\n"
     "\n"
     "Certificate related options:\n"
     "\n"

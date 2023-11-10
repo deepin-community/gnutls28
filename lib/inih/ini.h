@@ -25,20 +25,19 @@ extern "C" {
 
 /* Typedef for prototype of handler function. */
 #if INI_HANDLER_LINENO
-typedef int (*ini_handler)(void* user, const char* section,
-                           const char* name, const char* value,
-                           int lineno);
+typedef int (*ini_handler)(void *user, const char *section, const char *name,
+			   const char *value, int lineno);
 #else
-typedef int (*ini_handler)(void* user, const char* section,
-                           const char* name, const char* value);
+typedef int (*ini_handler)(void *user, const char *section, const char *name,
+			   const char *value);
 #endif
 
 /* Typedef for prototype of fgets-style reader function. */
-typedef char* (*ini_reader)(char* str, int num, void* stream);
+typedef char *(*ini_reader)(char *str, int num, void *stream);
 
 /* Same as ini_parse(), but takes a FILE* instead of filename. This doesn't
    close the file when it's finished -- the caller must do that. */
-int ini_parse_file(FILE* file, ini_handler handler, void* user);
+int ini_parse_file(FILE *file, ini_handler handler, void *user);
 
 /* Nonzero to allow multi-line value parsing, in the style of Python's
    configparser. If allowed, ini_parse() will call the handler with the same
@@ -101,5 +100,4 @@ int ini_parse_file(FILE* file, ini_handler handler, void* user);
 #ifdef __cplusplus
 }
 #endif
-
 #endif /* __INI_H__ */

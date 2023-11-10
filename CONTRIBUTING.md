@@ -44,7 +44,7 @@ For testing functionality of gnutls we use two test unit testing frameworks:
 
 Certificates for testing purposes are available at [cert-common.h](tests/cert-common.h).
 Note that we do not regenerate test certificates when they expire, but
-we rather fix the test's time using datefudge or gnutls_global_set_time_function().
+we rather fix the test's time using faketime/datefudge or gnutls_global_set_time_function().
 For example, see [x509cert-tl.c](tests/x509cert-tl.c).
 
 
@@ -66,8 +66,8 @@ case by case basis.
 
 # Indentation style:
 
- In general, use [the Linux kernel coding style](https://www.kernel.org/doc/html/latest/process/coding-style.html).
-You may indent the source using GNU indent, e.g. "indent -linux *.c".
+  We use [the Linux kernel coding style](https://www.kernel.org/doc/html/latest/process/coding-style.html). You may indent the source using the
+[devel/indent-gnutls](devel/indent-gnutls) script.
 
 
 # Commenting style
@@ -219,7 +219,7 @@ as in the example below. The detailed form is documented on `doc/scripts/gdoc`.
  *
  * Note that since version 3.1.2 this function enables some common
  * TLS extensions such as session tickets and OCSP certificate status
- * request in client side by default. To prevent that use the %GNUTLS_NO_EXTENSIONS
+ * request in client side by default. To prevent that use the %GNUTLS_NO_DEFAULT_EXTENSIONS
  * flag.
  *
  * Returns: %GNUTLS_E_SUCCESS on success, or a negative error code.
@@ -426,29 +426,6 @@ to track actual changes to be made in those files, a git external diff
 driver is provided as `devel/git-abidiff-gnutls`. See the comment in the
 file for the instruction.
 
-
-# Guile bindings:
-
- Parts of the Guile bindings, such as types (aka. "SMOBs"), enum values,
-constants, are automatically generated.  This is handled by the modules
-under `guile/modules/gnutls/build/'; these modules are only used at
-build-time and are not installed.
-
-The Scheme variables they generate (e.g., constants, type predicates,
-etc.) are exported to user programs through `gnutls.scm' and
-`gnutls/extra.scm', both of which are installed.
-
-For instance, when adding/removing/renaming enumerates or constants,
-two things must be done:
-
- 1. Update the enum list in `build/enums.scm' (currently dependencies
-    are not tracked, so you have to run "make clean all" in `guile/'
-    after).
-
- 2. Update the export list of `gnutls.scm' (or `extra.scm').
-
-Note that, for constants and enums, "schemefied" names are used, as
-noted under the "Guile API Conventions" node of the manual.
 
 # Automated testing
 

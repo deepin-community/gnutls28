@@ -16,8 +16,7 @@
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GnuTLS; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
+ * along with GnuTLS.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 #ifdef HAVE_CONFIG_H
@@ -50,8 +49,10 @@ void doit(void)
 	MD5_Update(&c, "abc", 3);
 	MD5_Final(&(md[0]), &c);
 
-	if (memcmp(md, "\x90\x01\x50\x98\x3c\xd2\x4f\xb0"
-		   "\xd6\x96\x3f\x7d\x28\xe1\x7f\x72", sizeof(md)) != 0) {
+	if (memcmp(md,
+		   "\x90\x01\x50\x98\x3c\xd2\x4f\xb0"
+		   "\xd6\x96\x3f\x7d\x28\xe1\x7f\x72",
+		   sizeof(md)) != 0) {
 		hexprint(md, sizeof(md));
 		fail("MD5 failure\n");
 	} else if (debug)

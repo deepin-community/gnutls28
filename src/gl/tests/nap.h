@@ -1,9 +1,9 @@
 /* Assist in file system timestamp tests.
-   Copyright (C) 2009-2021 Free Software Foundation, Inc.
+   Copyright (C) 2009-2023 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 3 of the License, or
+   the Free Software Foundation, either version 3 of the License, or
    (at your option) any later version.
 
    This program is distributed in the hope that it will be useful,
@@ -20,9 +20,8 @@
 # define GLTEST_NAP_H
 
 # include <limits.h>
-# include <stdbool.h>
 
-# include <intprops.h>
+# include <stdckdint.h>
 
 /* Avoid a conflict with a function called nap() on UnixWare.  */
 # if defined _SCO_DS || (defined __SCO_VERSION__ || defined __sysv5__)  /* OpenServer, UnixWare */
@@ -55,9 +54,9 @@ diff_timespec (struct timespec a, struct timespec b)
   if (! (bs < as || (bs == as && bns < ans)))
     return 0;
 
-  if (INT_SUBTRACT_WRAPV (as, bs, &sdiff)
-      || INT_MULTIPLY_WRAPV (sdiff, 1000000000, &sdiff)
-      || INT_ADD_WRAPV (sdiff, ans - bns, &sdiff))
+  if (ckd_sub (&sdiff, as, bs)
+      || ckd_mul (&sdiff, sdiff, 1000000000)
+      || ckd_add (&sdiff, sdiff, ans - bns))
     return INT_MAX;
 
   return sdiff;

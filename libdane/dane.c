@@ -112,14 +112,12 @@ unsigned int dane_query_entries(dane_query_t q)
  * Returns: On success, %DANE_E_SUCCESS (0) is returned, otherwise a
  *   negative error value.
  **/
-int
-dane_query_data(dane_query_t q, unsigned int idx,
-		unsigned int *usage, unsigned int *type,
-		unsigned int *match, gnutls_datum_t * data)
+int dane_query_data(dane_query_t q, unsigned int idx, unsigned int *usage,
+		    unsigned int *type, unsigned int *match,
+		    gnutls_datum_t *data)
 {
 	if (idx >= q->data_entries)
-		return
-		    gnutls_assert_val(DANE_E_REQUESTED_DATA_NOT_AVAILABLE);
+		return gnutls_assert_val(DANE_E_REQUESTED_DATA_NOT_AVAILABLE);
 
 	if (usage)
 		*usage = q->usage[idx];
@@ -158,9 +156,9 @@ dane_query_data(dane_query_t q, unsigned int idx,
  * Returns: On success, %DANE_E_SUCCESS (0) is returned, otherwise a
  *   negative error value.
  */
-int
-dane_query_to_raw_tlsa(dane_query_t q, unsigned int *data_entries,
-		char ***dane_data, int **dane_data_len, int *secure, int *bogus)
+int dane_query_to_raw_tlsa(dane_query_t q, unsigned int *data_entries,
+			   char ***dane_data, int **dane_data_len, int *secure,
+			   int *bogus)
 {
 	size_t data_sz;
 	char *data_buf;
@@ -185,17 +183,18 @@ dane_query_to_raw_tlsa(dane_query_t q, unsigned int *data_entries,
 	}
 
 	/* pack dane_data pointer list followed by dane_data contents */
-	data_sz = sizeof (**dane_data) * (q->data_entries + 1);
+	data_sz = sizeof(**dane_data) * (q->data_entries + 1);
 	for (idx = 0; idx < q->data_entries; idx++)
 		data_sz += 3 + q->data[idx].size;
 
-	*dane_data = gnutls_calloc (1, data_sz);
+	*dane_data = gnutls_calloc(1, data_sz);
 	if (*dane_data == NULL)
 		return DANE_E_MEMORY_ERROR;
 	data_buf = (char *)*dane_data;
-	data_buf += sizeof (**dane_data) * (q->data_entries + 1);
+	data_buf += sizeof(**dane_data) * (q->data_entries + 1);
 
-	*dane_data_len = gnutls_calloc (q->data_entries + 1, sizeof (**dane_data_len));
+	*dane_data_len =
+		gnutls_calloc(q->data_entries + 1, sizeof(**dane_data_len));
 	if (*dane_data_len == NULL) {
 		free(*dane_data);
 		*dane_data = NULL;
@@ -207,7 +206,8 @@ dane_query_to_raw_tlsa(dane_query_t q, unsigned int *data_entries,
 		(*dane_data)[idx][0] = q->usage[idx];
 		(*dane_data)[idx][1] = q->type[idx];
 		(*dane_data)[idx][2] = q->match[idx];
-		memcpy(&(*dane_data)[idx][3], q->data[idx].data, q->data[idx].size);
+		memcpy(&(*dane_data)[idx][3], q->data[idx].data,
+		       q->data[idx].size);
 		(*dane_data_len)[idx] = 3 + q->data[idx].size;
 		data_buf += 3 + q->data[idx].size;
 	}
@@ -230,7 +230,7 @@ dane_query_to_raw_tlsa(dane_query_t q, unsigned int *data_entries,
  * Returns: On success, %DANE_E_SUCCESS (0) is returned, otherwise a
  *   negative error value.
  **/
-int dane_state_init(dane_state_t * s, unsigned int flags)
+int dane_state_init(dane_state_t *s, unsigned int flags)
 {
 	struct ub_ctx *ctx;
 	int ret;
@@ -263,8 +263,7 @@ int dane_state_init(dane_state_t * s, unsigned int flags)
 
 	/* read public keys for DNSSEC verification */
 	if (!(flags & DANE_F_IGNORE_DNSSEC)) {
-		if (ub_ctx_add_ta_file(ctx,
-				       (char *) UNBOUND_ROOT_KEY_FILE) !=
+		if (ub_ctx_add_ta_file(ctx, (char *)UNBOUND_ROOT_KEY_FILE) !=
 		    0) {
 			gnutls_assert();
 			ret = DANE_E_INITIALIZATION_ERROR;
@@ -276,7 +275,7 @@ int dane_state_init(dane_state_t * s, unsigned int flags)
 	(*s)->flags = flags;
 
 	return DANE_E_SUCCESS;
-      cleanup:
+cleanup:
 
 	if (ctx)
 		ub_ctx_delete(ctx);
@@ -311,9 +310,8 @@ int dane_state_set_dlv_file(dane_state_t s, const char *file)
 {
 	int ret;
 
-	ret =
-	    ub_ctx_set_option(s->ctx, (char *) "dlv-anchor-file:",
-			      (void *) file);
+	ret = ub_ctx_set_option(s->ctx,
+				(char *)"dlv-anchor-file:", (void *)file);
 	if (ret != 0)
 		return gnutls_assert_val(DANE_E_FILE_ERROR);
 
@@ -333,7 +331,6 @@ void dane_query_deinit(dane_query_t q)
 		ub_resolve_free(q->result);
 	free(q);
 }
-
 
 /**
  * dane_raw_tlsa:
@@ -355,9 +352,8 @@ void dane_query_deinit(dane_query_t q)
  * Returns: On success, %DANE_E_SUCCESS (0) is returned, otherwise a
  *   negative error value.
  **/
-int
-dane_raw_tlsa(dane_state_t s, dane_query_t * r, char *const *dane_data,
-	      const int *dane_data_len, int secure, int bogus)
+int dane_raw_tlsa(dane_state_t s, dane_query_t *r, char *const *dane_data,
+		  const int *dane_data_len, int secure, int bogus)
 {
 	int ret = DANE_E_SUCCESS;
 	unsigned int i;
@@ -373,14 +369,12 @@ dane_raw_tlsa(dane_state_t s, dane_query_t * r, char *const *dane_data,
 			break;
 
 		if (dane_data_len[i] <= 3)
-			return
-			    gnutls_assert_val
-			    (DANE_E_RECEIVED_CORRUPT_DATA);
+			return gnutls_assert_val(DANE_E_RECEIVED_CORRUPT_DATA);
 
 		(*r)->usage[i] = dane_data[i][0];
 		(*r)->type[i] = dane_data[i][1];
 		(*r)->match[i] = dane_data[i][2];
-		(*r)->data[i].data = (void *) &dane_data[i][3];
+		(*r)->data[i].data = (void *)&dane_data[i][3];
 		(*r)->data[i].size = dane_data_len[i] - 3;
 		(*r)->data_entries++;
 	}
@@ -406,7 +400,6 @@ dane_raw_tlsa(dane_state_t s, dane_query_t * r, char *const *dane_data,
 	return ret;
 }
 
-
 /**
  * dane_query_tlsa:
  * @s: The DANE state structure
@@ -421,9 +414,8 @@ dane_raw_tlsa(dane_state_t s, dane_query_t * r, char *const *dane_data,
  * Returns: On success, %DANE_E_SUCCESS (0) is returned, otherwise a
  *   negative error value.
  **/
-int
-dane_query_tlsa(dane_state_t s, dane_query_t * r, const char *host,
-		const char *proto, unsigned int port)
+int dane_query_tlsa(dane_state_t s, dane_query_t *r, const char *host,
+		    const char *proto, unsigned int port)
 {
 	char ns[1024];
 	int ret;
@@ -437,15 +429,14 @@ dane_query_tlsa(dane_state_t s, dane_query_t * r, const char *host,
 		return gnutls_assert_val(DANE_E_RESOLVING_ERROR);
 	}
 
-/* show first result */
+	/* show first result */
 	if (!result->havedata) {
 		ub_resolve_free(result);
 		return gnutls_assert_val(DANE_E_NO_DANE_DATA);
 	}
 
-	ret =
-	    dane_raw_tlsa(s, r, result->data, result->len, result->secure,
-			  result->bogus);
+	ret = dane_raw_tlsa(s, r, result->data, result->len, result->secure,
+			    result->bogus);
 	if (*r == NULL) {
 		ub_resolve_free(result);
 		return ret;
@@ -454,10 +445,8 @@ dane_query_tlsa(dane_state_t s, dane_query_t * r, const char *host,
 	return ret;
 }
 
-
-static unsigned int
-matches(const gnutls_datum_t * raw1, const gnutls_datum_t * raw2,
-	dane_match_type_t match)
+static unsigned int matches(const gnutls_datum_t *raw1,
+			    const gnutls_datum_t *raw2, dane_match_type_t match)
 {
 	uint8_t digest[64];
 	int ret;
@@ -471,13 +460,11 @@ matches(const gnutls_datum_t * raw1, const gnutls_datum_t * raw2,
 
 		return 1;
 	} else if (match == DANE_MATCH_SHA2_256) {
-
 		if (raw2->size != 32)
 			return gnutls_assert_val(0);
 
-		ret =
-		    gnutls_hash_fast(GNUTLS_DIG_SHA256, raw1->data,
-				     raw1->size, digest);
+		ret = gnutls_hash_fast(GNUTLS_DIG_SHA256, raw1->data,
+				       raw1->size, digest);
 		if (ret < 0)
 			return gnutls_assert_val(0);
 
@@ -489,9 +476,8 @@ matches(const gnutls_datum_t * raw1, const gnutls_datum_t * raw2,
 		if (raw2->size != 64)
 			return gnutls_assert_val(0);
 
-		ret =
-		    gnutls_hash_fast(GNUTLS_DIG_SHA512, raw1->data,
-				     raw1->size, digest);
+		ret = gnutls_hash_fast(GNUTLS_DIG_SHA512, raw1->data,
+				       raw1->size, digest);
 		if (ret < 0)
 			return gnutls_assert_val(0);
 
@@ -504,8 +490,7 @@ matches(const gnutls_datum_t * raw1, const gnutls_datum_t * raw2,
 	return gnutls_assert_val(0);
 }
 
-static int
-crt_to_pubkey(const gnutls_datum_t * raw_crt, gnutls_datum_t * out)
+static int crt_to_pubkey(const gnutls_datum_t *raw_crt, gnutls_datum_t *out)
 {
 	gnutls_pubkey_t pub = NULL;
 	gnutls_x509_crt_t crt = NULL;
@@ -548,10 +533,10 @@ crt_to_pubkey(const gnutls_datum_t * raw_crt, gnutls_datum_t * out)
 	ret = 0;
 	goto clean_certs;
 
-      cleanup:
+cleanup:
 	free(out->data);
 	out->data = NULL;
-      clean_certs:
+clean_certs:
 	if (pub)
 		gnutls_pubkey_deinit(pub);
 	if (crt)
@@ -560,12 +545,10 @@ crt_to_pubkey(const gnutls_datum_t * raw_crt, gnutls_datum_t * out)
 	return ret;
 }
 
-static int
-verify_ca(const gnutls_datum_t * raw_crt, unsigned raw_crt_size,
-	  gnutls_certificate_type_t crt_type,
-	  dane_cert_type_t ctype,
-	  dane_match_type_t match, gnutls_datum_t * data,
-	  unsigned int *verify)
+static int verify_ca(const gnutls_datum_t *raw_crt, unsigned raw_crt_size,
+		     gnutls_certificate_type_t crt_type, dane_cert_type_t ctype,
+		     dane_match_type_t match, gnutls_datum_t *data,
+		     unsigned int *verify)
 {
 	gnutls_datum_t pubkey = { NULL, 0 };
 	int ret, i;
@@ -578,7 +561,7 @@ verify_ca(const gnutls_datum_t * raw_crt, unsigned raw_crt_size,
 
 	if (ctype == DANE_CERT_X509 && crt_type == GNUTLS_CRT_X509) {
 		is_ok = 0;
-		for (i=raw_crt_size-1;i>=1;i--) {
+		for (i = raw_crt_size - 1; i >= 1; i--) {
 			if (matches(&raw_crt[i], data, match)) {
 				is_ok = 1;
 				break;
@@ -593,7 +576,7 @@ verify_ca(const gnutls_datum_t * raw_crt, unsigned raw_crt_size,
 	} else if (ctype == DANE_CERT_PK && crt_type == GNUTLS_CRT_X509) {
 		is_ok = 0;
 
-		for (i=raw_crt_size-1;i>=1;i--) {
+		for (i = raw_crt_size - 1; i >= 1; i--) {
 			ret = crt_to_pubkey(&raw_crt[i], &pubkey);
 			if (ret < 0) {
 				gnutls_assert();
@@ -625,21 +608,21 @@ verify_ca(const gnutls_datum_t * raw_crt, unsigned raw_crt_size,
 		goto cleanup;
 	}
 
-	ret =
-	    gnutls_x509_crt_import(crt, &raw_crt[0], GNUTLS_X509_FMT_DER);
+	ret = gnutls_x509_crt_import(crt, &raw_crt[0], GNUTLS_X509_FMT_DER);
 	if (ret < 0) {
 		ret = gnutls_assert_val(DANE_E_CERT_ERROR);
 		goto cleanup;
 	}
 
-	for (i=raw_crt_size-1;i>=1;i--) {
+	for (i = raw_crt_size - 1; i >= 1; i--) {
 		ret = gnutls_x509_crt_init(&ca);
 		if (ret < 0) {
 			ret = gnutls_assert_val(DANE_E_CERT_ERROR);
 			goto cleanup;
 		}
 
-		ret = gnutls_x509_crt_import(ca, &raw_crt[i], GNUTLS_X509_FMT_DER);
+		ret = gnutls_x509_crt_import(ca, &raw_crt[i],
+					     GNUTLS_X509_FMT_DER);
 		if (ret < 0) {
 			ret = gnutls_assert_val(DANE_E_CERT_ERROR);
 			goto cleanup;
@@ -668,7 +651,7 @@ verify_ca(const gnutls_datum_t * raw_crt, unsigned raw_crt_size,
 	}
 
 	ret = 0;
-      cleanup:
+cleanup:
 	free(pubkey.data);
 	if (crt != NULL)
 		gnutls_x509_crt_deinit(crt);
@@ -677,24 +660,21 @@ verify_ca(const gnutls_datum_t * raw_crt, unsigned raw_crt_size,
 	return ret;
 }
 
-static int
-verify_ee(const gnutls_datum_t * raw_crt,
-	  gnutls_certificate_type_t crt_type, dane_cert_type_t ctype,
-	  dane_match_type_t match, gnutls_datum_t * data,
-	  unsigned int *verify)
+static int verify_ee(const gnutls_datum_t *raw_crt,
+		     gnutls_certificate_type_t crt_type, dane_cert_type_t ctype,
+		     dane_match_type_t match, gnutls_datum_t *data,
+		     unsigned int *verify)
 {
 	gnutls_datum_t pubkey = { NULL, 0 };
 	int ret;
 
 	if (ctype == DANE_CERT_X509 && crt_type == GNUTLS_CRT_X509) {
-
 		if (!matches(raw_crt, data, match)) {
 			gnutls_assert();
 			*verify |= DANE_VERIFY_CERT_DIFFERS;
 		}
 
 	} else if (ctype == DANE_CERT_PK && crt_type == GNUTLS_CRT_X509) {
-
 		ret = crt_to_pubkey(raw_crt, &pubkey);
 		if (ret < 0) {
 			gnutls_assert();
@@ -711,26 +691,26 @@ verify_ee(const gnutls_datum_t * raw_crt,
 	}
 
 	ret = 0;
-      cleanup:
+cleanup:
 	free(pubkey.data);
 	return ret;
 }
 
 #define CHECK_VRET(ret, checked, record_status, status) \
-			if (ret == DANE_E_UNKNOWN_DANE_DATA) { \
-				/* skip that entry */ \
-				continue; \
-			} else if (ret < 0) { \
-				gnutls_assert(); \
-				goto cleanup; \
-			} \
-			checked = 1; \
-			if (record_status == 0) { \
-				status = 0; \
-				break; \
-			} else { \
-				status |= record_status; \
-			}
+	if (ret == DANE_E_UNKNOWN_DANE_DATA) {          \
+		/* skip that entry */                   \
+		continue;                               \
+	} else if (ret < 0) {                           \
+		gnutls_assert();                        \
+		goto cleanup;                           \
+	}                                               \
+	checked = 1;                                    \
+	if (record_status == 0) {                       \
+		status = 0;                             \
+		break;                                  \
+	} else {                                        \
+		status |= record_status;                \
+	}
 
 /**
  * dane_verify_crt_raw:
@@ -756,13 +736,11 @@ verify_ee(const gnutls_datum_t * raw_crt,
  * will be returned.
  *
  **/
-int
-dane_verify_crt_raw(dane_state_t s,
-		    const gnutls_datum_t * chain, unsigned chain_size,
-		    gnutls_certificate_type_t chain_type,
-		    dane_query_t r,
-		    unsigned int sflags, unsigned int vflags,
-		    unsigned int *verify)
+int dane_verify_crt_raw(dane_state_t s, const gnutls_datum_t *chain,
+			unsigned chain_size,
+			gnutls_certificate_type_t chain_type, dane_query_t r,
+			unsigned int sflags, unsigned int vflags,
+			unsigned int *verify)
 {
 	int ret;
 	unsigned checked = 0;
@@ -780,9 +758,7 @@ dane_verify_crt_raw(dane_state_t s,
 	do {
 		unsigned int record_verify = 0;
 
-		ret =
-		    dane_query_data(r, idx++, &usage, &type, &match,
-				    &data);
+		ret = dane_query_data(r, idx++, &usage, &type, &match, &data);
 		if (ret == DANE_E_REQUESTED_DATA_NOT_AVAILABLE)
 			break;
 
@@ -791,38 +767,33 @@ dane_verify_crt_raw(dane_state_t s,
 			goto cleanup;
 		}
 
-		if (!(vflags & DANE_VFLAG_ONLY_CHECK_EE_USAGE)
-		    && (usage == DANE_CERT_USAGE_LOCAL_CA
-			|| usage == DANE_CERT_USAGE_CA)) {
-			ret =
-			    verify_ca(chain, chain_size, chain_type, type,
-				      match, &data, &record_verify);
+		if (!(vflags & DANE_VFLAG_ONLY_CHECK_EE_USAGE) &&
+		    (usage == DANE_CERT_USAGE_LOCAL_CA ||
+		     usage == DANE_CERT_USAGE_CA)) {
+			ret = verify_ca(chain, chain_size, chain_type, type,
+					match, &data, &record_verify);
 			CHECK_VRET(ret, checked, record_verify, *verify);
 
-		} else if (!(vflags & DANE_VFLAG_ONLY_CHECK_CA_USAGE)
-			   && (usage == DANE_CERT_USAGE_LOCAL_EE
-			       || usage == DANE_CERT_USAGE_EE)) {
-			ret =
-			    verify_ee(&chain[0], chain_type, type, match,
-				      &data, &record_verify);
+		} else if (!(vflags & DANE_VFLAG_ONLY_CHECK_CA_USAGE) &&
+			   (usage == DANE_CERT_USAGE_LOCAL_EE ||
+			    usage == DANE_CERT_USAGE_EE)) {
+			ret = verify_ee(&chain[0], chain_type, type, match,
+					&data, &record_verify);
 			CHECK_VRET(ret, checked, record_verify, *verify);
 		}
-	}
-	while (1);
+	} while (1);
 
 	if ((vflags & DANE_VFLAG_FAIL_IF_NOT_CHECKED) && checked == 0) {
-		ret =
-		    gnutls_assert_val(DANE_E_REQUESTED_DATA_NOT_AVAILABLE);
+		ret = gnutls_assert_val(DANE_E_REQUESTED_DATA_NOT_AVAILABLE);
 	} else if (checked == 0) {
 		*verify |= DANE_VERIFY_UNKNOWN_DANE_INFO;
 	} else {
 		ret = 0;
 	}
 
-      cleanup:
+cleanup:
 	return ret;
 }
-
 
 /**
  * dane_verify_crt:
@@ -846,7 +817,7 @@ dane_verify_crt_raw(dane_state_t s,
  * Due to the many possible options of DANE, there is no single threat
  * model countered. When notifying the user about DANE verification results
  * it may be better to mention: DANE verification did not reject the certificate,
- * rather than mentioning a successful DANE verication.
+ * rather than mentioning a successful DANE verification.
  *
  * Note that this function is designed to be run in addition to
  * PKIX - certificate chain - verification. To be run independently
@@ -861,13 +832,11 @@ dane_verify_crt_raw(dane_state_t s,
  * will be returned.
  *
  **/
-int
-dane_verify_crt(dane_state_t s,
-		const gnutls_datum_t * chain, unsigned chain_size,
-		gnutls_certificate_type_t chain_type,
-		const char *hostname, const char *proto, unsigned int port,
-		unsigned int sflags, unsigned int vflags,
-		unsigned int *verify)
+int dane_verify_crt(dane_state_t s, const gnutls_datum_t *chain,
+		    unsigned chain_size, gnutls_certificate_type_t chain_type,
+		    const char *hostname, const char *proto, unsigned int port,
+		    unsigned int sflags, unsigned int vflags,
+		    unsigned int *verify)
 {
 	dane_state_t state = NULL;
 	dane_query_t r = NULL;
@@ -888,9 +857,9 @@ dane_verify_crt(dane_state_t s,
 		gnutls_assert();
 		goto cleanup;
 	}
-	ret = dane_verify_crt_raw(state, chain, chain_size, chain_type,
-				  r, sflags, vflags, verify);
-      cleanup:
+	ret = dane_verify_crt_raw(state, chain, chain_size, chain_type, r,
+				  sflags, vflags, verify);
+cleanup:
 	if (state != s)
 		dane_state_deinit(state);
 	if (r != NULL)
@@ -924,12 +893,10 @@ dane_verify_crt(dane_state_t s,
  * will be returned.
  *
  **/
-int
-dane_verify_session_crt(dane_state_t s,
-			gnutls_session_t session,
-			const char *hostname, const char *proto,
-			unsigned int port, unsigned int sflags,
-			unsigned int vflags, unsigned int *verify)
+int dane_verify_session_crt(dane_state_t s, gnutls_session_t session,
+			    const char *hostname, const char *proto,
+			    unsigned int port, unsigned int sflags,
+			    unsigned int vflags, unsigned int *verify)
 {
 	const gnutls_datum_t *cert_list;
 	unsigned int cert_list_size = 0;
@@ -952,7 +919,8 @@ dane_verify_session_crt(dane_state_t s,
 		goto failsafe;
 	}
 
-	ret = gnutls_x509_crt_import(crt, &cert_list[cert_list_size-1], GNUTLS_X509_FMT_DER);
+	ret = gnutls_x509_crt_import(crt, &cert_list[cert_list_size - 1],
+				     GNUTLS_X509_FMT_DER);
 	if (ret < 0) {
 		gnutls_assert();
 		gnutls_x509_crt_deinit(crt);
@@ -968,7 +936,8 @@ dane_verify_session_crt(dane_state_t s,
 	}
 
 	/* chain does not finish in a self signed cert, try to obtain the issuer */
-	ret = gnutls_credentials_get(session, GNUTLS_CRD_CERTIFICATE, (void**)&sc);
+	ret = gnutls_credentials_get(session, GNUTLS_CRD_CERTIFICATE,
+				     (void **)&sc);
 	if (ret < 0) {
 		gnutls_assert();
 		gnutls_x509_crt_deinit(crt);
@@ -985,16 +954,19 @@ dane_verify_session_crt(dane_state_t s,
 	/* make the new list */
 	gnutls_datum_t *new_cert_list;
 
-	new_cert_list = gnutls_malloc((cert_list_size + 1) * sizeof(gnutls_datum_t));
+	new_cert_list =
+		gnutls_malloc((cert_list_size + 1) * sizeof(gnutls_datum_t));
 	if (new_cert_list == NULL) {
 		gnutls_assert();
 		gnutls_x509_crt_deinit(crt);
 		goto failsafe;
 	}
 
-	memcpy(new_cert_list, cert_list, cert_list_size*sizeof(gnutls_datum_t));
+	memcpy(new_cert_list, cert_list,
+	       cert_list_size * sizeof(gnutls_datum_t));
 
-	ret = gnutls_x509_crt_export2(ca, GNUTLS_X509_FMT_DER, &new_cert_list[cert_list_size]);
+	ret = gnutls_x509_crt_export2(ca, GNUTLS_X509_FMT_DER,
+				      &new_cert_list[cert_list_size]);
 	if (ret < 0) {
 		gnutls_assert();
 		free(new_cert_list);
@@ -1002,9 +974,8 @@ dane_verify_session_crt(dane_state_t s,
 		goto failsafe;
 	}
 
-	ret = dane_verify_crt(s, new_cert_list, cert_list_size+1, type,
-			      hostname, proto, port, sflags, vflags,
-			      verify);
+	ret = dane_verify_crt(s, new_cert_list, cert_list_size + 1, type,
+			      hostname, proto, port, sflags, vflags, verify);
 	if (ret < 0) {
 		gnutls_assert();
 	}
@@ -1012,10 +983,9 @@ dane_verify_session_crt(dane_state_t s,
 	free(new_cert_list);
 	return ret;
 
- failsafe:
-	return dane_verify_crt(s, cert_list, cert_list_size, type,
-			       hostname, proto, port, sflags, vflags,
-			       verify);
+failsafe:
+	return dane_verify_crt(s, cert_list, cert_list_size, type, hostname,
+			       proto, port, sflags, vflags, verify);
 }
 
 /**
@@ -1033,34 +1003,28 @@ dane_verify_session_crt(dane_state_t s,
  * Returns: On success, %GNUTLS_E_SUCCESS (0) is returned, otherwise a
  *   negative error value.
  **/
-int
-dane_verification_status_print(unsigned int status,
-			       gnutls_datum_t * out, unsigned int flags)
+int dane_verification_status_print(unsigned int status, gnutls_datum_t *out,
+				   unsigned int flags)
 {
 	gnutls_buffer_st str;
 
 	_gnutls_buffer_init(&str);
 
 	if (status == 0)
-		_gnutls_buffer_append_str(&str,
-					  _("Certificate matches. "));
+		_gnutls_buffer_append_str(&str, _("Certificate matches. "));
 	else
-		_gnutls_buffer_append_str(&str,
-					  _("Verification failed. "));
+		_gnutls_buffer_append_str(&str, _("Verification failed. "));
 
 	if (status & DANE_VERIFY_CA_CONSTRAINTS_VIOLATED)
 		_gnutls_buffer_append_str(&str,
-					  _
-					  ("CA constrains were violated. "));
+					  _("CA constrains were violated. "));
 
 	if (status & DANE_VERIFY_CERT_DIFFERS)
-		_gnutls_buffer_append_str(&str,
-					  _("The certificate differs. "));
+		_gnutls_buffer_append_str(&str, _("The certificate differs. "));
 
 	if (status & DANE_VERIFY_NO_DANE_INFO)
-		_gnutls_buffer_append_str(&str,
-					  _
-					  ("There were no DANE information. "));
+		_gnutls_buffer_append_str(
+			&str, _("There were no DANE information. "));
 
 	return _gnutls_buffer_to_datum(&str, out, 1);
 }

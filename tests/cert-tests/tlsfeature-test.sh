@@ -15,8 +15,7 @@
 # General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with GnuTLS; if not, write to the Free Software Foundation,
-# Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+# along with GnuTLS.  If not, see <https://www.gnu.org/licenses/>.
 
 #set -e
 
@@ -34,13 +33,11 @@ export TZ="UTC"
 
 . ${srcdir}/../scripts/common.sh
 
-skip_if_no_datefudge
 
 #
 # Test certificate generation
 #
-datefudge -s "2007-04-22" \
-"${CERTTOOL}" --generate-self-signed \
+"${CERTTOOL}" --attime "2007-04-22" --generate-self-signed \
 		--load-privkey "${srcdir}/data/template-test.key" \
 		--template "${srcdir}/templates/template-tlsfeature.tmpl" \
 		--outfile "${TMPFILE}" 2>/dev/null
@@ -98,8 +95,7 @@ fi
 # Test certificate request generation
 #
 
-datefudge -s "2007-04-22" \
-"${CERTTOOL}" --generate-request \
+"${CERTTOOL}" --attime "2007-04-22" --generate-request \
 		--load-privkey "${srcdir}/data/template-test.key" \
 		--template "${srcdir}/templates/template-tlsfeature.tmpl" \
 		--outfile "${TMPFILE}" -d 4 #2>/dev/null
@@ -159,8 +155,7 @@ fi
 #
 # Test certificate generation after a request
 #
-datefudge -s "2007-04-22" \
-"${CERTTOOL}" --generate-certificate \
+"${CERTTOOL}" --attime "2007-04-22" --generate-certificate \
 		--load-privkey "${srcdir}/data/template-test.key" \
 		--load-ca-privkey "${srcdir}/data/template-test.key" \
 		--load-ca-certificate "${srcdir}/data/template-tlsfeature.pem" \

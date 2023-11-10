@@ -1,9 +1,9 @@
 /* Test whether __func__ is available
-   Copyright (C) 2008-2021 Free Software Foundation, Inc.
+   Copyright (C) 2008-2023 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 3 of the License, or
+   the Free Software Foundation, either version 3 of the License, or
    (at your option) any later version.
 
    This program is distributed in the hope that it will be useful,
@@ -27,8 +27,8 @@ main ()
 {
   ASSERT (strlen (__func__) > 0);
 
-  /* On SunPRO C 5.9, sizeof __func__ evaluates to 0.  The compiler warns:
-     "warning: null dimension: sizeof()".  */
+  /* On Oracle Developer Studio 12.6 and earlier, sizeof __func__ yields 0.
+     The compiler warns: "warning: null dimension: sizeof()".  */
 #if !defined __SUNPRO_C
   ASSERT (strlen (__func__) + 1 == sizeof __func__);
 #endif

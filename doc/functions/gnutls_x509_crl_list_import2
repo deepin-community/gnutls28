@@ -7,13 +7,13 @@
 
 @var{size}: It will contain the size of the list.
 
-@var{data}: The PEM encoded CRL.
+@var{data}: The CRL data.
 
 @var{format}: One of DER or PEM.
 
 @var{flags}: must be (0) or an OR'd sequence of gnutls_certificate_import_flags.
 
-This function will convert the given PEM encoded CRL list
+This function will convert the given CRL list
 to the native gnutls_x509_crl_t format. The output will be stored
 in  @code{crls} .  They will be automatically initialized.
 

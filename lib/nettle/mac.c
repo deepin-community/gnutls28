@@ -44,13 +44,12 @@
 #endif
 #include <nettle/gcm.h>
 
-typedef void (*update_func) (void *, size_t, const uint8_t *);
-typedef void (*digest_func) (void *, size_t, uint8_t *);
-typedef void (*set_key_func) (void *, size_t, const uint8_t *);
-typedef void (*set_nonce_func) (void *, size_t, const uint8_t *);
+typedef void (*update_func)(void *, size_t, const uint8_t *);
+typedef void (*digest_func)(void *, size_t, uint8_t *);
+typedef void (*set_key_func)(void *, size_t, const uint8_t *);
+typedef void (*set_nonce_func)(void *, size_t, const uint8_t *);
 
-static int wrap_nettle_hash_init(gnutls_digest_algorithm_t algo,
-				 void **_ctx);
+static int wrap_nettle_hash_init(gnutls_digest_algorithm_t algo, void **_ctx);
 
 struct md5_sha1_ctx {
 	struct md5_ctx md5;
@@ -115,8 +114,8 @@ struct nettle_mac_ctx {
 #endif
 		struct umac96_ctx umac96;
 		struct umac128_ctx umac128;
-                struct cmac_aes128_ctx cmac128;
-                struct cmac_aes256_ctx cmac256;
+		struct cmac_aes128_ctx cmac128;
+		struct cmac_aes256_ctx cmac256;
 		struct gmac_ctx gmac;
 	} ctx;
 
@@ -130,60 +129,55 @@ struct nettle_mac_ctx {
 };
 
 #if ENABLE_GOST
-static void
-_wrap_gost28147_imit_set_key_tc26z(void *ctx, size_t len, const uint8_t * key)
+static void _wrap_gost28147_imit_set_key_tc26z(void *ctx, size_t len,
+					       const uint8_t *key)
 {
 	gost28147_imit_set_param(ctx, &gost28147_param_TC26_Z);
 	gost28147_imit_set_key(ctx, len, key);
 }
 
-static void
-_wrap_cmac_magma_set_key(void *ctx, size_t len, const uint8_t * key)
+static void _wrap_cmac_magma_set_key(void *ctx, size_t len, const uint8_t *key)
 {
 	cmac_magma_set_key(ctx, key);
 }
 
-static void
-_wrap_cmac_kuznyechik_set_key(void *ctx, size_t len, const uint8_t * key)
+static void _wrap_cmac_kuznyechik_set_key(void *ctx, size_t len,
+					  const uint8_t *key)
 {
 	cmac_kuznyechik_set_key(ctx, key);
 }
 #endif
 
-static void
-_wrap_umac96_set_key(void *ctx, size_t len, const uint8_t * key)
+static void _wrap_umac96_set_key(void *ctx, size_t len, const uint8_t *key)
 {
 	if (unlikely(len != 16))
 		abort();
 	umac96_set_key(ctx, key);
 }
 
-static void
-_wrap_umac128_set_key(void *ctx, size_t len, const uint8_t * key)
+static void _wrap_umac128_set_key(void *ctx, size_t len, const uint8_t *key)
 {
 	if (unlikely(len != 16))
 		abort();
 	umac128_set_key(ctx, key);
 }
 
-static void
-_wrap_cmac128_set_key(void *ctx, size_t len, const uint8_t * key)
+static void _wrap_cmac128_set_key(void *ctx, size_t len, const uint8_t *key)
 {
 	if (unlikely(len != 16))
 		abort();
 	cmac_aes128_set_key(ctx, key);
 }
 
-static void
-_wrap_cmac256_set_key(void *ctx, size_t len, const uint8_t * key)
+static void _wrap_cmac256_set_key(void *ctx, size_t len, const uint8_t *key)
 {
 	if (unlikely(len != 32))
 		abort();
 	cmac_aes256_set_key(ctx, key);
 }
 
-static void
-_wrap_gmac_aes128_set_key(void *_ctx, size_t len, const uint8_t * key)
+static void _wrap_gmac_aes128_set_key(void *_ctx, size_t len,
+				      const uint8_t *key)
 {
 	struct gmac_ctx *ctx = _ctx;
 
@@ -194,8 +188,8 @@ _wrap_gmac_aes128_set_key(void *_ctx, size_t len, const uint8_t * key)
 	ctx->pos = 0;
 }
 
-static void
-_wrap_gmac_aes192_set_key(void *_ctx, size_t len, const uint8_t * key)
+static void _wrap_gmac_aes192_set_key(void *_ctx, size_t len,
+				      const uint8_t *key)
 {
 	struct gmac_ctx *ctx = _ctx;
 
@@ -206,8 +200,8 @@ _wrap_gmac_aes192_set_key(void *_ctx, size_t len, const uint8_t * key)
 	ctx->pos = 0;
 }
 
-static void
-_wrap_gmac_aes256_set_key(void *_ctx, size_t len, const uint8_t * key)
+static void _wrap_gmac_aes256_set_key(void *_ctx, size_t len,
+				      const uint8_t *key)
 {
 	struct gmac_ctx *ctx = _ctx;
 
@@ -218,7 +212,8 @@ _wrap_gmac_aes256_set_key(void *_ctx, size_t len, const uint8_t * key)
 	ctx->pos = 0;
 }
 
-static void _wrap_gmac_set_nonce(void *_ctx, size_t nonce_length, const uint8_t *nonce)
+static void _wrap_gmac_set_nonce(void *_ctx, size_t nonce_length,
+				 const uint8_t *nonce)
 {
 	struct gmac_ctx *ctx = _ctx;
 
@@ -244,8 +239,7 @@ static void _wrap_gmac_update(void *_ctx, size_t length, const uint8_t *data)
 
 	if (length >= GCM_BLOCK_SIZE) {
 		gcm_update(&ctx->ctx, &ctx->key,
-			   length / GCM_BLOCK_SIZE * GCM_BLOCK_SIZE,
-			   data);
+			   length / GCM_BLOCK_SIZE * GCM_BLOCK_SIZE, data);
 		data += length / GCM_BLOCK_SIZE * GCM_BLOCK_SIZE;
 		length %= GCM_BLOCK_SIZE;
 	}
@@ -260,7 +254,8 @@ static void _wrap_gmac_digest(void *_ctx, size_t length, uint8_t *digest)
 
 	if (ctx->pos)
 		gcm_update(&ctx->ctx, &ctx->key, ctx->pos, ctx->buffer);
-	gcm_digest(&ctx->ctx, &ctx->key, &ctx->cipher, ctx->encrypt, length, digest);
+	gcm_digest(&ctx->ctx, &ctx->key, &ctx->cipher, ctx->encrypt, length,
+		   digest);
 	ctx->pos = 0;
 }
 
@@ -273,117 +268,117 @@ static int _mac_ctx_init(gnutls_mac_algorithm_t algo,
 	ctx->set_nonce = NULL;
 	switch (algo) {
 	case GNUTLS_MAC_MD5:
-		ctx->update = (update_func) hmac_md5_update;
-		ctx->digest = (digest_func) hmac_md5_digest;
-		ctx->set_key = (set_key_func) hmac_md5_set_key;
+		ctx->update = (update_func)hmac_md5_update;
+		ctx->digest = (digest_func)hmac_md5_digest;
+		ctx->set_key = (set_key_func)hmac_md5_set_key;
 		ctx->ctx_ptr = &ctx->ctx.md5;
 		ctx->length = MD5_DIGEST_SIZE;
 		break;
 	case GNUTLS_MAC_SHA1:
-		ctx->update = (update_func) hmac_sha1_update;
-		ctx->digest = (digest_func) hmac_sha1_digest;
-		ctx->set_key = (set_key_func) hmac_sha1_set_key;
+		ctx->update = (update_func)hmac_sha1_update;
+		ctx->digest = (digest_func)hmac_sha1_digest;
+		ctx->set_key = (set_key_func)hmac_sha1_set_key;
 		ctx->ctx_ptr = &ctx->ctx.sha1;
 		ctx->length = SHA1_DIGEST_SIZE;
 		break;
 	case GNUTLS_MAC_SHA224:
-		ctx->update = (update_func) hmac_sha224_update;
-		ctx->digest = (digest_func) hmac_sha224_digest;
-		ctx->set_key = (set_key_func) hmac_sha224_set_key;
+		ctx->update = (update_func)hmac_sha224_update;
+		ctx->digest = (digest_func)hmac_sha224_digest;
+		ctx->set_key = (set_key_func)hmac_sha224_set_key;
 		ctx->ctx_ptr = &ctx->ctx.sha224;
 		ctx->length = SHA224_DIGEST_SIZE;
 		break;
 	case GNUTLS_MAC_SHA256:
-		ctx->update = (update_func) hmac_sha256_update;
-		ctx->digest = (digest_func) hmac_sha256_digest;
-		ctx->set_key = (set_key_func) hmac_sha256_set_key;
+		ctx->update = (update_func)hmac_sha256_update;
+		ctx->digest = (digest_func)hmac_sha256_digest;
+		ctx->set_key = (set_key_func)hmac_sha256_set_key;
 		ctx->ctx_ptr = &ctx->ctx.sha256;
 		ctx->length = SHA256_DIGEST_SIZE;
 		break;
 	case GNUTLS_MAC_SHA384:
-		ctx->update = (update_func) hmac_sha384_update;
-		ctx->digest = (digest_func) hmac_sha384_digest;
-		ctx->set_key = (set_key_func) hmac_sha384_set_key;
+		ctx->update = (update_func)hmac_sha384_update;
+		ctx->digest = (digest_func)hmac_sha384_digest;
+		ctx->set_key = (set_key_func)hmac_sha384_set_key;
 		ctx->ctx_ptr = &ctx->ctx.sha384;
 		ctx->length = SHA384_DIGEST_SIZE;
 		break;
 	case GNUTLS_MAC_SHA512:
-		ctx->update = (update_func) hmac_sha512_update;
-		ctx->digest = (digest_func) hmac_sha512_digest;
-		ctx->set_key = (set_key_func) hmac_sha512_set_key;
+		ctx->update = (update_func)hmac_sha512_update;
+		ctx->digest = (digest_func)hmac_sha512_digest;
+		ctx->set_key = (set_key_func)hmac_sha512_set_key;
 		ctx->ctx_ptr = &ctx->ctx.sha512;
 		ctx->length = SHA512_DIGEST_SIZE;
 		break;
 #if ENABLE_GOST
 	case GNUTLS_MAC_GOSTR_94:
-		ctx->update = (update_func) hmac_gosthash94cp_update;
-		ctx->digest = (digest_func) hmac_gosthash94cp_digest;
-		ctx->set_key = (set_key_func) hmac_gosthash94cp_set_key;
+		ctx->update = (update_func)hmac_gosthash94cp_update;
+		ctx->digest = (digest_func)hmac_gosthash94cp_digest;
+		ctx->set_key = (set_key_func)hmac_gosthash94cp_set_key;
 		ctx->ctx_ptr = &ctx->ctx.gosthash94cp;
 		ctx->length = GOSTHASH94CP_DIGEST_SIZE;
 		break;
 	case GNUTLS_MAC_STREEBOG_256:
-		ctx->update = (update_func) hmac_streebog256_update;
-		ctx->digest = (digest_func) hmac_streebog256_digest;
-		ctx->set_key = (set_key_func) hmac_streebog256_set_key;
+		ctx->update = (update_func)hmac_streebog256_update;
+		ctx->digest = (digest_func)hmac_streebog256_digest;
+		ctx->set_key = (set_key_func)hmac_streebog256_set_key;
 		ctx->ctx_ptr = &ctx->ctx.streebog256;
 		ctx->length = STREEBOG256_DIGEST_SIZE;
 		break;
 	case GNUTLS_MAC_STREEBOG_512:
-		ctx->update = (update_func) hmac_streebog512_update;
-		ctx->digest = (digest_func) hmac_streebog512_digest;
-		ctx->set_key = (set_key_func) hmac_streebog512_set_key;
+		ctx->update = (update_func)hmac_streebog512_update;
+		ctx->digest = (digest_func)hmac_streebog512_digest;
+		ctx->set_key = (set_key_func)hmac_streebog512_set_key;
 		ctx->ctx_ptr = &ctx->ctx.streebog512;
 		ctx->length = STREEBOG512_DIGEST_SIZE;
 		break;
 	case GNUTLS_MAC_GOST28147_TC26Z_IMIT:
-		ctx->update = (update_func) gost28147_imit_update;
-		ctx->digest = (digest_func) gost28147_imit_digest;
+		ctx->update = (update_func)gost28147_imit_update;
+		ctx->digest = (digest_func)gost28147_imit_digest;
 		ctx->set_key = _wrap_gost28147_imit_set_key_tc26z;
 		ctx->ctx_ptr = &ctx->ctx.gost28147_imit;
 		ctx->length = GOST28147_IMIT_DIGEST_SIZE;
 		break;
 	case GNUTLS_MAC_MAGMA_OMAC:
-		ctx->update = (update_func) cmac_magma_update;
-		ctx->digest = (digest_func) cmac_magma_digest;
+		ctx->update = (update_func)cmac_magma_update;
+		ctx->digest = (digest_func)cmac_magma_digest;
 		ctx->set_key = _wrap_cmac_magma_set_key;
 		ctx->ctx_ptr = &ctx->ctx.magma;
 		ctx->length = CMAC64_DIGEST_SIZE;
 		break;
 	case GNUTLS_MAC_KUZNYECHIK_OMAC:
-		ctx->update = (update_func) cmac_kuznyechik_update;
-		ctx->digest = (digest_func) cmac_kuznyechik_digest;
+		ctx->update = (update_func)cmac_kuznyechik_update;
+		ctx->digest = (digest_func)cmac_kuznyechik_digest;
 		ctx->set_key = _wrap_cmac_kuznyechik_set_key;
 		ctx->ctx_ptr = &ctx->ctx.kuznyechik;
 		ctx->length = CMAC128_DIGEST_SIZE;
 		break;
 #endif
 	case GNUTLS_MAC_UMAC_96:
-		ctx->update = (update_func) umac96_update;
-		ctx->digest = (digest_func) umac96_digest;
+		ctx->update = (update_func)umac96_update;
+		ctx->digest = (digest_func)umac96_digest;
 		ctx->set_key = _wrap_umac96_set_key;
-		ctx->set_nonce = (set_nonce_func) umac96_set_nonce;
+		ctx->set_nonce = (set_nonce_func)umac96_set_nonce;
 		ctx->ctx_ptr = &ctx->ctx.umac96;
 		ctx->length = 12;
 		break;
 	case GNUTLS_MAC_UMAC_128:
-		ctx->update = (update_func) umac128_update;
-		ctx->digest = (digest_func) umac128_digest;
+		ctx->update = (update_func)umac128_update;
+		ctx->digest = (digest_func)umac128_digest;
 		ctx->set_key = _wrap_umac128_set_key;
-		ctx->set_nonce = (set_nonce_func) umac128_set_nonce;
+		ctx->set_nonce = (set_nonce_func)umac128_set_nonce;
 		ctx->ctx_ptr = &ctx->ctx.umac128;
 		ctx->length = 16;
 		break;
 	case GNUTLS_MAC_AES_CMAC_128:
-		ctx->update = (update_func) cmac_aes128_update;
-		ctx->digest = (digest_func) cmac_aes128_digest;
+		ctx->update = (update_func)cmac_aes128_update;
+		ctx->digest = (digest_func)cmac_aes128_digest;
 		ctx->set_key = _wrap_cmac128_set_key;
 		ctx->ctx_ptr = &ctx->ctx.cmac128;
 		ctx->length = CMAC128_DIGEST_SIZE;
 		break;
 	case GNUTLS_MAC_AES_CMAC_256:
-		ctx->update = (update_func) cmac_aes256_update;
-		ctx->digest = (digest_func) cmac_aes256_digest;
+		ctx->update = (update_func)cmac_aes256_update;
+		ctx->digest = (digest_func)cmac_aes256_digest;
 		ctx->set_key = _wrap_cmac256_set_key;
 		ctx->ctx_ptr = &ctx->ctx.cmac256;
 		ctx->length = CMAC128_DIGEST_SIZE;
@@ -423,11 +418,10 @@ static int _mac_ctx_init(gnutls_mac_algorithm_t algo,
 	return 0;
 }
 
-static int wrap_nettle_mac_fast(gnutls_mac_algorithm_t algo,
-				const void *nonce, size_t nonce_size,
-				const void *key, size_t key_size,
-				const void *text, size_t text_size,
-				void *digest)
+static int wrap_nettle_mac_fast(gnutls_mac_algorithm_t algo, const void *nonce,
+				size_t nonce_size, const void *key,
+				size_t key_size, const void *text,
+				size_t text_size, void *digest)
 {
 	struct nettle_mac_ctx ctx;
 	int ret;
@@ -445,7 +439,7 @@ static int wrap_nettle_mac_fast(gnutls_mac_algorithm_t algo,
 	}
 	ctx.update(&ctx, text_size, text);
 	ctx.digest(&ctx, ctx.length, digest);
-	
+
 	zeroize_temp_key(&ctx, sizeof(ctx));
 
 	return 0;
@@ -521,8 +515,7 @@ static void *wrap_nettle_mac_copy(const void *_ctx)
 	return new_ctx;
 }
 
-static int
-wrap_nettle_mac_set_key(void *_ctx, const void *key, size_t keylen)
+static int wrap_nettle_mac_set_key(void *_ctx, const void *key, size_t keylen)
 {
 	struct nettle_mac_ctx *ctx = _ctx;
 
@@ -530,8 +523,8 @@ wrap_nettle_mac_set_key(void *_ctx, const void *key, size_t keylen)
 	return 0;
 }
 
-static int
-wrap_nettle_mac_set_nonce(void *_ctx, const void *nonce, size_t noncelen)
+static int wrap_nettle_mac_set_nonce(void *_ctx, const void *nonce,
+				     size_t noncelen)
 {
 	struct nettle_mac_ctx *ctx = _ctx;
 
@@ -546,8 +539,7 @@ wrap_nettle_mac_set_nonce(void *_ctx, const void *nonce, size_t noncelen)
 	return GNUTLS_E_SUCCESS;
 }
 
-static int
-wrap_nettle_mac_update(void *_ctx, const void *text, size_t textsize)
+static int wrap_nettle_mac_update(void *_ctx, const void *text, size_t textsize)
 {
 	struct nettle_mac_ctx *ctx = _ctx;
 
@@ -556,8 +548,8 @@ wrap_nettle_mac_update(void *_ctx, const void *text, size_t textsize)
 	return GNUTLS_E_SUCCESS;
 }
 
-static int
-wrap_nettle_mac_output(void *src_ctx, void *digest, size_t digestsize)
+static int wrap_nettle_mac_output(void *src_ctx, void *digest,
+				  size_t digestsize)
 {
 	struct nettle_mac_ctx *ctx;
 	ctx = src_ctx;
@@ -575,15 +567,15 @@ wrap_nettle_mac_output(void *src_ctx, void *digest, size_t digestsize)
 static void wrap_nettle_mac_deinit(void *hd)
 {
 	struct nettle_mac_ctx *ctx = hd;
-	
+
 	zeroize_temp_key(ctx, sizeof(*ctx));
 	gnutls_free(ctx);
 }
 
 /* Hash functions 
  */
-static int
-wrap_nettle_hash_update(void *_ctx, const void *text, size_t textsize)
+static int wrap_nettle_hash_update(void *_ctx, const void *text,
+				   size_t textsize)
 {
 	struct nettle_hash_ctx *ctx = _ctx;
 
@@ -661,110 +653,110 @@ static int _ctx_init(gnutls_digest_algorithm_t algo,
 	switch (algo) {
 	case GNUTLS_DIG_MD5:
 		md5_init(&ctx->ctx.md5);
-		ctx->update = (update_func) md5_update;
-		ctx->digest = (digest_func) md5_digest;
+		ctx->update = (update_func)md5_update;
+		ctx->digest = (digest_func)md5_digest;
 		ctx->ctx_ptr = &ctx->ctx.md5;
 		ctx->length = MD5_DIGEST_SIZE;
 		break;
 	case GNUTLS_DIG_SHA1:
 		sha1_init(&ctx->ctx.sha1);
-		ctx->update = (update_func) sha1_update;
-		ctx->digest = (digest_func) sha1_digest;
+		ctx->update = (update_func)sha1_update;
+		ctx->digest = (digest_func)sha1_digest;
 		ctx->ctx_ptr = &ctx->ctx.sha1;
 		ctx->length = SHA1_DIGEST_SIZE;
 		break;
 	case GNUTLS_DIG_MD5_SHA1:
 		md5_init(&ctx->ctx.md5_sha1.md5);
 		sha1_init(&ctx->ctx.md5_sha1.sha1);
-		ctx->update = (update_func) _md5_sha1_update;
-		ctx->digest = (digest_func) _md5_sha1_digest;
+		ctx->update = (update_func)_md5_sha1_update;
+		ctx->digest = (digest_func)_md5_sha1_digest;
 		ctx->ctx_ptr = &ctx->ctx.md5_sha1;
 		ctx->length = MD5_DIGEST_SIZE + SHA1_DIGEST_SIZE;
 		break;
 	case GNUTLS_DIG_SHA224:
 		sha224_init(&ctx->ctx.sha224);
-		ctx->update = (update_func) sha224_update;
-		ctx->digest = (digest_func) sha224_digest;
+		ctx->update = (update_func)sha224_update;
+		ctx->digest = (digest_func)sha224_digest;
 		ctx->ctx_ptr = &ctx->ctx.sha224;
 		ctx->length = SHA224_DIGEST_SIZE;
 		break;
 	case GNUTLS_DIG_SHA256:
 		sha256_init(&ctx->ctx.sha256);
-		ctx->update = (update_func) sha256_update;
-		ctx->digest = (digest_func) sha256_digest;
+		ctx->update = (update_func)sha256_update;
+		ctx->digest = (digest_func)sha256_digest;
 		ctx->ctx_ptr = &ctx->ctx.sha256;
 		ctx->length = SHA256_DIGEST_SIZE;
 		break;
 	case GNUTLS_DIG_SHA384:
 		sha384_init(&ctx->ctx.sha384);
-		ctx->update = (update_func) sha384_update;
-		ctx->digest = (digest_func) sha384_digest;
+		ctx->update = (update_func)sha384_update;
+		ctx->digest = (digest_func)sha384_digest;
 		ctx->ctx_ptr = &ctx->ctx.sha384;
 		ctx->length = SHA384_DIGEST_SIZE;
 		break;
 	case GNUTLS_DIG_SHA512:
 		sha512_init(&ctx->ctx.sha512);
-		ctx->update = (update_func) sha512_update;
-		ctx->digest = (digest_func) sha512_digest;
+		ctx->update = (update_func)sha512_update;
+		ctx->digest = (digest_func)sha512_digest;
 		ctx->ctx_ptr = &ctx->ctx.sha512;
 		ctx->length = SHA512_DIGEST_SIZE;
 		break;
 #ifdef NETTLE_SHA3_FIPS202
 	case GNUTLS_DIG_SHA3_224:
 		sha3_224_init(&ctx->ctx.sha3_224);
-		ctx->update = (update_func) sha3_224_update;
-		ctx->digest = (digest_func) sha3_224_digest;
+		ctx->update = (update_func)sha3_224_update;
+		ctx->digest = (digest_func)sha3_224_digest;
 		ctx->ctx_ptr = &ctx->ctx.sha3_224;
 		ctx->length = SHA3_224_DIGEST_SIZE;
 		break;
 	case GNUTLS_DIG_SHA3_256:
 		sha3_256_init(&ctx->ctx.sha3_256);
-		ctx->update = (update_func) sha3_256_update;
-		ctx->digest = (digest_func) sha3_256_digest;
+		ctx->update = (update_func)sha3_256_update;
+		ctx->digest = (digest_func)sha3_256_digest;
 		ctx->ctx_ptr = &ctx->ctx.sha3_256;
 		ctx->length = SHA3_256_DIGEST_SIZE;
 		break;
 	case GNUTLS_DIG_SHA3_384:
 		sha3_384_init(&ctx->ctx.sha3_384);
-		ctx->update = (update_func) sha3_384_update;
-		ctx->digest = (digest_func) sha3_384_digest;
+		ctx->update = (update_func)sha3_384_update;
+		ctx->digest = (digest_func)sha3_384_digest;
 		ctx->ctx_ptr = &ctx->ctx.sha3_384;
 		ctx->length = SHA3_384_DIGEST_SIZE;
 		break;
 	case GNUTLS_DIG_SHA3_512:
 		sha3_512_init(&ctx->ctx.sha3_512);
-		ctx->update = (update_func) sha3_512_update;
-		ctx->digest = (digest_func) sha3_512_digest;
+		ctx->update = (update_func)sha3_512_update;
+		ctx->digest = (digest_func)sha3_512_digest;
 		ctx->ctx_ptr = &ctx->ctx.sha3_512;
 		ctx->length = SHA3_512_DIGEST_SIZE;
 		break;
 #endif
 	case GNUTLS_DIG_MD2:
 		md2_init(&ctx->ctx.md2);
-		ctx->update = (update_func) md2_update;
-		ctx->digest = (digest_func) md2_digest;
+		ctx->update = (update_func)md2_update;
+		ctx->digest = (digest_func)md2_digest;
 		ctx->ctx_ptr = &ctx->ctx.md2;
 		ctx->length = MD2_DIGEST_SIZE;
 		break;
 #if ENABLE_GOST
 	case GNUTLS_DIG_GOSTR_94:
 		gosthash94cp_init(&ctx->ctx.gosthash94cp);
-		ctx->update = (update_func) gosthash94cp_update;
-		ctx->digest = (digest_func) gosthash94cp_digest;
+		ctx->update = (update_func)gosthash94cp_update;
+		ctx->digest = (digest_func)gosthash94cp_digest;
 		ctx->ctx_ptr = &ctx->ctx.gosthash94cp;
 		ctx->length = GOSTHASH94_DIGEST_SIZE;
 		break;
 	case GNUTLS_DIG_STREEBOG_256:
 		streebog256_init(&ctx->ctx.streebog256);
-		ctx->update = (update_func) streebog256_update;
-		ctx->digest = (digest_func) streebog256_digest;
+		ctx->update = (update_func)streebog256_update;
+		ctx->digest = (digest_func)streebog256_digest;
 		ctx->ctx_ptr = &ctx->ctx.streebog256;
 		ctx->length = STREEBOG256_DIGEST_SIZE;
 		break;
 	case GNUTLS_DIG_STREEBOG_512:
 		streebog512_init(&ctx->ctx.streebog512);
-		ctx->update = (update_func) streebog512_update;
-		ctx->digest = (digest_func) streebog512_digest;
+		ctx->update = (update_func)streebog512_update;
+		ctx->digest = (digest_func)streebog512_digest;
 		ctx->ctx_ptr = &ctx->ctx.streebog512;
 		ctx->length = STREEBOG512_DIGEST_SIZE;
 		break;
@@ -797,8 +789,7 @@ static int wrap_nettle_hash_fast(gnutls_digest_algorithm_t algo,
 	return 0;
 }
 
-static int
-wrap_nettle_hash_init(gnutls_digest_algorithm_t algo, void **_ctx)
+static int wrap_nettle_hash_init(gnutls_digest_algorithm_t algo, void **_ctx)
 {
 	struct nettle_hash_ctx *ctx;
 	int ret;
@@ -838,8 +829,8 @@ static void *wrap_nettle_hash_copy(const void *_ctx)
 	return new_ctx;
 }
 
-static int
-wrap_nettle_hash_output(void *src_ctx, void *digest, size_t digestsize)
+static int wrap_nettle_hash_output(void *src_ctx, void *digest,
+				   size_t digestsize)
 {
 	struct nettle_hash_ctx *ctx;
 	ctx = src_ctx;
@@ -856,11 +847,9 @@ wrap_nettle_hash_output(void *src_ctx, void *digest, size_t digestsize)
 
 /* KDF functions based on MAC
  */
-static int
-wrap_nettle_hkdf_extract (gnutls_mac_algorithm_t mac,
-			  const void *key, size_t keysize,
-			  const void *salt, size_t saltsize,
-			  void *output)
+static int wrap_nettle_hkdf_extract(gnutls_mac_algorithm_t mac, const void *key,
+				    size_t keysize, const void *salt,
+				    size_t saltsize, void *output)
 {
 	struct nettle_mac_ctx ctx;
 	int ret;
@@ -870,18 +859,16 @@ wrap_nettle_hkdf_extract (gnutls_mac_algorithm_t mac,
 		return gnutls_assert_val(ret);
 
 	ctx.set_key(&ctx, saltsize, salt);
-	hkdf_extract(&ctx.ctx, ctx.update, ctx.digest, ctx.length,
-		     keysize, key, output);
+	hkdf_extract(&ctx.ctx, ctx.update, ctx.digest, ctx.length, keysize, key,
+		     output);
 
 	zeroize_temp_key(&ctx, sizeof(ctx));
 	return 0;
 }
 
-static int
-wrap_nettle_hkdf_expand (gnutls_mac_algorithm_t mac,
-			 const void *key, size_t keysize,
-			 const void *info, size_t infosize,
-			 void *output, size_t length)
+static int wrap_nettle_hkdf_expand(gnutls_mac_algorithm_t mac, const void *key,
+				   size_t keysize, const void *info,
+				   size_t infosize, void *output, size_t length)
 {
 	struct nettle_mac_ctx ctx;
 	int ret;
@@ -896,19 +883,16 @@ wrap_nettle_hkdf_expand (gnutls_mac_algorithm_t mac,
 	}
 
 	ctx.set_key(&ctx, keysize, key);
-	hkdf_expand(&ctx.ctx, ctx.update, ctx.digest, ctx.length,
-		    infosize, info, length, output);
+	hkdf_expand(&ctx.ctx, ctx.update, ctx.digest, ctx.length, infosize,
+		    info, length, output);
 	zeroize_temp_key(&ctx, sizeof(ctx));
 
 	return 0;
 }
 
-static int
-wrap_nettle_pbkdf2 (gnutls_mac_algorithm_t mac,
-		    const void *key, size_t keysize,
-		    const void *salt, size_t saltsize,
-		    unsigned iter_count,
-		    void *output, size_t length)
+static int wrap_nettle_pbkdf2(gnutls_mac_algorithm_t mac, const void *key,
+			      size_t keysize, const void *salt, size_t saltsize,
+			      unsigned iter_count, void *output, size_t length)
 {
 	struct nettle_mac_ctx ctx;
 	int ret;
@@ -918,8 +902,8 @@ wrap_nettle_pbkdf2 (gnutls_mac_algorithm_t mac,
 		return gnutls_assert_val(ret);
 
 	ctx.set_key(&ctx, keysize, key);
-	pbkdf2(&ctx.ctx, ctx.update, ctx.digest, ctx.length,
-	       iter_count, saltsize, salt, length, output);
+	pbkdf2(&ctx.ctx, ctx.update, ctx.digest, ctx.length, iter_count,
+	       saltsize, salt, length, output);
 	zeroize_temp_key(&ctx, sizeof(ctx));
 
 	return 0;

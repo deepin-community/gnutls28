@@ -17,8 +17,7 @@
 # General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with GnuTLS; if not, write to the Free Software Foundation,
-# Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+# along with GnuTLS.  If not, see <https://www.gnu.org/licenses/>.
 
 #set -e
 
@@ -85,19 +84,15 @@ if test $rc = 0; then
 	exit 1
 fi
 
-if check_for_datefudge; then
-	#this was causing a double free; verify that we receive the expected error code
-	datefudge -s 2020-01-01 \
-	${VALGRIND} "${CERTTOOL}" --verify-chain --infile "${srcdir}/data/cve-2019-3829.pem"
-	rc=$?
+#this was causing a double free; verify that we receive the expected error code
+${VALGRIND} "${CERTTOOL}"  --attime "2020-01-01" --verify-chain --infile "${srcdir}/data/cve-2019-3829.pem"
+rc=$?
 
-	# We're done.
-	if test $rc != 1; then
-		echo "Verification of invalid signature (6) failed"
-		exit 1
-	fi
-else
-	echo "Verification of invalid signature (6) skipped"
+# We're done.
+if test $rc != 1; then
+	echo "Verification of invalid signature (6) failed"
+	exit 1
 fi
+
 
 exit 0

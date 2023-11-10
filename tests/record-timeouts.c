@@ -16,8 +16,7 @@
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GnuTLS; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
+ * along with GnuTLS.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 #ifdef HAVE_CONFIG_H
@@ -65,7 +64,7 @@ static int pull_timeout_func(gnutls_transport_ptr_t ptr, unsigned int ms)
 }
 
 #define MAX_VALS 4
-static const int vals[MAX_VALS] = {0, 1000, 5000, GNUTLS_INDEFINITE_TIMEOUT};
+static const int vals[MAX_VALS] = { 0, 1000, 5000, GNUTLS_INDEFINITE_TIMEOUT };
 
 static void start(const char *prio)
 {
@@ -90,25 +89,23 @@ static void start(const char *prio)
 
 	/* Init server */
 	gnutls_certificate_allocate_credentials(&serverx509cred);
-	gnutls_certificate_set_x509_key_mem(serverx509cred,
-					    &server_cert, &server_key,
-					    GNUTLS_X509_FMT_PEM);
+	gnutls_certificate_set_x509_key_mem(serverx509cred, &server_cert,
+					    &server_key, GNUTLS_X509_FMT_PEM);
 
 	gnutls_init(&server, GNUTLS_SERVER);
 
-	gnutls_credentials_set(server, GNUTLS_CRD_CERTIFICATE,
-				serverx509cred);
+	gnutls_credentials_set(server, GNUTLS_CRD_CERTIFICATE, serverx509cred);
 	assert(gnutls_priority_set_direct(server, prio, NULL) >= 0);
 	gnutls_transport_set_push_function(server, server_push);
 	gnutls_transport_set_pull_function(server, server_pull);
 	gnutls_transport_set_ptr(server, server);
 
 	/* Init client */
-	assert(gnutls_certificate_allocate_credentials(&clientx509cred)>=0);
+	assert(gnutls_certificate_allocate_credentials(&clientx509cred) >= 0);
 	gnutls_init(&client, GNUTLS_CLIENT);
 	assert(gnutls_priority_set_direct(client, prio, NULL) >= 0);
 	assert(gnutls_credentials_set(client, GNUTLS_CRD_CERTIFICATE,
-				      clientx509cred)>=0);
+				      clientx509cred) >= 0);
 	gnutls_transport_set_push_function(client, client_push);
 	gnutls_transport_set_pull_function(client, client_pull);
 	gnutls_transport_set_pull_timeout_function(client, pull_timeout_func);
@@ -125,16 +122,18 @@ static void start(const char *prio)
 	/* Try sending various other sizes */
 	for (i = 1; i < 128; i++) {
 		called = 0;
-		gnutls_record_set_timeout(client, vals[i%MAX_VALS]);
-		expected_val = vals[i%MAX_VALS];
+		gnutls_record_set_timeout(client, vals[i % MAX_VALS]);
+		expected_val = vals[i % MAX_VALS];
 
 		TRANSFER(client, server, b1, i, buffer, MAX_BUF);
 
 		if (called == 0 && expected_val != 0) {
-			fail("pull timeout callback was not called for %d!\n", vals[i%MAX_VALS]);
+			fail("pull timeout callback was not called for %d!\n",
+			     vals[i % MAX_VALS]);
 			exit(1);
 		} else if (called != 0 && expected_val == 0) {
-			fail("pull timeout callback was called for %d!\n", vals[i%MAX_VALS]);
+			fail("pull timeout callback was called for %d!\n",
+			     vals[i % MAX_VALS]);
 			exit(1);
 		}
 	}

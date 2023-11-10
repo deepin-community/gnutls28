@@ -41,13 +41,12 @@
 #include "certtool-common.h"
 #include "certtool-cfg.h"
 
-
 #define MAX_KEYS 256
 
 /* Loads a x509 private key list
  */
-gnutls_x509_privkey_t *load_privkey_list(int mand, size_t * privkey_size,
-					 common_info_st * info)
+gnutls_x509_privkey_t *load_privkey_list(int mand, size_t *privkey_size,
+					 common_info_st *info)
 {
 	static gnutls_x509_privkey_t key[MAX_KEYS];
 	char *ptr;
@@ -74,7 +73,7 @@ gnutls_x509_privkey_t *load_privkey_list(int mand, size_t * privkey_size,
 		exit(1);
 	}
 
-	ptr = (void *) file_data.data;
+	ptr = (void *)file_data.data;
 	ptr_size = file_data.size;
 
 	for (i = 0; i < MAX_KEYS; i++) {
@@ -85,20 +84,15 @@ gnutls_x509_privkey_t *load_privkey_list(int mand, size_t * privkey_size,
 			exit(1);
 		}
 
-		dat.data = (void *) ptr;
+		dat.data = (void *)ptr;
 		dat.size = ptr_size;
 
-		ret =
-		    gnutls_x509_privkey_import2(key[i], &dat,
-						info->incert_format, NULL,
-						0);
+		ret = gnutls_x509_privkey_import2(key[i], &dat,
+						  info->incert_format, NULL, 0);
 		if (ret == GNUTLS_E_DECRYPTION_FAILED) {
 			pass = get_password(info, &flags, 0);
-			ret =
-			    gnutls_x509_privkey_import2(key[i], &dat,
-							info->
-							incert_format,
-							pass, flags);
+			ret = gnutls_x509_privkey_import2(
+				key[i], &dat, info->incert_format, pass, flags);
 		}
 
 		if (ret < 0 && *privkey_size > 0)
@@ -120,17 +114,15 @@ gnutls_x509_privkey_t *load_privkey_list(int mand, size_t * privkey_size,
 		ptr++;
 
 		ptr_size = file_data.size;
-		ptr_size -=
-		    ((unsigned char *) ptr -
-				    (unsigned char *) file_data.data);
+		ptr_size -= ((unsigned char *)ptr -
+			     (unsigned char *)file_data.data);
 
 		if (ptr_size < 0)
 			break;
-
 	}
 
 	gnutls_free(file_data.data);
-	fprintf(stderr, "Loaded %d private keys.\n", (int) *privkey_size);
+	fprintf(stderr, "Loaded %d private keys.\n", (int)*privkey_size);
 
 	return key;
 }

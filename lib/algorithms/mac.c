@@ -36,186 +36,186 @@
 #define MAC_OID_STREEBOG_256 "1.2.643.7.1.1.4.1"
 #define MAC_OID_STREEBOG_512 "1.2.643.7.1.1.4.2"
 
-static SYSTEM_CONFIG_OR_CONST
-mac_entry_st hash_algorithms[] = {
-	{.name = "SHA1",
-	 .oid = HASH_OID_SHA1,
-	 .mac_oid = MAC_OID_SHA1,
-	 .id = GNUTLS_MAC_SHA1,
-	 .output_size = 20,
-	 .key_size = 20,
-	 .block_size = 64},
-	{.name = "MD5+SHA1",
-	 .id = GNUTLS_MAC_MD5_SHA1,
-	 .output_size = 36,
-	 .key_size = 36,
-	 .flags = GNUTLS_MAC_FLAG_PREIMAGE_INSECURE,
-	 .block_size = 64},
-	{.name = "SHA256",
-	 .oid = HASH_OID_SHA256,
-	 .mac_oid = MAC_OID_SHA256,
-	 .id = GNUTLS_MAC_SHA256,
-	 .output_size = 32,
-	 .key_size = 32,
-	 .block_size = 64},
-	{.name = "SHA384",
-	 .oid = HASH_OID_SHA384,
-	 .mac_oid = MAC_OID_SHA384,
-	 .id = GNUTLS_MAC_SHA384,
-	 .output_size = 48,
-	 .key_size = 48,
-	 .block_size = 128},
-	{.name = "SHA512",
-	 .oid = HASH_OID_SHA512,
-	 .mac_oid = MAC_OID_SHA512,
-	 .id = GNUTLS_MAC_SHA512,
-	 .output_size = 64,
-	 .key_size = 64,
-	 .block_size = 128},
-	{.name = "SHA224",
-	 .oid = HASH_OID_SHA224,
-	 .mac_oid = MAC_OID_SHA224,
-	 .id = GNUTLS_MAC_SHA224,
-	 .output_size = 28,
-	 .key_size = 28,
-	 .block_size = 64},
-	{.name = "SHA3-256",
-	 .oid = HASH_OID_SHA3_256,
-	 .id = GNUTLS_MAC_SHA3_256,
-	 .output_size = 32,
-	 .key_size = 32,
-	 .block_size = 136},
-	{.name = "SHA3-384",
-	 .oid = HASH_OID_SHA3_384,
-	 .id = GNUTLS_MAC_SHA3_384,
-	 .output_size = 48,
-	 .key_size = 48,
-	 .block_size = 104},
-	{.name = "SHA3-512",
-	 .oid = HASH_OID_SHA3_512,
-	 .id = GNUTLS_MAC_SHA3_512,
-	 .output_size = 64,
-	 .key_size = 64,
-	 .block_size = 72},
-	{.name = "SHA3-224",
-	 .oid = HASH_OID_SHA3_224,
-	 .id = GNUTLS_MAC_SHA3_224,
-	 .output_size = 28,
-	 .key_size = 28,
-	 .block_size = 144},
-	{.name = "UMAC-96",
-	 .id = GNUTLS_MAC_UMAC_96,
-	 .output_size = 12,
-	 .key_size = 16,
-	 .nonce_size = 8},
-	{.name = "UMAC-128",
-	 .id = GNUTLS_MAC_UMAC_128,
-	 .output_size = 16,
-	 .key_size = 16,
-	 .nonce_size = 8},
-	{.name = "AEAD",
-	 .id = GNUTLS_MAC_AEAD,
-	 .placeholder = 1},
-	{.name = "MD5",
-	 .oid = HASH_OID_MD5,
-	 .id = GNUTLS_MAC_MD5,
-	 .output_size = 16,
-	 .key_size = 16,
-	 .flags = GNUTLS_MAC_FLAG_PREIMAGE_INSECURE,
-	 .block_size = 64},
-	{.name = "MD2",
-	 .oid = HASH_OID_MD2,
-	 .flags = GNUTLS_MAC_FLAG_PREIMAGE_INSECURE,
-	 .id = GNUTLS_MAC_MD2},
-	{.name = "RIPEMD160",
-	 .oid = HASH_OID_RMD160,
-	 .id = GNUTLS_MAC_RMD160,
-	 .output_size = 20,
-	 .key_size = 20,
-	 .block_size = 64
+static SYSTEM_CONFIG_OR_CONST mac_entry_st hash_algorithms[] = {
+	{ .name = "SHA1",
+	  .oid = HASH_OID_SHA1,
+	  .mac_oid = MAC_OID_SHA1,
+	  .id = GNUTLS_MAC_SHA1,
+	  .output_size = 20,
+	  .key_size = 20,
+	  .block_size = 64 },
+	{ .name = "MD5+SHA1",
+	  .id = GNUTLS_MAC_MD5_SHA1,
+	  .output_size = 36,
+	  .key_size = 36,
+	  .flags = GNUTLS_MAC_FLAG_PREIMAGE_INSECURE,
+	  .block_size = 64 },
+	{ .name = "SHA256",
+	  .oid = HASH_OID_SHA256,
+	  .mac_oid = MAC_OID_SHA256,
+	  .id = GNUTLS_MAC_SHA256,
+	  .output_size = 32,
+	  .key_size = 32,
+	  .block_size = 64 },
+	{ .name = "SHA384",
+	  .oid = HASH_OID_SHA384,
+	  .mac_oid = MAC_OID_SHA384,
+	  .id = GNUTLS_MAC_SHA384,
+	  .output_size = 48,
+	  .key_size = 48,
+	  .block_size = 128 },
+	{ .name = "SHA512",
+	  .oid = HASH_OID_SHA512,
+	  .mac_oid = MAC_OID_SHA512,
+	  .id = GNUTLS_MAC_SHA512,
+	  .output_size = 64,
+	  .key_size = 64,
+	  .block_size = 128 },
+	{ .name = "SHA224",
+	  .oid = HASH_OID_SHA224,
+	  .mac_oid = MAC_OID_SHA224,
+	  .id = GNUTLS_MAC_SHA224,
+	  .output_size = 28,
+	  .key_size = 28,
+	  .block_size = 64 },
+	{ .name = "SHA3-256",
+	  .oid = HASH_OID_SHA3_256,
+	  .id = GNUTLS_MAC_SHA3_256,
+	  .output_size = 32,
+	  .key_size = 32,
+	  .block_size = 136 },
+	{ .name = "SHA3-384",
+	  .oid = HASH_OID_SHA3_384,
+	  .id = GNUTLS_MAC_SHA3_384,
+	  .output_size = 48,
+	  .key_size = 48,
+	  .block_size = 104 },
+	{ .name = "SHA3-512",
+	  .oid = HASH_OID_SHA3_512,
+	  .id = GNUTLS_MAC_SHA3_512,
+	  .output_size = 64,
+	  .key_size = 64,
+	  .block_size = 72 },
+	{ .name = "SHA3-224",
+	  .oid = HASH_OID_SHA3_224,
+	  .id = GNUTLS_MAC_SHA3_224,
+	  .output_size = 28,
+	  .key_size = 28,
+	  .block_size = 144 },
+	{ .name = "UMAC-96",
+	  .id = GNUTLS_MAC_UMAC_96,
+	  .output_size = 12,
+	  .key_size = 16,
+	  .nonce_size = 8 },
+	{ .name = "UMAC-128",
+	  .id = GNUTLS_MAC_UMAC_128,
+	  .output_size = 16,
+	  .key_size = 16,
+	  .nonce_size = 8 },
+	{ .name = "AEAD", .id = GNUTLS_MAC_AEAD, .placeholder = 1 },
+	{ .name = "MD5",
+	  .oid = HASH_OID_MD5,
+	  .id = GNUTLS_MAC_MD5,
+	  .output_size = 16,
+	  .key_size = 16,
+	  .flags = GNUTLS_MAC_FLAG_PREIMAGE_INSECURE,
+	  .block_size = 64 },
+	{ .name = "MD2",
+	  .oid = HASH_OID_MD2,
+	  .flags = GNUTLS_MAC_FLAG_PREIMAGE_INSECURE,
+	  .id = GNUTLS_MAC_MD2 },
+	{ .name = "RIPEMD160",
+	  .oid = HASH_OID_RMD160,
+	  .id = GNUTLS_MAC_RMD160,
+	  .output_size = 20,
+	  .key_size = 20,
+	  .block_size = 64 },
+	{ .name = "GOSTR341194",
+	  .oid = HASH_OID_GOST_R_3411_94,
+	  .mac_oid = MAC_OID_GOST_R_3411_94,
+	  .id = GNUTLS_MAC_GOSTR_94,
+	  .output_size = 32,
+	  .key_size = 32,
+	  .block_size = 32,
+	  .flags = GNUTLS_MAC_FLAG_PREIMAGE_INSECURE },
+	{ .name = "STREEBOG-256",
+	  .oid = HASH_OID_STREEBOG_256,
+	  .mac_oid = MAC_OID_STREEBOG_256,
+	  .id = GNUTLS_MAC_STREEBOG_256,
+	  .output_size = 32,
+	  .key_size = 32,
+	  .block_size = 64 },
+	{ .name = "STREEBOG-512",
+	  .oid = HASH_OID_STREEBOG_512,
+	  .mac_oid = MAC_OID_STREEBOG_512,
+	  .id = GNUTLS_MAC_STREEBOG_512,
+	  .output_size = 64,
+	  .key_size = 64,
+	  .block_size = 64 },
+	{
+		.name = "AES-CMAC-128",
+		.id = GNUTLS_MAC_AES_CMAC_128,
+		.output_size = 16,
+		.key_size = 16,
 	},
-	{.name = "GOSTR341194",
-	 .oid = HASH_OID_GOST_R_3411_94,
-	 .mac_oid = MAC_OID_GOST_R_3411_94,
-	 .id = GNUTLS_MAC_GOSTR_94,
-	 .output_size = 32,
-	 .key_size = 32,
-	 .block_size = 32,
-	 .flags = GNUTLS_MAC_FLAG_PREIMAGE_INSECURE
-	},
-	{.name = "STREEBOG-256",
-	 .oid = HASH_OID_STREEBOG_256,
-	 .mac_oid = MAC_OID_STREEBOG_256,
-	 .id = GNUTLS_MAC_STREEBOG_256,
-	 .output_size = 32,
-	 .key_size = 32,
-	 .block_size = 64},
-	{.name = "STREEBOG-512",
-	 .oid = HASH_OID_STREEBOG_512,
-	 .mac_oid = MAC_OID_STREEBOG_512,
-	 .id = GNUTLS_MAC_STREEBOG_512,
-	 .output_size = 64,
-	 .key_size = 64,
-	 .block_size = 64},
-	{.name = "AES-CMAC-128",
-	 .id = GNUTLS_MAC_AES_CMAC_128,
-	 .output_size = 16,
-	 .key_size = 16,},
-	{.name = "AES-CMAC-256",
-	 .id = GNUTLS_MAC_AES_CMAC_256,
-	 .output_size = 16,
-	 .key_size = 32},
-	{.name = "AES-GMAC-128",
-	 .id = GNUTLS_MAC_AES_GMAC_128,
-	 .output_size = 16,
-	 .key_size = 16,
-	 .nonce_size = 12},
-	{.name = "AES-GMAC-192",
-	 .id = GNUTLS_MAC_AES_GMAC_192,
-	 .output_size = 16,
-	 .key_size = 24,
-	 .nonce_size = 12},
-	{.name = "AES-GMAC-256",
-	 .id = GNUTLS_MAC_AES_GMAC_256,
-	 .output_size = 16,
-	 .key_size = 32,
-	 .nonce_size = 12},
-	{.name = "GOST28147-TC26Z-IMIT",
-	 .id = GNUTLS_MAC_GOST28147_TC26Z_IMIT,
-	 .output_size = 4,
-	 .key_size = 32,
-	 .block_size = 8,
-	 .flags = GNUTLS_MAC_FLAG_CONTINUOUS_MAC},
-	{.name = "SHAKE-128",
-	 .oid = HASH_OID_SHAKE_128,
-	 .id = GNUTLS_MAC_SHAKE_128,
-	 .block_size = 168},
-	{.name = "SHAKE-256",
-	 .oid = HASH_OID_SHAKE_256,
-	 .id = GNUTLS_MAC_SHAKE_256,
-	 .block_size = 136},
-	{.name = "OMAC-MAGMA",
-	 .id = GNUTLS_MAC_MAGMA_OMAC,
-	 .output_size = 8,
-	 .key_size = 32,
-	 .block_size = 8},
-	{.name = "OMAC-KUZNYECHIK",
-	 .id = GNUTLS_MAC_KUZNYECHIK_OMAC,
-	 .output_size = 16,
-	 .key_size = 32,
-	 .block_size = 16},
-	{.name = "MAC-NULL",
-	 .id = GNUTLS_MAC_NULL},
-	{0, 0, 0, 0, 0, 0, 0, 0, 0}
+	{ .name = "AES-CMAC-256",
+	  .id = GNUTLS_MAC_AES_CMAC_256,
+	  .output_size = 16,
+	  .key_size = 32 },
+	{ .name = "AES-GMAC-128",
+	  .id = GNUTLS_MAC_AES_GMAC_128,
+	  .output_size = 16,
+	  .key_size = 16,
+	  .nonce_size = 12 },
+	{ .name = "AES-GMAC-192",
+	  .id = GNUTLS_MAC_AES_GMAC_192,
+	  .output_size = 16,
+	  .key_size = 24,
+	  .nonce_size = 12 },
+	{ .name = "AES-GMAC-256",
+	  .id = GNUTLS_MAC_AES_GMAC_256,
+	  .output_size = 16,
+	  .key_size = 32,
+	  .nonce_size = 12 },
+	{ .name = "GOST28147-TC26Z-IMIT",
+	  .id = GNUTLS_MAC_GOST28147_TC26Z_IMIT,
+	  .output_size = 4,
+	  .key_size = 32,
+	  .block_size = 8,
+	  .flags = GNUTLS_MAC_FLAG_CONTINUOUS_MAC },
+	{ .name = "SHAKE-128",
+	  .oid = HASH_OID_SHAKE_128,
+	  .id = GNUTLS_MAC_SHAKE_128,
+	  .block_size = 168 },
+	{ .name = "SHAKE-256",
+	  .oid = HASH_OID_SHAKE_256,
+	  .id = GNUTLS_MAC_SHAKE_256,
+	  .block_size = 136 },
+	{ .name = "OMAC-MAGMA",
+	  .id = GNUTLS_MAC_MAGMA_OMAC,
+	  .output_size = 8,
+	  .key_size = 32,
+	  .block_size = 8 },
+	{ .name = "OMAC-KUZNYECHIK",
+	  .id = GNUTLS_MAC_KUZNYECHIK_OMAC,
+	  .output_size = 16,
+	  .key_size = 32,
+	  .block_size = 16 },
+	{ .name = "MAC-NULL", .id = GNUTLS_MAC_NULL },
+	{ 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
+#define GNUTLS_HASH_LOOP(b)                               \
+	const mac_entry_st *p;                            \
+	for (p = hash_algorithms; p->name != NULL; p++) { \
+		b;                                        \
+	}
 
-#define GNUTLS_HASH_LOOP(b) \
-	const mac_entry_st *p; \
-		for(p = hash_algorithms; p->name != NULL; p++) { b ; }
-
-#define GNUTLS_HASH_ALG_LOOP(a) \
-			GNUTLS_HASH_LOOP( if(p->id == algorithm) { a; break; } )
+#define GNUTLS_HASH_ALG_LOOP(a)                    \
+	GNUTLS_HASH_LOOP(if (p->id == algorithm) { \
+		a;                                 \
+		break;                             \
+	})
 
 const mac_entry_st *_gnutls_mac_to_entry(gnutls_mac_algorithm_t c)
 {
@@ -256,12 +256,10 @@ const char *gnutls_digest_get_name(gnutls_digest_algorithm_t algorithm)
 {
 	const char *ret = NULL;
 
-	GNUTLS_HASH_LOOP(
-		if (algorithm == (unsigned) p->id && p->oid != NULL) {
-			ret = p->name;
-			break;
-		}
-	);
+	GNUTLS_HASH_LOOP(if (algorithm == (unsigned)p->id && p->oid != NULL) {
+		ret = p->name;
+		break;
+	});
 
 	return ret;
 }
@@ -280,13 +278,12 @@ gnutls_digest_algorithm_t gnutls_digest_get_id(const char *name)
 {
 	gnutls_digest_algorithm_t ret = GNUTLS_DIG_UNKNOWN;
 
-	GNUTLS_HASH_LOOP(
-		if (p->oid != NULL && c_strcasecmp(p->name, name) == 0) {
-			if (_gnutls_digest_exists((gnutls_digest_algorithm_t)p->id))
-				ret = (gnutls_digest_algorithm_t)p->id;
-			break;
-		}
-	);
+	GNUTLS_HASH_LOOP(if (p->oid != NULL &&
+			     c_strcasecmp(p->name, name) == 0) {
+		if (_gnutls_digest_exists((gnutls_digest_algorithm_t)p->id))
+			ret = (gnutls_digest_algorithm_t)p->id;
+		break;
+	});
 
 	return ret;
 }
@@ -297,7 +294,7 @@ int _gnutls_digest_mark_insecure(gnutls_digest_algorithm_t dig)
 #ifndef DISABLE_SYSTEM_CONFIG
 	mac_entry_st *p;
 
-	for(p = hash_algorithms; p->name != NULL; p++) {
+	for (p = hash_algorithms; p->name != NULL; p++) {
 		if (p->oid != NULL && p->id == (gnutls_mac_algorithm_t)dig) {
 			p->flags |= GNUTLS_MAC_FLAG_PREIMAGE_INSECURE;
 			return 0;
@@ -314,24 +311,26 @@ void _gnutls_digest_mark_insecure_all(void)
 #ifndef DISABLE_SYSTEM_CONFIG
 	mac_entry_st *p;
 
-	for(p = hash_algorithms; p->name != NULL; p++) {
+	for (p = hash_algorithms; p->name != NULL; p++) {
 		p->flags |= GNUTLS_MAC_FLAG_PREIMAGE_INSECURE_REVERTIBLE |
-			GNUTLS_MAC_FLAG_PREIMAGE_INSECURE;
+			    GNUTLS_MAC_FLAG_PREIMAGE_INSECURE;
 	}
 
 #endif
 }
 
-int
-_gnutls_digest_set_secure(gnutls_digest_algorithm_t dig, unsigned int secure)
+int _gnutls_digest_set_secure(gnutls_digest_algorithm_t dig,
+			      unsigned int secure)
 {
 #ifndef DISABLE_SYSTEM_CONFIG
 	mac_entry_st *p;
 
-	for(p = hash_algorithms; p->name != NULL; p++) {
+	for (p = hash_algorithms; p->name != NULL; p++) {
 		if (p->oid != NULL && p->id == (gnutls_mac_algorithm_t)dig) {
-			if (!(p->flags & GNUTLS_MAC_FLAG_PREIMAGE_INSECURE_REVERTIBLE)) {
-				return gnutls_assert_val(GNUTLS_E_INVALID_REQUEST);
+			if (!(p->flags &
+			      GNUTLS_MAC_FLAG_PREIMAGE_INSECURE_REVERTIBLE)) {
+				return gnutls_assert_val(
+					GNUTLS_E_INVALID_REQUEST);
 			}
 			if (secure) {
 				p->flags &= ~GNUTLS_MAC_FLAG_PREIMAGE_INSECURE;
@@ -350,7 +349,7 @@ unsigned _gnutls_digest_is_insecure(gnutls_digest_algorithm_t dig)
 {
 	const mac_entry_st *p;
 
-	for(p = hash_algorithms; p->name != NULL; p++) {
+	for (p = hash_algorithms; p->name != NULL; p++) {
 		if (p->oid != NULL && p->id == (gnutls_mac_algorithm_t)dig) {
 			return p->flags & GNUTLS_MAC_FLAG_PREIMAGE_INSECURE;
 		}
@@ -359,15 +358,16 @@ unsigned _gnutls_digest_is_insecure(gnutls_digest_algorithm_t dig)
 	return 1;
 }
 
-bool _gnutls_digest_is_insecure2(gnutls_digest_algorithm_t dig,	unsigned flags)
+bool _gnutls_digest_is_insecure2(gnutls_digest_algorithm_t dig, unsigned flags)
 {
 	const mac_entry_st *p;
 
-	for(p = hash_algorithms; p->name != NULL; p++) {
+	for (p = hash_algorithms; p->name != NULL; p++) {
 		if (p->oid != NULL && p->id == (gnutls_mac_algorithm_t)dig) {
 			return (p->flags & GNUTLS_MAC_FLAG_PREIMAGE_INSECURE &&
 				!(flags & GNUTLS_MAC_FLAG_ALLOW_INSECURE_REVERTIBLE &&
-				  p->flags & GNUTLS_MAC_FLAG_PREIMAGE_INSECURE_REVERTIBLE));
+				  p->flags &
+					  GNUTLS_MAC_FLAG_PREIMAGE_INSECURE_REVERTIBLE));
 		}
 	}
 
@@ -388,13 +388,11 @@ gnutls_mac_algorithm_t gnutls_mac_get_id(const char *name)
 {
 	gnutls_mac_algorithm_t ret = GNUTLS_MAC_UNKNOWN;
 
-	GNUTLS_HASH_LOOP(
-		if (c_strcasecmp(p->name, name) == 0) {
-			if (p->placeholder != 0 || _gnutls_mac_exists(p->id))
-				ret = p->id;
-			break;
-		}
-	);
+	GNUTLS_HASH_LOOP(if (c_strcasecmp(p->name, name) == 0) {
+		if (p->placeholder != 0 || _gnutls_mac_exists(p->id))
+			ret = p->id;
+		break;
+	});
 
 	return ret;
 }
@@ -457,8 +455,7 @@ const gnutls_mac_algorithm_t *gnutls_mac_list(void)
 
 		GNUTLS_HASH_LOOP(
 			if (p->placeholder != 0 || _gnutls_mac_exists(p->id))
-				 supported_macs[i++] = p->id;
-		);
+				supported_macs[i++] = p->id;);
 		supported_macs[i++] = 0;
 	}
 
@@ -477,19 +474,17 @@ const gnutls_mac_algorithm_t *gnutls_mac_list(void)
  **/
 const gnutls_digest_algorithm_t *gnutls_digest_list(void)
 {
-	static gnutls_digest_algorithm_t supported_digests[MAX_ALGOS] =
-	    { 0 };
+	static gnutls_digest_algorithm_t supported_digests[MAX_ALGOS] = { 0 };
 
 	if (supported_digests[0] == 0) {
 		int i = 0;
 
 		GNUTLS_HASH_LOOP(
 			if (p->oid != NULL && (p->placeholder != 0 ||
-				_gnutls_mac_exists(p->id))) {
-
-				supported_digests[i++] = (gnutls_digest_algorithm_t)p->id;
-			}
-		);
+					       _gnutls_mac_exists(p->id))) {
+				supported_digests[i++] =
+					(gnutls_digest_algorithm_t)p->id;
+			});
 		supported_digests[i++] = 0;
 	}
 
@@ -509,14 +504,12 @@ const gnutls_digest_algorithm_t *gnutls_digest_list(void)
  **/
 gnutls_digest_algorithm_t gnutls_oid_to_digest(const char *oid)
 {
-	GNUTLS_HASH_LOOP(
-		if (p->oid && strcmp(oid, p->oid) == 0) {
-			if (_gnutls_digest_exists((gnutls_digest_algorithm_t)p->id)) {
-				return (gnutls_digest_algorithm_t) p->id;
-			}
-			break;
+	GNUTLS_HASH_LOOP(if (p->oid && strcmp(oid, p->oid) == 0) {
+		if (_gnutls_digest_exists((gnutls_digest_algorithm_t)p->id)) {
+			return (gnutls_digest_algorithm_t)p->id;
 		}
-	);
+		break;
+	});
 
 	return GNUTLS_DIG_UNKNOWN;
 }
@@ -534,14 +527,12 @@ gnutls_digest_algorithm_t gnutls_oid_to_digest(const char *oid)
  **/
 gnutls_mac_algorithm_t gnutls_oid_to_mac(const char *oid)
 {
-	GNUTLS_HASH_LOOP(
-		if (p->mac_oid && strcmp(oid, p->mac_oid) == 0) {
-			if (_gnutls_mac_exists(p->id)) {
-				return p->id;
-			}
-			break;
+	GNUTLS_HASH_LOOP(if (p->mac_oid && strcmp(oid, p->mac_oid) == 0) {
+		if (_gnutls_mac_exists(p->id)) {
+			return p->id;
 		}
-	);
+		break;
+	});
 
 	return GNUTLS_MAC_UNKNOWN;
 }
@@ -559,11 +550,9 @@ gnutls_mac_algorithm_t gnutls_oid_to_mac(const char *oid)
  **/
 const char *gnutls_digest_get_oid(gnutls_digest_algorithm_t algorithm)
 {
-	GNUTLS_HASH_LOOP(
-		if (algorithm == (unsigned) p->id && p->oid != NULL) {
-			return p->oid;
-		}
-	);
+	GNUTLS_HASH_LOOP(if (algorithm == (unsigned)p->id && p->oid != NULL) {
+		return p->oid;
+	});
 
 	return NULL;
 }

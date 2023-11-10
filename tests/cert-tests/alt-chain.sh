@@ -15,8 +15,7 @@
 # General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with GnuTLS; if not, write to the Free Software Foundation,
-# Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+# along with GnuTLS.  If not, see <https://www.gnu.org/licenses/>.
 
 #set -e
 
@@ -36,14 +35,11 @@ OUTFILE=out-pkcs7.$$.tmp
 
 . ${srcdir}/../scripts/common.sh
 
-skip_if_no_datefudge
-
 OLD_CA_FILE="${srcdir}/data/alt-chain-old-ca.pem"
 NEW_CA_FILE="${srcdir}/data/alt-chain-new-ca.pem"
 
 echo ""
-datefudge -s "2017-5-10" \
-${VALGRIND} "${CERTTOOL}" --load-ca-certificate ${OLD_CA_FILE} --verify-hostname www.google.com --verify --infile "${srcdir}/data/alt-chain.pem" >${OUTFILE}
+${VALGRIND} "${CERTTOOL}" --attime "2017-5-10" --load-ca-certificate ${OLD_CA_FILE} --verify-hostname www.google.com --verify --infile "${srcdir}/data/alt-chain.pem" >${OUTFILE}
 rc=$?
 
 if test "${rc}" != "1"; then
@@ -53,8 +49,7 @@ if test "${rc}" != "1"; then
 fi
 
 echo ""
-datefudge -s "2017-5-10" \
-${VALGRIND} "${CERTTOOL}" --load-ca-certificate ${NEW_CA_FILE} --verify-hostname www.google.com --verify --infile "${srcdir}/data/alt-chain.pem" >${OUTFILE}
+${VALGRIND} "${CERTTOOL}" --attime "2017-5-10" --load-ca-certificate ${NEW_CA_FILE} --verify-hostname www.google.com --verify --infile "${srcdir}/data/alt-chain.pem" >${OUTFILE}
 rc=$?
 
 if test "${rc}" != "0"; then

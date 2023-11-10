@@ -32,15 +32,15 @@ struct gnutls_x509_trust_list_st {
 	 */
 	gnutls_datum_t x509_rdn_sequence;
 
-	gnutls_x509_crt_t *blacklisted;
-	unsigned int blacklisted_size;
+	gnutls_x509_crt_t *distrusted;
+	unsigned int distrusted_size;
 
 	/* certificates that will be deallocated when this struct
 	 * will be deinitialized */
 	gnutls_x509_crt_t *keep_certs;
 	unsigned int keep_certs_size;
 
-	char* pkcs11_token;
+	char *pkcs11_token;
 
 	/* set this callback if the issuer in the certificate
 	 * chain is missing. */

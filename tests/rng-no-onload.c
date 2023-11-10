@@ -16,8 +16,7 @@
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GnuTLS; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
+ * along with GnuTLS.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 #ifdef HAVE_CONFIG_H
@@ -47,7 +46,7 @@ static int _rnd_called = 0;
  * Normally it shouldn't be called to prevent any blocking due to getrandom()
  * calls.
  */
-int __attribute__ ((visibility ("protected")))
+int __attribute__((visibility("protected")))
 gnutls_rnd(gnutls_rnd_level_t level, void *data, size_t len)
 {
 	_rnd_called = 1;
@@ -69,4 +68,4 @@ void doit(void)
 
 	gnutls_global_deinit();
 }
-#endif				/* _WIN32 */
+#endif /* _WIN32 */

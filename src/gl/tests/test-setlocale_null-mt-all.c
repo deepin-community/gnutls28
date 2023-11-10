@@ -1,9 +1,9 @@
 /* Multithread-safety test for setlocale_null_r (LC_ALL, ...).
-   Copyright (C) 2019-2021 Free Software Foundation, Inc.
+   Copyright (C) 2019-2023 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 3 of the License, or
+   the Free Software Foundation, either version 3 of the License, or
    (at your option) any later version.
 
    This program is distributed in the hope that it will be useful,
@@ -166,7 +166,7 @@ Solaris 11.0         OK
 Solaris 11.4         OK
 Solaris OpenIndiana  OK
 Haiku                crash < 1 sec
-Cygwin               crash < 1 sec
+Cygwin < 3.4.6       crash < 1 sec
 mingw                OK
 MSVC                 OK (assuming compiler option /MD !)
 */

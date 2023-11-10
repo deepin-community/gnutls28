@@ -312,8 +312,8 @@ Connection end is a client.
 Connection is datagram oriented (DTLS). Since 3.0.0.
 @item GNUTLS_@-NONBLOCK
 Connection should not block. Since 3.0.0.
-@item GNUTLS_@-NO_@-EXTENSIONS
-Do not enable any TLS extensions by default (since 3.1.2). As TLS 1.2 and later require extensions this option is considered obsolete and should not be used.
+@item GNUTLS_@-NO_@-DEFAULT_@-EXTENSIONS
+Do not enable any TLS extensions by default such as session tickets and OCSP certificate status request (since 3.1.2). As TLS 1.2 and later require extensions this option is considered obsolete and should not be used.
 @item GNUTLS_@-NO_@-REPLAY_@-PROTECTION
 Disable any replay protection in DTLS. This must only be used if  replay protection is achieved using other means. Since 3.2.2.
 @item GNUTLS_@-NO_@-SIGNAL
@@ -378,6 +378,9 @@ session tickets during the handshake.
 Under TLS1.3 suppress sending EndOfEarlyData message. Since 3.7.2.
 @item GNUTLS_@-NO_@-TICKETS_@-TLS12
 Flag to indicate that the session should not use resumption with session tickets. This flag only has effect if TLS 1.2 is used.
+@item GNUTLS_@-NO_@-STATUS_@-REQUEST
+Prevents client from including the "status_request" TLS extension
+in the client hello, thus disabling the receival of certificate status information. Since 3.8.0.
 @end table
 
 @c gnutls_alert_level_t
@@ -1005,6 +1008,10 @@ Unknown data format
 NULL cipher with a 80 bit HMAC-SHA1
 @item GNUTLS_@-SRTP_@-NULL_@-HMAC_@-SHA1_@-32
 NULL cipher with a 32 bit HMAC-SHA1
+@item GNUTLS_@-SRTP_@-AEAD_@-AES_@-128_@-GCM
+128 bit AES with GCM
+@item GNUTLS_@-SRTP_@-AEAD_@-AES_@-256_@-GCM
+256 bit AES with GCM
 @end table
 
 @c gnutls_alpn_flags_t
@@ -1053,12 +1060,20 @@ This will enable CRL verification when added in the certificate structure.
 When used, it requires CAs to be added before CRLs.
 @end table
 
+@c gnutls_random_art_t
+@table @code
+@item GNUTLS_@-RANDOM_@-ART_@-OPENSSH
+OpenSSH-style random art.
+@end table
+
 @c gnutls_psk_key_flags
 @table @code
 @item GNUTLS_@-PSK_@-KEY_@-RAW
 PSK-key in raw format.
 @item GNUTLS_@-PSK_@-KEY_@-HEX
 PSK-key in hex format.
+@item GNUTLS_@-PSK_@-KEY_@-EXT
+PSK-key is external and to be imported.
 @end table
 
 @c gnutls_x509_subject_alt_name_t
@@ -1230,6 +1245,56 @@ Use SHA256 as the key ID algorithm.
 Use SHA512 as the key ID algorithm.
 @item GNUTLS_@-KEYID_@-USE_@-BEST_@-KNOWN
 Use the best known algorithm to calculate key ID. Using that option will make your program behavior depend on the version of gnutls linked with. That option has a cap of 64-bytes key IDs.
+@end table
+
+@c gnutls_info_access_what_t
+@table @code
+@item GNUTLS_@-IA_@-ACCESSMETHOD_@-OID
+Get accessMethod OID.
+@item GNUTLS_@-IA_@-ACCESSLOCATION_@-GENERALNAME_@-TYPE
+Get accessLocation name type.
+@item GNUTLS_@-IA_@-URI
+Get accessLocation URI value.
+@item GNUTLS_@-IA_@-UNKNOWN
+-- undescribed --
+@item GNUTLS_@-IA_@-OCSP_@-URI
+get accessLocation URI value for OCSP.
+@item GNUTLS_@-IA_@-CAISSUERS_@-URI
+get accessLocation URI value for caIssuers.
+@end table
+
+@c gnutls_x509_crl_reason_flags_t
+@table @code
+@item GNUTLS_@-CRL_@-REASON_@-UNSPECIFIED
+-- undescribed --
+@item GNUTLS_@-CRL_@-REASON_@-PRIVILEGE_@-WITHDRAWN
+The privileges were withdrawn from the owner.
+@item GNUTLS_@-CRL_@-REASON_@-CERTIFICATE_@-HOLD
+The certificate is on hold.
+@item GNUTLS_@-CRL_@-REASON_@-CESSATION_@-OF_@-OPERATION
+The end-entity is no longer operating.
+@item GNUTLS_@-CRL_@-REASON_@-SUPERSEDED
+There is a newer certificate of the owner.
+@item GNUTLS_@-CRL_@-REASON_@-AFFILIATION_@-CHANGED
+The end-entity affiliation has changed.
+@item GNUTLS_@-CRL_@-REASON_@-CA_@-COMPROMISE
+The CA was compromised.
+@item GNUTLS_@-CRL_@-REASON_@-KEY_@-COMPROMISE
+The certificate's key was compromised.
+@item GNUTLS_@-CRL_@-REASON_@-UNUSED
+The key was never used.
+@item GNUTLS_@-CRL_@-REASON_@-AA_@-COMPROMISE
+AA compromised.
+@end table
+
+@c gnutls_x509_qualifier_t
+@table @code
+@item GNUTLS_@-X509_@-QUALIFIER_@-UNKNOWN
+Unknown qualifier.
+@item GNUTLS_@-X509_@-QUALIFIER_@-URI
+A URL
+@item GNUTLS_@-X509_@-QUALIFIER_@-NOTICE
+-- undescribed --
 @end table
 
 @c gnutls_certificate_verify_flags

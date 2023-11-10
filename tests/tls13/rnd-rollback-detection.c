@@ -28,7 +28,7 @@
 
 #if defined(_WIN32)
 
-int main()
+int main(void)
 {
 	exit(77);
 }
@@ -64,8 +64,6 @@ static void client_log_func(int level, const char *str)
 	fprintf(stderr, "client|<%d>| %s", level, str);
 }
 
-
-
 static void client(int fd)
 {
 	int ret;
@@ -81,8 +79,7 @@ static void client(int fd)
 
 	gnutls_certificate_allocate_credentials(&x509_cred);
 	gnutls_certificate_set_x509_key_mem(x509_cred, &cli_ca3_cert,
-					    &cli_ca3_key,
-					    GNUTLS_X509_FMT_PEM);
+					    &cli_ca3_key, GNUTLS_X509_FMT_PEM);
 
 	/* Initialize TLS session
 	 */
@@ -90,7 +87,10 @@ static void client(int fd)
 
 	gnutls_handshake_set_timeout(session, get_timeout());
 
-	ret = gnutls_priority_set_direct(session, "NORMAL:-VERS-ALL:+VERS-TLS1.3:+VERS-TLS1.2:+VERS-TLS1.1:+VERS-TLS1.0", NULL);
+	ret = gnutls_priority_set_direct(
+		session,
+		"NORMAL:-VERS-ALL:+VERS-TLS1.3:+VERS-TLS1.2:+VERS-TLS1.1:+VERS-TLS1.0",
+		NULL);
 	if (ret < 0)
 		fail("cannot set TLS 1.2 priorities\n");
 
@@ -104,11 +104,11 @@ static void client(int fd)
 	 */
 	do {
 		ret = gnutls_handshake(session);
-	}
-	while (ret < 0 && gnutls_error_is_fatal(ret) == 0);
+	} while (ret < 0 && gnutls_error_is_fatal(ret) == 0);
 
 	if (ret != GNUTLS_E_RECEIVED_ILLEGAL_PARAMETER) {
-		fail("unexpected error during rollback: %s\n", gnutls_strerror(ret));
+		fail("unexpected error during rollback: %s\n",
+		     gnutls_strerror(ret));
 	}
 
 	close(fd);
@@ -121,26 +121,26 @@ static void client(int fd)
 }
 
 #ifdef TLS12
-# define RND tls12_rnd
-# define PRIO "NORMAL:-VERS-TLS-ALL:+VERS-TLS1.2"
+#define RND tls12_rnd
+#define PRIO "NORMAL:-VERS-TLS-ALL:+VERS-TLS1.2"
 #elif TLS11
-# define RND tls11_rnd
-# define PRIO "NORMAL:-VERS-TLS-ALL:+VERS-TLS1.1:+VERS-TLS1.0"
+#define RND tls11_rnd
+#define PRIO "NORMAL:-VERS-TLS-ALL:+VERS-TLS1.1:+VERS-TLS1.0"
 #else
-# error unknown version to test
+#error unknown version to test
 #endif
 
-gnutls_datum_t tls12_rnd = {(void*)"\x00\x00\x00\x04\x00\x00\x00\x04"
-			      "\x00\x00\x00\x04\x00\x00\x00\x04"
-			      "\x00\x00\x00\x04\x00\x00\x00\x04"
-			      "\x44\x4F\x57\x4E\x47\x52\x44\x01",
-			      32};
+gnutls_datum_t tls12_rnd = { (void *)"\x00\x00\x00\x04\x00\x00\x00\x04"
+				     "\x00\x00\x00\x04\x00\x00\x00\x04"
+				     "\x00\x00\x00\x04\x00\x00\x00\x04"
+				     "\x44\x4F\x57\x4E\x47\x52\x44\x01",
+			     32 };
 
-gnutls_datum_t tls11_rnd = {(void*)"\x00\x00\x00\x04\x00\x00\x00\x04"
-			      "\x00\x00\x00\x04\x00\x00\x00\x04"
-			      "\x00\x00\x00\x04\x00\x00\x00\x04"
-			      "\x44\x4F\x57\x4E\x47\x52\x44\x00",
-			      32};
+gnutls_datum_t tls11_rnd = { (void *)"\x00\x00\x00\x04\x00\x00\x00\x04"
+				     "\x00\x00\x00\x04\x00\x00\x00\x04"
+				     "\x00\x00\x00\x04\x00\x00\x00\x04"
+				     "\x44\x4F\x57\x4E\x47\x52\x44\x00",
+			     32 };
 
 static void server(int fd)
 {
@@ -159,15 +159,14 @@ static void server(int fd)
 
 	gnutls_certificate_allocate_credentials(&x509_cred);
 	gnutls_certificate_set_x509_key_mem(x509_cred, &server_cert,
-					    &server_key,
-					    GNUTLS_X509_FMT_PEM);
+					    &server_key, GNUTLS_X509_FMT_PEM);
 
 	gnutls_init(&session, GNUTLS_SERVER);
 
 	gnutls_handshake_set_timeout(session, get_timeout());
 	gnutls_handshake_set_random(session, &RND);
 
-	assert(gnutls_priority_set_direct(session, PRIO, NULL)>=0);
+	assert(gnutls_priority_set_direct(session, PRIO, NULL) >= 0);
 
 	gnutls_credentials_set(session, GNUTLS_CRD_CERTIFICATE, x509_cred);
 
@@ -179,7 +178,6 @@ static void server(int fd)
 			break;
 		}
 	} while (ret < 0 && gnutls_error_is_fatal(ret) == 0);
-
 
 	close(fd);
 	gnutls_deinit(session);
@@ -234,4 +232,4 @@ void doit(void)
 	}
 }
 
-#endif				/* _WIN32 */
+#endif /* _WIN32 */

@@ -49,17 +49,16 @@ static gnutls_pcert_st *server_pcert = NULL;
 static gnutls_ocsp_data_st ocspdata[2];
 
 #define OCSP_SIZE 16
-#define OCSP_DATA "\xff\xff\xf0\xf0\xff\xff\xf0\xf0\xff\xff\xf0\xf0\xff\xff\xf0\xf0"
+#define OCSP_DATA \
+	"\xff\xff\xf0\xf0\xff\xff\xf0\xf0\xff\xff\xf0\xf0\xff\xff\xf0\xf0"
 
-static int
-server_cert_callback(gnutls_session_t session,
-		     const struct gnutls_cert_retr_st *info,
-		     gnutls_pcert_st **pcert,
-		     unsigned int *pcert_length,
-		     gnutls_ocsp_data_st **ocsp,
-		     unsigned int *ocsp_length,
-		     gnutls_privkey_t *pkey,
-		     unsigned int *flags)
+static int server_cert_callback(gnutls_session_t session,
+				const struct gnutls_cert_retr_st *info,
+				gnutls_pcert_st **pcert,
+				unsigned int *pcert_length,
+				gnutls_ocsp_data_st **ocsp,
+				unsigned int *ocsp_length,
+				gnutls_privkey_t *pkey, unsigned int *flags)
 {
 	int ret;
 	gnutls_pcert_st *p;
@@ -72,17 +71,17 @@ server_cert_callback(gnutls_session_t session,
 		if (p == NULL)
 			return -1;
 
-		ocspdata[0].response.data = (void*)OCSP_DATA;
+		ocspdata[0].response.data = (void *)OCSP_DATA;
 		ocspdata[0].response.size = OCSP_SIZE;
 		ocspdata[0].exptime = 0;
 
-		ocspdata[1].response.data = (void*)OCSP_DATA;
+		ocspdata[1].response.data = (void *)OCSP_DATA;
 		ocspdata[1].response.size = OCSP_SIZE;
 		ocspdata[1].exptime = 0;
 
-		ret = gnutls_x509_crt_list_import2(&certs, &certs_size,
-						   &server_ca3_localhost_cert_chain,
-						   GNUTLS_X509_FMT_PEM, 0);
+		ret = gnutls_x509_crt_list_import2(
+			&certs, &certs_size, &server_ca3_localhost_cert_chain,
+			GNUTLS_X509_FMT_PEM, 0);
 		if (ret < 0)
 			return -1;
 		ret = gnutls_pcert_import_x509_list(p, certs, &certs_size, 0);
@@ -96,10 +95,8 @@ server_cert_callback(gnutls_session_t session,
 		if (ret < 0)
 			return -1;
 
-		ret =
-		    gnutls_privkey_import_x509_raw(lkey, &server_ca3_key,
-						   GNUTLS_X509_FMT_PEM, NULL,
-						   0);
+		ret = gnutls_privkey_import_x509_raw(
+			lkey, &server_ca3_key, GNUTLS_X509_FMT_PEM, NULL, 0);
 		if (ret < 0)
 			return -1;
 
@@ -146,13 +143,11 @@ static void start(const char *prio)
 	/* Init server */
 	gnutls_certificate_allocate_credentials(&scred);
 
-	gnutls_certificate_set_retrieve_function3(scred,
-						  server_cert_callback);
+	gnutls_certificate_set_retrieve_function3(scred, server_cert_callback);
 
 	gnutls_init(&server, GNUTLS_SERVER);
 	gnutls_credentials_set(server, GNUTLS_CRD_CERTIFICATE, scred);
-	assert(gnutls_priority_set_direct(server,
-				   prio, NULL) >= 0);
+	assert(gnutls_priority_set_direct(server, prio, NULL) >= 0);
 	gnutls_transport_set_push_function(server, server_push);
 	gnutls_transport_set_pull_function(server, server_pull);
 	gnutls_transport_set_ptr(server, server);
@@ -163,11 +158,11 @@ static void start(const char *prio)
 	if (ret < 0)
 		exit(1);
 
-	gnutls_certificate_set_verify_flags(ccred, GNUTLS_VERIFY_DISABLE_CRL_CHECKS);
+	gnutls_certificate_set_verify_flags(ccred,
+					    GNUTLS_VERIFY_DISABLE_CRL_CHECKS);
 
-	ret =
-	    gnutls_certificate_set_x509_trust_mem(ccred, &ca3_cert,
-						  GNUTLS_X509_FMT_PEM);
+	ret = gnutls_certificate_set_x509_trust_mem(ccred, &ca3_cert,
+						    GNUTLS_X509_FMT_PEM);
 	if (ret < 0)
 		exit(1);
 
@@ -175,20 +170,21 @@ static void start(const char *prio)
 	if (ret < 0)
 		exit(1);
 
-	ret = gnutls_credentials_set(client, GNUTLS_CRD_CERTIFICATE,
-				     ccred);
+	ret = gnutls_credentials_set(client, GNUTLS_CRD_CERTIFICATE, ccred);
 	if (ret < 0)
 		exit(1);
 
-	assert(gnutls_priority_set_direct(client, prio, NULL)>=0);
+	assert(gnutls_priority_set_direct(client, prio, NULL) >= 0);
 	gnutls_transport_set_push_function(client, client_push);
 	gnutls_transport_set_pull_function(client, client_pull);
 	gnutls_transport_set_ptr(client, client);
 
 	HANDSHAKE(client, server);
 
-	assert((gnutls_session_get_flags(server) & GNUTLS_SFLAGS_CLI_REQUESTED_OCSP) != 0);
-	assert((gnutls_session_get_flags(client) & GNUTLS_SFLAGS_CLI_REQUESTED_OCSP) != 0);
+	assert((gnutls_session_get_flags(server) &
+		GNUTLS_SFLAGS_CLI_REQUESTED_OCSP) != 0);
+	assert((gnutls_session_get_flags(client) &
+		GNUTLS_SFLAGS_CLI_REQUESTED_OCSP) != 0);
 
 	ret = gnutls_ocsp_status_request_get(client, &response);
 	if (ret != 0)
@@ -200,7 +196,8 @@ static void start(const char *prio)
 	if (gnutls_protocol_get_version(client) == GNUTLS_TLS1_3) {
 		ret = gnutls_ocsp_status_request_get2(client, 1, &response);
 		if (ret != 0)
-			fail("no response was found for 1: %s\n", gnutls_strerror(ret));
+			fail("no response was found for 1: %s\n",
+			     gnutls_strerror(ret));
 
 		assert(response.size == OCSP_SIZE);
 		assert(memcmp(response.data, OCSP_DATA, OCSP_SIZE) == 0);

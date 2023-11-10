@@ -72,23 +72,22 @@ static void client(int sd, const char *prio)
 
 	side = "client";
 
-	assert(gnutls_certificate_allocate_credentials(&clientx509cred)>=0);
+	assert(gnutls_certificate_allocate_credentials(&clientx509cred) >= 0);
 
-	assert(gnutls_init(&session, GNUTLS_CLIENT)>=0);
+	assert(gnutls_init(&session, GNUTLS_CLIENT) >= 0);
 
 	assert(gnutls_priority_set_direct(session, prio, NULL) >= 0);
 
 	/* put the anonymous credentials to the current session
 	 */
-	gnutls_credentials_set(session, GNUTLS_CRD_CERTIFICATE,
-				clientx509cred);
+	gnutls_credentials_set(session, GNUTLS_CRD_CERTIFICATE, clientx509cred);
 
 	gnutls_transport_set_int(session, sd);
 	gnutls_handshake_set_timeout(session, get_timeout());
 
 	do {
 		ret = gnutls_handshake(session);
-	} while(ret == GNUTLS_E_AGAIN || ret == GNUTLS_E_INTERRUPTED);
+	} while (ret == GNUTLS_E_AGAIN || ret == GNUTLS_E_INTERRUPTED);
 
 	if (ret < 0) {
 		fail("client: Handshake failed\n");
@@ -99,7 +98,7 @@ static void client(int sd, const char *prio)
 
 	do {
 		ret = gnutls_record_recv(session, buf, 1);
-	} while(ret == GNUTLS_E_AGAIN || ret == GNUTLS_E_INTERRUPTED);
+	} while (ret == GNUTLS_E_AGAIN || ret == GNUTLS_E_INTERRUPTED);
 	assert(ret == 0);
 
 	close(sd);
@@ -144,8 +143,7 @@ static void server(int sd, const char *prio)
 {
 	gnutls_certificate_credentials_t serverx509cred;
 	const gnutls_datum_t key = { server_key_pem,
-		sizeof(server_key_pem)-1
-	};
+				     sizeof(server_key_pem) - 1 };
 	int ret;
 	gnutls_session_t session;
 	gnutls_datum_t cert;
@@ -164,28 +162,26 @@ static void server(int sd, const char *prio)
 
 	snprintf(cert_path, sizeof(cert_path), "%s/data/large-cert.pem", src);
 
-	assert(gnutls_load_file(cert_path, &cert)>=0);
+	assert(gnutls_load_file(cert_path, &cert) >= 0);
 
-	assert(gnutls_certificate_allocate_credentials(&serverx509cred)>=0);
-	assert(gnutls_certificate_set_x509_key_mem(serverx509cred,
-					    &cert, &key,
-					    GNUTLS_X509_FMT_PEM)>=0);
+	assert(gnutls_certificate_allocate_credentials(&serverx509cred) >= 0);
+	assert(gnutls_certificate_set_x509_key_mem(serverx509cred, &cert, &key,
+						   GNUTLS_X509_FMT_PEM) >= 0);
 
 	gnutls_free(cert.data);
 
-	assert(gnutls_init(&session, GNUTLS_SERVER)>=0);
+	assert(gnutls_init(&session, GNUTLS_SERVER) >= 0);
 
 	assert(gnutls_priority_set_direct(session, prio, NULL) >= 0);
 
-	gnutls_credentials_set(session, GNUTLS_CRD_CERTIFICATE,
-				serverx509cred);
+	gnutls_credentials_set(session, GNUTLS_CRD_CERTIFICATE, serverx509cred);
 
 	gnutls_transport_set_int(session, sd);
 	gnutls_handshake_set_timeout(session, get_timeout());
 
 	do {
 		ret = gnutls_handshake(session);
-	} while(ret == GNUTLS_E_AGAIN || ret == GNUTLS_E_INTERRUPTED);
+	} while (ret == GNUTLS_E_AGAIN || ret == GNUTLS_E_INTERRUPTED);
 
 	if (ret < 0) {
 		close(sd);
@@ -210,8 +206,7 @@ static void server(int sd, const char *prio)
 		success("server: finished\n");
 }
 
-static
-void start(const char *name, const char *prio)
+static void start(const char *name, const char *prio)
 {
 	pid_t child;
 	int sockets[2];
@@ -257,4 +252,4 @@ void doit(void)
 	start("default", "NORMAL");
 }
 
-#endif				/* _WIN32 */
+#endif /* _WIN32 */

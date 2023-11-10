@@ -67,12 +67,9 @@
  *
  * Returns: %GNUTLS_E_SUCCESS on success, or an error code.
  **/
-int
-gnutls_prf_raw(gnutls_session_t session,
-	       size_t label_size,
-	       const char *label,
-	       size_t seed_size, const char *seed, size_t outsize,
-	       char *out)
+int gnutls_prf_raw(gnutls_session_t session, size_t label_size,
+		   const char *label, size_t seed_size, const char *seed,
+		   size_t outsize, char *out)
 {
 	int ret;
 	const version_entry_st *vers = get_version(session);
@@ -84,21 +81,19 @@ gnutls_prf_raw(gnutls_session_t session,
 		return gnutls_assert_val(GNUTLS_E_INVALID_REQUEST);
 
 	ret = _gnutls_prf_raw(session->security_parameters.prf->id,
-			  GNUTLS_MASTER_SIZE, session->security_parameters.master_secret,
-			  label_size, label,
-			  seed_size, (uint8_t *) seed,
-			  outsize, out);
+			      GNUTLS_MASTER_SIZE,
+			      session->security_parameters.master_secret,
+			      label_size, label, seed_size, (uint8_t *)seed,
+			      outsize, out);
 
 	return ret;
 }
 
-static int
-_tls13_derive_exporter(const mac_entry_st *prf,
-		       gnutls_session_t session,
-		       size_t label_size, const char *label,
-		       size_t context_size, const char *context,
-		       size_t outsize, char *out,
-		       bool early)
+static int _tls13_derive_exporter(const mac_entry_st *prf,
+				  gnutls_session_t session, size_t label_size,
+				  const char *label, size_t context_size,
+				  const char *context, size_t outsize,
+				  char *out, bool early)
 {
 	uint8_t secret[MAX_HASH_SIZE];
 	uint8_t digest[MAX_HASH_SIZE];
@@ -106,20 +101,18 @@ _tls13_derive_exporter(const mac_entry_st *prf,
 	int ret;
 
 	ret = _tls13_derive_secret2(prf, label, label_size, NULL, 0,
-				    session->key.proto.tls13.ap_expkey,
-				    secret);
+				    session->key.proto.tls13.ap_expkey, secret);
 	if (ret < 0)
 		return gnutls_assert_val(ret);
 
-	ret = gnutls_hash_fast((gnutls_digest_algorithm_t)prf->id,
-			       context, context_size, digest);
+	ret = gnutls_hash_fast((gnutls_digest_algorithm_t)prf->id, context,
+			       context_size, digest);
 	if (ret < 0)
 		return gnutls_assert_val(ret);
 
-	return _tls13_expand_secret2(prf,
-				     EXPORTER_LABEL, sizeof(EXPORTER_LABEL)-1,
-				     digest, digest_size,
-				     secret, outsize, out);
+	return _tls13_expand_secret2(prf, EXPORTER_LABEL,
+				     sizeof(EXPORTER_LABEL) - 1, digest,
+				     digest_size, secret, outsize, out);
 }
 
 /**
@@ -159,11 +152,9 @@ _tls13_derive_exporter(const mac_entry_st *prf,
  *
  * Since: 3.4.4
  **/
-int
-gnutls_prf_rfc5705(gnutls_session_t session,
-		   size_t label_size, const char *label,
-		   size_t context_size, const char *context,
-		   size_t outsize, char *out)
+int gnutls_prf_rfc5705(gnutls_session_t session, size_t label_size,
+		       const char *label, size_t context_size,
+		       const char *context, size_t outsize, char *out)
 {
 	const version_entry_st *vers = get_version(session);
 	int ret;
@@ -173,33 +164,31 @@ gnutls_prf_rfc5705(gnutls_session_t session,
 
 	if (vers && vers->tls13_sem) {
 		ret = _tls13_derive_exporter(session->security_parameters.prf,
-					     session,
-					     label_size, label,
-					     context_size, context,
-					     outsize, out,
-					     0);
+					     session, label_size, label,
+					     context_size, context, outsize,
+					     out, 0);
 	} else {
 		char *pctx = NULL;
 
-		if (context != NULL && context_size > 65535)  {
+		if (context != NULL && context_size > 65535) {
 			gnutls_assert();
 			return GNUTLS_E_INVALID_REQUEST;
 		}
 
 		if (context != NULL) {
-			pctx = gnutls_malloc(context_size+2);
+			pctx = gnutls_malloc(context_size + 2);
 			if (!pctx) {
 				gnutls_assert();
 				return GNUTLS_E_MEMORY_ERROR;
 			}
 
-			memcpy(pctx+2, context, context_size);
-			_gnutls_write_uint16(context_size, (void*)pctx);
+			memcpy(pctx + 2, context, context_size);
+			_gnutls_write_uint16(context_size, (void *)pctx);
 			context_size += 2;
 		}
 
-		ret = gnutls_prf(session, label_size, label, 0,
-				 context_size, pctx, outsize, out);
+		ret = gnutls_prf(session, label_size, label, 0, context_size,
+				 pctx, outsize, out);
 
 		gnutls_free(pctx);
 	}
@@ -242,21 +231,17 @@ gnutls_prf_rfc5705(gnutls_session_t session,
  *
  * Since: 3.6.8
  **/
-int
-gnutls_prf_early(gnutls_session_t session,
-		 size_t label_size, const char *label,
-		 size_t context_size, const char *context,
-		 size_t outsize, char *out)
+int gnutls_prf_early(gnutls_session_t session, size_t label_size,
+		     const char *label, size_t context_size,
+		     const char *context, size_t outsize, char *out)
 {
 	if (session->internals.initial_negotiation_completed ||
 	    session->key.binders[0].prf == NULL)
 		return gnutls_assert_val(GNUTLS_E_INVALID_REQUEST);
 
 	return _tls13_derive_exporter(session->key.binders[0].prf, session,
-				      label_size, label,
-				      context_size, context,
-				      outsize, out,
-				      1);
+				      label_size, label, context_size, context,
+				      outsize, out, 1);
 }
 
 /**
@@ -294,13 +279,9 @@ gnutls_prf_early(gnutls_session_t session,
  *
  * Returns: %GNUTLS_E_SUCCESS on success, or an error code.
  **/
-int
-gnutls_prf(gnutls_session_t session,
-	   size_t label_size,
-	   const char *label,
-	   int server_random_first,
-	   size_t extra_size, const char *extra,
-	   size_t outsize, char *out)
+int gnutls_prf(gnutls_session_t session, size_t label_size, const char *label,
+	       int server_random_first, size_t extra_size, const char *extra,
+	       size_t outsize, char *out)
 {
 	int ret;
 	uint8_t *seed;
@@ -310,7 +291,8 @@ gnutls_prf(gnutls_session_t session,
 	if (vers && vers->tls13_sem) {
 		if (extra == NULL && server_random_first == 0)
 			return gnutls_prf_rfc5705(session, label_size, label,
-						  extra_size, extra, outsize, out);
+						  extra_size, extra, outsize,
+						  out);
 		else
 			return gnutls_assert_val(GNUTLS_E_INVALID_REQUEST);
 	}
@@ -324,28 +306,27 @@ gnutls_prf(gnutls_session_t session,
 		return GNUTLS_E_MEMORY_ERROR;
 	}
 
-	memcpy(seed, server_random_first ?
-	       session->security_parameters.server_random :
-	       session->security_parameters.client_random,
+	memcpy(seed,
+	       server_random_first ?
+		       session->security_parameters.server_random :
+		       session->security_parameters.client_random,
 	       GNUTLS_RANDOM_SIZE);
 	memcpy(seed + GNUTLS_RANDOM_SIZE,
-	       server_random_first ? session->security_parameters.
-	       client_random : session->security_parameters.server_random,
+	       server_random_first ?
+		       session->security_parameters.client_random :
+		       session->security_parameters.server_random,
 	       GNUTLS_RANDOM_SIZE);
 
 	if (extra && extra_size) {
 		memcpy(seed + 2 * GNUTLS_RANDOM_SIZE, extra, extra_size);
 	}
 
-	ret =
-	    _gnutls_prf_raw(session->security_parameters.prf->id,
-			GNUTLS_MASTER_SIZE, session->security_parameters.master_secret,
-			label_size, label,
-			seedsize, seed,
-			outsize, out);
+	ret = _gnutls_prf_raw(session->security_parameters.prf->id,
+			      GNUTLS_MASTER_SIZE,
+			      session->security_parameters.master_secret,
+			      label_size, label, seedsize, seed, outsize, out);
 
 	gnutls_free(seed);
 
 	return ret;
 }
-

@@ -16,8 +16,7 @@
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GnuTLS; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
+ * along with GnuTLS.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 #ifdef HAVE_CONFIG_H
@@ -29,7 +28,7 @@
 
 #if defined(_WIN32)
 
-int main()
+int main(void)
 {
 	exit(77);
 }
@@ -57,7 +56,7 @@ int main()
 
 static void server_log_func(int level, const char *str)
 {
-//  fprintf (stderr, "server|<%d>| %s", level, str);
+	//  fprintf (stderr, "server|<%d>| %s", level, str);
 }
 
 static void client_log_func(int level, const char *str)
@@ -85,9 +84,7 @@ static void client(int fd, const char *prio)
 
 	gnutls_init(&session, GNUTLS_CLIENT);
 
-	ret =
-	    gnutls_priority_set_direct(session,
-					prio, &p);
+	ret = gnutls_priority_set_direct(session, prio, &p);
 	if (ret < 0) {
 		fail("error in setting priority: %s\n", p);
 		exit(1);
@@ -101,8 +98,7 @@ static void client(int fd, const char *prio)
 	 */
 	do {
 		ret = gnutls_handshake(session);
-	}
-	while (ret < 0 && gnutls_error_is_fatal(ret) == 0);
+	} while (ret < 0 && gnutls_error_is_fatal(ret) == 0);
 
 	if (ret < 0) {
 		if (debug) {
@@ -117,8 +113,8 @@ static void client(int fd, const char *prio)
 
 	if (debug)
 		success("client: TLS version is: %s\n",
-			gnutls_protocol_get_name
-			(gnutls_protocol_get_version(session)));
+			gnutls_protocol_get_name(
+				gnutls_protocol_get_version(session)));
 
 	close(fd);
 
@@ -128,7 +124,6 @@ static void client(int fd, const char *prio)
 
 	gnutls_global_deinit();
 }
-
 
 static void server(int fd, const char *prio, unsigned status, int expected)
 {
@@ -144,8 +139,7 @@ static void server(int fd, const char *prio, unsigned status, int expected)
 
 	gnutls_init(&session, GNUTLS_SERVER);
 
-	assert(gnutls_priority_set_direct(session,
-					  prio, NULL)>=0);
+	assert(gnutls_priority_set_direct(session, prio, NULL) >= 0);
 
 	if (debug) {
 		gnutls_global_set_log_function(server_log_func);
@@ -154,8 +148,7 @@ static void server(int fd, const char *prio, unsigned status, int expected)
 
 	gnutls_certificate_allocate_credentials(&x509_cred);
 	gnutls_certificate_set_x509_key_mem(x509_cred, &server_cert,
-					    &server_key,
-					    GNUTLS_X509_FMT_PEM);
+					    &server_key, GNUTLS_X509_FMT_PEM);
 
 	gnutls_credentials_set(session, GNUTLS_CRD_CERTIFICATE, x509_cred);
 
@@ -164,17 +157,15 @@ static void server(int fd, const char *prio, unsigned status, int expected)
 
 	do {
 		ret = gnutls_handshake(session);
-	}
-	while (ret < 0 && gnutls_error_is_fatal(ret) == 0);
+	} while (ret < 0 && gnutls_error_is_fatal(ret) == 0);
 
 	if (ret == expected) {
 		if (debug)
-			success
-			    ("server: Handshake finished as expected (%d)\n", ret);
+			success("server: Handshake finished as expected (%d)\n",
+				ret);
 		goto finish;
 	} else {
-		fail("expected %d, handshake returned %d\n", expected,
-		     ret);
+		fail("expected %d, handshake returned %d\n", expected, ret);
 	}
 
 	if (debug)
@@ -182,9 +173,9 @@ static void server(int fd, const char *prio, unsigned status, int expected)
 
 	if (debug)
 		success("server: TLS version is: %s\n",
-			gnutls_protocol_get_name
-			(gnutls_protocol_get_version(session)));
-      finish:
+			gnutls_protocol_get_name(
+				gnutls_protocol_get_version(session)));
+finish:
 	close(fd);
 	gnutls_deinit(session);
 
@@ -236,27 +227,31 @@ static void ch_handler(int sig)
 	return;
 }
 
-
 void doit(void)
 {
 	signal(SIGCHLD, ch_handler);
 	signal(SIGPIPE, SIG_IGN);
 
-	start("NONE:+VERS-TLS1.0:+AES-128-CBC:+SHA1:+SIGN-ALL:+COMP-NULL:+RSA", GNUTLS_CERT_IGNORE, 0);
-	start("NONE:+VERS-TLS1.0:+AES-128-CBC:+SHA1:+SIGN-ALL:+COMP-NULL:+RSA", GNUTLS_CERT_REQUEST, 0);
-	start("NONE:+VERS-TLS1.0:+AES-128-CBC:+SHA1:+SIGN-ALL:+COMP-NULL:+RSA", GNUTLS_CERT_REQUIRE, GNUTLS_E_NO_CERTIFICATE_FOUND);
+	start("NONE:+VERS-TLS1.0:+AES-128-CBC:+SHA1:+SIGN-ALL:+COMP-NULL:+RSA",
+	      GNUTLS_CERT_IGNORE, 0);
+	start("NONE:+VERS-TLS1.0:+AES-128-CBC:+SHA1:+SIGN-ALL:+COMP-NULL:+RSA",
+	      GNUTLS_CERT_REQUEST, 0);
+	start("NONE:+VERS-TLS1.0:+AES-128-CBC:+SHA1:+SIGN-ALL:+COMP-NULL:+RSA",
+	      GNUTLS_CERT_REQUIRE, GNUTLS_E_NO_CERTIFICATE_FOUND);
 
 	start("NORMAL:-VERS-ALL:+VERS-TLS1.2", GNUTLS_CERT_IGNORE, 0);
 	start("NORMAL:-VERS-ALL:+VERS-TLS1.2", GNUTLS_CERT_REQUEST, 0);
-	start("NORMAL:-VERS-ALL:+VERS-TLS1.2", GNUTLS_CERT_REQUIRE, GNUTLS_E_NO_CERTIFICATE_FOUND);
+	start("NORMAL:-VERS-ALL:+VERS-TLS1.2", GNUTLS_CERT_REQUIRE,
+	      GNUTLS_E_NO_CERTIFICATE_FOUND);
 
 	start("NORMAL:-VERS-ALL:+VERS-TLS1.3", GNUTLS_CERT_IGNORE, 0);
 	start("NORMAL:-VERS-ALL:+VERS-TLS1.3", GNUTLS_CERT_REQUEST, 0);
-	start("NORMAL:-VERS-ALL:+VERS-TLS1.3", GNUTLS_CERT_REQUIRE, GNUTLS_E_CERTIFICATE_REQUIRED);
+	start("NORMAL:-VERS-ALL:+VERS-TLS1.3", GNUTLS_CERT_REQUIRE,
+	      GNUTLS_E_CERTIFICATE_REQUIRED);
 
 	start("NORMAL", GNUTLS_CERT_IGNORE, 0);
 	start("NORMAL", GNUTLS_CERT_REQUEST, 0);
 	start("NORMAL", GNUTLS_CERT_REQUIRE, GNUTLS_E_CERTIFICATE_REQUIRED);
 }
 
-#endif				/* _WIN32 */
+#endif /* _WIN32 */

@@ -15,8 +15,7 @@
 # General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with GnuTLS; if not, write to the Free Software Foundation,
-# Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+# along with GnuTLS.  If not, see <https://www.gnu.org/licenses/>.
 
 #set -e
 
@@ -32,14 +31,11 @@ export TZ="UTC"
 
 . "${srcdir}/scripts/common.sh"
 
-skip_if_no_datefudge
-
 # Note that in rare cases this test may fail because the
-# time set using datefudge could have changed since the generation
+# time set using faketime/datefudge could have changed since the generation
 # (if example the system was busy)
 
-datefudge -s "2016-04-22" \
-	"${OCSPTOOL}" -e --load-signer "${srcdir}/ocsp-tests/certs/ca.pem" --infile "${srcdir}/ocsp-tests/response1.der"
+"${OCSPTOOL}" --attime "2016-04-22" -e --load-signer "${srcdir}/ocsp-tests/certs/ca.pem" --infile "${srcdir}/ocsp-tests/response1.der"
 rc=$?
 
 # We're done.
@@ -48,8 +44,7 @@ if test "${rc}" != "0"; then
 	exit ${rc}
 fi
 
-datefudge -s "2016-04-22" \
-	"${OCSPTOOL}" -e --load-signer "${srcdir}/ocsp-tests/certs/ocsp-server.pem" --infile "${srcdir}/ocsp-tests/response2.der"
+"${OCSPTOOL}" --attime "2016-04-22" -e --load-signer "${srcdir}/ocsp-tests/certs/ocsp-server.pem" --infile "${srcdir}/ocsp-tests/response2.der"
 rc=$?
 
 # We're done.
@@ -58,8 +53,7 @@ if test "${rc}" != "0"; then
 	exit ${rc}
 fi
 
-datefudge -s "2016-04-22" \
-	"${OCSPTOOL}" -e --load-signer "${srcdir}/ocsp-tests/certs/ca.pem" --infile "${srcdir}/ocsp-tests/response2.der" -d 4
+"${OCSPTOOL}" --attime "2016-04-22" -e --load-signer "${srcdir}/ocsp-tests/certs/ca.pem" --infile "${srcdir}/ocsp-tests/response2.der" -d 4
 rc=$?
 
 # We're done.

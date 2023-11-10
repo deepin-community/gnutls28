@@ -17,8 +17,7 @@
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GnuTLS; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
+ * along with GnuTLS.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 #ifdef HAVE_CONFIG_H
@@ -42,7 +41,7 @@ static void tls_log_func(int level, const char *str)
 	fprintf(stderr, "%s|<%d>| %s", side, level, str);
 }
 
-static time_t mytime(time_t * t)
+static time_t mytime(time_t *t)
 {
 	time_t then = 1461671166;
 
@@ -77,19 +76,13 @@ void doit(void)
 
 	/* Init server */
 	gnutls_certificate_allocate_credentials(&serverx509cred);
-	gnutls_certificate_set_x509_key_mem(serverx509cred,
-					    &server_cert, &server_key,
-					    GNUTLS_X509_FMT_PEM);
+	gnutls_certificate_set_x509_key_mem(serverx509cred, &server_cert,
+					    &server_key, GNUTLS_X509_FMT_PEM);
 
 	gnutls_init(&server, GNUTLS_SERVER);
-	gnutls_credentials_set(server, GNUTLS_CRD_CERTIFICATE,
-				serverx509cred);
-	assert(gnutls_priority_set_direct(server,
-				   "SECURE256",
-				   NULL) >= 0);
-	assert(gnutls_priority_set_direct(server,
-				   "NORMAL",
-				   NULL) >= 0);
+	gnutls_credentials_set(server, GNUTLS_CRD_CERTIFICATE, serverx509cred);
+	assert(gnutls_priority_set_direct(server, "SECURE256", NULL) >= 0);
+	assert(gnutls_priority_set_direct(server, "NORMAL", NULL) >= 0);
 	gnutls_transport_set_push_function(server, server_push);
 	gnutls_transport_set_pull_function(server, server_pull);
 	gnutls_transport_set_ptr(server, server);
@@ -99,7 +92,8 @@ void doit(void)
 	if (ret < 0)
 		exit(1);
 
-	ret = gnutls_certificate_set_x509_trust_mem(clientx509cred, &ca_cert, GNUTLS_X509_FMT_PEM);
+	ret = gnutls_certificate_set_x509_trust_mem(clientx509cred, &ca_cert,
+						    GNUTLS_X509_FMT_PEM);
 	if (ret < 0)
 		exit(1);
 
@@ -108,16 +102,13 @@ void doit(void)
 		exit(1);
 
 	ret = gnutls_credentials_set(client, GNUTLS_CRD_CERTIFICATE,
-				clientx509cred);
+				     clientx509cred);
 	if (ret < 0)
 		exit(1);
 
-	assert(gnutls_priority_set_direct(client,
-				   "PFS:%PROFILE_ULTRA",
-				   NULL) >= 0);
-	assert(gnutls_priority_set_direct(client,
-				   "NORMAL",
-				   NULL) >= 0);
+	assert(gnutls_priority_set_direct(client, "PFS:%PROFILE_ULTRA", NULL) >=
+	       0);
+	assert(gnutls_priority_set_direct(client, "NORMAL", NULL) >= 0);
 	gnutls_transport_set_push_function(client, client_push);
 	gnutls_transport_set_pull_function(client, client_pull);
 	gnutls_transport_set_ptr(client, client);
@@ -139,9 +130,11 @@ void doit(void)
 	{
 		unsigned status;
 
-		ret = gnutls_certificate_verify_peers3(client, "localhost", &status);
+		ret = gnutls_certificate_verify_peers3(client, "localhost",
+						       &status);
 		if (ret < 0) {
-			fail("could not verify certificate: %s\n", gnutls_strerror(ret));
+			fail("could not verify certificate: %s\n",
+			     gnutls_strerror(ret));
 			exit(1);
 		}
 

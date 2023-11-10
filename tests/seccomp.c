@@ -27,7 +27,7 @@
 #include <errno.h>
 #include <string.h>
 #if defined(__linux__)
-#  include <sys/syscall.h>
+#include <sys/syscall.h>
 #endif
 
 int disable_system_calls(void)
@@ -35,20 +35,22 @@ int disable_system_calls(void)
 	int ret;
 	scmp_filter_ctx ctx;
 
-	/*ctx = seccomp_init(SCMP_ACT_ERRNO(EPERM));*/
+	/*ctx = seccomp_init(SCMP_ACT_ERRNO(EPERM)); */
 	ctx = seccomp_init(SCMP_ACT_TRAP);
 	if (ctx == NULL) {
 		fprintf(stderr, "could not initialize seccomp");
 		return -1;
 	}
-
-#define ADD_SYSCALL(name, ...) \
-	ret = seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(name), __VA_ARGS__); \
-	/* libseccomp returns EDOM for pseudo-syscalls due to a bug */ \
-	if (ret < 0 && ret != -EDOM) { \
-		fprintf(stderr, "could not add " #name " to seccomp filter: %s", strerror(-ret)); \
-		ret = -1; \
-		goto fail; \
+#define ADD_SYSCALL(name, ...)                                           \
+	ret = seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(name),      \
+			       __VA_ARGS__);                             \
+	/* libseccomp returns EDOM for pseudo-syscalls due to a bug */   \
+	if (ret < 0 && ret != -EDOM) {                                   \
+		fprintf(stderr,                                          \
+			"could not add " #name " to seccomp filter: %s", \
+			strerror(-ret));                                 \
+		ret = -1;                                                \
+		goto fail;                                               \
 	}
 
 	ADD_SYSCALL(nanosleep, 0);
@@ -107,7 +109,7 @@ int disable_system_calls(void)
 		ret = -1;
 		goto fail;
 	}
-	
+
 	ret = 0;
 
 fail:

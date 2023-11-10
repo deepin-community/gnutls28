@@ -1046,13 +1046,13 @@ This function will deinitialize an iterator type.
 
 @var{crl_max}: Initially must hold the maximum number of crls. It will be updated with the number of crls available.
 
-@var{data}: The PEM encoded CRLs
+@var{data}: The CRL data
 
 @var{format}: One of DER or PEM.
 
 @var{flags}: must be (0) or an OR'd sequence of gnutls_certificate_import_flags.
 
-This function will convert the given PEM encoded CRL list
+This function will convert the given CRL list
 to the native gnutls_x509_crl_t format. The output will be stored
 in  @code{crls} .  They will be automatically initialized.
 
@@ -1070,13 +1070,13 @@ If the Certificate is PEM encoded it should have a header of "X509 CRL".
 
 @var{size}: It will contain the size of the list.
 
-@var{data}: The PEM encoded CRL.
+@var{data}: The CRL data.
 
 @var{format}: One of DER or PEM.
 
 @var{flags}: must be (0) or an OR'd sequence of gnutls_certificate_import_flags.
 
-This function will convert the given PEM encoded CRL list
+This function will convert the given CRL list
 to the native gnutls_x509_crl_t format. The output will be stored
 in  @code{crls} .  They will be automatically initialized.
 
@@ -4972,6 +4972,28 @@ negative error value.
 @strong{Since:} 3.6.0
 @end deftypefun
 
+@subheading gnutls_x509_crt_set_subject_alternative_name
+@anchor{gnutls_x509_crt_set_subject_alternative_name}
+@deftypefun {int} {gnutls_x509_crt_set_subject_alternative_name} (gnutls_x509_crt_t @var{crt}, gnutls_x509_subject_alt_name_t @var{type}, const char * @var{data_string})
+@var{crt}: a certificate of type @code{gnutls_x509_crt_t} 
+
+@var{type}: is one of the gnutls_x509_subject_alt_name_t enumerations
+
+@var{data_string}: The data to be set, a (0) terminated string
+
+This function will set the subject alternative name certificate
+extension. This function assumes that data can be expressed as a null
+terminated string.
+
+The name of the function is unfortunate since it is inconsistent with
+@code{gnutls_x509_crt_get_subject_alt_name()} .
+
+See @code{gnutls_x509_crt_set_subject_alt_name()}  for more information.
+
+@strong{Returns:} On success, @code{GNUTLS_E_SUCCESS}  (0) is returned, otherwise a
+negative error value.
+@end deftypefun
+
 @subheading gnutls_x509_crt_set_subject_alt_name
 @anchor{gnutls_x509_crt_set_subject_alt_name}
 @deftypefun {int} {gnutls_x509_crt_set_subject_alt_name} (gnutls_x509_crt_t @var{crt}, gnutls_x509_subject_alt_name_t @var{type}, const void * @var{data}, unsigned int @var{data_size}, unsigned int @var{flags})
@@ -5024,28 +5046,6 @@ can be used to encode the provided data.
 negative error value.
 
 @strong{Since:} 3.5.0
-@end deftypefun
-
-@subheading gnutls_x509_crt_set_subject_alternative_name
-@anchor{gnutls_x509_crt_set_subject_alternative_name}
-@deftypefun {int} {gnutls_x509_crt_set_subject_alternative_name} (gnutls_x509_crt_t @var{crt}, gnutls_x509_subject_alt_name_t           @var{type}, const char * @var{data_string})
-@var{crt}: a certificate of type @code{gnutls_x509_crt_t} 
-
-@var{type}: is one of the gnutls_x509_subject_alt_name_t enumerations
-
-@var{data_string}: The data to be set, a (0) terminated string
-
-This function will set the subject alternative name certificate
-extension. This function assumes that data can be expressed as a null
-terminated string.
-
-The name of the function is unfortunate since it is inconsistent with
-@code{gnutls_x509_crt_get_subject_alt_name()} .
-
-See @code{gnutls_x509_crt_set_subject_alt_name()}  for more information.
-
-@strong{Returns:} On success, @code{GNUTLS_E_SUCCESS}  (0) is returned, otherwise a
-negative error value.
 @end deftypefun
 
 @subheading gnutls_x509_crt_set_subject_key_id
@@ -7806,7 +7806,7 @@ from the trusted list.
 
 Note that this function can accept certificates and authorities
 not yet known. In that case they will be kept in a separate
-black list that will be used during certificate verification.
+block list that will be used during certificate verification.
 Unlike @code{gnutls_x509_trust_list_add_cas()}  there is no deinitialization
 restriction for  certificate list provided in this function.
 
@@ -7825,7 +7825,7 @@ restriction for  certificate list provided in this function.
 @var{type}: The format of the certificates
 
 This function will remove the given certificate authorities
-from the trusted list, and add them into a black list when needed. 
+from the trusted list, and add them into a block list when needed. 
 PKCS 11 URLs are also accepted, instead
 of files, by this function.
 
@@ -7846,7 +7846,7 @@ See also @code{gnutls_x509_trust_list_remove_cas()} .
 @var{type}: The format of the certificates
 
 This function will remove the provided certificate authorities
-from the trusted list, and add them into a black list when needed. 
+from the trusted list, and add them into a block list when needed. 
 
 See also @code{gnutls_x509_trust_list_remove_cas()} .
 

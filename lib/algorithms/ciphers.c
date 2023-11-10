@@ -26,7 +26,6 @@
 #include <x509/common.h>
 #include "c-strcase.h"
 
-
 /* Note that all algorithms are in CBC or STREAM modes.
  * Do not add any algorithms in other modes (avoid modified algorithms).
  * View first: "The order of encryption and authentication for
@@ -45,21 +44,21 @@ static const cipher_entry_st algorithms[] = {
 	  .keysize = 32,
 	  .type = CIPHER_BLOCK,
 	  .explicit_iv = 16,
-	  .cipher_iv = 16},
+	  .cipher_iv = 16 },
 	{ .name = "AES-192-CBC",
 	  .id = GNUTLS_CIPHER_AES_192_CBC,
 	  .blocksize = 16,
 	  .keysize = 24,
 	  .type = CIPHER_BLOCK,
 	  .explicit_iv = 16,
-	  .cipher_iv = 16},
+	  .cipher_iv = 16 },
 	{ .name = "AES-128-CBC",
 	  .id = GNUTLS_CIPHER_AES_128_CBC,
 	  .blocksize = 16,
 	  .keysize = 16,
 	  .type = CIPHER_BLOCK,
 	  .explicit_iv = 16,
-	  .cipher_iv = 16},
+	  .cipher_iv = 16 },
 	{ .name = "AES-128-GCM",
 	  .id = GNUTLS_CIPHER_AES_128_GCM,
 	  .blocksize = 16,
@@ -68,7 +67,7 @@ static const cipher_entry_st algorithms[] = {
 	  .implicit_iv = 4,
 	  .explicit_iv = 8,
 	  .cipher_iv = 12,
-	  .tagsize = 16},
+	  .tagsize = 16 },
 	{ .name = "AES-192-GCM",
 	  .id = GNUTLS_CIPHER_AES_192_GCM,
 	  .blocksize = 16,
@@ -77,7 +76,7 @@ static const cipher_entry_st algorithms[] = {
 	  .implicit_iv = 4,
 	  .explicit_iv = 8,
 	  .cipher_iv = 12,
-	  .tagsize = 16},
+	  .tagsize = 16 },
 	{ .name = "AES-256-GCM",
 	  .id = GNUTLS_CIPHER_AES_256_GCM,
 	  .blocksize = 16,
@@ -86,7 +85,7 @@ static const cipher_entry_st algorithms[] = {
 	  .implicit_iv = 4,
 	  .explicit_iv = 8,
 	  .cipher_iv = 12,
-	  .tagsize = 16},
+	  .tagsize = 16 },
 	{ .name = "AES-128-CCM",
 	  .id = GNUTLS_CIPHER_AES_128_CCM,
 	  .blocksize = 16,
@@ -96,7 +95,7 @@ static const cipher_entry_st algorithms[] = {
 	  .explicit_iv = 8,
 	  .cipher_iv = 12,
 	  .flags = GNUTLS_CIPHER_FLAG_ONLY_AEAD,
-	  .tagsize = 16},
+	  .tagsize = 16 },
 	{ .name = "AES-256-CCM",
 	  .id = GNUTLS_CIPHER_AES_256_CCM,
 	  .blocksize = 16,
@@ -106,7 +105,7 @@ static const cipher_entry_st algorithms[] = {
 	  .explicit_iv = 8,
 	  .cipher_iv = 12,
 	  .flags = GNUTLS_CIPHER_FLAG_ONLY_AEAD,
-	  .tagsize = 16},
+	  .tagsize = 16 },
 	{ .name = "AES-128-CCM-8",
 	  .id = GNUTLS_CIPHER_AES_128_CCM_8,
 	  .blocksize = 16,
@@ -116,7 +115,7 @@ static const cipher_entry_st algorithms[] = {
 	  .explicit_iv = 8,
 	  .cipher_iv = 12,
 	  .flags = GNUTLS_CIPHER_FLAG_ONLY_AEAD,
-	  .tagsize = 8},
+	  .tagsize = 8 },
 	{ .name = "AES-256-CCM-8",
 	  .id = GNUTLS_CIPHER_AES_256_CCM_8,
 	  .blocksize = 16,
@@ -126,25 +125,32 @@ static const cipher_entry_st algorithms[] = {
 	  .explicit_iv = 8,
 	  .cipher_iv = 12,
 	  .flags = GNUTLS_CIPHER_FLAG_ONLY_AEAD,
-	  .tagsize = 8},
+	  .tagsize = 8 },
 	{ .name = "ARCFOUR-128",
 	  .id = GNUTLS_CIPHER_ARCFOUR_128,
 	  .blocksize = 1,
 	  .keysize = 16,
 	  .type = CIPHER_STREAM,
-	 0, 0, 0, 0},
+	  0,
+	  0,
+	  0,
+	  0 },
 	{ .name = "ESTREAM-SALSA20-256",
 	  .id = GNUTLS_CIPHER_ESTREAM_SALSA20_256,
 	  .blocksize = 64,
 	  .keysize = 32,
-	 .type = CIPHER_STREAM, 0, 0, 8, 0},
+	  .type = CIPHER_STREAM,
+	  0,
+	  0,
+	  8,
+	  0 },
 	{ .name = "SALSA20-256",
 	  .id = GNUTLS_CIPHER_SALSA20_256,
 	  .blocksize = 64,
 	  .keysize = 32,
 	  .type = CIPHER_STREAM,
 	  .explicit_iv = 0,
-	  .cipher_iv = 8},
+	  .cipher_iv = 8 },
 	{ .name = "CHACHA20-32",
 	  .id = GNUTLS_CIPHER_CHACHA20_32,
 	  .blocksize = 64,
@@ -152,7 +158,7 @@ static const cipher_entry_st algorithms[] = {
 	  .type = CIPHER_STREAM,
 	  .explicit_iv = 0,
 	  /* IV includes counter */
-	  .cipher_iv = 16},
+	  .cipher_iv = 16 },
 	{ .name = "CHACHA20-64",
 	  .id = GNUTLS_CIPHER_CHACHA20_64,
 	  .blocksize = 64,
@@ -160,28 +166,28 @@ static const cipher_entry_st algorithms[] = {
 	  .type = CIPHER_STREAM,
 	  .explicit_iv = 0,
 	  /* IV includes counter */
-	  .cipher_iv = 16},
+	  .cipher_iv = 16 },
 	{ .name = "CAMELLIA-256-CBC",
 	  .id = GNUTLS_CIPHER_CAMELLIA_256_CBC,
 	  .blocksize = 16,
 	  .keysize = 32,
 	  .type = CIPHER_BLOCK,
 	  .explicit_iv = 16,
-	  .cipher_iv = 16},
+	  .cipher_iv = 16 },
 	{ .name = "CAMELLIA-192-CBC",
 	  .id = GNUTLS_CIPHER_CAMELLIA_192_CBC,
 	  .blocksize = 16,
 	  .keysize = 24,
 	  .type = CIPHER_BLOCK,
 	  .explicit_iv = 16,
-	  .cipher_iv = 16},
+	  .cipher_iv = 16 },
 	{ .name = "CAMELLIA-128-CBC",
 	  .id = GNUTLS_CIPHER_CAMELLIA_128_CBC,
 	  .blocksize = 16,
 	  .keysize = 16,
 	  .type = CIPHER_BLOCK,
 	  .explicit_iv = 16,
-	  .cipher_iv = 16},
+	  .cipher_iv = 16 },
 	{ .name = "CHACHA20-POLY1305",
 	  .id = GNUTLS_CIPHER_CHACHA20_POLY1305,
 	  .blocksize = 64,
@@ -192,13 +198,16 @@ static const cipher_entry_st algorithms[] = {
 	  /* in chacha20 we don't need a rekey after 2^24 messages */
 	  .flags = GNUTLS_CIPHER_FLAG_XOR_NONCE | GNUTLS_CIPHER_FLAG_NO_REKEY,
 	  .cipher_iv = 12,
-	  .tagsize = 16
-	},
+	  .tagsize = 16 },
 	{ .name = "CAMELLIA-128-GCM",
 	  .id = GNUTLS_CIPHER_CAMELLIA_128_GCM,
 	  .blocksize = 16,
 	  .keysize = 16,
-	  .type = CIPHER_AEAD, 4, 8, 12, 16},
+	  .type = CIPHER_AEAD,
+	  4,
+	  8,
+	  12,
+	  16 },
 	{ .name = "CAMELLIA-256-GCM",
 	  .id = GNUTLS_CIPHER_CAMELLIA_256_GCM,
 	  .blocksize = 16,
@@ -207,42 +216,42 @@ static const cipher_entry_st algorithms[] = {
 	  .implicit_iv = 4,
 	  .explicit_iv = 8,
 	  .cipher_iv = 12,
-	  .tagsize = 16},
+	  .tagsize = 16 },
 	{ .name = "GOST28147-TC26Z-CFB",
 	  .id = GNUTLS_CIPHER_GOST28147_TC26Z_CFB,
 	  .blocksize = 8,
 	  .keysize = 32,
 	  .type = CIPHER_STREAM,
 	  .implicit_iv = 8,
-	  .cipher_iv = 8},
+	  .cipher_iv = 8 },
 	{ .name = "GOST28147-CPA-CFB",
 	  .id = GNUTLS_CIPHER_GOST28147_CPA_CFB,
 	  .blocksize = 8,
 	  .keysize = 32,
 	  .type = CIPHER_STREAM,
 	  .implicit_iv = 8,
-	  .cipher_iv = 8},
+	  .cipher_iv = 8 },
 	{ .name = "GOST28147-CPB-CFB",
 	  .id = GNUTLS_CIPHER_GOST28147_CPB_CFB,
 	  .blocksize = 8,
 	  .keysize = 32,
 	  .type = CIPHER_STREAM,
 	  .implicit_iv = 8,
-	  .cipher_iv = 8},
+	  .cipher_iv = 8 },
 	{ .name = "GOST28147-CPC-CFB",
 	  .id = GNUTLS_CIPHER_GOST28147_CPC_CFB,
 	  .blocksize = 8,
 	  .keysize = 32,
 	  .type = CIPHER_STREAM,
 	  .implicit_iv = 8,
-	  .cipher_iv = 8},
+	  .cipher_iv = 8 },
 	{ .name = "GOST28147-CPD-CFB",
 	  .id = GNUTLS_CIPHER_GOST28147_CPD_CFB,
 	  .blocksize = 8,
 	  .keysize = 32,
 	  .type = CIPHER_STREAM,
 	  .implicit_iv = 8,
-	  .cipher_iv = 8},
+	  .cipher_iv = 8 },
 
 	{ .name = "AES-128-CFB8",
 	  .id = GNUTLS_CIPHER_AES_128_CFB8,
@@ -250,35 +259,35 @@ static const cipher_entry_st algorithms[] = {
 	  .keysize = 16,
 	  .type = CIPHER_BLOCK,
 	  .explicit_iv = 16,
-	  .cipher_iv = 16},
+	  .cipher_iv = 16 },
 	{ .name = "AES-192-CFB8",
 	  .id = GNUTLS_CIPHER_AES_192_CFB8,
 	  .blocksize = 16,
 	  .keysize = 24,
 	  .type = CIPHER_BLOCK,
 	  .explicit_iv = 16,
-	  .cipher_iv = 16},
+	  .cipher_iv = 16 },
 	{ .name = "AES-256-CFB8",
 	  .id = GNUTLS_CIPHER_AES_256_CFB8,
 	  .blocksize = 16,
 	  .keysize = 32,
 	  .type = CIPHER_BLOCK,
 	  .explicit_iv = 16,
-	  .cipher_iv = 16},
+	  .cipher_iv = 16 },
 	{ .name = "AES-128-XTS",
 	  .id = GNUTLS_CIPHER_AES_128_XTS,
 	  .blocksize = 16,
 	  .keysize = 32,
 	  .type = CIPHER_BLOCK,
 	  .explicit_iv = 16,
-	  .cipher_iv = 16},
+	  .cipher_iv = 16 },
 	{ .name = "AES-256-XTS",
 	  .id = GNUTLS_CIPHER_AES_256_XTS,
 	  .blocksize = 16,
 	  .keysize = 64,
 	  .type = CIPHER_BLOCK,
 	  .explicit_iv = 16,
-	  .cipher_iv = 16},
+	  .cipher_iv = 16 },
 	{ .name = "AES-128-SIV",
 	  .id = GNUTLS_CIPHER_AES_128_SIV,
 	  .blocksize = 16,
@@ -287,8 +296,8 @@ static const cipher_entry_st algorithms[] = {
 	  .explicit_iv = 16,
 	  .cipher_iv = 16,
 	  .flags = GNUTLS_CIPHER_FLAG_ONLY_AEAD |
-	  GNUTLS_CIPHER_FLAG_TAG_PREFIXED,
-	  .tagsize = 16},
+		   GNUTLS_CIPHER_FLAG_TAG_PREFIXED,
+	  .tagsize = 16 },
 	{ .name = "AES-256-SIV",
 	  .id = GNUTLS_CIPHER_AES_256_SIV,
 	  .blocksize = 16,
@@ -297,70 +306,74 @@ static const cipher_entry_st algorithms[] = {
 	  .explicit_iv = 16,
 	  .cipher_iv = 16,
 	  .flags = GNUTLS_CIPHER_FLAG_ONLY_AEAD |
-	  GNUTLS_CIPHER_FLAG_TAG_PREFIXED,
-	  .tagsize = 16},
+		   GNUTLS_CIPHER_FLAG_TAG_PREFIXED,
+	  .tagsize = 16 },
 	{ .name = "GOST28147-TC26Z-CNT",
 	  .id = GNUTLS_CIPHER_GOST28147_TC26Z_CNT,
 	  .blocksize = 8,
 	  .keysize = 32,
 	  .type = CIPHER_STREAM,
 	  .implicit_iv = 8,
-	  .cipher_iv = 8},
+	  .cipher_iv = 8 },
 	{ .name = "MAGMA-CTR-ACPKM",
 	  .id = GNUTLS_CIPHER_MAGMA_CTR_ACPKM,
 	  .blocksize = 8,
 	  .keysize = 32,
 	  .type = CIPHER_STREAM,
 	  .implicit_iv = 4,
-	  .cipher_iv = 8},
+	  .cipher_iv = 8 },
 	{ .name = "KUZNYECHIK-CTR-ACPKM",
 	  .id = GNUTLS_CIPHER_KUZNYECHIK_CTR_ACPKM,
 	  .blocksize = 16,
 	  .keysize = 32,
 	  .type = CIPHER_STREAM,
 	  .implicit_iv = 8,
-	  .cipher_iv = 16},
+	  .cipher_iv = 16 },
 	{ .name = "3DES-CBC",
 	  .id = GNUTLS_CIPHER_3DES_CBC,
 	  .blocksize = 8,
 	  .keysize = 24,
 	  .type = CIPHER_BLOCK,
 	  .explicit_iv = 8,
-	  .cipher_iv = 8},
+	  .cipher_iv = 8 },
 	{ .name = "DES-CBC",
 	  .id = GNUTLS_CIPHER_DES_CBC,
 	  .blocksize = 8,
 	  .keysize = 8,
 	  .type = CIPHER_BLOCK,
 	  .explicit_iv = 8,
-	  .cipher_iv = 8},
+	  .cipher_iv = 8 },
 	{ .name = "ARCFOUR-40",
 	  .id = GNUTLS_CIPHER_ARCFOUR_40,
 	  .blocksize = 1,
 	  .keysize = 5,
-	  .type = CIPHER_STREAM},
+	  .type = CIPHER_STREAM },
 	{ .name = "RC2-40",
 	  .id = GNUTLS_CIPHER_RC2_40_CBC,
 	  .blocksize = 8,
 	  .keysize = 5,
 	  .type = CIPHER_BLOCK,
 	  .explicit_iv = 8,
-	  .cipher_iv = 8},
+	  .cipher_iv = 8 },
 	{ .name = "NULL",
 	  .id = GNUTLS_CIPHER_NULL,
 	  .blocksize = 1,
 	  .keysize = 0,
-	  .type = CIPHER_STREAM
-	},
-	{0, 0, 0, 0, 0, 0, 0}
+	  .type = CIPHER_STREAM },
+	{ 0, 0, 0, 0, 0, 0, 0 }
 };
 
-#define GNUTLS_CIPHER_LOOP(b) \
-	const cipher_entry_st *p; \
-		for(p = algorithms; p->name != NULL; p++) { b ; }
+#define GNUTLS_CIPHER_LOOP(b)                        \
+	const cipher_entry_st *p;                    \
+	for (p = algorithms; p->name != NULL; p++) { \
+		b;                                   \
+	}
 
-#define GNUTLS_ALG_LOOP(a) \
-			GNUTLS_CIPHER_LOOP( if(p->id == algorithm) { a; break; } )
+#define GNUTLS_ALG_LOOP(a)                           \
+	GNUTLS_CIPHER_LOOP(if (p->id == algorithm) { \
+		a;                                   \
+		break;                               \
+	})
 
 /* CIPHER functions */
 
@@ -376,11 +389,7 @@ const cipher_entry_st *_gnutls_cipher_to_entry(gnutls_cipher_algorithm_t c)
  */
 const cipher_entry_st *cipher_name_to_entry(const char *name)
 {
-	GNUTLS_CIPHER_LOOP(
-		if (c_strcasecmp(p->name, name) == 0) {
-			return p;
-		}
-	);
+	GNUTLS_CIPHER_LOOP(if (c_strcasecmp(p->name, name) == 0) { return p; });
 
 	return NULL;
 }
@@ -398,7 +407,6 @@ unsigned gnutls_cipher_get_block_size(gnutls_cipher_algorithm_t algorithm)
 	size_t ret = 0;
 	GNUTLS_ALG_LOOP(ret = p->blocksize);
 	return ret;
-
 }
 
 /**
@@ -446,11 +454,10 @@ unsigned gnutls_cipher_get_iv_size(gnutls_cipher_algorithm_t algorithm)
  *   the given cipher is invalid.
  **/
 size_t gnutls_cipher_get_key_size(gnutls_cipher_algorithm_t algorithm)
-{				/* In bytes */
+{ /* In bytes */
 	size_t ret = 0;
 	GNUTLS_ALG_LOOP(ret = p->keysize);
 	return ret;
-
 }
 
 /**
@@ -485,13 +492,11 @@ gnutls_cipher_algorithm_t gnutls_cipher_get_id(const char *name)
 {
 	gnutls_cipher_algorithm_t ret = GNUTLS_CIPHER_UNKNOWN;
 
-	GNUTLS_CIPHER_LOOP(
-		if (c_strcasecmp(p->name, name) == 0) {
-			if (p->id == GNUTLS_CIPHER_NULL || _gnutls_cipher_exists(p->id))
-				ret = p->id;
-			break;
-		}
-	);
+	GNUTLS_CIPHER_LOOP(if (c_strcasecmp(p->name, name) == 0) {
+		if (p->id == GNUTLS_CIPHER_NULL || _gnutls_cipher_exists(p->id))
+			ret = p->id;
+		break;
+	});
 
 	return ret;
 }
@@ -512,16 +517,14 @@ gnutls_cipher_algorithm_t gnutls_cipher_get_id(const char *name)
  **/
 const gnutls_cipher_algorithm_t *gnutls_cipher_list(void)
 {
-	static gnutls_cipher_algorithm_t supported_ciphers[MAX_ALGOS] =
-	    { 0 };
+	static gnutls_cipher_algorithm_t supported_ciphers[MAX_ALGOS] = { 0 };
 
 	if (supported_ciphers[0] == 0) {
 		int i = 0;
 
-		GNUTLS_CIPHER_LOOP(
-			if (p->id == GNUTLS_CIPHER_NULL || _gnutls_cipher_exists(p->id))
-				supported_ciphers[i++] = p->id;
-		);
+		GNUTLS_CIPHER_LOOP(if (p->id == GNUTLS_CIPHER_NULL ||
+				       _gnutls_cipher_exists(p->id))
+					   supported_ciphers[i++] = p->id;);
 		supported_ciphers[i++] = 0;
 	}
 

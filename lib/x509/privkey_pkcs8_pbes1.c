@@ -37,9 +37,9 @@
  * We only support decryption for compatibility with other software.
  */
 
-int _gnutls_read_pbkdf1_params(const uint8_t * data, int data_size,
-		       struct pbkdf2_params *kdf_params,
-		       struct pbe_enc_params *enc_params)
+int _gnutls_read_pbkdf1_params(const uint8_t *data, int data_size,
+			       struct pbkdf2_params *kdf_params,
+			       struct pbe_enc_params *enc_params)
 {
 	asn1_node pasn = NULL;
 	int len;
@@ -48,41 +48,37 @@ int _gnutls_read_pbkdf1_params(const uint8_t * data, int data_size,
 	memset(kdf_params, 0, sizeof(*kdf_params));
 	memset(enc_params, 0, sizeof(*enc_params));
 
-	if ((result =
-		     asn1_create_element(_gnutls_get_pkix(),
-					 "PKIX1.pkcs-5-PBE-params",
-					 &pasn)) != ASN1_SUCCESS) {
+	if ((result = asn1_create_element(_gnutls_get_pkix(),
+					  "PKIX1.pkcs-5-PBE-params", &pasn)) !=
+	    ASN1_SUCCESS) {
 		gnutls_assert();
 		return _gnutls_asn2err(result);
 	}
 
 	/* Decode the parameters.
 	 */
-	result =
-	    _asn1_strict_der_decode(&pasn, data, data_size, NULL);
+	result = _asn1_strict_der_decode(&pasn, data, data_size, NULL);
 	if (result != ASN1_SUCCESS) {
 		gnutls_assert();
 		ret = _gnutls_asn2err(result);
 		goto error;
 	}
 
-	ret =
-	    _gnutls_x509_read_uint(pasn, "iterationCount",
-			   &kdf_params->iter_count);
+	ret = _gnutls_x509_read_uint(pasn, "iterationCount",
+				     &kdf_params->iter_count);
 	if (ret < 0) {
 		gnutls_assert();
 		goto error;
 	}
 
-	if (kdf_params->iter_count >= MAX_ITER_COUNT || kdf_params->iter_count == 0) {
+	if (kdf_params->iter_count >= MAX_ITER_COUNT ||
+	    kdf_params->iter_count == 0) {
 		ret = gnutls_assert_val(GNUTLS_E_ILLEGAL_PARAMETER);
 		goto error;
 	}
 
 	len = sizeof(kdf_params->salt);
-	result =
-	    asn1_read_value(pasn, "salt",
-		    kdf_params->salt, &len);
+	result = asn1_read_value(pasn, "salt", kdf_params->salt, &len);
 	if (result != ASN1_SUCCESS) {
 		gnutls_assert();
 		ret = _gnutls_asn2err(result);
@@ -98,14 +94,14 @@ int _gnutls_read_pbkdf1_params(const uint8_t * data, int data_size,
 	enc_params->cipher = GNUTLS_CIPHER_DES_CBC;
 
 	ret = 0;
- error:
+error:
 	asn1_delete_structure2(&pasn, ASN1_DELETE_FLAG_ZEROIZE);
 	return ret;
-
 }
 
 static void pbkdf1_md5(const char *password, unsigned password_len,
-	const uint8_t salt[8], unsigned iter_count, unsigned key_size, uint8_t *key)
+		       const uint8_t salt[8], unsigned iter_count,
+		       unsigned key_size, uint8_t *key)
 {
 	struct md5_ctx ctx;
 	uint8_t tmp[16];
@@ -114,10 +110,10 @@ static void pbkdf1_md5(const char *password, unsigned password_len,
 	if (key_size > sizeof(tmp))
 		abort();
 
-	for (i=0;i<iter_count;i++) {
+	for (i = 0; i < iter_count; i++) {
 		md5_init(&ctx);
-		if (i==0) {
-			md5_update(&ctx, password_len, (uint8_t*)password);
+		if (i == 0) {
+			md5_update(&ctx, password_len, (uint8_t *)password);
 			md5_update(&ctx, 8, salt);
 			md5_digest(&ctx, 16, tmp);
 		} else {
@@ -130,13 +126,12 @@ static void pbkdf1_md5(const char *password, unsigned password_len,
 	return;
 }
 
-int
-_gnutls_decrypt_pbes1_des_md5_data(const char *password,
-			   unsigned password_len,
-			   const struct pbkdf2_params *kdf_params,
-			   const struct pbe_enc_params *enc_params,
-			   const gnutls_datum_t *encrypted_data,
-			   gnutls_datum_t *decrypted_data)
+int _gnutls_decrypt_pbes1_des_md5_data(const char *password,
+				       unsigned password_len,
+				       const struct pbkdf2_params *kdf_params,
+				       const struct pbe_enc_params *enc_params,
+				       const gnutls_datum_t *encrypted_data,
+				       gnutls_datum_t *decrypted_data)
 {
 	int result;
 	gnutls_datum_t dkey, d_iv;
@@ -152,7 +147,8 @@ _gnutls_decrypt_pbes1_des_md5_data(const char *password,
 
 	/* generate the key
 	 */
-	pbkdf1_md5(password, password_len, kdf_params->salt, kdf_params->iter_count, sizeof(key), key);
+	pbkdf1_md5(password, password_len, kdf_params->salt,
+		   kdf_params->iter_count, sizeof(key), key);
 
 	dkey.data = key;
 	dkey.size = 8;
@@ -165,25 +161,28 @@ _gnutls_decrypt_pbes1_des_md5_data(const char *password,
 	}
 	_gnutls_switch_fips_state(GNUTLS_FIPS140_OP_NOT_APPROVED);
 
-	result = gnutls_cipher_decrypt(ch, encrypted_data->data, encrypted_data->size);
+	result = gnutls_cipher_decrypt(ch, encrypted_data->data,
+				       encrypted_data->size);
 	if (result < 0) {
 		gnutls_assert();
 		goto error;
 	}
 
-	if ((int)encrypted_data->size - encrypted_data->data[encrypted_data->size - 1] < 0) {
+	if ((int)encrypted_data->size -
+		    encrypted_data->data[encrypted_data->size - 1] <
+	    0) {
 		gnutls_assert();
 		result = GNUTLS_E_ILLEGAL_PARAMETER;
 		goto error;
 	}
 
 	decrypted_data->data = encrypted_data->data;
-	decrypted_data->size = encrypted_data->size - encrypted_data->data[encrypted_data->size - 1];
+	decrypted_data->size = encrypted_data->size -
+			       encrypted_data->data[encrypted_data->size - 1];
 
 	result = 0;
- error:
+error:
 	gnutls_cipher_deinit(ch);
 
 	return result;
 }
-

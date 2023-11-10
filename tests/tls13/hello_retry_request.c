@@ -28,7 +28,7 @@
 
 #if defined(_WIN32)
 
-int main()
+int main(void)
 {
 	exit(77);
 }
@@ -56,8 +56,7 @@ int main()
 
 const char *testname = "";
 
-#define myfail(fmt, ...) \
-	fail("%s: "fmt, testname, ##__VA_ARGS__)
+#define myfail(fmt, ...) fail("%s: " fmt, testname, ##__VA_ARGS__)
 
 static void server_log_func(int level, const char *str)
 {
@@ -79,7 +78,8 @@ struct ctx_st {
 };
 
 static int hello_callback(gnutls_session_t session, unsigned int htype,
-			  unsigned post, unsigned int incoming, const gnutls_datum_t *msg)
+			  unsigned post, unsigned int incoming,
+			  const gnutls_datum_t *msg)
 {
 	struct ctx_st *ctx = gnutls_session_get_ptr(session);
 	assert(ctx != NULL);
@@ -87,7 +87,8 @@ static int hello_callback(gnutls_session_t session, unsigned int htype,
 	if (htype == GNUTLS_HANDSHAKE_HELLO_RETRY_REQUEST)
 		ctx->hrr_seen = 1;
 
-	if (htype == GNUTLS_HANDSHAKE_CLIENT_HELLO && post == GNUTLS_HOOK_POST) {
+	if (htype == GNUTLS_HANDSHAKE_CLIENT_HELLO &&
+	    post == GNUTLS_HOOK_POST) {
 		size_t session_id_len;
 		uint8_t *session_id;
 
@@ -98,11 +99,13 @@ static int hello_callback(gnutls_session_t session, unsigned int htype,
 		if (ctx->hello_counter > 0) {
 			assert(msg->size > 4);
 			if (msg->data[0] != 0x03 || msg->data[1] != 0x03) {
-				fail("version is %d.%d expected 3,3\n", (int)msg->data[0], (int)msg->data[1]);
+				fail("version is %d.%d expected 3,3\n",
+				     (int)msg->data[0], (int)msg->data[1]);
 			}
 
 			if (session_id_len != ctx->session_id_len ||
-			    memcmp(session_id, ctx->session_id, session_id_len) != 0) {
+			    memcmp(session_id, ctx->session_id,
+				   session_id_len) != 0) {
 				fail("different legacy_session_id is sent after HRR\n");
 			}
 		}
@@ -115,7 +118,6 @@ static int hello_callback(gnutls_session_t session, unsigned int htype,
 
 	return 0;
 }
-
 
 static void client(int fd)
 {
@@ -131,29 +133,31 @@ static void client(int fd)
 		gnutls_global_set_log_level(7);
 	}
 
-	assert(gnutls_certificate_allocate_credentials(&x509_cred)>=0);
+	assert(gnutls_certificate_allocate_credentials(&x509_cred) >= 0);
 
-	assert(gnutls_init(&session, GNUTLS_CLIENT|GNUTLS_KEY_SHARE_TOP)>=0);
+	assert(gnutls_init(&session, GNUTLS_CLIENT | GNUTLS_KEY_SHARE_TOP) >=
+	       0);
 
 	gnutls_handshake_set_timeout(session, get_timeout());
 	gnutls_session_set_ptr(session, &ctx);
 
-	ret = gnutls_priority_set_direct(session, "NORMAL:-VERS-ALL:+VERS-TLS1.3:-GROUP-ALL:+GROUP-SECP256R1:+GROUP-X25519", NULL);
+	ret = gnutls_priority_set_direct(
+		session,
+		"NORMAL:-VERS-ALL:+VERS-TLS1.3:-GROUP-ALL:+GROUP-SECP256R1:+GROUP-X25519",
+		NULL);
 	if (ret < 0)
 		myfail("cannot set TLS 1.3 priorities\n");
 
 	gnutls_credentials_set(session, GNUTLS_CRD_CERTIFICATE, x509_cred);
 
 	gnutls_handshake_set_hook_function(session, GNUTLS_HANDSHAKE_ANY,
-					   GNUTLS_HOOK_BOTH,
-					   hello_callback);
+					   GNUTLS_HOOK_BOTH, hello_callback);
 
 	gnutls_transport_set_int(session, fd);
 
 	do {
 		ret = gnutls_handshake(session);
-	}
-	while (ret < 0 && gnutls_error_is_fatal(ret) == 0);
+	} while (ret < 0 && gnutls_error_is_fatal(ret) == 0);
 
 	assert(ctx.hrr_seen != 0);
 
@@ -175,17 +179,20 @@ static void server(int fd)
 		gnutls_global_set_log_level(4711);
 	}
 
-	assert(gnutls_certificate_allocate_credentials(&x509_cred)>=0);
+	assert(gnutls_certificate_allocate_credentials(&x509_cred) >= 0);
 	assert(gnutls_certificate_set_x509_key_mem(x509_cred, &server_cert,
 						   &server_key,
-						   GNUTLS_X509_FMT_PEM)>=0);
+						   GNUTLS_X509_FMT_PEM) >= 0);
 
 	gnutls_init(&session, GNUTLS_SERVER);
 
 	gnutls_handshake_set_timeout(session, get_timeout());
 
 	/* server only supports x25519, client advertises secp256r1 */
-	assert(gnutls_priority_set_direct(session, "NORMAL:-VERS-ALL:+VERS-TLS1.3:-GROUP-ALL:+GROUP-X25519", NULL)>=0);
+	assert(gnutls_priority_set_direct(
+		       session,
+		       "NORMAL:-VERS-ALL:+VERS-TLS1.3:-GROUP-ALL:+GROUP-X25519",
+		       NULL) >= 0);
 
 	gnutls_credentials_set(session, GNUTLS_CRD_CERTIFICATE, x509_cred);
 
@@ -202,7 +209,8 @@ static void server(int fd)
 		myfail("handshake error: %s\n", gnutls_strerror(ret));
 
 	if (gnutls_group_get(session) != GNUTLS_GROUP_X25519)
-		myfail("group doesn't match the expected: %s\n", gnutls_group_get_name(gnutls_group_get(session)));
+		myfail("group doesn't match the expected: %s\n",
+		       gnutls_group_get_name(gnutls_group_get(session)));
 
 	close(fd);
 	gnutls_deinit(session);
@@ -252,4 +260,4 @@ void doit(void)
 	}
 }
 
-#endif				/* _WIN32 */
+#endif /* _WIN32 */

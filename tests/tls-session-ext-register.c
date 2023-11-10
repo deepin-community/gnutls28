@@ -63,10 +63,10 @@ static void tls_log_func(int level, const char *str)
 #define TLSEXT_TYPE_SAMPLE 0xF1
 #define TLSEXT_TYPE_IGN 0xF2
 
-static int TLSEXT_TYPE_client_sent		= 0;
-static int TLSEXT_TYPE_client_received		= 0;
-static int TLSEXT_TYPE_server_sent		= 0;
-static int TLSEXT_TYPE_server_received		= 0;
+static int TLSEXT_TYPE_client_sent = 0;
+static int TLSEXT_TYPE_client_received = 0;
+static int TLSEXT_TYPE_server_sent = 0;
+static int TLSEXT_TYPE_server_received = 0;
 static int ign_extension_called = 0;
 
 static void reset_vars(void)
@@ -78,16 +78,12 @@ static void reset_vars(void)
 	ign_extension_called = 0;
 }
 
-static const unsigned char ext_data[] =
-{	
-	0xFE,
-	0xED
-};
+static const unsigned char ext_data[] = { 0xFE, 0xED };
 
-#define myfail(fmt, ...) \
-	fail("%s: "fmt, name, ##__VA_ARGS__)
+#define myfail(fmt, ...) fail("%s: " fmt, name, ##__VA_ARGS__)
 
-static int ext_recv_client_params(gnutls_session_t session, const unsigned char *buf, size_t buflen)
+static int ext_recv_client_params(gnutls_session_t session,
+				  const unsigned char *buf, size_t buflen)
 {
 	const char *name;
 	name = gnutls_session_get_ptr(session);
@@ -105,25 +101,29 @@ static int ext_recv_client_params(gnutls_session_t session, const unsigned char 
 	return 0; //Success
 }
 
-static int ext_send_client_params(gnutls_session_t session, gnutls_buffer_t extdata)
+static int ext_send_client_params(gnutls_session_t session,
+				  gnutls_buffer_t extdata)
 {
 	TLSEXT_TYPE_client_sent = 1;
 	gnutls_buffer_append_data(extdata, ext_data, sizeof(ext_data));
 	return sizeof(ext_data);
 }
 
-static int ext_recv_client_ign_params(gnutls_session_t session, const unsigned char *buf, size_t buflen)
+static int ext_recv_client_ign_params(gnutls_session_t session,
+				      const unsigned char *buf, size_t buflen)
 {
 	return 0;
 }
 
-static int ext_send_client_ign_params(gnutls_session_t session, gnutls_buffer_t extdata)
+static int ext_send_client_ign_params(gnutls_session_t session,
+				      gnutls_buffer_t extdata)
 {
 	ign_extension_called = 1;
 	return 0;
 }
 
-static int ext_recv_server_params(gnutls_session_t session, const unsigned char *buf, size_t buflen)
+static int ext_recv_server_params(gnutls_session_t session,
+				  const unsigned char *buf, size_t buflen)
 {
 	const char *name;
 
@@ -140,14 +140,16 @@ static int ext_recv_server_params(gnutls_session_t session, const unsigned char 
 	return 0; //Success
 }
 
-static int ext_send_server_params(gnutls_session_t session, gnutls_buffer_t extdata)
+static int ext_send_server_params(gnutls_session_t session,
+				  gnutls_buffer_t extdata)
 {
 	TLSEXT_TYPE_server_sent = 1;
 	gnutls_buffer_append_data(extdata, ext_data, sizeof(ext_data));
 	return sizeof(ext_data);
 }
 
-static void client(int sd, const char *name, const char *prio, unsigned flags, unsigned expected_ok)
+static void client(int sd, const char *name, const char *prio, unsigned flags,
+		   unsigned expected_ok)
 {
 	int ret;
 	gnutls_session_t session;
@@ -162,33 +164,43 @@ static void client(int sd, const char *name, const char *prio, unsigned flags, u
 	/* Initialize TLS session
 	 */
 	assert(gnutls_init(&session, GNUTLS_CLIENT) >= 0);
-	gnutls_session_set_ptr(session, (void*)name);
+	gnutls_session_set_ptr(session, (void *)name);
 
 	/* Use default priorities */
-	assert(gnutls_priority_set_direct(session, prio,
-				   NULL)>=0);
+	assert(gnutls_priority_set_direct(session, prio, NULL) >= 0);
 
 	/* put the anonymous credentials to the current session
 	 */
-	gnutls_credentials_set(session, GNUTLS_CRD_CERTIFICATE,
-				clientx509cred);
+	gnutls_credentials_set(session, GNUTLS_CRD_CERTIFICATE, clientx509cred);
 
 	gnutls_transport_set_int(session, sd);
 	gnutls_handshake_set_timeout(session, get_timeout());
 
-	ret = gnutls_session_ext_register(session, "ext_ign", TLSEXT_TYPE_IGN, GNUTLS_EXT_TLS, ext_recv_client_ign_params, ext_send_client_ign_params, NULL, NULL, NULL, flags);
+	ret = gnutls_session_ext_register(session, "ext_ign", TLSEXT_TYPE_IGN,
+					  GNUTLS_EXT_TLS,
+					  ext_recv_client_ign_params,
+					  ext_send_client_ign_params, NULL,
+					  NULL, NULL, flags);
 	if (ret < 0)
 		myfail("client: register extension\n");
 
-	ext_name = gnutls_ext_get_name2(session, TLSEXT_TYPE_IGN, GNUTLS_EXT_ANY);
+	ext_name =
+		gnutls_ext_get_name2(session, TLSEXT_TYPE_IGN, GNUTLS_EXT_ANY);
 	if (ext_name == NULL || strcmp(ext_name, "ext_ign"))
-		myfail("client: retrieve name of extension %u\n", TLSEXT_TYPE_IGN);
+		myfail("client: retrieve name of extension %u\n",
+		       TLSEXT_TYPE_IGN);
 
-	ext_name = gnutls_ext_get_name2(session, TLSEXT_TYPE_IGN, GNUTLS_EXT_APPLICATION);
+	ext_name = gnutls_ext_get_name2(session, TLSEXT_TYPE_IGN,
+					GNUTLS_EXT_APPLICATION);
 	if (ext_name)
-		myfail("client: retrieve name of extension %u (expected none)\n", TLSEXT_TYPE_IGN);
-		
-	ret = gnutls_session_ext_register(session, "ext_client", TLSEXT_TYPE_SAMPLE, GNUTLS_EXT_TLS, ext_recv_client_params, ext_send_client_params, NULL, NULL, NULL, flags);
+		myfail("client: retrieve name of extension %u (expected none)\n",
+		       TLSEXT_TYPE_IGN);
+
+	ret = gnutls_session_ext_register(session, "ext_client",
+					  TLSEXT_TYPE_SAMPLE, GNUTLS_EXT_TLS,
+					  ext_recv_client_params,
+					  ext_send_client_params, NULL, NULL,
+					  NULL, flags);
 	if (ret < 0)
 		myfail("client: register extension\n");
 
@@ -199,9 +211,11 @@ static void client(int sd, const char *name, const char *prio, unsigned flags, u
 	if (ret < 0) {
 		if (!expected_ok) {
 			if (debug)
-				success("client: handshake failed as expected: %s\n", gnutls_strerror(ret));
+				success("client: handshake failed as expected: %s\n",
+					gnutls_strerror(ret));
 		} else {
-			myfail("client: Handshake failed: %s\n", gnutls_strerror(ret));
+			myfail("client: Handshake failed: %s\n",
+			       gnutls_strerror(ret));
 		}
 		goto end;
 	} else {
@@ -243,7 +257,8 @@ end:
 	gnutls_certificate_free_credentials(clientx509cred);
 }
 
-static void server(int sd, const char *name, const char *prio, unsigned flags, unsigned expected_ok)
+static void server(int sd, const char *name, const char *prio, unsigned flags,
+		   unsigned expected_ok)
 {
 	gnutls_certificate_credentials_t serverx509cred;
 	int ret;
@@ -251,24 +266,25 @@ static void server(int sd, const char *name, const char *prio, unsigned flags, u
 
 	side = "server";
 
-	assert(gnutls_certificate_allocate_credentials(&serverx509cred)>=0);
-	assert(gnutls_certificate_set_x509_key_mem(serverx509cred,
-					    &server_cert, &server_key,
-					    GNUTLS_X509_FMT_PEM) >= 0);
+	assert(gnutls_certificate_allocate_credentials(&serverx509cred) >= 0);
+	assert(gnutls_certificate_set_x509_key_mem(serverx509cred, &server_cert,
+						   &server_key,
+						   GNUTLS_X509_FMT_PEM) >= 0);
 
 	assert(gnutls_init(&session, GNUTLS_SERVER) >= 0);
-	gnutls_session_set_ptr(session, (void*)name);
+	gnutls_session_set_ptr(session, (void *)name);
 
 	/* avoid calling all the priority functions, since the defaults
 	 * are adequate.
 	 */
-	assert(gnutls_priority_set_direct(session, prio,
-				   NULL) >= 0);
+	assert(gnutls_priority_set_direct(session, prio, NULL) >= 0);
 
-	gnutls_credentials_set(session, GNUTLS_CRD_CERTIFICATE,
-				serverx509cred);
+	gnutls_credentials_set(session, GNUTLS_CRD_CERTIFICATE, serverx509cred);
 
-	assert(gnutls_session_ext_register(session, "ext_server", TLSEXT_TYPE_SAMPLE, GNUTLS_EXT_TLS, ext_recv_server_params, ext_send_server_params, NULL, NULL, NULL, flags) >= 0);
+	assert(gnutls_session_ext_register(
+		       session, "ext_server", TLSEXT_TYPE_SAMPLE,
+		       GNUTLS_EXT_TLS, ext_recv_server_params,
+		       ext_send_server_params, NULL, NULL, NULL, flags) >= 0);
 
 	gnutls_transport_set_int(session, sd);
 	gnutls_handshake_set_timeout(session, get_timeout());
@@ -277,19 +293,19 @@ static void server(int sd, const char *name, const char *prio, unsigned flags, u
 	if (ret < 0) {
 		if (!expected_ok) {
 			if (debug)
-				success("server: handshake failed as expected: %s\n", gnutls_strerror(ret));
+				success("server: handshake failed as expected: %s\n",
+					gnutls_strerror(ret));
 			goto cleanup;
 		} else {
 			close(sd);
 			gnutls_deinit(session);
 			myfail("server: Handshake has failed (%s)\n",
-			     gnutls_strerror(ret));
+			       gnutls_strerror(ret));
 		}
 		return;
 	}
 	if (debug)
 		success("server: Handshake was completed\n");
-
 
 	if (TLSEXT_TYPE_server_sent != 1 || TLSEXT_TYPE_server_received != 1) {
 		if (expected_ok)
@@ -305,7 +321,7 @@ static void server(int sd, const char *name, const char *prio, unsigned flags, u
 	if (!expected_ok)
 		myfail("server: expected failure but succeeded!\n");
 
- cleanup:
+cleanup:
 	close(sd);
 	gnutls_deinit(session);
 
@@ -371,22 +387,45 @@ void doit(void)
 	if (debug)
 		gnutls_global_set_log_level(5);
 
-	try_common("TLS1.2 both ways (default)", "NORMAL:+ANON-ECDH:-VERS-TLS-ALL:+VERS-TLS1.2", 0, 1, 1);
-	try_common("TLS1.2 both ways", "NORMAL:+ANON-ECDH:-VERS-TLS-ALL:+VERS-TLS1.2", GNUTLS_EXT_FLAG_CLIENT_HELLO|GNUTLS_EXT_FLAG_TLS12_SERVER_HELLO, 1, 1);
+	try_common("TLS1.2 both ways (default)",
+		   "NORMAL:+ANON-ECDH:-VERS-TLS-ALL:+VERS-TLS1.2", 0, 1, 1);
+	try_common("TLS1.2 both ways",
+		   "NORMAL:+ANON-ECDH:-VERS-TLS-ALL:+VERS-TLS1.2",
+		   GNUTLS_EXT_FLAG_CLIENT_HELLO |
+			   GNUTLS_EXT_FLAG_TLS12_SERVER_HELLO,
+		   1, 1);
 
-	try_common("TLS1.2 client only", "NORMAL:+ANON-ECDH:-VERS-TLS-ALL:+VERS-TLS1.2", GNUTLS_EXT_FLAG_CLIENT_HELLO, 0, 0);
-	try_common("TLS1.2 client and TLS 1.3 server", "NORMAL:+ANON-ECDH:-VERS-TLS-ALL:+VERS-TLS1.2", GNUTLS_EXT_FLAG_CLIENT_HELLO|GNUTLS_EXT_FLAG_TLS13_SERVER_HELLO, 0, 0);
-	try_common("TLS1.2 server only", "NORMAL:+ANON-ECDH:-VERS-TLS-ALL:+VERS-TLS1.2", GNUTLS_EXT_FLAG_TLS12_SERVER_HELLO, 0, 0);
+	try_common("TLS1.2 client only",
+		   "NORMAL:+ANON-ECDH:-VERS-TLS-ALL:+VERS-TLS1.2",
+		   GNUTLS_EXT_FLAG_CLIENT_HELLO, 0, 0);
+	try_common("TLS1.2 client and TLS 1.3 server",
+		   "NORMAL:+ANON-ECDH:-VERS-TLS-ALL:+VERS-TLS1.2",
+		   GNUTLS_EXT_FLAG_CLIENT_HELLO |
+			   GNUTLS_EXT_FLAG_TLS13_SERVER_HELLO,
+		   0, 0);
+	try_common("TLS1.2 server only",
+		   "NORMAL:+ANON-ECDH:-VERS-TLS-ALL:+VERS-TLS1.2",
+		   GNUTLS_EXT_FLAG_TLS12_SERVER_HELLO, 0, 0);
 
-	try("TLS1.2 client rejects", "NORMAL:+ANON-ECDH:-VERS-TLS-ALL:+VERS-TLS1.2", GNUTLS_EXT_FLAG_CLIENT_HELLO|GNUTLS_EXT_FLAG_TLS12_SERVER_HELLO, GNUTLS_EXT_FLAG_CLIENT_HELLO, 0, 0);
-	try("TLS1.2 never on client hello", "NORMAL:+ANON-ECDH:-VERS-TLS-ALL:+VERS-TLS1.2", GNUTLS_EXT_FLAG_TLS12_SERVER_HELLO, GNUTLS_EXT_FLAG_CLIENT_HELLO, 0, 0);
+	try("TLS1.2 client rejects",
+	    "NORMAL:+ANON-ECDH:-VERS-TLS-ALL:+VERS-TLS1.2",
+	    GNUTLS_EXT_FLAG_CLIENT_HELLO | GNUTLS_EXT_FLAG_TLS12_SERVER_HELLO,
+	    GNUTLS_EXT_FLAG_CLIENT_HELLO, 0, 0);
+	try("TLS1.2 never on client hello",
+	    "NORMAL:+ANON-ECDH:-VERS-TLS-ALL:+VERS-TLS1.2",
+	    GNUTLS_EXT_FLAG_TLS12_SERVER_HELLO, GNUTLS_EXT_FLAG_CLIENT_HELLO, 0,
+	    0);
 
 	/* check whether we can crash the library by adding many extensions */
 	success("Testing: register many global extensions\n");
-	for (i=0;i<64;i++) {
-		ret = gnutls_ext_register("ext_serverxx", TLSEXT_TYPE_SAMPLE+i+1, GNUTLS_EXT_TLS, ext_recv_server_params, ext_send_server_params, NULL, NULL, NULL);
+	for (i = 0; i < 64; i++) {
+		ret = gnutls_ext_register(
+			"ext_serverxx", TLSEXT_TYPE_SAMPLE + i + 1,
+			GNUTLS_EXT_TLS, ext_recv_server_params,
+			ext_send_server_params, NULL, NULL, NULL);
 		if (ret < 0) {
-			success("failed registering extension no %d (expected)\n", i+1);
+			success("failed registering extension no %d (expected)\n",
+				i + 1);
 			break;
 		}
 	}
@@ -394,4 +433,4 @@ void doit(void)
 	gnutls_global_deinit();
 }
 
-#endif				/* _WIN32 */
+#endif /* _WIN32 */

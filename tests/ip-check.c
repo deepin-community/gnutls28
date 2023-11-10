@@ -16,8 +16,7 @@
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GnuTLS; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
+ * along with GnuTLS.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 #ifdef HAVE_CONFIG_H
@@ -27,9 +26,6 @@
 #include <string.h>
 #include <gnutls/gnutls.h>
 #include <gnutls/x509.h>
-#ifdef ENABLE_OPENPGP
-#include <gnutls/openpgp.h>
-#endif
 
 #include "utils.h"
 
@@ -38,7 +34,8 @@
  * name-constraints-ip.c for lower level checks.
  */
 
-char pem_ips[] = "\n"
+char pem_ips[] =
+	"\n"
 	"X.509 Certificate Information:\n"
 	"	Version: 3\n"
 	"	Serial Number (hex): 00\n"
@@ -155,7 +152,7 @@ void doit(void)
 	if (ret < 0)
 		fail("gnutls_x509_crt_init: %d\n", ret);
 
-	data.data = (unsigned char *) pem_ips;
+	data.data = (unsigned char *)pem_ips;
 	data.size = strlen(pem_ips);
 
 	ret = gnutls_x509_crt_import(x509, &data, GNUTLS_X509_FMT_PEM);
@@ -172,37 +169,52 @@ void doit(void)
 
 	ret = gnutls_x509_crt_check_hostname(x509, "127.0.0.1");
 	if (!ret)
-		fail("%d: Hostname incorrectly does not match (%d)\n", __LINE__, ret);
+		fail("%d: Hostname incorrectly does not match (%d)\n", __LINE__,
+		     ret);
 
 	ret = gnutls_x509_crt_check_hostname(x509, "192.168.5.1");
 	if (!ret)
-		fail("%d: Hostname incorrectly does not match (%d)\n", __LINE__, ret);
+		fail("%d: Hostname incorrectly does not match (%d)\n", __LINE__,
+		     ret);
 
 	ret = gnutls_x509_crt_check_hostname(x509, "::1");
 	if (!ret)
-		fail("%d: Hostname incorrectly does not match (%d)\n", __LINE__, ret);
+		fail("%d: Hostname incorrectly does not match (%d)\n", __LINE__,
+		     ret);
 
 	ret = gnutls_x509_crt_check_hostname(x509, "fe80::3e97:eff:fe18:359a");
 	if (!ret)
-		fail("%d: Hostname incorrectly does not match (%d)\n", __LINE__, ret);
+		fail("%d: Hostname incorrectly does not match (%d)\n", __LINE__,
+		     ret);
 
-	ret = gnutls_x509_crt_check_ip(x509, (unsigned char*)"\x7f\x00\x00\x02", 4, 0);
+	ret = gnutls_x509_crt_check_ip(
+		x509, (unsigned char *)"\x7f\x00\x00\x02", 4, 0);
 	if (ret)
 		fail("%d: IP incorrectly matches (%d)\n", __LINE__, ret);
 
-	ret = gnutls_x509_crt_check_ip(x509, (unsigned char*)"\x7f\x00\x00\x01", 4, 0);
+	ret = gnutls_x509_crt_check_ip(
+		x509, (unsigned char *)"\x7f\x00\x00\x01", 4, 0);
 	if (!ret)
 		fail("%d: IP incorrectly does not match (%d)\n", __LINE__, ret);
 
-	ret = gnutls_x509_crt_check_ip(x509, (unsigned char*)"\xc0\xa8\x05\x01", 4, 0);
+	ret = gnutls_x509_crt_check_ip(
+		x509, (unsigned char *)"\xc0\xa8\x05\x01", 4, 0);
 	if (!ret)
 		fail("%d: IP incorrectly does not match (%d)\n", __LINE__, ret);
 
-	ret = gnutls_x509_crt_check_ip(x509, (unsigned char*)"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01", 16, 0);
+	ret = gnutls_x509_crt_check_ip(
+		x509,
+		(unsigned char
+			 *)"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01",
+		16, 0);
 	if (!ret)
 		fail("%d: IP incorrectly does not match (%d)\n", __LINE__, ret);
 
-	ret = gnutls_x509_crt_check_ip(x509, (unsigned char*)"\xfe\x80\x00\x00\x00\x00\x00\x00\x3e\x97\x0e\xff\xfe\x18\x35\x9a", 16, 0);
+	ret = gnutls_x509_crt_check_ip(
+		x509,
+		(unsigned char
+			 *)"\xfe\x80\x00\x00\x00\x00\x00\x00\x3e\x97\x0e\xff\xfe\x18\x35\x9a",
+		16, 0);
 	if (!ret)
 		fail("%d: IP incorrectly does not match (%d)\n", __LINE__, ret);
 

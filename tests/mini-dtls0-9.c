@@ -16,8 +16,7 @@
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GnuTLS; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
+ * along with GnuTLS.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 #ifdef HAVE_CONFIG_H
@@ -29,7 +28,7 @@
 
 #if defined(_WIN32)
 
-int main()
+int main(void)
 {
 	exit(77);
 }
@@ -69,18 +68,18 @@ static void client_log_func(int level, const char *str)
 
 #define MAX_BUF 1024
 
-static ssize_t
-push(gnutls_transport_ptr_t tr, const void *data, size_t len)
+static ssize_t push(gnutls_transport_ptr_t tr, const void *data, size_t len)
 {
-	int fd = (long int) tr;
+	int fd = (long int)tr;
 
 	return send(fd, data, len, 0);
 }
 
-static gnutls_datum_t master =
-    { (void*)"\x44\x66\x44\xa9\xb6\x29\xed\x6e\xd6\x93\x15\xdb\xf0\x7d\x4b\x2e\x18\xb1\x9d\xed\xff\x6a\x86\x76\xc9\x0e\x16\xab\xc2\x10\xbb\x17\x99\x24\xb1\xd9\xb9\x95\xe7\xea\xea\xea\xea\xea\xff\xaa\xac", 48};
-static gnutls_datum_t sess_id =
-    { (void*)"\xd9\xb9\x95\xe7\xea", 5};
+static gnutls_datum_t master = {
+	(void *)"\x44\x66\x44\xa9\xb6\x29\xed\x6e\xd6\x93\x15\xdb\xf0\x7d\x4b\x2e\x18\xb1\x9d\xed\xff\x6a\x86\x76\xc9\x0e\x16\xab\xc2\x10\xbb\x17\x99\x24\xb1\xd9\xb9\x95\xe7\xea\xea\xea\xea\xea\xff\xaa\xac",
+	48
+};
+static gnutls_datum_t sess_id = { (void *)"\xd9\xb9\x95\xe7\xea", 5 };
 
 static void client(int fd, int proto, int cipher, int mac)
 {
@@ -105,16 +104,17 @@ static void client(int fd, int proto, int cipher, int mac)
 	gnutls_handshake_set_timeout(session, get_timeout());
 
 	/* Use default priorities */
-	gnutls_priority_set_direct(session,
-				   "NONE:+VERS-DTLS0.9:+COMP-NULL:+AES-128-GCM:+AEAD:+AES-128-CBC:+SHA1:+RSA:%COMPAT",
-				   NULL);
+	gnutls_priority_set_direct(
+		session,
+		"NONE:+VERS-DTLS0.9:+COMP-NULL:+AES-128-GCM:+AEAD:+AES-128-CBC:+SHA1:+RSA:%COMPAT",
+		NULL);
 
-	ret = gnutls_session_set_premaster(session, GNUTLS_CLIENT,
-		proto, GNUTLS_KX_RSA,
-		cipher, mac,
-		GNUTLS_COMP_NULL, &master, &sess_id);
+	ret = gnutls_session_set_premaster(session, GNUTLS_CLIENT, proto,
+					   GNUTLS_KX_RSA, cipher, mac,
+					   GNUTLS_COMP_NULL, &master, &sess_id);
 	if (ret < 0) {
-		fail("client: gnutls_session_set_premaster failed: %s\n", gnutls_strerror(ret));
+		fail("client: gnutls_session_set_premaster failed: %s\n",
+		     gnutls_strerror(ret));
 		exit(1);
 	}
 
@@ -127,8 +127,7 @@ static void client(int fd, int proto, int cipher, int mac)
 	 */
 	do {
 		ret = gnutls_handshake(session);
-	}
-	while (ret < 0 && gnutls_error_is_fatal(ret) == 0);
+	} while (ret < 0 && gnutls_error_is_fatal(ret) == 0);
 
 	if (ret < 0) {
 		fail("client: Handshake failed\n");
@@ -141,17 +140,16 @@ static void client(int fd, int proto, int cipher, int mac)
 
 	if (debug)
 		success("client: TLS version is: %s\n",
-			gnutls_protocol_get_name
-			(gnutls_protocol_get_version(session)));
+			gnutls_protocol_get_name(
+				gnutls_protocol_get_version(session)));
 
 	do {
-		ret = gnutls_record_recv(session, buffer, sizeof(buffer)-1);
+		ret = gnutls_record_recv(session, buffer, sizeof(buffer) - 1);
 	} while (ret == GNUTLS_E_AGAIN || ret == GNUTLS_E_INTERRUPTED);
 
 	if (ret == 0) {
 		if (debug)
-			success
-			    ("client: Peer has closed the TLS connection\n");
+			success("client: Peer has closed the TLS connection\n");
 		goto end;
 	} else if (ret < 0) {
 		fail("client: Error: %s\n", gnutls_strerror(ret));
@@ -160,7 +158,7 @@ static void client(int fd, int proto, int cipher, int mac)
 
 	gnutls_bye(session, GNUTLS_SHUT_WR);
 
-      end:
+end:
 
 	close(fd);
 
@@ -170,7 +168,6 @@ static void client(int fd, int proto, int cipher, int mac)
 
 	gnutls_global_deinit();
 }
-
 
 /* These are global */
 pid_t child;
@@ -195,7 +192,8 @@ static void server(int fd, int proto, int cipher, int mac)
 	 */
 	global_init();
 
-	success("testing for %s-%s\n", gnutls_cipher_get_name(cipher), gnutls_mac_get_name(mac));
+	success("testing for %s-%s\n", gnutls_cipher_get_name(cipher),
+		gnutls_mac_get_name(mac));
 
 	if (debug) {
 		gnutls_global_set_log_function(server_log_func);
@@ -211,16 +209,17 @@ static void server(int fd, int proto, int cipher, int mac)
 	/* avoid calling all the priority functions, since the defaults
 	 * are adequate.
 	 */
-	gnutls_priority_set_direct(session,
-				   "NONE:+VERS-DTLS0.9:+COMP-NULL:+AES-128-CBC:+AES-128-GCM:+AEAD:+SHA1:+RSA:%COMPAT",
-				   NULL);
+	gnutls_priority_set_direct(
+		session,
+		"NONE:+VERS-DTLS0.9:+COMP-NULL:+AES-128-CBC:+AES-128-GCM:+AEAD:+SHA1:+RSA:%COMPAT",
+		NULL);
 
-	ret = gnutls_session_set_premaster(session, GNUTLS_SERVER,
-		proto, GNUTLS_KX_RSA,
-		cipher, mac,
-		GNUTLS_COMP_NULL, &master, &sess_id);
+	ret = gnutls_session_set_premaster(session, GNUTLS_SERVER, proto,
+					   GNUTLS_KX_RSA, cipher, mac,
+					   GNUTLS_COMP_NULL, &master, &sess_id);
 	if (ret < 0) {
-		fail("server: gnutls_session_set_premaster failed: %s\n", gnutls_strerror(ret));
+		fail("server: gnutls_session_set_premaster failed: %s\n",
+		     gnutls_strerror(ret));
 		exit(1);
 	}
 
@@ -231,8 +230,7 @@ static void server(int fd, int proto, int cipher, int mac)
 
 	do {
 		ret = gnutls_handshake(session);
-	}
-	while (ret < 0 && gnutls_error_is_fatal(ret) == 0);
+	} while (ret < 0 && gnutls_error_is_fatal(ret) == 0);
 	if (ret < 0) {
 		close(fd);
 		gnutls_deinit(session);
@@ -245,15 +243,15 @@ static void server(int fd, int proto, int cipher, int mac)
 
 	if (debug)
 		success("server: TLS version is: %s\n",
-			gnutls_protocol_get_name
-			(gnutls_protocol_get_version(session)));
+			gnutls_protocol_get_name(
+				gnutls_protocol_get_version(session)));
 
 	/* see the Getting peer's information example */
 	/* print_info(session); */
 
 	memset(buffer, 1, sizeof(buffer));
 	do {
-		ret = gnutls_record_send(session, buffer, sizeof(buffer)-1);
+		ret = gnutls_record_send(session, buffer, sizeof(buffer) - 1);
 	} while (ret == GNUTLS_E_AGAIN || ret == GNUTLS_E_INTERRUPTED);
 
 	if (ret < 0) {
@@ -263,7 +261,6 @@ static void server(int fd, int proto, int cipher, int mac)
 		     gnutls_strerror(ret));
 		terminate();
 	}
-
 
 	/* do not wait for the peer to close the connection.
 	 */
@@ -323,4 +320,4 @@ void doit(void)
 	run(GNUTLS_DTLS0_9, GNUTLS_CIPHER_AES_128_GCM, GNUTLS_MAC_AEAD);
 }
 
-#endif				/* _WIN32 */
+#endif /* _WIN32 */

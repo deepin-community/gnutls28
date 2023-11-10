@@ -30,22 +30,22 @@
 #include <x509_b64.h>
 #include <nettle/base64.h>
 
-#define INCR(what, size, max_len) \
-	do { \
-	what+=size; \
-	if (what > max_len) { \
-		gnutls_assert(); \
-		gnutls_free( result->data); result->data = NULL; \
-		return GNUTLS_E_INTERNAL_ERROR; \
-	} \
-	} while(0)
+#define INCR(what, size, max_len)                       \
+	do {                                            \
+		what += size;                           \
+		if (what > max_len) {                   \
+			gnutls_assert();                \
+			gnutls_free(result->data);      \
+			result->data = NULL;            \
+			return GNUTLS_E_INTERNAL_ERROR; \
+		}                                       \
+	} while (0)
 
 /* encodes data and puts the result into result (locally allocated)
  * The result_size (including the null terminator) is the return value.
  */
-int
-_gnutls_fbase64_encode(const char *msg, const uint8_t * data,
-		       size_t data_size, gnutls_datum_t * result)
+int _gnutls_fbase64_encode(const char *msg, const uint8_t *data,
+			   size_t data_size, gnutls_datum_t *result)
 {
 	int tmp;
 	unsigned int i;
@@ -100,9 +100,10 @@ _gnutls_fbase64_encode(const char *msg, const uint8_t * data,
 
 		size = BASE64_ENCODE_RAW_LENGTH(tmp);
 		if (sizeof(tmpres) < size)
-			return gnutls_assert_val(GNUTLS_E_BASE64_ENCODING_ERROR);
+			return gnutls_assert_val(
+				GNUTLS_E_BASE64_ENCODING_ERROR);
 
-		base64_encode_raw((void*)tmpres, tmp, &data[i]);
+		base64_encode_raw((void *)tmpres, tmp, &data[i]);
 
 		INCR(bytes, size + 1, max);
 		ptr = &result->data[pos];
@@ -144,9 +145,8 @@ _gnutls_fbase64_encode(const char *msg, const uint8_t * data,
  *   %GNUTLS_E_SHORT_MEMORY_BUFFER is returned if the buffer given is
  *   not long enough, or 0 on success.
  **/
-int
-gnutls_pem_base64_encode(const char *msg, const gnutls_datum_t * data,
-			 char *result, size_t * result_size)
+int gnutls_pem_base64_encode(const char *msg, const gnutls_datum_t *data,
+			     char *result, size_t *result_size)
 {
 	gnutls_datum_t res;
 	int ret;
@@ -155,7 +155,7 @@ gnutls_pem_base64_encode(const char *msg, const gnutls_datum_t * data,
 	if (ret < 0)
 		return ret;
 
-	if (result == NULL || *result_size < (unsigned) res.size) {
+	if (result == NULL || *result_size < (unsigned)res.size) {
 		gnutls_free(res.data);
 		*result_size = res.size + 1;
 		return GNUTLS_E_SHORT_MEMORY_BUFFER;
@@ -190,10 +190,8 @@ gnutls_pem_base64_encode(const char *msg, const gnutls_datum_t * data,
  *
  * Since: 3.4.0
  **/
-int
-gnutls_pem_base64_encode2(const char *header,
-			       const gnutls_datum_t * data,
-			       gnutls_datum_t * result)
+int gnutls_pem_base64_encode2(const char *header, const gnutls_datum_t *data,
+			      gnutls_datum_t *result)
 {
 	int ret;
 
@@ -213,8 +211,8 @@ gnutls_pem_base64_encode2(const char *header,
  * It will fail with GNUTLS_E_BASE64_DECODING_ERROR if the
  * end-result is the empty string.
  */
-inline static int
-cpydata(const uint8_t * data, int data_size, gnutls_datum_t * result)
+inline static int cpydata(const uint8_t *data, int data_size,
+			  gnutls_datum_t *result)
 {
 	int i, j;
 
@@ -223,8 +221,8 @@ cpydata(const uint8_t * data, int data_size, gnutls_datum_t * result)
 		return GNUTLS_E_MEMORY_ERROR;
 
 	for (j = i = 0; i < data_size; i++) {
-		if (data[i] == '\n' || data[i] == '\r' || data[i] == ' '
-		    || data[i] == '\t')
+		if (data[i] == '\n' || data[i] == '\r' || data[i] == ' ' ||
+		    data[i] == '\t')
 			continue;
 		else if (data[i] == '-')
 			break;
@@ -235,7 +233,7 @@ cpydata(const uint8_t * data, int data_size, gnutls_datum_t * result)
 	result->size = j;
 	result->data[j] = 0;
 
-	if (j==0) {
+	if (j == 0) {
 		gnutls_free(result->data);
 		return gnutls_assert_val(GNUTLS_E_BASE64_DECODING_ERROR);
 	}
@@ -249,9 +247,8 @@ cpydata(const uint8_t * data, int data_size, gnutls_datum_t * result)
  *
  * The result_size is the return value.
  */
-int
-_gnutls_base64_decode(const uint8_t * data, size_t data_size,
-		      gnutls_datum_t * result)
+int _gnutls_base64_decode(const uint8_t *data, size_t data_size,
+			  gnutls_datum_t *result)
 {
 	int ret;
 	size_t size;
@@ -259,7 +256,7 @@ _gnutls_base64_decode(const uint8_t * data, size_t data_size,
 	struct base64_decode_ctx ctx;
 
 	if (data_size == 0) {
-		result->data = (unsigned char*)gnutls_strdup("");
+		result->data = (unsigned char *)gnutls_strdup("");
 		if (result->data == NULL)
 			return gnutls_assert_val(GNUTLS_E_MEMORY_ERROR);
 		result->size = 0;
@@ -286,8 +283,8 @@ _gnutls_base64_decode(const uint8_t * data, size_t data_size,
 		goto cleanup;
 	}
 
-	ret = base64_decode_update(&ctx, &size, result->data,
-				   pdata.size, (void*)pdata.data);
+	ret = base64_decode_update(&ctx, &size, result->data, pdata.size,
+				   (void *)pdata.data);
 	if (ret == 0 || size == 0) {
 		gnutls_assert();
 		ret = GNUTLS_E_BASE64_DECODING_ERROR;
@@ -305,14 +302,13 @@ _gnutls_base64_decode(const uint8_t * data, size_t data_size,
 	ret = size;
 	goto cleanup;
 
- fail:
+fail:
 	gnutls_free(result->data);
 
- cleanup:
+cleanup:
 	gnutls_free(pdata.data);
 	return ret;
 }
-
 
 /* Searches the given string for ONE PEM encoded certificate, and
  * stores it in the result.
@@ -321,9 +317,8 @@ _gnutls_base64_decode(const uint8_t * data, size_t data_size,
  * or a negative error code.
  */
 #define ENDSTR "-----"
-int
-_gnutls_fbase64_decode(const char *header, const uint8_t * data,
-		       size_t data_size, gnutls_datum_t * result)
+int _gnutls_fbase64_decode(const char *header, const uint8_t *data,
+			   size_t data_size, gnutls_datum_t *result)
 {
 	int ret;
 	static const char top[] = "-----BEGIN ";
@@ -350,8 +345,7 @@ _gnutls_fbase64_decode(const char *header, const uint8_t * data,
 		return GNUTLS_E_BASE64_DECODING_ERROR;
 	}
 
-	kdata =
-	    memmem(rdata + 1, data_size - 1, ENDSTR, sizeof(ENDSTR) - 1);
+	kdata = memmem(rdata + 1, data_size - 1, ENDSTR, sizeof(ENDSTR) - 1);
 	/* allow CR as well.
 	 */
 	if (kdata == NULL) {
@@ -405,21 +399,18 @@ _gnutls_fbase64_decode(const char *header, const uint8_t * data,
  *   %GNUTLS_E_SHORT_MEMORY_BUFFER is returned if the buffer given is
  *   not long enough, or 0 on success.
  **/
-int
-gnutls_pem_base64_decode(const char *header,
-			 const gnutls_datum_t * b64_data,
-			 unsigned char *result, size_t * result_size)
+int gnutls_pem_base64_decode(const char *header, const gnutls_datum_t *b64_data,
+			     unsigned char *result, size_t *result_size)
 {
 	gnutls_datum_t res;
 	int ret;
 
-	ret =
-	    _gnutls_fbase64_decode(header, b64_data->data, b64_data->size,
-				   &res);
+	ret = _gnutls_fbase64_decode(header, b64_data->data, b64_data->size,
+				     &res);
 	if (ret < 0)
 		return gnutls_assert_val(ret);
 
-	if (result == NULL || *result_size < (unsigned) res.size) {
+	if (result == NULL || *result_size < (unsigned)res.size) {
 		gnutls_free(res.data);
 		*result_size = res.size;
 		return GNUTLS_E_SHORT_MEMORY_BUFFER;
@@ -455,19 +446,17 @@ gnutls_pem_base64_decode(const char *header,
  *
  * Since: 3.4.0
  **/
-int
-gnutls_pem_base64_decode2(const char *header,
-			       const gnutls_datum_t * b64_data,
-			       gnutls_datum_t * result)
+int gnutls_pem_base64_decode2(const char *header,
+			      const gnutls_datum_t *b64_data,
+			      gnutls_datum_t *result)
 {
 	int ret;
 
 	if (result == NULL)
 		return gnutls_assert_val(GNUTLS_E_INVALID_REQUEST);
 
-	ret =
-	    _gnutls_fbase64_decode(header, b64_data->data, b64_data->size,
-				   result);
+	ret = _gnutls_fbase64_decode(header, b64_data->data, b64_data->size,
+				     result);
 	if (ret < 0)
 		return gnutls_assert_val(ret);
 
@@ -489,9 +478,7 @@ gnutls_pem_base64_decode2(const char *header,
  *
  * Since: 3.6.0
  **/
-int
-gnutls_base64_decode2(const gnutls_datum_t *base64,
-		      gnutls_datum_t *result)
+int gnutls_base64_decode2(const gnutls_datum_t *base64, gnutls_datum_t *result)
 {
 	int ret;
 
@@ -519,9 +506,7 @@ gnutls_base64_decode2(const gnutls_datum_t *base64,
  *
  * Since: 3.6.0
  **/
-int
-gnutls_base64_encode2(const gnutls_datum_t *data,
-		      gnutls_datum_t *result)
+int gnutls_base64_encode2(const gnutls_datum_t *data, gnutls_datum_t *result)
 {
 	int ret;
 

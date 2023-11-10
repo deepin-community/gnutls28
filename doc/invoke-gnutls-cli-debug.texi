@@ -37,6 +37,7 @@ None:
 				  0 to 65536
        --app-proto            an alias for the 'starttls-proto' option
        --starttls-proto=str   The application protocol to be used to obtain the server's certificate (https, ftp, smtp, imap, ldap, xmpp, lmtp, pop3, nntp, sieve, postgres)
+       --attime=str           Perform validation at the timestamp instead of the system time
 
 Version, usage and configuration options:
 
@@ -78,6 +79,16 @@ This is an alias for the @code{starttls-proto} option,
 This is the ``the application protocol to be used to obtain the server's certificate (https, ftp, smtp, imap, ldap, xmpp, lmtp, pop3, nntp, sieve, postgres)'' option.
 This option takes a ArgumentType.STRING argument.
 Specify the application layer protocol for STARTTLS. If the protocol is supported, gnutls-cli will proceed to the TLS negotiation.
+@subheading attime option.
+@anchor{gnutls-cli-debug attime}
+
+This is the ``perform validation at the timestamp instead of the system time'' option.
+This option takes a ArgumentType.STRING argument @file{timestamp}.
+timestamp is an instance in time encoded as Unix time or in a human
+ readable timestring such as "29 Feb 2004", "2004-02-29".
+Full documentation available at 
+<https://www.gnu.org/software/coreutils/manual/html_node/Date-input-formats.html>
+or locally via info '(coreutils) date invocation'.
 @subheading version option (-v).
 @anchor{gnutls-cli-debug version}
 

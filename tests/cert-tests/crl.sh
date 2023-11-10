@@ -15,8 +15,7 @@
 # General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with GnuTLS; if not, write to the Free Software Foundation,
-# Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+# along with GnuTLS.  If not, see <https://www.gnu.org/licenses/>.
 
 #set -e
 
@@ -171,10 +170,9 @@ export TZ="UTC"
 
 . ${srcdir}/../scripts/common.sh
 
-skip_if_no_datefudge
 
-datefudge -s "2020-01-20 10:00:00" ${VALGRIND} \
-	"${CERTTOOL}" --generate-crl --load-ca-privkey "${srcdir}/data/template-test.key" \
+${VALGRIND} \
+	"${CERTTOOL}" --attime "2020-01-20 10:00:00" --generate-crl --load-ca-privkey "${srcdir}/data/template-test.key" \
 	--load-ca-certificate "${srcdir}/data/template-test.pem" \
 	--load-certificate "${srcdir}/data/ca-certs.pem" --template \
 	"${TMPFILE}" >${OUTFILE} 2>${INFOFILE}
@@ -195,8 +193,8 @@ fi
 
 if test "${ac_cv_sizeof_time_t}" = 8;then
 	# we should test that on systems which have 64-bit time_t
-	datefudge -s "2138-01-20 10:00:00" ${VALGRIND} \
-		"${CERTTOOL}" --generate-crl --load-ca-privkey "${srcdir}/data/template-test.key" \
+	${VALGRIND} \
+		"${CERTTOOL}" --attime "2138-01-20 10:00:00" --generate-crl --load-ca-privkey "${srcdir}/data/template-test.key" \
 		--load-ca-certificate "${srcdir}/data/template-test.pem" \
 		--load-certificate "${srcdir}/data/ca-certs.pem" --template \
 		"${TMPFILE}" >${OUTFILE} 2>${INFOFILE}

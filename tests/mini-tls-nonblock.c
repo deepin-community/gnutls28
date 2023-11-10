@@ -16,8 +16,7 @@
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GnuTLS; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
+ * along with GnuTLS.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 #ifdef HAVE_CONFIG_H
@@ -29,7 +28,7 @@
 
 #if defined(_WIN32)
 
-int main()
+int main(void)
 {
 	exit(77);
 }
@@ -58,7 +57,7 @@ static void terminate(void);
 
 static void server_log_func(int level, const char *str)
 {
-//  fprintf (stderr, "server|<%d>| %s", level, str);
+	//  fprintf (stderr, "server|<%d>| %s", level, str);
 }
 
 static void client_log_func(int level, const char *str)
@@ -67,46 +66,42 @@ static void client_log_func(int level, const char *str)
 }
 
 static unsigned char server_cert_pem[] =
-    "-----BEGIN CERTIFICATE-----\n"
-    "MIICVjCCAcGgAwIBAgIERiYdMTALBgkqhkiG9w0BAQUwGTEXMBUGA1UEAxMOR251\n"
-    "VExTIHRlc3QgQ0EwHhcNMDcwNDE4MTMyOTIxWhcNMDgwNDE3MTMyOTIxWjA3MRsw\n"
-    "GQYDVQQKExJHbnVUTFMgdGVzdCBzZXJ2ZXIxGDAWBgNVBAMTD3Rlc3QuZ251dGxz\n"
-    "Lm9yZzCBnDALBgkqhkiG9w0BAQEDgYwAMIGIAoGA17pcr6MM8C6pJ1aqU46o63+B\n"
-    "dUxrmL5K6rce+EvDasTaDQC46kwTHzYWk95y78akXrJutsoKiFV1kJbtple8DDt2\n"
-    "DZcevensf9Op7PuFZKBroEjOd35znDET/z3IrqVgbtm2jFqab7a+n2q9p/CgMyf1\n"
-    "tx2S5Zacc1LWn9bIjrECAwEAAaOBkzCBkDAMBgNVHRMBAf8EAjAAMBoGA1UdEQQT\n"
-    "MBGCD3Rlc3QuZ251dGxzLm9yZzATBgNVHSUEDDAKBggrBgEFBQcDATAPBgNVHQ8B\n"
-    "Af8EBQMDB6AAMB0GA1UdDgQWBBTrx0Vu5fglyoyNgw106YbU3VW0dTAfBgNVHSME\n"
-    "GDAWgBTpPBz7rZJu5gakViyi4cBTJ8jylTALBgkqhkiG9w0BAQUDgYEAaFEPTt+7\n"
-    "bzvBuOf7+QmeQcn29kT6Bsyh1RHJXf8KTk5QRfwp6ogbp94JQWcNQ/S7YDFHglD1\n"
-    "AwUNBRXwd3riUsMnsxgeSDxYBfJYbDLeohNBsqaPDJb7XailWbMQKfAbFQ8cnOxg\n"
-    "rOKLUQRWJ0K3HyXRMhbqjdLIaQiCvQLuizo=\n" "-----END CERTIFICATE-----\n";
+	"-----BEGIN CERTIFICATE-----\n"
+	"MIICVjCCAcGgAwIBAgIERiYdMTALBgkqhkiG9w0BAQUwGTEXMBUGA1UEAxMOR251\n"
+	"VExTIHRlc3QgQ0EwHhcNMDcwNDE4MTMyOTIxWhcNMDgwNDE3MTMyOTIxWjA3MRsw\n"
+	"GQYDVQQKExJHbnVUTFMgdGVzdCBzZXJ2ZXIxGDAWBgNVBAMTD3Rlc3QuZ251dGxz\n"
+	"Lm9yZzCBnDALBgkqhkiG9w0BAQEDgYwAMIGIAoGA17pcr6MM8C6pJ1aqU46o63+B\n"
+	"dUxrmL5K6rce+EvDasTaDQC46kwTHzYWk95y78akXrJutsoKiFV1kJbtple8DDt2\n"
+	"DZcevensf9Op7PuFZKBroEjOd35znDET/z3IrqVgbtm2jFqab7a+n2q9p/CgMyf1\n"
+	"tx2S5Zacc1LWn9bIjrECAwEAAaOBkzCBkDAMBgNVHRMBAf8EAjAAMBoGA1UdEQQT\n"
+	"MBGCD3Rlc3QuZ251dGxzLm9yZzATBgNVHSUEDDAKBggrBgEFBQcDATAPBgNVHQ8B\n"
+	"Af8EBQMDB6AAMB0GA1UdDgQWBBTrx0Vu5fglyoyNgw106YbU3VW0dTAfBgNVHSME\n"
+	"GDAWgBTpPBz7rZJu5gakViyi4cBTJ8jylTALBgkqhkiG9w0BAQUDgYEAaFEPTt+7\n"
+	"bzvBuOf7+QmeQcn29kT6Bsyh1RHJXf8KTk5QRfwp6ogbp94JQWcNQ/S7YDFHglD1\n"
+	"AwUNBRXwd3riUsMnsxgeSDxYBfJYbDLeohNBsqaPDJb7XailWbMQKfAbFQ8cnOxg\n"
+	"rOKLUQRWJ0K3HyXRMhbqjdLIaQiCvQLuizo=\n"
+	"-----END CERTIFICATE-----\n";
 
-const gnutls_datum_t server_cert = { server_cert_pem,
-	sizeof(server_cert_pem)
-};
+const gnutls_datum_t server_cert = { server_cert_pem, sizeof(server_cert_pem) };
 
 static unsigned char server_key_pem[] =
-    "-----BEGIN RSA PRIVATE KEY-----\n"
-    "MIICXAIBAAKBgQDXulyvowzwLqknVqpTjqjrf4F1TGuYvkrqtx74S8NqxNoNALjq\n"
-    "TBMfNhaT3nLvxqResm62ygqIVXWQlu2mV7wMO3YNlx696ex/06ns+4VkoGugSM53\n"
-    "fnOcMRP/PciupWBu2baMWppvtr6far2n8KAzJ/W3HZLllpxzUtaf1siOsQIDAQAB\n"
-    "AoGAYAFyKkAYC/PYF8e7+X+tsVCHXppp8AoP8TEZuUqOZz/AArVlle/ROrypg5kl\n"
-    "8YunrvUdzH9R/KZ7saNZlAPLjZyFG9beL/am6Ai7q7Ma5HMqjGU8kTEGwD7K+lbG\n"
-    "iomokKMOl+kkbY/2sI5Czmbm+/PqLXOjtVc5RAsdbgvtmvkCQQDdV5QuU8jap8Hs\n"
-    "Eodv/tLJ2z4+SKCV2k/7FXSKWe0vlrq0cl2qZfoTUYRnKRBcWxc9o92DxK44wgPi\n"
-    "oMQS+O7fAkEA+YG+K9e60sj1K4NYbMPAbYILbZxORDecvP8lcphvwkOVUqbmxOGh\n"
-    "XRmTZUuhBrJhJKKf6u7gf3KWlPl6ShKEbwJASC118cF6nurTjuLf7YKARDjNTEws\n"
-    "qZEeQbdWYINAmCMj0RH2P0mvybrsXSOD5UoDAyO7aWuqkHGcCLv6FGG+qwJAOVqq\n"
-    "tXdUucl6GjOKKw5geIvRRrQMhb/m5scb+5iw8A4LEEHPgGiBaF5NtJZLALgWfo5n\n"
-    "hmC8+G8F0F78znQtPwJBANexu+Tg5KfOnzSILJMo3oXiXhf5PqXIDmbN0BKyCKAQ\n"
-    "LfkcEcUbVfmDaHpvzwY9VEaoMOKVLitETXdNSxVpvWM=\n"
-    "-----END RSA PRIVATE KEY-----\n";
+	"-----BEGIN RSA PRIVATE KEY-----\n"
+	"MIICXAIBAAKBgQDXulyvowzwLqknVqpTjqjrf4F1TGuYvkrqtx74S8NqxNoNALjq\n"
+	"TBMfNhaT3nLvxqResm62ygqIVXWQlu2mV7wMO3YNlx696ex/06ns+4VkoGugSM53\n"
+	"fnOcMRP/PciupWBu2baMWppvtr6far2n8KAzJ/W3HZLllpxzUtaf1siOsQIDAQAB\n"
+	"AoGAYAFyKkAYC/PYF8e7+X+tsVCHXppp8AoP8TEZuUqOZz/AArVlle/ROrypg5kl\n"
+	"8YunrvUdzH9R/KZ7saNZlAPLjZyFG9beL/am6Ai7q7Ma5HMqjGU8kTEGwD7K+lbG\n"
+	"iomokKMOl+kkbY/2sI5Czmbm+/PqLXOjtVc5RAsdbgvtmvkCQQDdV5QuU8jap8Hs\n"
+	"Eodv/tLJ2z4+SKCV2k/7FXSKWe0vlrq0cl2qZfoTUYRnKRBcWxc9o92DxK44wgPi\n"
+	"oMQS+O7fAkEA+YG+K9e60sj1K4NYbMPAbYILbZxORDecvP8lcphvwkOVUqbmxOGh\n"
+	"XRmTZUuhBrJhJKKf6u7gf3KWlPl6ShKEbwJASC118cF6nurTjuLf7YKARDjNTEws\n"
+	"qZEeQbdWYINAmCMj0RH2P0mvybrsXSOD5UoDAyO7aWuqkHGcCLv6FGG+qwJAOVqq\n"
+	"tXdUucl6GjOKKw5geIvRRrQMhb/m5scb+5iw8A4LEEHPgGiBaF5NtJZLALgWfo5n\n"
+	"hmC8+G8F0F78znQtPwJBANexu+Tg5KfOnzSILJMo3oXiXhf5PqXIDmbN0BKyCKAQ\n"
+	"LfkcEcUbVfmDaHpvzwY9VEaoMOKVLitETXdNSxVpvWM=\n"
+	"-----END RSA PRIVATE KEY-----\n";
 
-const gnutls_datum_t server_key = { server_key_pem,
-	sizeof(server_key_pem)
-};
-
+const gnutls_datum_t server_key = { server_key_pem, sizeof(server_key_pem) };
 
 /* A very basic TLS client, with anonymous authentication.
  */
@@ -114,20 +109,17 @@ const gnutls_datum_t server_key = { server_key_pem,
 #define MAX_BUF 1024
 static const char *g_msg = "";
 
-static ssize_t
-my_pull(gnutls_transport_ptr_t tr, void *data, size_t len)
+static ssize_t my_pull(gnutls_transport_ptr_t tr, void *data, size_t len)
 {
 	return recv((long)tr, data, len, 0);
 }
 
-static ssize_t
-my_push(gnutls_transport_ptr_t tr, const void *data, size_t len)
+static ssize_t my_push(gnutls_transport_ptr_t tr, const void *data, size_t len)
 {
 	return send((long)tr, data, len, 0);
 }
 
-static int
-my_pull_timeout(gnutls_transport_ptr_t tr, unsigned ms)
+static int my_pull_timeout(gnutls_transport_ptr_t tr, unsigned ms)
 {
 	if (ms != 0) {
 		fail("pull timeout was called: %s!\n", g_msg);
@@ -161,7 +153,7 @@ static void client(int fd, const char *msg, const char *prio, unsigned expl)
 
 	/* Initialize TLS session
 	 */
-	gnutls_init(&session, GNUTLS_CLIENT|expl);
+	gnutls_init(&session, GNUTLS_CLIENT | expl);
 
 	/* Use default priorities */
 	ret = gnutls_priority_set_direct(session, prio, NULL);
@@ -184,8 +176,7 @@ static void client(int fd, const char *msg, const char *prio, unsigned expl)
 	 */
 	do {
 		ret = gnutls_handshake(session);
-	}
-	while (ret < 0 && gnutls_error_is_fatal(ret) == 0);
+	} while (ret < 0 && gnutls_error_is_fatal(ret) == 0);
 
 	if (ret < 0) {
 		fail("client: Handshake failed\n");
@@ -198,8 +189,8 @@ static void client(int fd, const char *msg, const char *prio, unsigned expl)
 
 	if (debug)
 		success("client: TLS version is: %s\n",
-			gnutls_protocol_get_name
-			(gnutls_protocol_get_version(session)));
+			gnutls_protocol_get_name(
+				gnutls_protocol_get_version(session)));
 
 	close(fd);
 
@@ -211,10 +202,8 @@ static void client(int fd, const char *msg, const char *prio, unsigned expl)
 	gnutls_global_deinit();
 }
 
-
 /* These are global */
 pid_t child;
-
 
 static void terminate(void)
 {
@@ -243,13 +232,12 @@ static void server(int fd, const char *prio, unsigned expl)
 
 	gnutls_certificate_allocate_credentials(&x509_cred);
 	gnutls_certificate_set_x509_key_mem(x509_cred, &server_cert,
-					    &server_key,
-					    GNUTLS_X509_FMT_PEM);
+					    &server_key, GNUTLS_X509_FMT_PEM);
 
 	gnutls_anon_allocate_server_credentials(&anoncred);
 
 	if (expl & GNUTLS_DATAGRAM)
-		gnutls_init(&session, GNUTLS_SERVER|GNUTLS_DATAGRAM);
+		gnutls_init(&session, GNUTLS_SERVER | GNUTLS_DATAGRAM);
 	else
 		gnutls_init(&session, GNUTLS_SERVER);
 
@@ -265,8 +253,7 @@ static void server(int fd, const char *prio, unsigned expl)
 
 	do {
 		ret = gnutls_handshake(session);
-	}
-	while (ret < 0 && gnutls_error_is_fatal(ret) == 0);
+	} while (ret < 0 && gnutls_error_is_fatal(ret) == 0);
 	if (ret < 0) {
 		close(fd);
 		gnutls_deinit(session);
@@ -279,8 +266,8 @@ static void server(int fd, const char *prio, unsigned expl)
 
 	if (debug)
 		success("server: TLS version is: %s\n",
-			gnutls_protocol_get_name
-			(gnutls_protocol_get_version(session)));
+			gnutls_protocol_get_name(
+				gnutls_protocol_get_version(session)));
 	close(fd);
 	gnutls_deinit(session);
 
@@ -336,21 +323,25 @@ static void ch_handler(int sig)
 }
 
 #ifndef GNUTLS_NONBLOCK
-# error GNUTLS_NONBLOCK should have been defined
+#error GNUTLS_NONBLOCK should have been defined
 #endif
 
 void doit(void)
 {
 	signal(SIGCHLD, ch_handler);
 
-	start("TLS1.2-explicit flag", "NORMAL:-VERS-ALL:+VERS-TLS1.2", GNUTLS_NONBLOCK);
-	start("TLS1.2-explicit flag", "NORMAL:-VERS-ALL:+VERS-TLS1.3", GNUTLS_NONBLOCK);
+	start("TLS1.2-explicit flag", "NORMAL:-VERS-ALL:+VERS-TLS1.2",
+	      GNUTLS_NONBLOCK);
+	start("TLS1.2-explicit flag", "NORMAL:-VERS-ALL:+VERS-TLS1.3",
+	      GNUTLS_NONBLOCK);
 	start("TLS-explicit flag", "NORMAL", GNUTLS_NONBLOCK);
-	start("DTLS1.2-explicit flag", "NORMAL:-VERS-ALL:+VERS-DTLS1.2", GNUTLS_NONBLOCK|GNUTLS_DATAGRAM);
-	start("DTLS-explicit flag", "NORMAL", GNUTLS_NONBLOCK|GNUTLS_DATAGRAM);
+	start("DTLS1.2-explicit flag", "NORMAL:-VERS-ALL:+VERS-DTLS1.2",
+	      GNUTLS_NONBLOCK | GNUTLS_DATAGRAM);
+	start("DTLS-explicit flag", "NORMAL",
+	      GNUTLS_NONBLOCK | GNUTLS_DATAGRAM);
 	start("TLS1.2-no flag", "NORMAL:-VERS-ALL:+VERS-TLS1.2", 0);
 	start("TLS1.3-no flag", "NORMAL:-VERS-ALL:+VERS-TLS1.3", 0);
 	start("TLS-no flag", "NORMAL", 0);
 }
 
-#endif				/* _WIN32 */
+#endif /* _WIN32 */

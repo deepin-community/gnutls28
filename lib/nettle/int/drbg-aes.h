@@ -16,9 +16,7 @@
  * License for more details.
  * 
  * You should have received a copy of the GNU Lesser General Public License
- * along with the nettle library; see the file COPYING.LIB.  If not, write to
- * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
- * MA 02111-1301, USA.
+ * along with the nettle library.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 #ifndef GNUTLS_LIB_NETTLE_INT_DRBG_AES_H
@@ -29,17 +27,16 @@
 
 /* This is nettle's increment macro */
 /* Requires that size > 0 */
-#define INCREMENT(size, ctr)                    \
-  do {                                          \
-    unsigned increment_i = (size) - 1;          \
-    if (++(ctr)[increment_i] == 0)              \
-      while (increment_i > 0                    \
-             && ++(ctr)[--increment_i] == 0 )   \
-        ;                                       \
-  } while (0)
+#define INCREMENT(size, ctr)                                                   \
+	do {                                                                   \
+		unsigned increment_i = (size)-1;                               \
+		if (++(ctr)[increment_i] == 0)                                 \
+			while (increment_i > 0 && ++(ctr)[--increment_i] == 0) \
+				;                                              \
+	} while (0)
 
 #define DRBG_AES_KEY_SIZE AES256_KEY_SIZE
-#define DRBG_AES_SEED_SIZE (AES_BLOCK_SIZE+DRBG_AES_KEY_SIZE)
+#define DRBG_AES_SEED_SIZE (AES_BLOCK_SIZE + DRBG_AES_KEY_SIZE)
 
 /* This is the CTR-AES-256-based random-number generator from SP800-90A.
  */
@@ -65,24 +62,19 @@ struct drbg_aes_ctx {
  * size DRBG_AES_SEED_SIZE. Additional data and pers.
  * string may be <= DRBG_AES_SEED_SIZE.
  */
-int
-drbg_aes_init(struct drbg_aes_ctx *ctx, 
-	unsigned entropy_size, const uint8_t *entropy, 
-	unsigned pstring_size, const uint8_t* pstring);
+int drbg_aes_init(struct drbg_aes_ctx *ctx, unsigned entropy_size,
+		  const uint8_t *entropy, unsigned pstring_size,
+		  const uint8_t *pstring);
 
-int
-drbg_aes_reseed(struct drbg_aes_ctx *ctx, 
-	unsigned entropy_size, const uint8_t *entropy, 
-	unsigned add_size, const uint8_t* add);
+int drbg_aes_reseed(struct drbg_aes_ctx *ctx, unsigned entropy_size,
+		    const uint8_t *entropy, unsigned add_size,
+		    const uint8_t *add);
 
 /* our wrapper for the low-level drbg_aes_generate */
-int
-drbg_aes_random(struct drbg_aes_ctx *ctx, unsigned length,
-		uint8_t * dst);
+int drbg_aes_random(struct drbg_aes_ctx *ctx, unsigned length, uint8_t *dst);
 
-int
-drbg_aes_generate(struct drbg_aes_ctx *ctx, unsigned length,
-		uint8_t * dst, unsigned add_size, const uint8_t* add);
+int drbg_aes_generate(struct drbg_aes_ctx *ctx, unsigned length, uint8_t *dst,
+		      unsigned add_size, const uint8_t *add);
 
 /* For deinitialization use zeroize_key() on the context */
 

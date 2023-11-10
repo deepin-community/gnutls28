@@ -16,8 +16,7 @@
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GnuTLS; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
+ * along with GnuTLS.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 #ifdef HAVE_CONFIG_H
@@ -29,7 +28,7 @@
 
 #if defined(_WIN32)
 
-int main()
+int main(void)
 {
 	exit(77);
 }
@@ -63,17 +62,20 @@ static void server_log_func(int level, const char *str)
 	fprintf(stderr, "server|<%d>| %s", level, str);
 }
 
-static int url_import_key(gnutls_privkey_t pkey, const char *url, unsigned flags)
+static int url_import_key(gnutls_privkey_t pkey, const char *url,
+			  unsigned flags)
 {
 	if (strcmp(url, "system:key") != 0) {
 		fail("unexpected key url: %s\n", url);
 		return GNUTLS_E_REQUESTED_DATA_NOT_AVAILABLE;
 	}
 	url_used++;
-	return gnutls_privkey_import_x509_raw(pkey, &server_key, GNUTLS_X509_FMT_PEM, NULL, 0);
+	return gnutls_privkey_import_x509_raw(pkey, &server_key,
+					      GNUTLS_X509_FMT_PEM, NULL, 0);
 }
 
-static int url_import_crt(gnutls_x509_crt_t crt, const char *url, unsigned flags)
+static int url_import_crt(gnutls_x509_crt_t crt, const char *url,
+			  unsigned flags)
 {
 	if (strcmp(url, "system:cert") != 0) {
 		abort();
@@ -97,7 +99,8 @@ static void client(int fd)
 	gnutls_init(&session, GNUTLS_CLIENT);
 
 	/* Use default priorities */
-	assert(gnutls_priority_set_direct(session, "NORMAL:-VERS-ALL:+VERS-TLS1.2", NULL)>=0);
+	assert(gnutls_priority_set_direct(
+		       session, "NORMAL:-VERS-ALL:+VERS-TLS1.2", NULL) >= 0);
 
 	gnutls_credentials_set(session, GNUTLS_CRD_CERTIFICATE, x509_cred);
 
@@ -107,8 +110,7 @@ static void client(int fd)
 	 */
 	do {
 		ret = gnutls_handshake(session);
-	}
-	while (ret < 0 && gnutls_error_is_fatal(ret) == 0);
+	} while (ret < 0 && gnutls_error_is_fatal(ret) == 0);
 
 	if (ret < 0) {
 		fail("client: Handshake failed\n");
@@ -121,8 +123,8 @@ static void client(int fd)
 
 	if (debug)
 		success("client: TLS version is: %s\n",
-			gnutls_protocol_get_name
-			(gnutls_protocol_get_version(session)));
+			gnutls_protocol_get_name(
+				gnutls_protocol_get_version(session)));
 
 	gnutls_bye(session, GNUTLS_SHUT_WR);
 
@@ -155,8 +157,8 @@ static void server(int fd)
 	 */
 	gnutls_certificate_allocate_credentials(&x509_cred);
 
-	ret = gnutls_certificate_set_x509_key_file(x509_cred, "system:cert", "system:key",
-						   GNUTLS_X509_FMT_PEM);
+	ret = gnutls_certificate_set_x509_key_file(
+		x509_cred, "system:cert", "system:key", GNUTLS_X509_FMT_PEM);
 	if (ret < 0) {
 		fail("server: gnutls_certificate_set_x509_key_file (%s)\n\n",
 		     gnutls_strerror(ret));
@@ -168,7 +170,8 @@ static void server(int fd)
 	/* avoid calling all the priority functions, since the defaults
 	 * are adequate.
 	 */
-	assert(gnutls_priority_set_direct(session, "NORMAL:-VERS-ALL:+VERS-TLS1.2", NULL)>=0);
+	assert(gnutls_priority_set_direct(
+		       session, "NORMAL:-VERS-ALL:+VERS-TLS1.2", NULL) >= 0);
 
 	gnutls_credentials_set(session, GNUTLS_CRD_CERTIFICATE, x509_cred);
 
@@ -176,8 +179,7 @@ static void server(int fd)
 
 	do {
 		ret = gnutls_handshake(session);
-	}
-	while (ret < 0 && gnutls_error_is_fatal(ret) == 0);
+	} while (ret < 0 && gnutls_error_is_fatal(ret) == 0);
 	if (ret < 0) {
 		close(fd);
 		gnutls_deinit(session);
@@ -190,8 +192,8 @@ static void server(int fd)
 
 	if (debug)
 		success("server: TLS version is: %s\n",
-			gnutls_protocol_get_name
-			(gnutls_protocol_get_version(session)));
+			gnutls_protocol_get_name(
+				gnutls_protocol_get_version(session)));
 
 	if (url_used != 2) {
 		fail("The callbacks were not used\n");
@@ -213,12 +215,10 @@ static void server(int fd)
 		success("server: finished\n");
 }
 
-const gnutls_custom_url_st custom_url_st = {
-	.name = "system:",
-	.name_size = sizeof("system:")-1,
-	.import_key = url_import_key,
-	.import_crt = url_import_crt
-};
+const gnutls_custom_url_st custom_url_st = { .name = "system:",
+					     .name_size = sizeof("system:") - 1,
+					     .import_key = url_import_key,
+					     .import_crt = url_import_crt };
 
 static void start(void)
 {
@@ -279,4 +279,4 @@ void doit(void)
 	start();
 }
 
-#endif				/* _WIN32 */
+#endif /* _WIN32 */

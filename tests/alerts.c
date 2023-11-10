@@ -29,7 +29,7 @@
 
 #if defined(_WIN32)
 
-int main()
+int main(void)
 {
 	exit(77);
 }
@@ -69,7 +69,7 @@ static void client(int fd, const char *prio, int ign)
 {
 	int ret;
 	char buffer[64];
-	const char* err;
+	const char *err;
 	gnutls_certificate_credentials_t x509_cred;
 	gnutls_session_t session;
 	/* Need to enable anonymous KX specifically. */
@@ -105,8 +105,7 @@ static void client(int fd, const char *prio, int ign)
 	 */
 	do {
 		ret = gnutls_handshake(session);
-	}
-	while (ret < 0 && gnutls_error_is_fatal(ret) == 0);
+	} while (ret < 0 && gnutls_error_is_fatal(ret) == 0);
 
 	if (ret < 0) {
 		fail("client (%s): Handshake has failed (%s)\n\n", prio,
@@ -119,18 +118,22 @@ static void client(int fd, const char *prio, int ign)
 
 	if (debug)
 		success("client: TLS version is: %s\n",
-			gnutls_protocol_get_name
-			(gnutls_protocol_get_version(session)));
+			gnutls_protocol_get_name(
+				gnutls_protocol_get_version(session)));
 
-	ret = gnutls_alert_send(session, GNUTLS_AL_WARNING, GNUTLS_A_USER_CANCELED);
+	ret = gnutls_alert_send(session, GNUTLS_AL_WARNING,
+				GNUTLS_A_USER_CANCELED);
 	if (ret < 0) {
-		fail("server: Error sending user cancelled alert: %s\n", gnutls_strerror(ret));
+		fail("server: Error sending user cancelled alert: %s\n",
+		     gnutls_strerror(ret));
 		exit(1);
 	}
 
-	ret = gnutls_alert_send(session, GNUTLS_AL_FATAL, GNUTLS_A_DECRYPT_ERROR);
+	ret = gnutls_alert_send(session, GNUTLS_AL_FATAL,
+				GNUTLS_A_DECRYPT_ERROR);
 	if (ret < 0) {
-		fail("server: Error sending decrypt error alert: %s\n", gnutls_strerror(ret));
+		fail("server: Error sending decrypt error alert: %s\n",
+		     gnutls_strerror(ret));
 		exit(1);
 	}
 
@@ -142,7 +145,6 @@ static void client(int fd, const char *prio, int ign)
 
 	gnutls_global_deinit();
 }
-
 
 /* These are global */
 pid_t child;
@@ -157,7 +159,7 @@ static void terminate(void)
 static void server(int fd, const char *prio, int ign)
 {
 	int ret;
-	const char* err;
+	const char *err;
 	char buffer[64];
 	gnutls_session_t session;
 	gnutls_certificate_credentials_t x509_cred;
@@ -174,9 +176,7 @@ static void server(int fd, const char *prio, int ign)
 
 	gnutls_certificate_allocate_credentials(&x509_cred);
 	gnutls_certificate_set_x509_key_mem(x509_cred, &server_cert,
-					    &server_key,
-					    GNUTLS_X509_FMT_PEM);
-
+					    &server_key, GNUTLS_X509_FMT_PEM);
 
 	gnutls_init(&session, GNUTLS_SERVER);
 
@@ -195,8 +195,7 @@ static void server(int fd, const char *prio, int ign)
 
 	do {
 		ret = gnutls_handshake(session);
-	}
-	while (ret < 0 && gnutls_error_is_fatal(ret) == 0);
+	} while (ret < 0 && gnutls_error_is_fatal(ret) == 0);
 	if (ret < 0) {
 		close(fd);
 		gnutls_deinit(session);
@@ -209,14 +208,14 @@ static void server(int fd, const char *prio, int ign)
 
 	if (debug)
 		success("server: TLS version is: %s\n",
-			gnutls_protocol_get_name
-			(gnutls_protocol_get_version(session)));
+			gnutls_protocol_get_name(
+				gnutls_protocol_get_version(session)));
 
 	do {
 		do {
-			ret = gnutls_record_recv(session, buffer, sizeof(buffer));
-		} while (ret == GNUTLS_E_AGAIN
-			 || ret == GNUTLS_E_INTERRUPTED);
+			ret = gnutls_record_recv(session, buffer,
+						 sizeof(buffer));
+		} while (ret == GNUTLS_E_AGAIN || ret == GNUTLS_E_INTERRUPTED);
 		if (ret > 0)
 			fail("error receiving alert: ret: %d\n", ret);
 	} while (ret > 0);
@@ -228,9 +227,9 @@ static void server(int fd, const char *prio, int ign)
 
 	do {
 		do {
-			ret = gnutls_record_recv(session, buffer, sizeof(buffer));
-		} while (ret == GNUTLS_E_AGAIN
-			 || ret == GNUTLS_E_INTERRUPTED);
+			ret = gnutls_record_recv(session, buffer,
+						 sizeof(buffer));
+		} while (ret == GNUTLS_E_AGAIN || ret == GNUTLS_E_INTERRUPTED);
 		if (ret > 0)
 			fail("error receiving alert: ret: %d\n", ret);
 	} while (ret > 0);
@@ -280,7 +279,8 @@ static void start(const char *prio, int ign)
 	}
 }
 
-#define AES_GCM "NONE:+VERS-TLS1.2:-CIPHER-ALL:+RSA:+AES-128-GCM:+MAC-ALL:+SIGN-ALL:+COMP-NULL:+ANON-ECDH:+CURVE-ALL"
+#define AES_GCM \
+	"NONE:+VERS-TLS1.2:-CIPHER-ALL:+RSA:+AES-128-GCM:+MAC-ALL:+SIGN-ALL:+COMP-NULL:+ANON-ECDH:+CURVE-ALL"
 
 static void ch_handler(int sig)
 {
@@ -297,4 +297,4 @@ void doit(void)
 	start(AES_GCM, 0);
 }
 
-#endif				/* _WIN32 */
+#endif /* _WIN32 */

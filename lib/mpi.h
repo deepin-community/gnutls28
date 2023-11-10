@@ -31,7 +31,7 @@ extern int crypto_bigint_prio;
 extern gnutls_crypto_bigint_st _gnutls_mpi_ops;
 
 bigint_t _gnutls_mpi_random_modp(bigint_t, bigint_t p,
-			       gnutls_rnd_level_t level);
+				 gnutls_rnd_level_t level);
 
 #define _gnutls_mpi_init _gnutls_mpi_ops.bigint_init
 #define _gnutls_mpi_init_multi _gnutls_mpi_ops.bigint_init_multi
@@ -55,15 +55,19 @@ bigint_t _gnutls_mpi_random_modp(bigint_t, bigint_t p,
 #define _gnutls_mpi_sub_ui _gnutls_mpi_ops.bigint_sub_ui
 #define _gnutls_mpi_mul_ui _gnutls_mpi_ops.bigint_mul_ui
 #define _gnutls_prime_check _gnutls_mpi_ops.bigint_prime_check
-#define _gnutls_mpi_print(x,y,z) _gnutls_mpi_ops.bigint_print(x,y,z,GNUTLS_MPI_FORMAT_USG)
-#define _gnutls_mpi_print_lz(x,y,z) _gnutls_mpi_ops.bigint_print(x,y,z,GNUTLS_MPI_FORMAT_STD)
-#define _gnutls_mpi_print_le(x,y,z) _gnutls_mpi_ops.bigint_print(x,y,z,GNUTLS_MPI_FORMAT_ULE)
+#define _gnutls_mpi_print(x, y, z) \
+	_gnutls_mpi_ops.bigint_print(x, y, z, GNUTLS_MPI_FORMAT_USG)
+#define _gnutls_mpi_print_lz(x, y, z) \
+	_gnutls_mpi_ops.bigint_print(x, y, z, GNUTLS_MPI_FORMAT_STD)
+#define _gnutls_mpi_print_le(x, y, z) \
+	_gnutls_mpi_ops.bigint_print(x, y, z, GNUTLS_MPI_FORMAT_ULE)
 #define _gnutls_mpi_copy _gnutls_mpi_ops.bigint_copy
-#define _gnutls_mpi_scan(r, b, s) _gnutls_mpi_ops.bigint_scan(r, b, s, GNUTLS_MPI_FORMAT_USG)
-#define _gnutls_mpi_scan_le(r, b, s) _gnutls_mpi_ops.bigint_scan(r, b, s, GNUTLS_MPI_FORMAT_ULE)
+#define _gnutls_mpi_scan(r, b, s) \
+	_gnutls_mpi_ops.bigint_scan(r, b, s, GNUTLS_MPI_FORMAT_USG)
+#define _gnutls_mpi_scan_le(r, b, s) \
+	_gnutls_mpi_ops.bigint_scan(r, b, s, GNUTLS_MPI_FORMAT_ULE)
 
-inline static
-void _gnutls_mpi_release(bigint_t * x)
+inline static void _gnutls_mpi_release(bigint_t *x)
 {
 	if (*x == NULL)
 		return;
@@ -72,22 +76,22 @@ void _gnutls_mpi_release(bigint_t * x)
 	*x = NULL;
 }
 
-int _gnutls_mpi_init_scan(bigint_t * ret_mpi, const void *buffer,
-		     size_t nbytes);
-int _gnutls_mpi_init_scan_nz(bigint_t * ret_mpi, const void *buffer,
-			size_t nbytes);
-int _gnutls_mpi_init_scan_le(bigint_t * ret_mpi, const void *buffer,
+int _gnutls_mpi_init_scan(bigint_t *ret_mpi, const void *buffer, size_t nbytes);
+int _gnutls_mpi_init_scan_nz(bigint_t *ret_mpi, const void *buffer,
+			     size_t nbytes);
+int _gnutls_mpi_init_scan_le(bigint_t *ret_mpi, const void *buffer,
 			     size_t nbytes);
 
-int _gnutls_mpi_dprint_le(const bigint_t a, gnutls_datum_t * dest);
-int _gnutls_mpi_dprint_lz(const bigint_t a, gnutls_datum_t * dest);
-int _gnutls_mpi_dprint(const bigint_t a, gnutls_datum_t * dest);
-int _gnutls_mpi_dprint_size(const bigint_t a, gnutls_datum_t * dest,
+int _gnutls_mpi_dprint_le(const bigint_t a, gnutls_datum_t *dest);
+int _gnutls_mpi_dprint_lz(const bigint_t a, gnutls_datum_t *dest);
+int _gnutls_mpi_dprint(const bigint_t a, gnutls_datum_t *dest);
+int _gnutls_mpi_dprint_size(const bigint_t a, gnutls_datum_t *dest,
 			    size_t size);
 int _gnutls_mpi_bprint_size(const bigint_t a, uint8_t *buf, size_t size);
 
-typedef int (*mpi_dprint_func)(const bigint_t a, gnutls_datum_t * dest);
+typedef int (*mpi_dprint_func)(const bigint_t a, gnutls_datum_t *dest);
 
-#define _gnutls_mpi_generate_group( gg, bits) _gnutls_mpi_ops.bigint_generate_group( gg, bits)
+#define _gnutls_mpi_generate_group(gg, bits) \
+	_gnutls_mpi_ops.bigint_generate_group(gg, bits)
 
 #endif /* GNUTLS_LIB_MPI_H */

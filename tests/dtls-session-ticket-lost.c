@@ -28,7 +28,7 @@
 
 #if defined(_WIN32)
 
-int main()
+int main(void)
 {
 	exit(77);
 }
@@ -79,9 +79,9 @@ static void client(int fd, const char *prio)
 
 	gnutls_certificate_allocate_credentials(&x509_cred);
 
-	assert(gnutls_init(&session, GNUTLS_CLIENT|GNUTLS_DATAGRAM)>=0);
+	assert(gnutls_init(&session, GNUTLS_CLIENT | GNUTLS_DATAGRAM) >= 0);
 
-	assert(gnutls_priority_set_direct(session, prio, NULL)>=0);
+	assert(gnutls_priority_set_direct(session, prio, NULL) >= 0);
 
 	gnutls_credentials_set(session, GNUTLS_CRD_CERTIFICATE, x509_cred);
 
@@ -89,8 +89,7 @@ static void client(int fd, const char *prio)
 
 	do {
 		ret = gnutls_handshake(session);
-	}
-	while (ret < 0 && gnutls_error_is_fatal(ret) == 0);
+	} while (ret < 0 && gnutls_error_is_fatal(ret) == 0);
 
 	if (ret < 0) {
 		fail("client: Handshake failed: %s\n", gnutls_strerror(ret));
@@ -99,11 +98,11 @@ static void client(int fd, const char *prio)
 			success("client: Handshake was completed\n");
 	}
 
-	gnutls_record_set_timeout(session, 30*1000);
+	gnutls_record_set_timeout(session, 30 * 1000);
 
 	do {
 		ret = gnutls_bye(session, GNUTLS_SHUT_WR);
-	} while(ret == GNUTLS_E_AGAIN || ret == GNUTLS_E_INTERRUPTED);
+	} while (ret == GNUTLS_E_AGAIN || ret == GNUTLS_E_INTERRUPTED);
 
 	close(fd);
 
@@ -112,16 +111,16 @@ static void client(int fd, const char *prio)
 	gnutls_certificate_free_credentials(x509_cred);
 }
 
-
-static ssize_t
-server_push(gnutls_transport_ptr_t tr, const void *data, size_t len)
+static ssize_t server_push(gnutls_transport_ptr_t tr, const void *data,
+			   size_t len)
 {
 	const uint8_t *d = data;
 	static int dropped = 0;
 
 	if (d[13] == GNUTLS_HANDSHAKE_NEW_SESSION_TICKET) {
 		if (dropped == 0) {
-			success("dropping message: %s\n", gnutls_handshake_description_get_name(d[13]));
+			success("dropping message: %s\n",
+				gnutls_handshake_description_get_name(d[13]));
 			dropped = 1;
 			return len;
 		}
@@ -145,19 +144,19 @@ static void server(int fd, const char *prio)
 		gnutls_global_set_log_level(6);
 	}
 
-	assert(gnutls_certificate_allocate_credentials(&x509_cred)>=0);
+	assert(gnutls_certificate_allocate_credentials(&x509_cred) >= 0);
 	assert(gnutls_certificate_set_x509_key_mem(x509_cred, &server_cert,
-					    &server_key,
-					    GNUTLS_X509_FMT_PEM)>=0);
+						   &server_key,
+						   GNUTLS_X509_FMT_PEM) >= 0);
 
-	assert(gnutls_init(&session, GNUTLS_SERVER|GNUTLS_DATAGRAM)>=0);
+	assert(gnutls_init(&session, GNUTLS_SERVER | GNUTLS_DATAGRAM) >= 0);
 
-	assert(gnutls_session_ticket_key_generate(&skey)>=0);
+	assert(gnutls_session_ticket_key_generate(&skey) >= 0);
 	assert(gnutls_session_ticket_enable_server(session, &skey) >= 0);
 
 	gnutls_transport_set_push_function(session, server_push);
 
-	assert(gnutls_priority_set_direct(session, prio, NULL)>=0);
+	assert(gnutls_priority_set_direct(session, prio, NULL) >= 0);
 
 	gnutls_credentials_set(session, GNUTLS_CRD_CERTIFICATE, x509_cred);
 
@@ -175,16 +174,16 @@ static void server(int fd, const char *prio)
 		success("server: Handshake was completed\n");
 	}
 
-	gnutls_record_set_timeout(session, 30*1000);
+	gnutls_record_set_timeout(session, 30 * 1000);
 
 	success("waiting for EOF\n");
 	do {
 		ret = gnutls_record_recv(session, buffer, sizeof(buffer));
-	} while(ret == GNUTLS_E_AGAIN || ret == GNUTLS_E_INTERRUPTED);
+	} while (ret == GNUTLS_E_AGAIN || ret == GNUTLS_E_INTERRUPTED);
 	if (ret != 0)
 		fail("error waiting for EOF: %s\n", gnutls_strerror(ret));
 
- end:
+end:
 	close(fd);
 	gnutls_deinit(session);
 	gnutls_free(skey.data);
@@ -200,8 +199,7 @@ static void ch_handler(int sig)
 	return;
 }
 
-static
-void start(const char *prio)
+static void start(const char *prio)
 {
 	int fd[2];
 	int ret, status = 0;
@@ -244,4 +242,4 @@ void doit(void)
 	start("NORMAL:-VERS-ALL:+VERS-DTLS1.2");
 }
 
-#endif				/* _WIN32 */
+#endif /* _WIN32 */

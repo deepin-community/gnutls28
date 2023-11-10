@@ -16,8 +16,7 @@
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GnuTLS; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
+ * along with GnuTLS.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 #ifdef HAVE_CONFIG_H
@@ -51,12 +50,12 @@ enum {
 	TESTNO_MAX
 };
 
-#define myfail(fmt, ...) \
-	fail("%s%s %d: "fmt, dtls?"dtls":"tls", name, testno, ##__VA_ARGS__)
+#define myfail(fmt, ...)                                           \
+	fail("%s%s %d: " fmt, dtls ? "dtls" : "tls", name, testno, \
+	     ##__VA_ARGS__)
 
 static void try(const char *name, unsigned testno, unsigned fs,
-		const char *prio, unsigned dhsize,
-		unsigned dtls)
+		const char *prio, unsigned dhsize, unsigned dtls)
 {
 	int ret;
 	/* Server stuff. */
@@ -70,10 +69,10 @@ static void try(const char *name, unsigned testno, unsigned fs,
 	gnutls_certificate_credentials_t clientx509cred;
 	gnutls_session_t client;
 	int cret = GNUTLS_E_AGAIN;
-	const gnutls_datum_t p3_2048 =
-	    { (void *)pkcs3_2048, strlen(pkcs3_2048) };
-	const gnutls_datum_t p3_3072 =
-	    { (void *)pkcs3_3072, strlen(pkcs3_3072) };
+	const gnutls_datum_t p3_2048 = { (void *)pkcs3_2048,
+					 strlen(pkcs3_2048) };
+	const gnutls_datum_t p3_3072 = { (void *)pkcs3_3072,
+					 strlen(pkcs3_3072) };
 	gnutls_dh_params_t dh_params;
 	unsigned flags = 0;
 
@@ -81,7 +80,7 @@ static void try(const char *name, unsigned testno, unsigned fs,
 		return;
 
 	if (dtls)
-		flags |= GNUTLS_DATAGRAM|GNUTLS_NONBLOCK;
+		flags |= GNUTLS_DATAGRAM | GNUTLS_NONBLOCK;
 
 	/* General init. */
 	gnutls_global_set_log_function(tls_log_func);
@@ -103,15 +102,14 @@ static void try(const char *name, unsigned testno, unsigned fs,
 	gnutls_anon_set_server_dh_params(serveranoncred, dh_params);
 
 	gnutls_certificate_allocate_credentials(&serverx509cred);
-	gnutls_certificate_set_x509_key_mem(serverx509cred,
-					    &server_cert, &server_key,
-					    GNUTLS_X509_FMT_PEM);
-	gnutls_certificate_set_x509_key_mem(serverx509cred,
-					    &server_ecc_cert, &server_ecc_key,
+	gnutls_certificate_set_x509_key_mem(serverx509cred, &server_cert,
+					    &server_key, GNUTLS_X509_FMT_PEM);
+	gnutls_certificate_set_x509_key_mem(serverx509cred, &server_ecc_cert,
+					    &server_ecc_key,
 					    GNUTLS_X509_FMT_PEM);
 	gnutls_certificate_set_dh_params(serverx509cred, dh_params);
 
-	gnutls_init(&server, GNUTLS_SERVER|flags);
+	gnutls_init(&server, GNUTLS_SERVER | flags);
 	gnutls_credentials_set(server, GNUTLS_CRD_CERTIFICATE, serverx509cred);
 
 	gnutls_credentials_set(server, GNUTLS_CRD_ANON, serveranoncred);
@@ -119,7 +117,8 @@ static void try(const char *name, unsigned testno, unsigned fs,
 	gnutls_priority_set_direct(server, prio, NULL);
 	gnutls_transport_set_push_function(server, server_push);
 	gnutls_transport_set_pull_function(server, server_pull);
-	gnutls_transport_set_pull_timeout_function(server, server_pull_timeout_func);
+	gnutls_transport_set_pull_timeout_function(server,
+						   server_pull_timeout_func);
 	gnutls_transport_set_ptr(server, server);
 
 	/* Init client */
@@ -129,13 +128,13 @@ static void try(const char *name, unsigned testno, unsigned fs,
 	if (ret < 0)
 		exit(1);
 
-	ret =
-	    gnutls_certificate_set_x509_trust_mem(clientx509cred, &ca_cert,
-						  GNUTLS_X509_FMT_PEM);
+	ret = gnutls_certificate_set_x509_trust_mem(clientx509cred, &ca_cert,
+						    GNUTLS_X509_FMT_PEM);
 	if (ret < 0)
 		exit(1);
 
-	ret = gnutls_init(&client, GNUTLS_CLIENT|GNUTLS_ENABLE_FALSE_START|flags);
+	ret = gnutls_init(&client,
+			  GNUTLS_CLIENT | GNUTLS_ENABLE_FALSE_START | flags);
 	if (ret < 0)
 		exit(1);
 
@@ -154,28 +153,29 @@ static void try(const char *name, unsigned testno, unsigned fs,
 
 	gnutls_transport_set_push_function(client, client_push);
 	gnutls_transport_set_pull_function(client, client_pull);
-	gnutls_transport_set_pull_timeout_function(client, client_pull_timeout_func);
+	gnutls_transport_set_pull_timeout_function(client,
+						   client_pull_timeout_func);
 	gnutls_transport_set_ptr(client, client);
 
 	HANDSHAKE(client, server);
 
-	if ((gnutls_session_get_flags(client) & GNUTLS_SFLAGS_FALSE_START)
-	    && !fs) {
+	if ((gnutls_session_get_flags(client) & GNUTLS_SFLAGS_FALSE_START) &&
+	    !fs) {
 		myfail("false start occurred but not expected\n");
 	}
 
-	if (!(gnutls_session_get_flags(client) & GNUTLS_SFLAGS_FALSE_START)
-	    && fs) {
+	if (!(gnutls_session_get_flags(client) & GNUTLS_SFLAGS_FALSE_START) &&
+	    fs) {
 		myfail("false start expected but not happened\n");
 	}
 
 	if (testno == TEST_SEND_RECV) {
 		side = "client";
-		ret =
-		    gnutls_record_send(client, TESTDATA, sizeof(TESTDATA) - 1);
+		ret = gnutls_record_send(client, TESTDATA,
+					 sizeof(TESTDATA) - 1);
 		if (ret < 0) {
 			myfail("error sending false start data: %s\n",
-				gnutls_strerror(ret));
+			       gnutls_strerror(ret));
 			exit(1);
 		}
 
@@ -184,7 +184,7 @@ static void try(const char *name, unsigned testno, unsigned fs,
 		ret = gnutls_record_recv(server, buffer, sizeof(buffer));
 		if (ret < 0) {
 			myfail("error receiving data: %s\n",
-				gnutls_strerror(ret));
+			       gnutls_strerror(ret));
 		}
 
 		if (ret != sizeof(TESTDATA) - 1) {
@@ -196,30 +196,30 @@ static void try(const char *name, unsigned testno, unsigned fs,
 		}
 
 		/* check handshake completion */
-		ret =
-		    gnutls_record_send(server, TESTDATA, sizeof(TESTDATA) - 1);
+		ret = gnutls_record_send(server, TESTDATA,
+					 sizeof(TESTDATA) - 1);
 		if (ret < 0) {
 			myfail("error sending false start data: %s\n",
-				gnutls_strerror(ret));
+			       gnutls_strerror(ret));
 			exit(1);
 		}
 
 		side = "client";
 		do {
-			ret =
-			    gnutls_record_recv(client, buffer, sizeof(buffer));
+			ret = gnutls_record_recv(client, buffer,
+						 sizeof(buffer));
 		} while (ret == GNUTLS_E_AGAIN || ret == GNUTLS_E_INTERRUPTED);
 		if (ret < 0) {
 			myfail("error receiving data: %s\n",
-				gnutls_strerror(ret));
+			       gnutls_strerror(ret));
 		}
 	} else if (testno == TEST_RECV_SEND) {
 		side = "server";
-		ret =
-		    gnutls_record_send(server, TESTDATA, sizeof(TESTDATA) - 1);
+		ret = gnutls_record_send(server, TESTDATA,
+					 sizeof(TESTDATA) - 1);
 		if (ret < 0) {
 			myfail("error sending false start data: %s\n",
-				gnutls_strerror(ret));
+			       gnutls_strerror(ret));
 			exit(1);
 		}
 
@@ -228,7 +228,7 @@ static void try(const char *name, unsigned testno, unsigned fs,
 		ret = gnutls_record_recv(client, buffer, sizeof(buffer));
 		if (ret < 0) {
 			myfail("error receiving data: %s\n",
-				gnutls_strerror(ret));
+			       gnutls_strerror(ret));
 		}
 
 		if (ret != sizeof(TESTDATA) - 1) {
@@ -242,9 +242,8 @@ static void try(const char *name, unsigned testno, unsigned fs,
 		/* explicit completion by caller */
 		ret = gnutls_handshake(client);
 		if (ret != GNUTLS_E_HANDSHAKE_DURING_FALSE_START) {
-			myfail
-			    ("error in explicit handshake after false start: %s\n",
-			     gnutls_strerror(ret));
+			myfail("error in explicit handshake after false start: %s\n",
+			       gnutls_strerror(ret));
 			exit(1);
 		}
 
@@ -254,19 +253,17 @@ static void try(const char *name, unsigned testno, unsigned fs,
 	side = "server";
 	ret = gnutls_bye(server, GNUTLS_SHUT_WR);
 	if (ret < 0) {
-		myfail("error in server bye: %s\n",
-			gnutls_strerror(ret));
+		myfail("error in server bye: %s\n", gnutls_strerror(ret));
 	}
 
 	side = "client";
 	ret = gnutls_bye(client, GNUTLS_SHUT_RDWR);
 	if (ret < 0) {
-		myfail("error in client bye: %s\n",
-			gnutls_strerror(ret));
+		myfail("error in client bye: %s\n", gnutls_strerror(ret));
 	}
 
-	success("%5s%s \tok\n", dtls?"dtls-":"tls-", name);
- exit:
+	success("%5s%s \tok\n", dtls ? "dtls-" : "tls-", name);
+exit:
 	gnutls_deinit(client);
 	gnutls_deinit(server);
 
@@ -283,30 +280,46 @@ void doit(void)
 
 	global_init();
 
-
-	for (j=0;j<2;j++) {
+	for (j = 0; j < 2; j++) {
 		for (i = 0; i < TESTNO_MAX; i++) {
-			try("1.2 anon-dh  :", i, 0, "NORMAL:-VERS-ALL:+VERS-DTLS1.2:+VERS-TLS1.2:-KX-ALL:+ANON-DH", 3072, j);
+			try("1.2 anon-dh  :", i, 0,
+			    "NORMAL:-VERS-ALL:+VERS-DTLS1.2:+VERS-TLS1.2:-KX-ALL:+ANON-DH",
+			    3072, j);
 			reset_buffers();
-			try("1.2 anon-ecdh:", i, 0, "NORMAL:-VERS-ALL:+VERS-DTLS1.2:+VERS-TLS1.2:-KX-ALL:+ANON-ECDH", 2048, j);
+			try("1.2 anon-ecdh:", i, 0,
+			    "NORMAL:-VERS-ALL:+VERS-DTLS1.2:+VERS-TLS1.2:-KX-ALL:+ANON-ECDH",
+			    2048, j);
 			reset_buffers();
-			try("1.2 ecdhe-rsa:", i, 1, "NORMAL:-VERS-ALL:+VERS-DTLS1.2:+VERS-TLS1.2:-KX-ALL:+ECDHE-RSA", 2048, j);
+			try("1.2 ecdhe-rsa:", i, 1,
+			    "NORMAL:-VERS-ALL:+VERS-DTLS1.2:+VERS-TLS1.2:-KX-ALL:+ECDHE-RSA",
+			    2048, j);
 			reset_buffers();
-			try("1.2 ecdhe-x25519-rsa:", i, 1, "NORMAL:-VERS-ALL:+VERS-DTLS1.2:+VERS-TLS1.2:-KX-ALL:+ECDHE-RSA:-CURVE-ALL:+CURVE-X25519", 2048, j);
+			try("1.2 ecdhe-x25519-rsa:", i, 1,
+			    "NORMAL:-VERS-ALL:+VERS-DTLS1.2:+VERS-TLS1.2:-KX-ALL:+ECDHE-RSA:-CURVE-ALL:+CURVE-X25519",
+			    2048, j);
 			reset_buffers();
-			try("1.2 ecdhe-ecdsa:", i, 1, "NORMAL:-VERS-ALL:+VERS-DTLS1.2:+VERS-TLS1.2:-KX-ALL:+ECDHE-ECDSA", 2048, j);
+			try("1.2 ecdhe-ecdsa:", i, 1,
+			    "NORMAL:-VERS-ALL:+VERS-DTLS1.2:+VERS-TLS1.2:-KX-ALL:+ECDHE-ECDSA",
+			    2048, j);
 			reset_buffers();
-			try("1.2 dhe-rsa-2048:", i, 0, "NORMAL:-VERS-ALL:+VERS-DTLS1.2:+VERS-TLS1.2:-KX-ALL:+DHE-RSA", 2048, j);
+			try("1.2 dhe-rsa-2048:", i, 0,
+			    "NORMAL:-VERS-ALL:+VERS-DTLS1.2:+VERS-TLS1.2:-KX-ALL:+DHE-RSA",
+			    2048, j);
 			reset_buffers();
-			try("1.2 dhe-rsa-3072:", i, 1, "NORMAL:-VERS-ALL:+VERS-DTLS1.2:+VERS-TLS1.2:-KX-ALL:+DHE-RSA", 3072, j);
+			try("1.2 dhe-rsa-3072:", i, 1,
+			    "NORMAL:-VERS-ALL:+VERS-DTLS1.2:+VERS-TLS1.2:-KX-ALL:+DHE-RSA",
+			    3072, j);
 			reset_buffers();
 		}
 	}
 
 	/* it should work, but false start will not be reported */
-	try("1.3 secp256r1:", i, 0, "NORMAL:-VERS-ALL:+VERS-TLS1.3:-GROUP-ALL:+GROUP-SECP256R1", 2048, 0);
+	try("1.3 secp256r1:", i, 0,
+	    "NORMAL:-VERS-ALL:+VERS-TLS1.3:-GROUP-ALL:+GROUP-SECP256R1", 2048,
+	    0);
 	reset_buffers();
-	try("1.3 ffdhe2048:", i, 0, "NORMAL:-VERS-ALL:+VERS-TLS1.3:+GROUP-FFDHE2048", 2048, 0);
+	try("1.3 ffdhe2048:", i, 0,
+	    "NORMAL:-VERS-ALL:+VERS-TLS1.3:+GROUP-FFDHE2048", 2048, 0);
 	reset_buffers();
 
 	gnutls_global_deinit();

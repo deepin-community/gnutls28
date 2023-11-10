@@ -30,10 +30,9 @@
 #include <ext/etm.h>
 
 static int _gnutls_ext_etm_recv_params(gnutls_session_t session,
-					  const uint8_t * data,
-					  size_t data_size);
+				       const uint8_t *data, size_t data_size);
 static int _gnutls_ext_etm_send_params(gnutls_session_t session,
-					  gnutls_buffer_st * extdata);
+				       gnutls_buffer_st *extdata);
 
 const hello_ext_entry_st ext_mod_etm = {
 	.name = "Encrypt-then-MAC",
@@ -41,7 +40,8 @@ const hello_ext_entry_st ext_mod_etm = {
 	.gid = GNUTLS_EXTENSION_ETM,
 	.client_parse_point = GNUTLS_EXT_MANDATORY,
 	.server_parse_point = GNUTLS_EXT_MANDATORY,
-	.validity = GNUTLS_EXT_FLAG_TLS | GNUTLS_EXT_FLAG_DTLS | GNUTLS_EXT_FLAG_CLIENT_HELLO |
+	.validity = GNUTLS_EXT_FLAG_TLS | GNUTLS_EXT_FLAG_DTLS |
+		    GNUTLS_EXT_FLAG_CLIENT_HELLO |
 		    GNUTLS_EXT_FLAG_TLS12_SERVER_HELLO,
 	.recv_func = _gnutls_ext_etm_recv_params,
 	.send_func = _gnutls_ext_etm_send_params,
@@ -56,9 +56,8 @@ const hello_ext_entry_st ext_mod_etm = {
  * sets a flag into the session security parameters.
  *
  */
-static int
-_gnutls_ext_etm_recv_params(gnutls_session_t session,
-			       const uint8_t * data, size_t _data_size)
+static int _gnutls_ext_etm_recv_params(gnutls_session_t session,
+				       const uint8_t *data, size_t _data_size)
 {
 	ssize_t data_size = _data_size;
 
@@ -72,20 +71,20 @@ _gnutls_ext_etm_recv_params(gnutls_session_t session,
 		if (session->internals.no_etm != 0)
 			return 0;
 
-		epriv = (void*)(intptr_t)1;
-		_gnutls_hello_ext_set_priv(session,
-						   GNUTLS_EXTENSION_ETM,
-						   epriv);
+		epriv = (void *)(intptr_t)1;
+		_gnutls_hello_ext_set_priv(session, GNUTLS_EXTENSION_ETM,
+					   epriv);
 
 		/* don't decide now, decide on send */
 		return 0;
 	} else { /* client */
-		const gnutls_cipher_suite_entry_st *e = 
+		const gnutls_cipher_suite_entry_st *e =
 			session->security_parameters.cs;
 		if (e != NULL) {
 			const cipher_entry_st *c;
 			c = cipher_to_entry(e->block_algorithm);
-			if (c == NULL || (c->type == CIPHER_AEAD || c->type == CIPHER_STREAM))
+			if (c == NULL || (c->type == CIPHER_AEAD ||
+					  c->type == CIPHER_STREAM))
 				return 0;
 
 			session->security_parameters.etm = 1;
@@ -97,9 +96,8 @@ _gnutls_ext_etm_recv_params(gnutls_session_t session,
 
 /* returns data_size or a negative number on failure
  */
-static int
-_gnutls_ext_etm_send_params(gnutls_session_t session,
-			       gnutls_buffer_st * extdata)
+static int _gnutls_ext_etm_send_params(gnutls_session_t session,
+				       gnutls_buffer_st *extdata)
 {
 	if (session->internals.no_etm != 0)
 		return 0;
@@ -119,12 +117,12 @@ _gnutls_ext_etm_send_params(gnutls_session_t session,
 		e = session->security_parameters.cs;
 		if (e != NULL) {
 			c = cipher_to_entry(e->block_algorithm);
-			if (c == NULL || (c->type == CIPHER_AEAD || c->type == CIPHER_STREAM))
+			if (c == NULL || (c->type == CIPHER_AEAD ||
+					  c->type == CIPHER_STREAM))
 				return 0;
 
-			ret = _gnutls_hello_ext_get_priv(session,
-							   GNUTLS_EXTENSION_ETM,
-							   &epriv);
+			ret = _gnutls_hello_ext_get_priv(
+				session, GNUTLS_EXTENSION_ETM, &epriv);
 			if (ret < 0 || ((intptr_t)epriv) == 0)
 				return 0;
 

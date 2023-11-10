@@ -82,6 +82,7 @@ struct gnutls_cli_options
     bool keymatexportsize;
     bool waitresumption;
     bool ca_auto_retrieve;
+    bool attime;
     bool version;
     bool help;
     bool more_help;
@@ -121,6 +122,7 @@ struct gnutls_cli_options
     const char *logfile;
     const char *keymatexport;
     const char *keymatexportsize;
+    const char *attime;
     const char *version;
   } arg;
 
@@ -211,6 +213,7 @@ struct gnutls_cli_options
     bool keymatexportsize;
     bool waitresumption;
     bool ca_auto_retrieve;
+    bool attime;
     bool version;
     bool help;
     bool more_help;
@@ -291,6 +294,7 @@ struct gnutls_cli_options
 #define HAVE_OPT_KEYMATEXPORTSIZE gnutls_cli_options.present.keymatexportsize
 #define HAVE_OPT_WAITRESUMPTION gnutls_cli_options.present.waitresumption
 #define HAVE_OPT_CA_AUTO_RETRIEVE gnutls_cli_options.present.ca_auto_retrieve
+#define HAVE_OPT_ATTIME gnutls_cli_options.present.attime
 #define HAVE_OPT_VERSION gnutls_cli_options.present.version
 #define HAVE_OPT_HELP gnutls_cli_options.present.help
 #define HAVE_OPT_MORE_HELP gnutls_cli_options.present.more_help
@@ -362,6 +366,7 @@ struct gnutls_cli_options
 #define OPT_ARG_KEYMATEXPORTSIZE gnutls_cli_options.arg.keymatexportsize
 #define OPT_ARG_WAITRESUMPTION gnutls_cli_options.arg.waitresumption
 #define OPT_ARG_CA_AUTO_RETRIEVE gnutls_cli_options.arg.ca_auto_retrieve
+#define OPT_ARG_ATTIME gnutls_cli_options.arg.attime
 #define OPT_ARG_VERSION gnutls_cli_options.arg.version
 #define OPT_ARG_HELP gnutls_cli_options.arg.help
 #define OPT_ARG_MORE_HELP gnutls_cli_options.arg.more_help
@@ -439,6 +444,7 @@ struct gnutls_cli_options
 #define ENABLED_OPT_KEYMATEXPORTSIZE gnutls_cli_options.enabled.keymatexportsize
 #define ENABLED_OPT_WAITRESUMPTION gnutls_cli_options.enabled.waitresumption
 #define ENABLED_OPT_CA_AUTO_RETRIEVE gnutls_cli_options.enabled.ca_auto_retrieve
+#define ENABLED_OPT_ATTIME gnutls_cli_options.enabled.attime
 #define ENABLED_OPT_VERSION gnutls_cli_options.enabled.version
 #define ENABLED_OPT_HELP gnutls_cli_options.enabled.help
 #define ENABLED_OPT_MORE_HELP gnutls_cli_options.enabled.more_help

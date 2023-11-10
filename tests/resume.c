@@ -41,7 +41,7 @@ int main(int argc, char **argv)
 #else
 
 #ifndef _GNU_SOURCE
-# define _GNU_SOURCE
+#define _GNU_SOURCE
 #endif
 #include <string.h>
 #include <sys/types.h>
@@ -60,8 +60,7 @@ int main(int argc, char **argv)
 
 static void wrap_db_init(void);
 static void wrap_db_deinit(void);
-static int wrap_db_store(void *dbf, gnutls_datum_t key,
-			 gnutls_datum_t data);
+static int wrap_db_store(void *dbf, gnutls_datum_t key, gnutls_datum_t data);
 static gnutls_datum_t wrap_db_fetch(void *dbf, gnutls_datum_t key);
 static int wrap_db_delete(void *dbf, gnutls_datum_t key);
 
@@ -91,181 +90,186 @@ struct params_res {
 	int change_ciphersuite;
 	int early_start;
 	int no_early_start;
+	int no_fips;
 };
 
 pid_t child;
 
 struct params_res resume_tests[] = {
 #ifndef TLS13
-	{.desc = "try to resume from db",
-	 .enable_db = 1,
-	 .enable_session_ticket_server = ST_NONE,
-	 .enable_session_ticket_client = ST_NONE,
-	 .expect_resume = 1},
-	{.desc = "try to resume from db with post_client_hello",
-	 .enable_db = 1,
-	 .enable_session_ticket_server = ST_NONE,
-	 .enable_session_ticket_client = ST_NONE,
-	 .call_post_client_hello = 1,
-	 .expect_resume = 1},
-	{.desc = "try to resume from db using resumed session's data",
-	 .enable_db = 1,
-	 .enable_session_ticket_server = ST_NONE,
-	 .enable_session_ticket_client = ST_NONE,
-	 .try_resumed_data = 1,
-	 .expect_resume = 1},
-	{.desc = "try to resume from db and check ALPN",
-	 .enable_db = 1,
-	 .enable_session_ticket_server = ST_NONE,
-	 .enable_session_ticket_client = ST_NONE,
-	 .try_alpn = 1,
-	 .expect_resume = 1},
-	{.desc = "try to resume from db (ext master secret -> none)",
-	 .enable_db = 1,
-	 .enable_session_ticket_server = ST_NONE,
-	 .enable_session_ticket_client = ST_NONE,
-	 .expect_resume = 0,
-	 .first_no_ext_master = 0,
-	 .second_no_ext_master = 1},
-	{.desc = "try to resume from db (none -> ext master secret)",
-	 .enable_db = 1,
-	 .enable_session_ticket_server = ST_NONE,
-	 .enable_session_ticket_client = ST_NONE,
-	 .expect_resume = 0,
-	 .first_no_ext_master = 1,
-	 .second_no_ext_master = 0},
+	{ .desc = "try to resume from db",
+	  .enable_db = 1,
+	  .enable_session_ticket_server = ST_NONE,
+	  .enable_session_ticket_client = ST_NONE,
+	  .expect_resume = 1 },
+	{ .desc = "try to resume from db with post_client_hello",
+	  .enable_db = 1,
+	  .enable_session_ticket_server = ST_NONE,
+	  .enable_session_ticket_client = ST_NONE,
+	  .call_post_client_hello = 1,
+	  .expect_resume = 1 },
+	{ .desc = "try to resume from db using resumed session's data",
+	  .enable_db = 1,
+	  .enable_session_ticket_server = ST_NONE,
+	  .enable_session_ticket_client = ST_NONE,
+	  .try_resumed_data = 1,
+	  .expect_resume = 1 },
+	{ .desc = "try to resume from db and check ALPN",
+	  .enable_db = 1,
+	  .enable_session_ticket_server = ST_NONE,
+	  .enable_session_ticket_client = ST_NONE,
+	  .try_alpn = 1,
+	  .expect_resume = 1 },
+	{ .desc = "try to resume from db (ext master secret -> none)",
+	  .enable_db = 1,
+	  .enable_session_ticket_server = ST_NONE,
+	  .enable_session_ticket_client = ST_NONE,
+	  .expect_resume = 0,
+	  .first_no_ext_master = 0,
+	  .second_no_ext_master = 1,
+	  .no_fips = 1 },
+	{ .desc = "try to resume from db (none -> ext master secret)",
+	  .enable_db = 1,
+	  .enable_session_ticket_server = ST_NONE,
+	  .enable_session_ticket_client = ST_NONE,
+	  .expect_resume = 0,
+	  .first_no_ext_master = 1,
+	  .second_no_ext_master = 0,
+	  .no_fips = 1 },
 #endif
 #if defined(TLS13)
 	/* only makes sense under TLS1.3 as negotiation involves a new
 	 * handshake with different parameters */
-	{.desc = "try to resume from session ticket (different cipher order)",
-	 .enable_db = 0,
-	 .enable_session_ticket_server = ST_ALL,
-	 .enable_session_ticket_client = ST_ALL,
-	 .change_ciphersuite = 1,
-	 .expect_resume = 1},
-	{.desc = "try to resume from session ticket with post_client_hello",
-	 .enable_db = 0,
-	 .enable_session_ticket_server = ST_ALL,
-	 .enable_session_ticket_client = ST_ALL,
-	 .call_post_client_hello = 1,
-	 .expect_resume = 1},
+	{ .desc = "try to resume from session ticket (different cipher order)",
+	  .enable_db = 0,
+	  .enable_session_ticket_server = ST_ALL,
+	  .enable_session_ticket_client = ST_ALL,
+	  .change_ciphersuite = 1,
+	  .expect_resume = 1 },
+	{ .desc = "try to resume from session ticket with post_client_hello",
+	  .enable_db = 0,
+	  .enable_session_ticket_server = ST_ALL,
+	  .enable_session_ticket_client = ST_ALL,
+	  .call_post_client_hello = 1,
+	  .expect_resume = 1 },
 #endif
 #if defined(TLS13) && !defined(USE_PSK)
-	{.desc = "try to resume from session ticket (early start)",
-	 .enable_db = 0,
-	 .enable_session_ticket_server = ST_ALL,
-	 .enable_session_ticket_client = ST_ALL,
-	 .early_start = 1,
-	 .expect_resume = 1},
+	{ .desc = "try to resume from session ticket (early start)",
+	  .enable_db = 0,
+	  .enable_session_ticket_server = ST_ALL,
+	  .enable_session_ticket_client = ST_ALL,
+	  .early_start = 1,
+	  .expect_resume = 1 },
 #endif
 #if defined(TLS13) && defined(USE_PSK)
 	/* early start should no happen on PSK. */
-	{.desc = "try to resume from session ticket (early start)",
-	 .enable_db = 0,
-	 .enable_session_ticket_server = ST_ALL,
-	 .enable_session_ticket_client = ST_ALL,
-	 .no_early_start = 1,
-	 .expect_resume = 1},
+	{ .desc = "try to resume from session ticket (early start)",
+	  .enable_db = 0,
+	  .enable_session_ticket_server = ST_ALL,
+	  .enable_session_ticket_client = ST_ALL,
+	  .no_early_start = 1,
+	  .expect_resume = 1 },
 #endif
-	{.desc = "try to resume from session ticket",
-	 .enable_db = 0,
-	 .enable_session_ticket_server = ST_ALL,
-	 .enable_session_ticket_client = ST_ALL,
-	 .expect_resume = 1},
+	{ .desc = "try to resume from session ticket",
+	  .enable_db = 0,
+	  .enable_session_ticket_server = ST_ALL,
+	  .enable_session_ticket_client = ST_ALL,
+	  .expect_resume = 1 },
 #ifdef TLS13
-	{.desc = "try to resume from session ticket (session ticket disabled for TLS 1.2)",
-	 .enable_db = 0,
-	 .enable_session_ticket_server = ST_TLS13_ONLY,
-	 .enable_session_ticket_client = ST_TLS13_ONLY,
-	 .expect_resume = 1},
+	{ .desc = "try to resume from session ticket (session ticket disabled for TLS 1.2)",
+	  .enable_db = 0,
+	  .enable_session_ticket_server = ST_TLS13_ONLY,
+	  .enable_session_ticket_client = ST_TLS13_ONLY,
+	  .expect_resume = 1 },
 #else
-	{.desc = "try to resume from session ticket (session ticket disabled for TLS 1.2)",
-	 .enable_db = 0,
-	 .enable_session_ticket_server = ST_TLS13_ONLY,
-	 .enable_session_ticket_client = ST_TLS13_ONLY,
-	 .expect_resume = 0},
+	{ .desc = "try to resume from session ticket (session ticket disabled for TLS 1.2)",
+	  .enable_db = 0,
+	  .enable_session_ticket_server = ST_TLS13_ONLY,
+	  .enable_session_ticket_client = ST_TLS13_ONLY,
+	  .expect_resume = 0 },
 #endif
-	{.desc = "try to resume from session ticket (client cert)",
-	 .enable_db = 0,
-	 .client_cert = 1,
-	 .enable_session_ticket_server = ST_ALL,
-	 .enable_session_ticket_client = ST_ALL,
-	 .expect_resume = 1},
-	{.desc = "try to resume from session ticket (expired)",
-	 .enable_db = 0,
-	 .enable_session_ticket_server = ST_ALL,
-	 .enable_session_ticket_client = ST_ALL,
-	 .expire_ticket = 1,
-	 .expect_resume = 0},
-	{.desc = "try to resume from session ticket using resumed session's data",
-	 .enable_db = 0,
-	 .enable_session_ticket_server = ST_ALL,
-	 .enable_session_ticket_client = ST_ALL,
-	 .try_resumed_data = 1,
-	 .expect_resume = 1},
+	{ .desc = "try to resume from session ticket (client cert)",
+	  .enable_db = 0,
+	  .client_cert = 1,
+	  .enable_session_ticket_server = ST_ALL,
+	  .enable_session_ticket_client = ST_ALL,
+	  .expect_resume = 1 },
+	{ .desc = "try to resume from session ticket (expired)",
+	  .enable_db = 0,
+	  .enable_session_ticket_server = ST_ALL,
+	  .enable_session_ticket_client = ST_ALL,
+	  .expire_ticket = 1,
+	  .expect_resume = 0 },
+	{ .desc = "try to resume from session ticket using resumed session's data",
+	  .enable_db = 0,
+	  .enable_session_ticket_server = ST_ALL,
+	  .enable_session_ticket_client = ST_ALL,
+	  .try_resumed_data = 1,
+	  .expect_resume = 1 },
 #ifndef TLS13
-	{.desc = "try to resume from session ticket (ext master secret -> none)",
-	 .enable_db = 0,
-	 .enable_session_ticket_server = ST_ALL,
-	 .enable_session_ticket_client = ST_ALL,
-	 .expect_resume = 0,
-	 .first_no_ext_master = 0,
-	 .second_no_ext_master = 1},
-	{.desc = "try to resume from session ticket (none -> ext master secret)",
-	 .enable_db = 0,
-	 .enable_session_ticket_server = ST_ALL,
-	 .enable_session_ticket_client = ST_ALL,
-	 .expect_resume = 0,
-	 .first_no_ext_master = 1,
-	 .second_no_ext_master = 0},
-	{.desc = "try to resume from session ticket (server only)",
+	{ .desc = "try to resume from session ticket (ext master secret -> none)",
+	  .enable_db = 0,
+	  .enable_session_ticket_server = ST_ALL,
+	  .enable_session_ticket_client = ST_ALL,
+	  .expect_resume = 0,
+	  .first_no_ext_master = 0,
+	  .second_no_ext_master = 1,
+	  .no_fips = 1 },
+	{ .desc = "try to resume from session ticket (none -> ext master secret)",
+	  .enable_db = 0,
+	  .enable_session_ticket_server = ST_ALL,
+	  .enable_session_ticket_client = ST_ALL,
+	  .expect_resume = 0,
+	  .first_no_ext_master = 1,
+	  .second_no_ext_master = 0,
+	  .no_fips = 1 },
+	{ .desc = "try to resume from session ticket (server only)",
 	  .enable_db = 0,
 	  .enable_session_ticket_server = ST_ALL,
 	  .enable_session_ticket_client = ST_NONE,
-	  .expect_resume = 0},
-	{.desc = "try to resume from session ticket (client only)",
-	 .enable_db = 0,
-	 .enable_session_ticket_server = ST_NONE,
-	 .enable_session_ticket_client = ST_ALL,
-	 .expect_resume = 0},
-	{.desc = "try to resume from db and ticket",
-	 .enable_db = 1,
-	 .enable_session_ticket_server = ST_ALL,
-	 .enable_session_ticket_client = ST_ALL,
-	 .expect_resume = 1},
-	{.desc = "try to resume from db and different SNI",
-	 .enable_db = 1,
-	 .try_sni = 1,
-	 .try_diff_sni = 1,
-	 .expect_resume = 0},
-	{.desc = "try to resume with ticket and different SNI",
-	 .enable_session_ticket_server = ST_ALL,
-	 .enable_session_ticket_client = ST_ALL,
-	 .try_sni = 1,
-	 .try_diff_sni = 1,
-	 .expect_resume = 0},
-	{.desc = "try to resume from db and same SNI",
-	 .enable_db = 1,
-	 .try_sni = 1,
-	 .expect_resume = 1},
+	  .expect_resume = 0 },
+	{ .desc = "try to resume from session ticket (client only)",
+	  .enable_db = 0,
+	  .enable_session_ticket_server = ST_NONE,
+	  .enable_session_ticket_client = ST_ALL,
+	  .expect_resume = 0 },
+	{ .desc = "try to resume from db and ticket",
+	  .enable_db = 1,
+	  .enable_session_ticket_server = ST_ALL,
+	  .enable_session_ticket_client = ST_ALL,
+	  .expect_resume = 1 },
+	{ .desc = "try to resume from db and different SNI",
+	  .enable_db = 1,
+	  .try_sni = 1,
+	  .try_diff_sni = 1,
+	  .expect_resume = 0 },
+	{ .desc = "try to resume with ticket and different SNI",
+	  .enable_session_ticket_server = ST_ALL,
+	  .enable_session_ticket_client = ST_ALL,
+	  .try_sni = 1,
+	  .try_diff_sni = 1,
+	  .expect_resume = 0 },
+	{ .desc = "try to resume from db and same SNI",
+	  .enable_db = 1,
+	  .try_sni = 1,
+	  .expect_resume = 1 },
 #endif
-	{.desc = "try to resume with ticket and same SNI",
-	 .enable_session_ticket_server = ST_ALL,
-	 .enable_session_ticket_client = ST_ALL,
-	 .try_sni = 1,
-	 .expect_resume = 1},
-	{NULL, -1}
+	{ .desc = "try to resume with ticket and same SNI",
+	  .enable_session_ticket_server = ST_ALL,
+	  .enable_session_ticket_client = ST_ALL,
+	  .try_sni = 1,
+	  .expect_resume = 1 },
+	{ NULL, -1 }
 };
 
 /* A very basic TLS client, with anonymous authentication.
  */
 
 #define SESSIONS 3
-#define MAX_BUF 5*1024
+#define MAX_BUF 5 * 1024
 #define MSG "Hello TLS"
 
-#define HANDSHAKE_SESSION_ID_POS (2+32)
+#define HANDSHAKE_SESSION_ID_POS (2 + 32)
 
 static void tls_log_func(int level, const char *str)
 {
@@ -276,18 +280,20 @@ static void tls_log_func(int level, const char *str)
 static int post_client_hello_callback(gnutls_session_t session)
 {
 	/* switches the supported ciphersuites to something compatible */
-	assert(gnutls_priority_set_direct(session, gnutls_session_get_ptr(session), NULL) >= 0);
+	assert(gnutls_priority_set_direct(
+		       session, gnutls_session_get_ptr(session), NULL) >= 0);
 	return 0;
 }
 
-static int hsk_hook_cb(gnutls_session_t session, unsigned int htype, unsigned post,
-			unsigned int incoming, const gnutls_datum_t *_msg)
+static int hsk_hook_cb(gnutls_session_t session, unsigned int htype,
+		       unsigned post, unsigned int incoming,
+		       const gnutls_datum_t *_msg)
 {
 	unsigned size;
-	gnutls_datum_t msg = {_msg->data, _msg->size};
+	gnutls_datum_t msg = { _msg->data, _msg->size };
 
 	/* skip up to session ID */
-	if (msg.size <= HANDSHAKE_SESSION_ID_POS+6) {
+	if (msg.size <= HANDSHAKE_SESSION_ID_POS + 6) {
 		fail("Cannot parse server hello\n");
 		return -1;
 	}
@@ -311,7 +317,8 @@ static int hsk_hook_cb(gnutls_session_t session, unsigned int htype, unsigned po
 	return 0;
 }
 
-static void append_alpn(gnutls_session_t session, struct params_res *params, unsigned alpn_counter)
+static void append_alpn(gnutls_session_t session, struct params_res *params,
+			unsigned alpn_counter)
 {
 	gnutls_datum_t protocol;
 	int ret;
@@ -322,7 +329,7 @@ static void append_alpn(gnutls_session_t session, struct params_res *params, uns
 
 	snprintf(str, sizeof(str), "myproto-%d", alpn_counter);
 
-	protocol.data = (void*)str;
+	protocol.data = (void *)str;
 	protocol.size = strlen(str);
 
 	ret = gnutls_alpn_set_protocols(session, &protocol, 1, 0);
@@ -332,7 +339,8 @@ static void append_alpn(gnutls_session_t session, struct params_res *params, uns
 	}
 }
 
-static void verify_alpn(gnutls_session_t session, struct params_res *params, unsigned alpn_counter)
+static void verify_alpn(gnutls_session_t session, struct params_res *params,
+			unsigned alpn_counter)
 {
 	int ret;
 	gnutls_datum_t selected;
@@ -349,8 +357,10 @@ static void verify_alpn(gnutls_session_t session, struct params_res *params, uns
 		exit(1);
 	}
 
-	if (strlen(str) != selected.size || memcmp(str, selected.data, selected.size) != 0) {
-		fail("expected protocol %s, got %.*s\n", str, selected.size, selected.data);
+	if (strlen(str) != selected.size ||
+	    memcmp(str, selected.data, selected.size) != 0) {
+		fail("expected protocol %s, got %.*s\n", str, selected.size,
+		     selected.data);
 		exit(1);
 	}
 
@@ -358,7 +368,8 @@ static void verify_alpn(gnutls_session_t session, struct params_res *params, uns
 		success("ALPN got: %s\n", str);
 }
 
-static void verify_group(gnutls_session_t session, gnutls_group_t *group, unsigned counter)
+static void verify_group(gnutls_session_t session, gnutls_group_t *group,
+			 unsigned counter)
 {
 	if (counter == 0) {
 		*group = gnutls_group_get(session);
@@ -366,12 +377,14 @@ static void verify_group(gnutls_session_t session, gnutls_group_t *group, unsign
 	}
 
 	if (gnutls_group_get(session) != *group) {
-		fail("expected group %s, got group %s\n", gnutls_group_get_name(*group),
+		fail("expected group %s, got group %s\n",
+		     gnutls_group_get_name(*group),
 		     gnutls_group_get_name(gnutls_group_get(session)));
 	}
 }
 
-static void verify_server_params(gnutls_session_t session, unsigned counter, struct params_res *params)
+static void verify_server_params(gnutls_session_t session, unsigned counter,
+				 struct params_res *params)
 {
 	static char id[GNUTLS_MAX_SESSION_ID];
 	static size_t id_size = 0;
@@ -388,7 +401,8 @@ static void verify_server_params(gnutls_session_t session, unsigned counter, str
 #endif
 
 	if (counter == 0 && params->early_start) {
-		if (!(gnutls_session_get_flags(session) & GNUTLS_SFLAGS_EARLY_START)) {
+		if (!(gnutls_session_get_flags(session) &
+		      GNUTLS_SFLAGS_EARLY_START)) {
 			fail("early start did not happen on %d!\n", counter);
 		}
 	}
@@ -400,25 +414,30 @@ static void verify_server_params(gnutls_session_t session, unsigned counter, str
 	}
 
 	if (params->no_early_start) {
-		if (gnutls_session_get_flags(session) & GNUTLS_SFLAGS_EARLY_START) {
-			fail("early start did happen on %d but was not expected!\n", counter);
+		if (gnutls_session_get_flags(session) &
+		    GNUTLS_SFLAGS_EARLY_START) {
+			fail("early start did happen on %d but was not expected!\n",
+			     counter);
 		}
 	}
-
 #if defined(USE_X509)
 	unsigned int l;
 
 	if (gnutls_certificate_type_get(session) != GNUTLS_CRT_X509)
-		fail("did not find the expected X509 certificate type! (%d)\n", gnutls_certificate_type_get(session));
+		fail("did not find the expected X509 certificate type! (%d)\n",
+		     gnutls_certificate_type_get(session));
 
 	if (counter == 0 && gnutls_certificate_get_ours(session) == NULL)
-		fail("no certificate returned on server side (%s)\n", counter ? "resumed session" : "first session");
+		fail("no certificate returned on server side (%s)\n",
+		     counter ? "resumed session" : "first session");
 	else if (counter != 0 && gnutls_certificate_get_ours(session) != NULL)
-		fail("certificate was returned on server side (%s)\n", counter ? "resumed session" : "first session");
+		fail("certificate was returned on server side (%s)\n",
+		     counter ? "resumed session" : "first session");
 
 	if (params->client_cert) {
 		if (gnutls_certificate_get_peers(session, &l) == NULL || l < 1)
-			fail("no client certificate returned on server side (%s)\n", counter ? "resumed session" : "first session");
+			fail("no client certificate returned on server side (%s)\n",
+			     counter ? "resumed session" : "first session");
 	}
 #endif
 
@@ -451,17 +470,18 @@ static void verify_client_params(gnutls_session_t session, unsigned counter)
 #if defined(USE_X509)
 	unsigned int l;
 	if (gnutls_certificate_get_peers(session, &l) == NULL || l < 1)
-		fail("no server certificate returned on client side (%s)\n", counter ? "resumed session" : "first session");
+		fail("no server certificate returned on client side (%s)\n",
+		     counter ? "resumed session" : "first session");
 #else
 	return;
 #endif
 }
 
 #ifdef TLS12
-# define VERS_STR "+VERS-TLS1.2"
+#define VERS_STR "+VERS-TLS1.2"
 #endif
 #ifdef TLS13
-# define VERS_STR "-VERS-ALL:+VERS-TLS1.3"
+#define VERS_STR "-VERS-ALL:+VERS-TLS1.3"
 #endif
 
 static void client(int sds[], struct params_res *params)
@@ -475,14 +495,20 @@ static void client(int sds[], struct params_res *params)
 	const char *dns_name1 = "example.com";
 	const char *dns_name2 = "www.example.com";
 #ifdef USE_PSK
-# define PRIO_STR "NONE:"VERS_STR":+CIPHER-ALL:+MAC-ALL:+SIGN-ALL:+COMP-ALL:+PSK:+CURVE-ALL"
-	const gnutls_datum_t pskkey = { (void *) "DEADBEEF", 8 };
+#define PRIO_STR         \
+	"NONE:" VERS_STR \
+	":+CIPHER-ALL:+MAC-ALL:+SIGN-ALL:+COMP-ALL:+PSK:+CURVE-ALL"
+	const gnutls_datum_t pskkey = { (void *)"DEADBEEF", 8 };
 	gnutls_psk_client_credentials_t pskcred;
 #elif defined(USE_ANON)
-# define PRIO_STR "NONE:"VERS_STR":+CIPHER-ALL:+MAC-ALL:+SIGN-ALL:+COMP-ALL:+ANON-ECDH:+ANON-DH:+CURVE-ALL"
+#define PRIO_STR         \
+	"NONE:" VERS_STR \
+	":+CIPHER-ALL:+MAC-ALL:+SIGN-ALL:+COMP-ALL:+ANON-ECDH:+ANON-DH:+CURVE-ALL"
 	gnutls_anon_client_credentials_t anoncred;
 #elif defined(USE_X509)
-# define PRIO_STR "NONE:"VERS_STR":+CIPHER-ALL:+MAC-ALL:+SIGN-ALL:+COMP-ALL:+ECDHE-RSA:+RSA:+CURVE-ALL"
+#define PRIO_STR         \
+	"NONE:" VERS_STR \
+	":+CIPHER-ALL:+MAC-ALL:+SIGN-ALL:+COMP-ALL:+ECDHE-RSA:+RSA:+CURVE-ALL"
 	gnutls_certificate_credentials_t clientx509cred;
 #endif
 
@@ -491,32 +517,32 @@ static void client(int sds[], struct params_res *params)
 	/* variables used in session resuming
 	 */
 	int t;
-	gnutls_datum_t session_data = {NULL, 0};
+	gnutls_datum_t session_data = { NULL, 0 };
 
 	if (debug) {
 		gnutls_global_set_log_function(tls_log_func);
 		gnutls_global_set_log_level(4);
 	}
-
 #ifdef USE_PSK
 	gnutls_psk_allocate_client_credentials(&pskcred);
-	gnutls_psk_set_client_credentials(pskcred, "test", &pskkey, GNUTLS_PSK_KEY_HEX);
+	gnutls_psk_set_client_credentials(pskcred, "test", &pskkey,
+					  GNUTLS_PSK_KEY_HEX);
 #elif defined(USE_ANON)
 	gnutls_anon_allocate_client_credentials(&anoncred);
 #elif defined(USE_X509)
 	gnutls_certificate_allocate_credentials(&clientx509cred);
 
 	if (params->client_cert) {
-		assert(gnutls_certificate_set_x509_key_mem(clientx509cred,
-							   &cli_cert, &cli_key,
-							   GNUTLS_X509_FMT_PEM) >= 0);
+		assert(gnutls_certificate_set_x509_key_mem(
+			       clientx509cred, &cli_cert, &cli_key,
+			       GNUTLS_X509_FMT_PEM) >= 0);
 	}
 #endif
 
 	for (t = 0; t < SESSIONS; t++) {
 		int sd = sds[t];
 
-		assert(gnutls_init(&session, GNUTLS_CLIENT)>=0);
+		assert(gnutls_init(&session, GNUTLS_CLIENT) >= 0);
 
 		snprintf(prio_str, sizeof(prio_str), "%s", PRIO_STR);
 
@@ -544,7 +570,8 @@ static void client(int sds[], struct params_res *params)
 
 		if (params->change_ciphersuite) {
 			if (t > 0)
-				strcat(prio_str, ":-CIPHER-ALL:+AES-256-GCM:+AES-128-GCM");
+				strcat(prio_str,
+				       ":-CIPHER-ALL:+AES-256-GCM:+AES-128-GCM");
 			else
 				strcat(prio_str, ":-CIPHER-ALL:+AES-128-GCM");
 		}
@@ -563,7 +590,8 @@ static void client(int sds[], struct params_res *params)
 #elif defined(USE_ANON)
 		gnutls_credentials_set(session, GNUTLS_CRD_ANON, anoncred);
 #elif defined(USE_X509)
-		gnutls_credentials_set(session, GNUTLS_CRD_CERTIFICATE, clientx509cred);
+		gnutls_credentials_set(session, GNUTLS_CRD_CERTIFICATE,
+				       clientx509cred);
 #endif
 
 		if (t > 0) {
@@ -571,17 +599,25 @@ static void client(int sds[], struct params_res *params)
 			gnutls_session_set_data(session, session_data.data,
 						session_data.size);
 			if (params->try_diff_sni)
-				gnutls_server_name_set(session, GNUTLS_NAME_DNS, dns_name1, strlen(dns_name1));
+				gnutls_server_name_set(session, GNUTLS_NAME_DNS,
+						       dns_name1,
+						       strlen(dns_name1));
 			else if (params->try_sni)
-				gnutls_server_name_set(session, GNUTLS_NAME_DNS, dns_name2, strlen(dns_name2));
+				gnutls_server_name_set(session, GNUTLS_NAME_DNS,
+						       dns_name2,
+						       strlen(dns_name2));
 
 		} else {
 			if (params->try_sni)
-				gnutls_server_name_set(session, GNUTLS_NAME_DNS, dns_name2, strlen(dns_name2));
+				gnutls_server_name_set(session, GNUTLS_NAME_DNS,
+						       dns_name2,
+						       strlen(dns_name2));
 		}
 
 		if (ext_master_secret_check)
-			gnutls_handshake_set_hook_function(session, GNUTLS_HANDSHAKE_SERVER_HELLO, GNUTLS_HOOK_PRE, hsk_hook_cb);
+			gnutls_handshake_set_hook_function(
+				session, GNUTLS_HANDSHAKE_SERVER_HELLO,
+				GNUTLS_HOOK_PRE, hsk_hook_cb);
 		gnutls_transport_set_int(session, sd);
 
 		/* Perform the TLS handshake
@@ -597,27 +633,25 @@ static void client(int sds[], struct params_res *params)
 			goto end;
 		} else {
 			if (debug)
-				success
-				    ("client: Handshake was completed\n");
+				success("client: Handshake was completed\n");
 		}
 
 		ext_master_secret_check = 0;
 		if (t == 0) {
-			ext_master_secret_check =  gnutls_session_ext_master_secret_status(session);
+			ext_master_secret_check =
+				gnutls_session_ext_master_secret_status(
+					session);
 
 			/* get the session data size */
-			ret =
-			    gnutls_session_get_data2(session,
-						     &session_data);
+			ret = gnutls_session_get_data2(session, &session_data);
 			if (ret < 0)
 				fail("Getting resume data failed\n");
 
-		} else {	/* the second time we connect */
+		} else { /* the second time we connect */
 			if (params->try_resumed_data) {
 				gnutls_free(session_data.data);
-				ret =
-				    gnutls_session_get_data2(session,
-							     &session_data);
+				ret = gnutls_session_get_data2(session,
+							       &session_data);
 				if (ret < 0)
 					fail("Getting resume data failed\n");
 			}
@@ -626,8 +660,7 @@ static void client(int sds[], struct params_res *params)
 			if (gnutls_session_is_resumed(session) != 0) {
 				if (params->expect_resume) {
 					if (debug)
-						success
-						    ("- Previous session was resumed\n");
+						success("- Previous session was resumed\n");
 				} else
 					fail("- Previous session was resumed but NOT expected\n");
 			} else {
@@ -635,16 +668,18 @@ static void client(int sds[], struct params_res *params)
 					fail("*** Previous session was NOT resumed\n");
 				} else {
 					if (debug)
-						success
-						    ("*** Previous session was NOT resumed (expected)\n");
+						success("*** Previous session was NOT resumed (expected)\n");
 				}
 			}
 
 			if (params->change_ciphersuite) {
 				/* check if the expected cipher was negotiated */
-				if (gnutls_cipher_get(session) != GNUTLS_CIPHER_AES_128_GCM) {
+				if (gnutls_cipher_get(session) !=
+				    GNUTLS_CIPHER_AES_128_GCM) {
 					fail("negotiated different cipher: %s\n",
-					     gnutls_cipher_get_name(gnutls_cipher_get(session)));
+					     gnutls_cipher_get_name(
+						     gnutls_cipher_get(
+							     session)));
 				}
 			}
 		}
@@ -662,8 +697,7 @@ static void client(int sds[], struct params_res *params)
 		} while (ret == GNUTLS_E_AGAIN);
 		if (ret == 0) {
 			if (debug)
-				success
-				    ("client: Peer has closed the TLS connection\n");
+				success("client: Peer has closed the TLS connection\n");
 			goto end;
 		} else if (ret < 0) {
 			fail("client: Error: %s\n", gnutls_strerror(ret));
@@ -686,7 +720,7 @@ static void client(int sds[], struct params_res *params)
 	}
 	gnutls_free(session_data.data);
 
-      end:
+end:
 #ifdef USE_PSK
 	gnutls_psk_free_client_credentials(pskcred);
 #elif defined(USE_ANON)
@@ -701,7 +735,6 @@ static void client(int sds[], struct params_res *params)
 /* These are global */
 static gnutls_datum_t session_ticket_key = { NULL, 0 };
 
-
 static gnutls_dh_params_t dh_params;
 
 #ifdef USE_PSK
@@ -714,7 +747,7 @@ gnutls_certificate_credentials_t serverx509cred;
 
 static int generate_dh_params(void)
 {
-	const gnutls_datum_t p3 = { (void *) pkcs3, strlen(pkcs3) };
+	const gnutls_datum_t p3 = { (void *)pkcs3, strlen(pkcs3) };
 	/* Generate Diffie-Hellman parameters - for use with DHE
 	 * kx algorithms. These should be discarded and regenerated
 	 * once a day, once a week or once a month. Depending on the
@@ -724,7 +757,6 @@ static int generate_dh_params(void)
 	return gnutls_dh_params_import_pkcs3(dh_params, &p3,
 					     GNUTLS_X509_FMT_PEM);
 }
-
 
 static void global_stop(void)
 {
@@ -742,9 +774,8 @@ static void global_stop(void)
 }
 
 #ifdef USE_PSK
-static int
-pskfunc(gnutls_session_t session, const char *username,
-	gnutls_datum_t * key)
+static int pskfunc(gnutls_session_t session, const char *username,
+		   gnutls_datum_t *key)
 {
 	if (debug)
 		printf("psk: username %s\n", username);
@@ -778,7 +809,6 @@ static void server(int sds[], struct params_res *params)
 		gnutls_global_set_log_function(tls_log_func);
 		gnutls_global_set_log_level(4);
 	}
-
 #ifdef USE_PSK
 	gnutls_psk_allocate_server_credentials(&pskcred);
 	gnutls_psk_set_server_credentials_function(pskcred, pskfunc);
@@ -786,8 +816,9 @@ static void server(int sds[], struct params_res *params)
 	gnutls_anon_allocate_server_credentials(&anoncred);
 #elif defined(USE_X509)
 	gnutls_certificate_allocate_credentials(&serverx509cred);
-	assert(gnutls_certificate_set_x509_key_mem(serverx509cred,
-		&server_cert, &server_key, GNUTLS_X509_FMT_PEM) >= 0);
+	assert(gnutls_certificate_set_x509_key_mem(serverx509cred, &server_cert,
+						   &server_key,
+						   GNUTLS_X509_FMT_PEM) >= 0);
 #endif
 
 	if (debug)
@@ -814,15 +845,13 @@ static void server(int sds[], struct params_res *params)
 		/* avoid calling all the priority functions, since the defaults
 		 * are adequate.
 		 */
-		assert(gnutls_priority_set_direct(session,
-						  PRIO_STR,
-						  NULL) >= 0);
-
+		assert(gnutls_priority_set_direct(session, PRIO_STR, NULL) >=
+		       0);
 
 #if defined(USE_X509)
 		if (params->client_cert) {
-			gnutls_certificate_server_set_request(session,
-							      GNUTLS_CERT_REQUIRE);
+			gnutls_certificate_server_set_request(
+				session, GNUTLS_CERT_REQUIRE);
 		}
 #endif
 
@@ -836,8 +865,8 @@ static void server(int sds[], struct params_res *params)
 		}
 
 		if (params->enable_session_ticket_server)
-			gnutls_session_ticket_enable_server(session,
-							    &session_ticket_key);
+			gnutls_session_ticket_enable_server(
+				session, &session_ticket_key);
 
 		append_alpn(session, params, t);
 
@@ -850,17 +879,17 @@ static void server(int sds[], struct params_res *params)
 #elif defined(USE_ANON)
 		gnutls_credentials_set(session, GNUTLS_CRD_ANON, anoncred);
 #elif defined(USE_X509)
-		gnutls_credentials_set(session, GNUTLS_CRD_CERTIFICATE, serverx509cred);
+		gnutls_credentials_set(session, GNUTLS_CRD_CERTIFICATE,
+				       serverx509cred);
 #endif
 		gnutls_transport_set_int(session, sd);
 		gnutls_handshake_set_timeout(session, get_timeout());
 
 		if (params->call_post_client_hello) {
 			gnutls_session_set_ptr(session, PRIO_STR);
-			gnutls_handshake_set_post_client_hello_function(session,
-									post_client_hello_callback);
+			gnutls_handshake_set_post_client_hello_function(
+				session, post_client_hello_callback);
 		}
-
 
 		do {
 			ret = gnutls_handshake(session);
@@ -879,7 +908,8 @@ static void server(int sds[], struct params_res *params)
 		if (t > 0 && params->expect_resume) {
 			ret = gnutls_session_is_resumed(session);
 			if (ret == 0) {
-				fail("server: session_is_resumed error (%d)\n", t);
+				fail("server: session_is_resumed error (%d)\n",
+				     t);
 			}
 		}
 
@@ -898,12 +928,12 @@ static void server(int sds[], struct params_res *params)
 
 			if (ret == 0) {
 				if (debug)
-					success
-					    ("server: Peer has closed the GnuTLS connection\n");
+					success("server: Peer has closed the GnuTLS connection\n");
 				break;
 			} else if (ret < 0) {
 				kill(child, SIGTERM);
-				fail("server: Received corrupted data(%d). Closing...\n", ret);
+				fail("server: Received corrupted data(%d). Closing...\n",
+				     ret);
 				break;
 			} else if (ret > 0) {
 				/* echo data back to the client
@@ -941,6 +971,12 @@ void doit(void)
 	for (i = 0; resume_tests[i].desc; i++) {
 		int client_sds[SESSIONS], server_sds[SESSIONS];
 		int j;
+
+		if (resume_tests[i].no_fips && gnutls_fips140_mode_enabled()) {
+			success("skipping %s under FIPS mode\n",
+				resume_tests[i].desc);
+			continue;
+		}
 
 		printf("%s\n", resume_tests[i].desc);
 
@@ -1005,7 +1041,6 @@ static int cache_db_ptr = 0;
 
 static void wrap_db_init(void)
 {
-
 	/* allocate cache_db */
 	cache_db = calloc(1, TLS_SESSION_CACHE * sizeof(CACHE));
 }
@@ -1017,8 +1052,7 @@ static void wrap_db_deinit(void)
 	return;
 }
 
-static int
-wrap_db_store(void *dbf, gnutls_datum_t key, gnutls_datum_t data)
+static int wrap_db_store(void *dbf, gnutls_datum_t key, gnutls_datum_t data)
 {
 	time_t t, e, now = time(0);
 
@@ -1096,11 +1130,9 @@ static gnutls_datum_t wrap_db_fetch(void *dbf, gnutls_datum_t key)
 
 	for (i = 0; i < TLS_SESSION_CACHE; i++) {
 		if (key.size == cache_db[i].session_id_size &&
-		    memcmp(key.data, cache_db[i].session_id,
-			   key.size) == 0) {
+		    memcmp(key.data, cache_db[i].session_id, key.size) == 0) {
 			if (debug)
-				success
-				    ("resume db fetch... return info\n");
+				success("resume db fetch... return info\n");
 
 			res.size = cache_db[i].session_data_size;
 
@@ -1108,16 +1140,14 @@ static gnutls_datum_t wrap_db_fetch(void *dbf, gnutls_datum_t key)
 			if (res.data == NULL)
 				return res;
 
-			memcpy(res.data, cache_db[i].session_data,
-				res.size);
+			memcpy(res.data, cache_db[i].session_data, res.size);
 
 #ifdef DEBUG_CACHE
 			if (debug) {
 				unsigned int j;
 				printf("data:\n");
 				for (j = 0; j < res.size; j++) {
-					printf("%02x ",
-						res.data[j] & 0xFF);
+					printf("%02x ", res.data[j] & 0xFF);
 					if ((j + 1) % 16 == 0)
 						printf("\n");
 				}
@@ -1142,9 +1172,7 @@ static int wrap_db_delete(void *dbf, gnutls_datum_t key)
 
 	for (i = 0; i < TLS_SESSION_CACHE; i++) {
 		if (key.size == cache_db[i].session_id_size &&
-		    memcmp(key.data, cache_db[i].session_id,
-			   key.size) == 0) {
-
+		    memcmp(key.data, cache_db[i].session_id, key.size) == 0) {
 			cache_db[i].session_id_size = 0;
 			cache_db[i].session_data_size = 0;
 
@@ -1153,7 +1181,6 @@ static int wrap_db_delete(void *dbf, gnutls_datum_t key)
 	}
 
 	return -1;
-
 }
 
-#endif				/* _WIN32 */
+#endif /* _WIN32 */

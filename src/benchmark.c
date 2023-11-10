@@ -34,7 +34,7 @@ volatile int benchmark_must_finish = 0;
 #include <windows.h>
 static DWORD WINAPI alarm_handler(LPVOID lpParameter)
 {
-	HANDLE wtimer = *((HANDLE *) lpParameter);
+	HANDLE wtimer = *((HANDLE *)lpParameter);
 	WaitForSingleObject(wtimer, INFINITE);
 	benchmark_must_finish = 1;
 	return 0;
@@ -46,27 +46,26 @@ static void alarm_handler(int signo)
 }
 #endif
 
-static void
-value2human(uint64_t bytes, double time, double *data, double *speed,
-	    char *metric)
+static void value2human(uint64_t bytes, double time, double *data,
+			double *speed, char *metric)
 {
 	if (bytes > 1000 && bytes < 1000 * 1000) {
-		*data = ((double) bytes) / 1000;
+		*data = ((double)bytes) / 1000;
 		*speed = *data / time;
 		strcpy(metric, "KB");
 		return;
 	} else if (bytes >= 1000 * 1000 && bytes < 1000 * 1000 * 1000) {
-		*data = ((double) bytes) / (1000 * 1000);
+		*data = ((double)bytes) / (1000 * 1000);
 		*speed = *data / time;
 		strcpy(metric, "MB");
 		return;
 	} else if (bytes >= 1000 * 1000 * 1000) {
-		*data = ((double) bytes) / (1000 * 1000 * 1000);
+		*data = ((double)bytes) / (1000 * 1000 * 1000);
 		*speed = *data / time;
 		strcpy(metric, "GB");
 		return;
 	} else {
-		*data = (double) bytes;
+		*data = (double)bytes;
 		*speed = *data / time;
 		strcpy(metric, "bytes");
 		return;
@@ -90,28 +89,24 @@ void start_benchmark(struct benchmark_st *st)
 		exit(1);
 	}
 	st->wthread =
-	    CreateThread(NULL, 0, alarm_handler, &st->wtimer, 0, NULL);
+		CreateThread(NULL, 0, alarm_handler, &st->wtimer, 0, NULL);
 	if (st->wthread == NULL) {
-		fprintf(stderr, "error: CreateThread %u\n",
-			GetLastError());
+		fprintf(stderr, "error: CreateThread %u\n", GetLastError());
 		exit(1);
 	}
-	st->alarm_timeout.QuadPart = (BSECS) * 10000000;
-	if (SetWaitableTimer
-	    (st->wtimer, &st->alarm_timeout, 0, NULL, NULL, FALSE) == 0) {
-		fprintf(stderr, "error: SetWaitableTimer %u\n",
-			GetLastError());
+	st->alarm_timeout.QuadPart = (BSECS)*10000000;
+	if (SetWaitableTimer(st->wtimer, &st->alarm_timeout, 0, NULL, NULL,
+			     FALSE) == 0) {
+		fprintf(stderr, "error: SetWaitableTimer %u\n", GetLastError());
 		exit(1);
 	}
 #else
 	alarm(BSECS);
 #endif
-
 }
 
 /* returns the elapsed time */
-double stop_benchmark(struct benchmark_st *st, const char *metric,
-		      int quiet)
+double stop_benchmark(struct benchmark_st *st, const char *metric, int quiet)
 {
 	double secs;
 	unsigned long lsecs;
@@ -134,14 +129,14 @@ double stop_benchmark(struct benchmark_st *st, const char *metric,
 	secs = lsecs;
 	secs /= 1000;
 
-	if (metric == NULL) {	/* assume bytes/sec */
+	if (metric == NULL) { /* assume bytes/sec */
 		value2human(st->size, secs, &ddata, &dspeed, imetric);
 		if (quiet == 0)
 			printf("  Processed %.2f %s in %.2f secs: ", ddata,
 			       imetric, secs);
 		printf("%.2f %s/sec\n", dspeed, imetric);
 	} else {
-		ddata = (double) st->size;
+		ddata = (double)st->size;
 		dspeed = ddata / secs;
 		if (quiet == 0)
 			printf("  Processed %.2f %s in %.2f secs: ", ddata,

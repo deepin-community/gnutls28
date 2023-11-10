@@ -8,7 +8,7 @@
 @var{enabled}: whether to enable the protocol
 
 Control the previous system-wide setting that marked  @code{version} as
-enabled or disabled.  Calling this fuction is allowed
+enabled or disabled.  Calling this function is allowed
 only if allowlisting mode is set in the configuration file,
 and only if the system-wide TLS priority string
 has not been initialized yet.

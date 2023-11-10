@@ -17,8 +17,7 @@
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GnuTLS; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
+ * along with GnuTLS.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 /* Parts copied from GnuTLS example programs. */
@@ -67,7 +66,6 @@ static void tls_log_func(int level, const char *str)
 #define MAX_BUF 1024
 #define MSG "Hello TLS"
 
-
 static void client(int sd, const char *prio)
 {
 	int ret, ii;
@@ -95,7 +93,7 @@ static void client(int sd, const char *prio)
 	 */
 	gnutls_init(&session, GNUTLS_CLIENT);
 
-	assert(gnutls_priority_set_direct(session, prio, NULL)>=0);
+	assert(gnutls_priority_set_direct(session, prio, NULL) >= 0);
 
 	/* put the x509 credentials to the current session
 	 */
@@ -117,16 +115,18 @@ static void client(int sd, const char *prio)
 
 	if (debug)
 		success("client: TLS version is: %s\n",
-			gnutls_protocol_get_name
-			(gnutls_protocol_get_version(session)));
+			gnutls_protocol_get_name(
+				gnutls_protocol_get_version(session)));
 
 	/* see the Getting peer's information example */
 	if (debug)
 		print_info(session);
 
-	ret = gnutls_credentials_get(session, GNUTLS_CRD_CERTIFICATE, (void**)&tst_cred);
+	ret = gnutls_credentials_get(session, GNUTLS_CRD_CERTIFICATE,
+				     (void **)&tst_cred);
 	if (ret < 0) {
-		fail("client: gnutls_credentials_get failed: %s\n", gnutls_strerror(ret));
+		fail("client: gnutls_credentials_get failed: %s\n",
+		     gnutls_strerror(ret));
 	}
 	if (tst_cred != xcred) {
 		fail("client: gnutls_credentials_get returned invalid value\n");
@@ -145,7 +145,7 @@ static void client(int sd, const char *prio)
 
 	do {
 		ret = gnutls_record_recv(session, buffer, MAX_BUF);
-	} while(ret == GNUTLS_E_AGAIN || ret == GNUTLS_E_INTERRUPTED);
+	} while (ret == GNUTLS_E_AGAIN || ret == GNUTLS_E_INTERRUPTED);
 
 	if (debug)
 		success("client: recv returned %d.\n", ret);
@@ -156,8 +156,7 @@ static void client(int sd, const char *prio)
 		ret = gnutls_handshake(session);
 		if (ret == 0) {
 			if (debug)
-				success
-				    ("client: handshake complete, reading again.\n");
+				success("client: handshake complete, reading again.\n");
 			ret = gnutls_record_recv(session, buffer, MAX_BUF);
 		} else {
 			fail("client: handshake failed.\n");
@@ -166,8 +165,7 @@ static void client(int sd, const char *prio)
 
 	if (ret == 0) {
 		if (debug)
-			success
-			    ("client: Peer has closed the TLS connection\n");
+			success("client: Peer has closed the TLS connection\n");
 		goto end;
 	} else if (ret < 0) {
 		fail("client: Error: %s\n", gnutls_strerror(ret));
@@ -184,7 +182,7 @@ static void client(int sd, const char *prio)
 
 	gnutls_bye(session, GNUTLS_SHUT_RDWR);
 
-      end:
+end:
 
 	close(sd);
 
@@ -200,7 +198,6 @@ static void client(int sd, const char *prio)
 
 #define MAX_BUF 1024
 #define DH_BITS 1024
-
 
 static void server(int sd, const char *prio)
 {
@@ -229,7 +226,7 @@ static void server(int sd, const char *prio)
 
 	gnutls_init(&session, GNUTLS_SERVER);
 
-	assert(gnutls_priority_set_direct(session, prio, NULL)>=0);
+	assert(gnutls_priority_set_direct(session, prio, NULL) >= 0);
 
 	gnutls_credentials_set(session, GNUTLS_CRD_CERTIFICATE, x509_cred);
 
@@ -239,7 +236,6 @@ static void server(int sd, const char *prio)
 	 */
 
 	gnutls_dh_set_prime_bits(session, DH_BITS);
-
 
 	gnutls_transport_set_int(session, sd);
 	ret = gnutls_handshake(session);
@@ -253,8 +249,8 @@ static void server(int sd, const char *prio)
 	if (debug) {
 		success("server: Handshake was completed\n");
 		success("server: TLS version is: %s\n",
-			gnutls_protocol_get_name
-			(gnutls_protocol_get_version(session)));
+			gnutls_protocol_get_name(
+				gnutls_protocol_get_version(session)));
 	}
 
 	/* see the Getting peer's information example */
@@ -265,23 +261,22 @@ static void server(int sd, const char *prio)
 		memset(buffer, 0, MAX_BUF + 1);
 		do {
 			ret = gnutls_record_recv(session, buffer, MAX_BUF);
-		} while(ret == GNUTLS_E_AGAIN || ret == GNUTLS_E_INTERRUPTED);
+		} while (ret == GNUTLS_E_AGAIN || ret == GNUTLS_E_INTERRUPTED);
 
 		if (ret == 0) {
 			if (debug)
-				success
-				    ("server: Peer has closed the GnuTLS connection\n");
+				success("server: Peer has closed the GnuTLS connection\n");
 			break;
 		} else if (ret < 0) {
-			fail("server: Received corrupted data(%s). Closing...\n", gnutls_strerror(ret));
+			fail("server: Received corrupted data(%s). Closing...\n",
+			     gnutls_strerror(ret));
 			break;
 		} else if (ret > 0) {
-			gnutls_certificate_server_set_request(session,
-							      GNUTLS_CERT_REQUEST);
+			gnutls_certificate_server_set_request(
+				session, GNUTLS_CERT_REQUEST);
 
 			if (debug)
-				success
-				    ("server: got data, forcing rehandshake.\n");
+				success("server: got data, forcing rehandshake.\n");
 
 			ret = gnutls_rehandshake(session);
 			if (ret < 0) {
@@ -302,8 +297,7 @@ static void server(int sd, const char *prio)
 
 			/* echo data back to the client
 			 */
-			gnutls_record_send(session, buffer,
-					   strlen(buffer));
+			gnutls_record_send(session, buffer, strlen(buffer));
 		}
 	}
 	/* do not wait for the peer to close the connection.
@@ -321,9 +315,7 @@ static void server(int sd, const char *prio)
 		success("server: finished\n");
 }
 
-
-static
-void start(const char *prio)
+static void start(const char *prio)
 {
 	int sockets[2];
 	int err;
@@ -367,4 +359,4 @@ void doit(void)
 	start("NORMAL");
 }
 
-#endif				/* _WIN32 */
+#endif /* _WIN32 */

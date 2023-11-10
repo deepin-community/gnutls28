@@ -16,8 +16,7 @@
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GnuTLS; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
+ * along with GnuTLS.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 #ifdef HAVE_CONFIG_H
@@ -70,8 +69,7 @@ static unsigned char encryption_cert_pem[] =
 	"-----END CERTIFICATE-----\n";
 
 const gnutls_datum_t enc_cert = { encryption_cert_pem,
-	sizeof(encryption_cert_pem)-1
-};
+				  sizeof(encryption_cert_pem) - 1 };
 
 static unsigned char encryption_key_pem[] =
 	"-----BEGIN RSA PRIVATE KEY-----\n"
@@ -102,11 +100,9 @@ static unsigned char encryption_key_pem[] =
 	"gZ9oloj50/wHdTSU/MExRExhC7DUom2DzihUz3a5uqWOK/SnpfNeIJPs\n"
 	"-----END RSA PRIVATE KEY-----\n";
 const gnutls_datum_t enc_key = { encryption_key_pem,
-	sizeof(encryption_key_pem)-1
-};
+				 sizeof(encryption_key_pem) - 1 };
 
-static
-void server_check(void)
+static void server_check(void)
 {
 	int ret;
 	/* Server stuff. */
@@ -126,16 +122,14 @@ void server_check(void)
 
 	/* Init server */
 	gnutls_certificate_allocate_credentials(&serverx509cred);
-	gnutls_certificate_set_x509_key_mem(serverx509cred,
-					    &enc_cert, &enc_key,
+	gnutls_certificate_set_x509_key_mem(serverx509cred, &enc_cert, &enc_key,
 					    GNUTLS_X509_FMT_PEM);
 
 	gnutls_init(&server, GNUTLS_SERVER);
-	gnutls_credentials_set(server, GNUTLS_CRD_CERTIFICATE,
-				serverx509cred);
-	gnutls_priority_set_direct(server,
-				   "NORMAL:-KX-ALL:+ECDHE-RSA:-VERS-ALL:+VERS-TLS1.2",
-				   NULL);
+	gnutls_credentials_set(server, GNUTLS_CRD_CERTIFICATE, serverx509cred);
+	gnutls_priority_set_direct(
+		server, "NORMAL:-KX-ALL:+ECDHE-RSA:-VERS-ALL:+VERS-TLS1.2",
+		NULL);
 	gnutls_transport_set_push_function(server, server_push);
 	gnutls_transport_set_pull_function(server, server_pull);
 	gnutls_transport_set_ptr(server, server);
@@ -145,7 +139,8 @@ void server_check(void)
 	if (ret < 0)
 		exit(1);
 
-	ret = gnutls_certificate_set_x509_trust_mem(clientx509cred, &ca_cert, GNUTLS_X509_FMT_PEM);
+	ret = gnutls_certificate_set_x509_trust_mem(clientx509cred, &ca_cert,
+						    GNUTLS_X509_FMT_PEM);
 	if (ret < 0)
 		exit(1);
 
@@ -154,16 +149,18 @@ void server_check(void)
 		exit(1);
 
 	ret = gnutls_credentials_set(client, GNUTLS_CRD_CERTIFICATE,
-				clientx509cred);
+				     clientx509cred);
 	if (ret < 0)
 		exit(1);
 
-	gnutls_priority_set_direct(client, "NORMAL:+ECDHE-RSA:-VERS-ALL:+VERS-TLS1.2", NULL);
+	gnutls_priority_set_direct(
+		client, "NORMAL:+ECDHE-RSA:-VERS-ALL:+VERS-TLS1.2", NULL);
 	gnutls_transport_set_push_function(client, client_push);
 	gnutls_transport_set_pull_function(client, client_pull);
 	gnutls_transport_set_ptr(client, client);
 
-	HANDSHAKE_EXPECT(client, server, GNUTLS_E_AGAIN, GNUTLS_E_NO_CIPHER_SUITES);
+	HANDSHAKE_EXPECT(client, server, GNUTLS_E_AGAIN,
+			 GNUTLS_E_NO_CIPHER_SUITES);
 
 	if (debug)
 		success("server returned the expected code\n");
@@ -180,12 +177,11 @@ void server_check(void)
 static gnutls_privkey_t g_pkey = NULL;
 static gnutls_pcert_st *g_pcert = NULL;
 
-static int
-cert_callback(gnutls_session_t session,
-	      const gnutls_datum_t * req_ca_rdn, int nreqs,
-	      const gnutls_pk_algorithm_t * sign_algos,
-	      int sign_algos_length, gnutls_pcert_st ** pcert,
-	      unsigned int *pcert_length, gnutls_privkey_t * pkey)
+static int cert_callback(gnutls_session_t session,
+			 const gnutls_datum_t *req_ca_rdn, int nreqs,
+			 const gnutls_pk_algorithm_t *sign_algos,
+			 int sign_algos_length, gnutls_pcert_st **pcert,
+			 unsigned int *pcert_length, gnutls_privkey_t *pkey)
 {
 	int ret;
 	gnutls_pcert_st *p;
@@ -193,10 +189,11 @@ cert_callback(gnutls_session_t session,
 
 	if (g_pkey == NULL) {
 		p = gnutls_malloc(sizeof(*p));
-		if (p==NULL)
+		if (p == NULL)
 			return -1;
 
-		ret = gnutls_pcert_import_x509_raw(p, &enc_cert, GNUTLS_X509_FMT_PEM, 0);
+		ret = gnutls_pcert_import_x509_raw(p, &enc_cert,
+						   GNUTLS_X509_FMT_PEM, 0);
 		if (ret < 0)
 			return -1;
 
@@ -204,7 +201,8 @@ cert_callback(gnutls_session_t session,
 		if (ret < 0)
 			return -1;
 
-		ret = gnutls_privkey_import_x509_raw(lkey, &enc_key, GNUTLS_X509_FMT_PEM, NULL, 0);
+		ret = gnutls_privkey_import_x509_raw(
+			lkey, &enc_key, GNUTLS_X509_FMT_PEM, NULL, 0);
 		if (ret < 0)
 			return -1;
 
@@ -222,8 +220,7 @@ cert_callback(gnutls_session_t session,
 	return 0;
 }
 
-static
-void client_check(void)
+static void client_check(void)
 {
 	int ret;
 	/* Server stuff. */
@@ -243,14 +240,15 @@ void client_check(void)
 
 	/* Init server */
 	gnutls_certificate_allocate_credentials(&serverx509cred);
-	gnutls_certificate_set_retrieve_function2(serverx509cred, cert_callback);
+	gnutls_certificate_set_retrieve_function2(serverx509cred,
+						  cert_callback);
 
 	gnutls_init(&server, GNUTLS_SERVER);
-	gnutls_credentials_set(server, GNUTLS_CRD_CERTIFICATE,
-				serverx509cred);
-	gnutls_priority_set_direct(server,
-				   "NORMAL:-KX-ALL:+ECDHE-RSA:%DEBUG_ALLOW_KEY_USAGE_VIOLATIONS:-VERS-ALL:+VERS-TLS1.2",
-				   NULL);
+	gnutls_credentials_set(server, GNUTLS_CRD_CERTIFICATE, serverx509cred);
+	gnutls_priority_set_direct(
+		server,
+		"NORMAL:-KX-ALL:+ECDHE-RSA:%DEBUG_ALLOW_KEY_USAGE_VIOLATIONS:-VERS-ALL:+VERS-TLS1.2",
+		NULL);
 	gnutls_transport_set_push_function(server, server_push);
 	gnutls_transport_set_pull_function(server, server_pull);
 	gnutls_transport_set_ptr(server, server);
@@ -260,7 +258,8 @@ void client_check(void)
 	if (ret < 0)
 		exit(1);
 
-	ret = gnutls_certificate_set_x509_trust_mem(clientx509cred, &ca_cert, GNUTLS_X509_FMT_PEM);
+	ret = gnutls_certificate_set_x509_trust_mem(clientx509cred, &ca_cert,
+						    GNUTLS_X509_FMT_PEM);
 	if (ret < 0)
 		exit(1);
 
@@ -269,19 +268,22 @@ void client_check(void)
 		exit(1);
 
 	ret = gnutls_credentials_set(client, GNUTLS_CRD_CERTIFICATE,
-				clientx509cred);
+				     clientx509cred);
 	if (ret < 0)
 		exit(1);
 
-	gnutls_priority_set_direct(client, "NORMAL:+ECDHE-RSA:-VERS-ALL:+VERS-TLS1.2", NULL);
+	gnutls_priority_set_direct(
+		client, "NORMAL:+ECDHE-RSA:-VERS-ALL:+VERS-TLS1.2", NULL);
 	gnutls_transport_set_push_function(client, client_push);
 	gnutls_transport_set_pull_function(client, client_pull);
 	gnutls_transport_set_ptr(client, client);
 
-	HANDSHAKE_EXPECT(client, server, GNUTLS_E_KEY_USAGE_VIOLATION, GNUTLS_E_AGAIN);
+	HANDSHAKE_EXPECT(client, server, GNUTLS_E_KEY_USAGE_VIOLATION,
+			 GNUTLS_E_AGAIN);
 
 	if (debug)
-		success("client returned the expected code: %s\n", gnutls_strerror(cret));
+		success("client returned the expected code: %s\n",
+			gnutls_strerror(cret));
 
 	gnutls_deinit(client);
 	gnutls_deinit(server);

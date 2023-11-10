@@ -29,7 +29,7 @@
 
 #if defined(_WIN32)
 
-int main()
+int main(void)
 {
 	exit(77);
 }
@@ -59,7 +59,7 @@ int main()
  * result in a ticket being sent.
  */
 
-static time_t mytime(time_t * t)
+static time_t mytime(time_t *t)
 {
 	time_t then = 1464610242;
 	if (t)
@@ -81,7 +81,8 @@ static void client_log_func(int level, const char *str)
 static int sent = 0;
 
 static int handshake_callback(gnutls_session_t session, unsigned int htype,
-	unsigned post, unsigned int incoming, const gnutls_datum_t *msg)
+			      unsigned post, unsigned int incoming,
+			      const gnutls_datum_t *msg)
 {
 	if (htype != GNUTLS_HANDSHAKE_NEW_SESSION_TICKET)
 		return 0;
@@ -115,7 +116,7 @@ static void client(int fd, const char *prio, unsigned int flags)
 	 */
 	gnutls_init(&session, flags);
 
-	assert(gnutls_priority_set_direct(session, prio, NULL)>=0);
+	assert(gnutls_priority_set_direct(session, prio, NULL) >= 0);
 
 	/* put the anonymous credentials to the current session
 	 */
@@ -127,8 +128,7 @@ static void client(int fd, const char *prio, unsigned int flags)
 	 */
 	do {
 		ret = gnutls_handshake(session);
-	}
-	while (ret < 0 && gnutls_error_is_fatal(ret) == 0);
+	} while (ret < 0 && gnutls_error_is_fatal(ret) == 0);
 
 	if (ret == GNUTLS_E_UNSUPPORTED_SIGNATURE_ALGORITHM) {
 		/* success */
@@ -145,12 +145,12 @@ static void client(int fd, const char *prio, unsigned int flags)
 
 	if (debug)
 		success("client: TLS version is: %s\n",
-			gnutls_protocol_get_name
-			(gnutls_protocol_get_version(session)));
+			gnutls_protocol_get_name(
+				gnutls_protocol_get_version(session)));
 
 	gnutls_bye(session, GNUTLS_SHUT_WR);
 
-      end:
+end:
 
 	close(fd);
 
@@ -161,7 +161,6 @@ static void client(int fd, const char *prio, unsigned int flags)
 	gnutls_global_deinit();
 }
 
-
 /* These are global */
 pid_t child;
 
@@ -171,7 +170,7 @@ static void server(int fd, const char *prio, unsigned int flags)
 	char buffer[MAX_BUF + 1];
 	gnutls_session_t session;
 	gnutls_certificate_credentials_t x509_cred;
-	gnutls_datum_t skey = {NULL, 0};
+	gnutls_datum_t skey = { NULL, 0 };
 
 	flags |= GNUTLS_SERVER;
 
@@ -185,26 +184,28 @@ static void server(int fd, const char *prio, unsigned int flags)
 		gnutls_global_set_log_level(4711);
 	}
 
-	assert(gnutls_certificate_allocate_credentials(&x509_cred)>=0);
+	assert(gnutls_certificate_allocate_credentials(&x509_cred) >= 0);
 	assert(gnutls_certificate_set_x509_key_mem(x509_cred, &server_cert,
-					    &server_key,
-					    GNUTLS_X509_FMT_PEM)>=0);
+						   &server_key,
+						   GNUTLS_X509_FMT_PEM) >= 0);
 
-	assert(gnutls_init(&session, flags)>=0);
+	assert(gnutls_init(&session, flags) >= 0);
 
 	if (!(flags & GNUTLS_NO_TICKETS)) {
-		assert(gnutls_session_ticket_key_generate(&skey)>=0);
-		assert(gnutls_session_ticket_enable_server(session, &skey) >= 0);
+		assert(gnutls_session_ticket_key_generate(&skey) >= 0);
+		assert(gnutls_session_ticket_enable_server(session, &skey) >=
+		       0);
 	}
 
-	gnutls_handshake_set_hook_function(session, GNUTLS_HANDSHAKE_NEW_SESSION_TICKET,
+	gnutls_handshake_set_hook_function(session,
+					   GNUTLS_HANDSHAKE_NEW_SESSION_TICKET,
 					   GNUTLS_HOOK_POST,
 					   handshake_callback);
 
 	/* avoid calling all the priority functions, since the defaults
 	 * are adequate.
 	 */
-	assert(gnutls_priority_set_direct(session, prio, NULL)>=0);
+	assert(gnutls_priority_set_direct(session, prio, NULL) >= 0);
 
 	gnutls_credentials_set(session, GNUTLS_CRD_CERTIFICATE, x509_cred);
 
@@ -224,19 +225,19 @@ static void server(int fd, const char *prio, unsigned int flags)
 
 	if (debug)
 		success("server: TLS version is: %s\n",
-			gnutls_protocol_get_name
-			(gnutls_protocol_get_version(session)));
+			gnutls_protocol_get_name(
+				gnutls_protocol_get_version(session)));
 
 	if (sent != 0) {
 		fail("new session ticket was sent\n");
 		exit(1);
-	}		
+	}
 
 	/* do not wait for the peer to close the connection.
 	 */
 	gnutls_bye(session, GNUTLS_SHUT_WR);
 
- end:
+end:
 	close(fd);
 	gnutls_deinit(session);
 	gnutls_free(skey.data);
@@ -254,8 +255,8 @@ static void ch_handler(int sig)
 	return;
 }
 
-static
-void start2(const char *prio, const char *sprio, unsigned int flags, unsigned int sflags)
+static void start2(const char *prio, const char *sprio, unsigned int flags,
+		   unsigned int sflags)
 {
 	int fd[2];
 	int ret, status = 0;
@@ -294,8 +295,7 @@ void start2(const char *prio, const char *sprio, unsigned int flags, unsigned in
 	return;
 }
 
-static
-void start(const char *prio, unsigned int flags)
+static void start(const char *prio, unsigned int flags)
 {
 	start2(prio, prio, GNUTLS_NO_TICKETS, flags);
 }
@@ -307,8 +307,9 @@ void doit(void)
 	 * always sent unless server sets GNUTLS_NO_TICKETS... */
 	start("NORMAL:-VERS-ALL:+VERS-TLS1.3", GNUTLS_NO_TICKETS);
 	/* ...or there is no overlap between PSK key exchange modes */
-	start2("NORMAL:-VERS-ALL:+VERS-TLS1.3:+PSK:-DHE-PSK", "NORMAL:-VERS-ALL:+VERS-TLS1.3", 0, 0);
+	start2("NORMAL:-VERS-ALL:+VERS-TLS1.3:+PSK:-DHE-PSK",
+	       "NORMAL:-VERS-ALL:+VERS-TLS1.3", 0, 0);
 	start("NORMAL", GNUTLS_NO_TICKETS);
 }
 
-#endif				/* _WIN32 */
+#endif /* _WIN32 */

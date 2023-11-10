@@ -16,8 +16,7 @@
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GnuTLS; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
+ * along with GnuTLS.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 #ifdef HAVE_CONFIG_H
@@ -29,7 +28,7 @@
 
 #if defined(_WIN32)
 
-int main()
+int main(void)
 {
 	exit(77);
 }
@@ -52,10 +51,10 @@ int main()
 #include "utils.h"
 
 #define TXT1 "hello there"
-#define TXT1_SIZE (sizeof(TXT1)-1)
+#define TXT1_SIZE (sizeof(TXT1) - 1)
 
 #define TXT2 "2hello there"
-#define TXT2_SIZE (sizeof(TXT2)-1)
+#define TXT2_SIZE (sizeof(TXT2) - 1)
 
 static void terminate(void);
 
@@ -71,10 +70,9 @@ static void client_log_func(int level, const char *str)
 
 #define MAX_BUF 1024
 
-static ssize_t
-push(gnutls_transport_ptr_t tr, const void *data, size_t len)
+static ssize_t push(gnutls_transport_ptr_t tr, const void *data, size_t len)
 {
-	int fd = (long int) tr;
+	int fd = (long int)tr;
 	static int counter = 0;
 
 	if (counter % 2 == 0) {
@@ -120,8 +118,7 @@ static void client(int fd, const char *prio)
 	 */
 	do {
 		ret = gnutls_handshake(session);
-	}
-	while (ret < 0 && gnutls_error_is_fatal(ret) == 0);
+	} while (ret < 0 && gnutls_error_is_fatal(ret) == 0);
 
 	if (ret < 0) {
 		fail("client: Handshake failed\n");
@@ -134,17 +131,18 @@ static void client(int fd, const char *prio)
 
 	if (debug)
 		success("client: TLS version is: %s\n",
-			gnutls_protocol_get_name
-			(gnutls_protocol_get_version(session)));
+			gnutls_protocol_get_name(
+				gnutls_protocol_get_version(session)));
 
 	gnutls_transport_set_push_function(session, push);
 	do {
 		ret = gnutls_record_send(session, TXT1, TXT1_SIZE);
 		if (ret == GNUTLS_E_AGAIN) {
-			if (debug) success("discarding\n");
+			if (debug)
+				success("discarding\n");
 			gnutls_record_discard_queued(session);
 		}
-			
+
 	} while (ret == GNUTLS_E_INTERRUPTED);
 
 	do {
@@ -161,7 +159,6 @@ static void client(int fd, const char *prio)
 
 	gnutls_global_deinit();
 }
-
 
 /* These are global */
 pid_t child;
@@ -208,8 +205,7 @@ static void server(int fd, const char *prio)
 
 	do {
 		ret = gnutls_handshake(session);
-	}
-	while (ret < 0 && gnutls_error_is_fatal(ret) == 0);
+	} while (ret < 0 && gnutls_error_is_fatal(ret) == 0);
 	if (ret < 0) {
 		close(fd);
 		gnutls_deinit(session);
@@ -222,8 +218,8 @@ static void server(int fd, const char *prio)
 
 	if (debug)
 		success("server: TLS version is: %s\n",
-			gnutls_protocol_get_name
-			(gnutls_protocol_get_version(session)));
+			gnutls_protocol_get_name(
+				gnutls_protocol_get_version(session)));
 
 	/* see the Getting peer's information example */
 	/* print_info(session); */
@@ -245,7 +241,6 @@ static void server(int fd, const char *prio)
 		terminate();
 	}
 
-
 	/* do not wait for the peer to close the connection.
 	 */
 	gnutls_bye(session, GNUTLS_SHUT_WR);
@@ -261,8 +256,7 @@ static void server(int fd, const char *prio)
 		success("server: finished\n");
 }
 
-static
-void start(const char *prio)
+static void start(const char *prio)
 {
 	int fd[2];
 	int ret;
@@ -302,4 +296,4 @@ void doit(void)
 	start("NONE:+VERS-DTLS1.2:+CIPHER-ALL:+MAC-ALL:+SIGN-ALL:+COMP-ALL:+ANON-ECDH:+CURVE-ALL");
 }
 
-#endif				/* _WIN32 */
+#endif /* _WIN32 */

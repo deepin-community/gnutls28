@@ -34,7 +34,7 @@
 #include <gnutls/gnutls.h>
 #include <gnutls/pkcs11.h>
 #ifndef CRYPTOKI_GNU
-# define CRYPTOKI_GNU
+#define CRYPTOKI_GNU
 #endif
 #include <p11-kit/pkcs11.h>
 
@@ -45,12 +45,11 @@
 #if defined(HAVE___REGISTER_ATFORK)
 
 #ifdef _WIN32
-# define P11LIB "libpkcs11mock1.dll"
+#define P11LIB "libpkcs11mock1.dll"
 #else
-# include <dlfcn.h>
-# define P11LIB "libpkcs11mock1.so"
+#include <dlfcn.h>
+#define P11LIB "libpkcs11mock1.so"
 #endif
-
 
 static void tls_log_func(int level, const char *str)
 {
@@ -95,34 +94,31 @@ void doit(void)
 	}
 
 	{
-		static const char url[] = "pkcs11:token="TOKEN_NAME;
+		static const char url[] = "pkcs11:token=" TOKEN_NAME;
 
 		/* Testing a too small buffer */
 		size_t size = 1;
 		char *buf = gnutls_malloc(size);
 		assert(buf != NULL);
-		ret = gnutls_pkcs11_token_get_info(url,
-			GNUTLS_PKCS11_TOKEN_LABEL,
-			buf, &size);
+		ret = gnutls_pkcs11_token_get_info(
+			url, GNUTLS_PKCS11_TOKEN_LABEL, buf, &size);
 		assert(ret == GNUTLS_E_SHORT_MEMORY_BUFFER);
-		assert(size == strlen(TOKEN_NAME)+1);
+		assert(size == strlen(TOKEN_NAME) + 1);
 
 		/* Testing a too small buffer by one */
 		size -= 1;
 		buf = gnutls_realloc(buf, size);
 		assert(buf != NULL);
-		ret = gnutls_pkcs11_token_get_info(url,
-			GNUTLS_PKCS11_TOKEN_LABEL,
-			buf, &size);
+		ret = gnutls_pkcs11_token_get_info(
+			url, GNUTLS_PKCS11_TOKEN_LABEL, buf, &size);
 		assert(ret == GNUTLS_E_SHORT_MEMORY_BUFFER);
-		assert(size == strlen(TOKEN_NAME)+1);
+		assert(size == strlen(TOKEN_NAME) + 1);
 
 		/* Testing an exactly fitting buffer */
 		buf = gnutls_realloc(buf, size);
 		assert(buf != NULL);
-		ret = gnutls_pkcs11_token_get_info(url,
-			GNUTLS_PKCS11_TOKEN_LABEL,
-			buf, &size);
+		ret = gnutls_pkcs11_token_get_info(
+			url, GNUTLS_PKCS11_TOKEN_LABEL, buf, &size);
 		assert(ret == 0);
 		assert(strcmp(buf, TOKEN_NAME) == 0);
 		assert(size == strlen(TOKEN_NAME));
@@ -130,10 +126,12 @@ void doit(void)
 		gnutls_free(buf);
 	}
 
-	ret = gnutls_pkcs11_token_get_ptr("pkcs11:token=invalid", (void**)&mod, &slot_id, 0);
+	ret = gnutls_pkcs11_token_get_ptr("pkcs11:token=invalid", (void **)&mod,
+					  &slot_id, 0);
 	assert(ret == GNUTLS_E_REQUESTED_DATA_NOT_AVAILABLE);
 
-	ret = gnutls_pkcs11_token_get_ptr("pkcs11:", (void**)&mod, &slot_id, 0);
+	ret = gnutls_pkcs11_token_get_ptr("pkcs11:", (void **)&mod, &slot_id,
+					  0);
 	if (ret < 0) {
 		fail("%d: %s\n", ret, gnutls_strerror(ret));
 		exit(1);

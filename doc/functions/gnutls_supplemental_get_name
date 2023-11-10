@@ -2,7 +2,7 @@
 
 
 
-@deftypefun {const char     *} {gnutls_supplemental_get_name} (gnutls_supplemental_data_format_type_t       @var{type})
+@deftypefun {const char *} {gnutls_supplemental_get_name} (gnutls_supplemental_data_format_type_t @var{type})
 @var{type}: is a supplemental data format type
 
 Convert a @code{gnutls_supplemental_data_format_type_t}  value to a

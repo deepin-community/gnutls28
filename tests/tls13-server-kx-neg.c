@@ -44,8 +44,8 @@ test_case_st tests[] = {
 		.name = "TLS 1.3 DHE-PSK without cred",
 		.client_ret = GNUTLS_E_AGAIN,
 		.server_ret = GNUTLS_E_INSUFFICIENT_CREDENTIALS,
-		.server_prio = "NORMAL:-KX-ALL:+DHE-PSK:"PVERSION,
-		.client_prio = "NORMAL:-KX-ALL:+DHE-PSK:"PVERSION,
+		.server_prio = "NORMAL:-KX-ALL:+DHE-PSK:" PVERSION,
+		.client_prio = "NORMAL:-KX-ALL:+DHE-PSK:" PVERSION,
 		.exp_version = GNUTLS_TLS1_3,
 	},
 	{
@@ -53,8 +53,8 @@ test_case_st tests[] = {
 		.client_ret = 0,
 		.server_ret = 0,
 		.have_psk_cred = 1,
-		.server_prio = "NORMAL:-KX-ALL:+DHE-PSK:"PVERSION,
-		.client_prio = "NORMAL:-KX-ALL:+DHE-PSK:"PVERSION,
+		.server_prio = "NORMAL:-KX-ALL:+DHE-PSK:" PVERSION,
+		.client_prio = "NORMAL:-KX-ALL:+DHE-PSK:" PVERSION,
 		.exp_version = GNUTLS_TLS1_3,
 	},
 	{
@@ -63,8 +63,8 @@ test_case_st tests[] = {
 		.server_ret = 0,
 		.have_psk_cred = 1,
 		.have_psk_dh_params = 1,
-		.server_prio = "NORMAL:-KX-ALL:+DHE-PSK:"PVERSION,
-		.client_prio = "NORMAL:-KX-ALL:+DHE-PSK:"PVERSION,
+		.server_prio = "NORMAL:-KX-ALL:+DHE-PSK:" PVERSION,
+		.client_prio = "NORMAL:-KX-ALL:+DHE-PSK:" PVERSION,
 		.exp_version = GNUTLS_TLS1_3,
 	},
 	{
@@ -73,8 +73,8 @@ test_case_st tests[] = {
 		.server_ret = 0,
 		.have_psk_cred = 1,
 		.have_psk_exp_dh_params = 1,
-		.server_prio = "NORMAL:-KX-ALL:+DHE-PSK:"PVERSION,
-		.client_prio = "NORMAL:-KX-ALL:+DHE-PSK:"PVERSION,
+		.server_prio = "NORMAL:-KX-ALL:+DHE-PSK:" PVERSION,
+		.client_prio = "NORMAL:-KX-ALL:+DHE-PSK:" PVERSION,
 		.exp_version = GNUTLS_TLS1_3,
 	},
 	{
@@ -82,8 +82,10 @@ test_case_st tests[] = {
 		.client_ret = GNUTLS_E_AGAIN,
 		.server_ret = GNUTLS_E_NO_COMMON_KEY_SHARE,
 		.have_psk_cred = 1,
-		.server_prio = "NORMAL:-KX-ALL:+ECDHE-PSK:-CURVE-ALL:+CURVE-SECP256R1:"PVERSION,
-		.client_prio = "NORMAL:-KX-ALL:+ECDHE-PSK:-CURVE-ALL:+CURVE-SECP384R1:"PVERSION,
+		.server_prio =
+			"NORMAL:-KX-ALL:+ECDHE-PSK:-CURVE-ALL:+CURVE-SECP256R1:" PVERSION,
+		.client_prio =
+			"NORMAL:-KX-ALL:+ECDHE-PSK:-CURVE-ALL:+CURVE-SECP384R1:" PVERSION,
 		.exp_version = GNUTLS_TLS1_3,
 	},
 	{
@@ -91,8 +93,8 @@ test_case_st tests[] = {
 		.client_ret = 0,
 		.server_ret = 0,
 		.have_psk_cred = 1,
-		.server_prio = "NORMAL:-KX-ALL:+ECDHE-PSK:"PVERSION,
-		.client_prio = "NORMAL:-KX-ALL:+ECDHE-PSK:"PVERSION,
+		.server_prio = "NORMAL:-KX-ALL:+ECDHE-PSK:" PVERSION,
+		.client_prio = "NORMAL:-KX-ALL:+ECDHE-PSK:" PVERSION,
 		.exp_version = GNUTLS_TLS1_3,
 	},
 	{
@@ -100,8 +102,8 @@ test_case_st tests[] = {
 		.client_ret = GNUTLS_E_AGAIN,
 		.server_ret = GNUTLS_E_INSUFFICIENT_CREDENTIALS,
 		.have_psk_cred = 1,
-		.server_prio = "NORMAL:-KX-ALL:+RSA-PSK:"PVERSION,
-		.client_prio = "NORMAL:-KX-ALL:+RSA-PSK:"PVERSION,
+		.server_prio = "NORMAL:-KX-ALL:+RSA-PSK:" PVERSION,
+		.client_prio = "NORMAL:-KX-ALL:+RSA-PSK:" PVERSION,
 		.exp_version = GNUTLS_TLS1_2,
 	},
 	{
@@ -110,8 +112,8 @@ test_case_st tests[] = {
 		.server_ret = GNUTLS_E_NO_CIPHER_SUITES,
 		.have_psk_cred = 0,
 		.have_cert_cred = 1,
-		.server_prio = "NORMAL:-KX-ALL:+RSA-PSK:"PVERSION,
-		.client_prio = "NORMAL:-KX-ALL:+RSA-PSK:"PVERSION,
+		.server_prio = "NORMAL:-KX-ALL:+RSA-PSK:" PVERSION,
+		.client_prio = "NORMAL:-KX-ALL:+RSA-PSK:" PVERSION,
 		.exp_version = GNUTLS_TLS1_2,
 	},
 	{
@@ -122,8 +124,8 @@ test_case_st tests[] = {
 		.have_cert_cred = 1,
 		.have_rsa_sign_cert = 1,
 		.have_ecc_sign_cert = 1,
-		.server_prio = "NORMAL:-KX-ALL:+RSA-PSK:"PVERSION,
-		.client_prio = "NORMAL:-KX-ALL:+RSA-PSK:"PVERSION,
+		.server_prio = "NORMAL:-KX-ALL:+RSA-PSK:" PVERSION,
+		.client_prio = "NORMAL:-KX-ALL:+RSA-PSK:" PVERSION,
 		.exp_version = GNUTLS_TLS1_2,
 	},
 	{
@@ -133,8 +135,8 @@ test_case_st tests[] = {
 		.have_psk_cred = 1,
 		.have_cert_cred = 1,
 		.have_rsa_decrypt_cert = 1,
-		.server_prio = "NORMAL:-KX-ALL:+RSA-PSK:"PVERSION,
-		.client_prio = "NORMAL:-KX-ALL:+RSA-PSK:"PVERSION,
+		.server_prio = "NORMAL:-KX-ALL:+RSA-PSK:" PVERSION,
+		.client_prio = "NORMAL:-KX-ALL:+RSA-PSK:" PVERSION,
 		.exp_version = GNUTLS_TLS1_2,
 	},
 	{
@@ -146,17 +148,18 @@ test_case_st tests[] = {
 		.have_rsa_sign_cert = 1,
 		.have_ecc_sign_cert = 1,
 		.have_rsa_decrypt_cert = 1,
-		.server_prio = "NORMAL:-KX-ALL:+RSA-PSK:"PVERSION,
-		.client_prio = "NORMAL:-KX-ALL:+RSA-PSK:"PVERSION,
+		.server_prio = "NORMAL:-KX-ALL:+RSA-PSK:" PVERSION,
+		.client_prio = "NORMAL:-KX-ALL:+RSA-PSK:" PVERSION,
 		.exp_version = GNUTLS_TLS1_2,
 	},
+#ifdef ENABLE_SRP
 	{
 		.name = "TLS 1.3 SRP-RSA without cert cred",
 		.client_ret = GNUTLS_E_AGAIN,
 		.server_ret = GNUTLS_E_INSUFFICIENT_CREDENTIALS,
 		.have_srp_cred = 1,
-		.server_prio = "NORMAL:-KX-ALL:+SRP-RSA:"PVERSION,
-		.client_prio = "NORMAL:-KX-ALL:+SRP-RSA:"PVERSION,
+		.server_prio = "NORMAL:-KX-ALL:+SRP-RSA:" PVERSION,
+		.client_prio = "NORMAL:-KX-ALL:+SRP-RSA:" PVERSION,
 		.exp_version = GNUTLS_TLS1_2,
 	},
 	{
@@ -165,8 +168,8 @@ test_case_st tests[] = {
 		.server_ret = GNUTLS_E_NO_CIPHER_SUITES,
 		.have_srp_cred = 0,
 		.have_cert_cred = 1,
-		.server_prio = "NORMAL:-KX-ALL:+SRP-RSA:"PVERSION,
-		.client_prio = "NORMAL:-KX-ALL:+SRP-RSA:"PVERSION,
+		.server_prio = "NORMAL:-KX-ALL:+SRP-RSA:" PVERSION,
+		.client_prio = "NORMAL:-KX-ALL:+SRP-RSA:" PVERSION,
 		.exp_version = GNUTLS_TLS1_2,
 	},
 	{
@@ -177,8 +180,8 @@ test_case_st tests[] = {
 		.have_cert_cred = 1,
 		.have_rsa_decrypt_cert = 1,
 		.have_ecc_sign_cert = 1,
-		.server_prio = "NORMAL:-KX-ALL:+SRP-RSA:"PVERSION,
-		.client_prio = "NORMAL:-KX-ALL:+SRP-RSA:"PVERSION,
+		.server_prio = "NORMAL:-KX-ALL:+SRP-RSA:" PVERSION,
+		.client_prio = "NORMAL:-KX-ALL:+SRP-RSA:" PVERSION,
 		.exp_version = GNUTLS_TLS1_2,
 	},
 	{
@@ -188,8 +191,8 @@ test_case_st tests[] = {
 		.have_srp_cred = 1,
 		.have_cert_cred = 1,
 		.have_rsa_sign_cert = 1,
-		.server_prio = "NORMAL:-KX-ALL:+SRP-RSA:"PVERSION,
-		.client_prio = "NORMAL:-KX-ALL:+SRP-RSA:"PVERSION,
+		.server_prio = "NORMAL:-KX-ALL:+SRP-RSA:" PVERSION,
+		.client_prio = "NORMAL:-KX-ALL:+SRP-RSA:" PVERSION,
 		.exp_version = GNUTLS_TLS1_2,
 	},
 	{
@@ -201,8 +204,8 @@ test_case_st tests[] = {
 		.have_rsa_sign_cert = 1,
 		.have_ecc_sign_cert = 1,
 		.have_rsa_decrypt_cert = 1,
-		.server_prio = "NORMAL:-KX-ALL:+SRP-RSA:"PVERSION,
-		.client_prio = "NORMAL:-KX-ALL:+SRP-RSA:"PVERSION,
+		.server_prio = "NORMAL:-KX-ALL:+SRP-RSA:" PVERSION,
+		.client_prio = "NORMAL:-KX-ALL:+SRP-RSA:" PVERSION,
 		.exp_version = GNUTLS_TLS1_2,
 	},
 	{
@@ -211,8 +214,8 @@ test_case_st tests[] = {
 		.server_ret = GNUTLS_E_INSUFFICIENT_CREDENTIALS,
 		.have_srp_cred = 0,
 		.have_cert_cred = 1,
-		.server_prio = "NORMAL:-KX-ALL:+SRP:"PVERSION,
-		.client_prio = "NORMAL:-KX-ALL:+SRP:"PVERSION,
+		.server_prio = "NORMAL:-KX-ALL:+SRP:" PVERSION,
+		.client_prio = "NORMAL:-KX-ALL:+SRP:" PVERSION,
 		.exp_version = GNUTLS_TLS1_2,
 	},
 	{
@@ -220,10 +223,12 @@ test_case_st tests[] = {
 		.server_ret = 0,
 		.client_ret = 0,
 		.have_srp_cred = 1,
-		.server_prio = "NORMAL:-KX-ALL:+SRP:"PVERSION,
-		.client_prio = "NORMAL:-KX-ALL:+SRP:"PVERSION,
+		.server_prio = "NORMAL:-KX-ALL:+SRP:" PVERSION,
+		.client_prio = "NORMAL:-KX-ALL:+SRP:" PVERSION,
 		.exp_version = GNUTLS_TLS1_2,
 	},
+#endif
+
 #ifdef ENABLE_GOST
 	{
 		.name = "TLS 1.3 server, TLS 1.2 client VKO-GOST-12 with cred and GOST-256 cert",
@@ -232,8 +237,11 @@ test_case_st tests[] = {
 		.have_cert_cred = 1,
 		.have_gost12_256_cert = 1,
 		.not_on_fips = 1,
-		.server_prio = "NORMAL:-KX-ALL:+VKO-GOST-12:+GROUP-GOST-ALL:+CIPHER-GOST-ALL:+MAC-GOST-ALL:+SIGN-GOST-ALL:"PVERSION,
-		.client_prio = "NORMAL:-KX-ALL:+VKO-GOST-12:+GROUP-GOST-ALL:+CIPHER-GOST-ALL:+MAC-GOST-ALL:+SIGN-GOST-ALL:" "-VERS-ALL:+VERS-TLS1.2",
+		.server_prio =
+			"NORMAL:-KX-ALL:+VKO-GOST-12:+GROUP-GOST-ALL:+CIPHER-GOST-ALL:+MAC-GOST-ALL:+SIGN-GOST-ALL:" PVERSION,
+		.client_prio =
+			"NORMAL:-KX-ALL:+VKO-GOST-12:+GROUP-GOST-ALL:+CIPHER-GOST-ALL:+MAC-GOST-ALL:+SIGN-GOST-ALL:"
+			"-VERS-ALL:+VERS-TLS1.2",
 		.exp_version = GNUTLS_TLS1_2,
 	},
 	{
@@ -243,8 +251,11 @@ test_case_st tests[] = {
 		.have_cert_cred = 1,
 		.have_gost12_512_cert = 1,
 		.not_on_fips = 1,
-		.server_prio = "NORMAL:-KX-ALL:+VKO-GOST-12:+GROUP-GOST-ALL:+CIPHER-GOST-ALL:+MAC-GOST-ALL:+SIGN-GOST-ALL:"PVERSION,
-		.client_prio = "NORMAL:-KX-ALL:+VKO-GOST-12:+GROUP-GOST-ALL:+CIPHER-GOST-ALL:+MAC-GOST-ALL:+SIGN-GOST-ALL:" "-VERS-ALL:+VERS-TLS1.2",
+		.server_prio =
+			"NORMAL:-KX-ALL:+VKO-GOST-12:+GROUP-GOST-ALL:+CIPHER-GOST-ALL:+MAC-GOST-ALL:+SIGN-GOST-ALL:" PVERSION,
+		.client_prio =
+			"NORMAL:-KX-ALL:+VKO-GOST-12:+GROUP-GOST-ALL:+CIPHER-GOST-ALL:+MAC-GOST-ALL:+SIGN-GOST-ALL:"
+			"-VERS-ALL:+VERS-TLS1.2",
 		.exp_version = GNUTLS_TLS1_2,
 	},
 	{
@@ -254,8 +265,11 @@ test_case_st tests[] = {
 		.have_cert_cred = 1,
 		.have_gost12_256_cert = 1,
 		.not_on_fips = 1,
-		.server_prio = "NORMAL:-KX-ALL:+VKO-GOST-12:+GROUP-GOST-ALL:+CIPHER-GOST-ALL:+MAC-GOST-ALL:+SIGN-GOST-ALL:" "-VERS-ALL:+VERS-TLS1.2",
-		.client_prio = "NORMAL:-KX-ALL:+VKO-GOST-12:+GROUP-GOST-ALL:+CIPHER-GOST-ALL:+MAC-GOST-ALL:+SIGN-GOST-ALL:"PVERSION,
+		.server_prio =
+			"NORMAL:-KX-ALL:+VKO-GOST-12:+GROUP-GOST-ALL:+CIPHER-GOST-ALL:+MAC-GOST-ALL:+SIGN-GOST-ALL:"
+			"-VERS-ALL:+VERS-TLS1.2",
+		.client_prio =
+			"NORMAL:-KX-ALL:+VKO-GOST-12:+GROUP-GOST-ALL:+CIPHER-GOST-ALL:+MAC-GOST-ALL:+SIGN-GOST-ALL:" PVERSION,
 		.exp_version = GNUTLS_TLS1_2,
 	},
 	{
@@ -265,8 +279,11 @@ test_case_st tests[] = {
 		.have_cert_cred = 1,
 		.have_gost12_512_cert = 1,
 		.not_on_fips = 1,
-		.server_prio = "NORMAL:-KX-ALL:+VKO-GOST-12:+GROUP-GOST-ALL:+CIPHER-GOST-ALL:+MAC-GOST-ALL:+SIGN-GOST-ALL:" "-VERS-ALL:+VERS-TLS1.2",
-		.client_prio = "NORMAL:-KX-ALL:+VKO-GOST-12:+GROUP-GOST-ALL:+CIPHER-GOST-ALL:+MAC-GOST-ALL:+SIGN-GOST-ALL:"PVERSION,
+		.server_prio =
+			"NORMAL:-KX-ALL:+VKO-GOST-12:+GROUP-GOST-ALL:+CIPHER-GOST-ALL:+MAC-GOST-ALL:+SIGN-GOST-ALL:"
+			"-VERS-ALL:+VERS-TLS1.2",
+		.client_prio =
+			"NORMAL:-KX-ALL:+VKO-GOST-12:+GROUP-GOST-ALL:+CIPHER-GOST-ALL:+MAC-GOST-ALL:+SIGN-GOST-ALL:" PVERSION,
 		.exp_version = GNUTLS_TLS1_2,
 	},
 	/* Ideally for the next two test cases we should fallback to TLS 1.2 + GOST
@@ -278,8 +295,10 @@ test_case_st tests[] = {
 		.have_cert_cred = 1,
 		.have_gost12_256_cert = 1,
 		.not_on_fips = 1,
-		.server_prio = "NORMAL:-KX-ALL:+VKO-GOST-12:+GROUP-GOST-ALL:+CIPHER-GOST-ALL:+MAC-GOST-ALL:+SIGN-GOST-ALL:"PVERSION,
-		.client_prio = "NORMAL:-KX-ALL:+VKO-GOST-12:+GROUP-GOST-ALL:+CIPHER-GOST-ALL:+MAC-GOST-ALL:+SIGN-GOST-ALL:"PVERSION,
+		.server_prio =
+			"NORMAL:-KX-ALL:+VKO-GOST-12:+GROUP-GOST-ALL:+CIPHER-GOST-ALL:+MAC-GOST-ALL:+SIGN-GOST-ALL:" PVERSION,
+		.client_prio =
+			"NORMAL:-KX-ALL:+VKO-GOST-12:+GROUP-GOST-ALL:+CIPHER-GOST-ALL:+MAC-GOST-ALL:+SIGN-GOST-ALL:" PVERSION,
 		.exp_version = GNUTLS_TLS1_2,
 	},
 	{
@@ -289,8 +308,10 @@ test_case_st tests[] = {
 		.have_cert_cred = 1,
 		.have_gost12_512_cert = 1,
 		.not_on_fips = 1,
-		.server_prio = "NORMAL:-KX-ALL:+VKO-GOST-12:+GROUP-GOST-ALL:+CIPHER-GOST-ALL:+MAC-GOST-ALL:+SIGN-GOST-ALL:"PVERSION,
-		.client_prio = "NORMAL:-KX-ALL:+VKO-GOST-12:+GROUP-GOST-ALL:+CIPHER-GOST-ALL:+MAC-GOST-ALL:+SIGN-GOST-ALL:"PVERSION,
+		.server_prio =
+			"NORMAL:-KX-ALL:+VKO-GOST-12:+GROUP-GOST-ALL:+CIPHER-GOST-ALL:+MAC-GOST-ALL:+SIGN-GOST-ALL:" PVERSION,
+		.client_prio =
+			"NORMAL:-KX-ALL:+VKO-GOST-12:+GROUP-GOST-ALL:+CIPHER-GOST-ALL:+MAC-GOST-ALL:+SIGN-GOST-ALL:" PVERSION,
 		.exp_version = GNUTLS_TLS1_2,
 	},
 #endif
@@ -301,7 +322,7 @@ void doit(void)
 	unsigned i;
 	global_init();
 
-	for (i=0;i<sizeof(tests)/sizeof(tests[0]);i++) {
+	for (i = 0; i < sizeof(tests) / sizeof(tests[0]); i++) {
 		try(&tests[i]);
 	}
 

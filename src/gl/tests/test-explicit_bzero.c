@@ -1,9 +1,9 @@
 /* Test of explicit_bzero() function.
-   Copyright (C) 2020-2021 Free Software Foundation, Inc.
+   Copyright (C) 2020-2023 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 3 of the License, or
+   the Free Software Foundation, either version 3 of the License, or
    (at your option) any later version.
 
    This program is distributed in the hope that it will be useful,
@@ -24,7 +24,6 @@
 #include "signature.h"
 SIGNATURE_CHECK (explicit_bzero, void, (void *, size_t));
 
-#include <stdbool.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -106,10 +105,12 @@ static void
 test_heap (void)
 {
   char *heapbuf = (char *) malloc (SECRET_SIZE);
-  uintptr_t addr = (uintptr_t) heapbuf;
+  ASSERT (heapbuf);
+  uintptr_t volatile addr = (uintptr_t) heapbuf;
   memcpy (heapbuf, SECRET, SECRET_SIZE);
   explicit_bzero (heapbuf, SECRET_SIZE);
   free (heapbuf);
+  heapbuf = (char *) addr;
   if (is_range_mapped (addr, addr + SECRET_SIZE))
     {
       /* some implementation could override freed memory by canaries so
@@ -127,20 +128,28 @@ test_heap (void)
      1. Put a secret in memory and invoke explicit_bzero on it.
      2. Verify that the memory has been erased.
    Implement them in the same function, so that they access the same memory
-   range on the stack.  */
-static int _GL_ATTRIBUTE_NOINLINE
-do_secret_stuff (volatile int pass)
+   range on the stack.  Declare the local scalars to be volatile so they
+   are not optimized away.  That way, the test verifies that the compiler
+   does not eliminate a call to explicit_bzero, even if data flow analysis
+   reveals that the stack area is dead at the end of the function.  */
+static bool _GL_ATTRIBUTE_NOINLINE
+do_secret_stuff (int volatile pass, char *volatile *volatile last_stackbuf)
 {
   char stackbuf[SECRET_SIZE];
   if (pass == 1)
     {
       memcpy (stackbuf, SECRET, SECRET_SIZE);
       explicit_bzero (stackbuf, SECRET_SIZE);
-      return 0;
+      *last_stackbuf = stackbuf;
+      return false;
     }
   else /* pass == 2 */
     {
-      return memcmp (zero, stackbuf, SECRET_SIZE) != 0;
+      /* Use *last_stackbuf here, because stackbuf may be allocated at a
+         different address than *last_stackbuf.  This can happen
+         when the compiler splits this function into different functions,
+         one for pass == 1 and one for pass != 1.  */
+      return memcmp (zero, *last_stackbuf, SECRET_SIZE) != 0;
     }
 }
 
@@ -149,11 +158,19 @@ test_stack (void)
 {
   int count = 0;
   int repeat;
+  char *volatile last_stackbuf;
 
-  for (repeat = 1000; repeat > 0; repeat--)
+  for (repeat = 2 * 1000; repeat > 0; repeat--)
     {
-      do_secret_stuff (1);
-      count += do_secret_stuff (2);
+      /* This odd way of writing two consecutive statements
+           do_secret_stuff (1, &last_stackbuf);
+           count += do_secret_stuff (2, &last_stackbuf);
+         ensures that the two do_secret_stuff calls are performed with the same
+         stack pointer value, on m68k.  */
+      if ((repeat % 2) == 0)
+        do_secret_stuff (1, &last_stackbuf);
+      else
+        count += do_secret_stuff (2, &last_stackbuf);
     }
   /* If explicit_bzero works, count is near 0.  (It may be > 0 if there were
      some asynchronous signal invocations between the two calls of

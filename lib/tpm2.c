@@ -66,8 +66,9 @@ static int rsa_key_info(gnutls_privkey_t key, unsigned int flags, void *_info)
 			return 1;
 
 		default:
-			_gnutls_debug_log("tpm2: unsupported RSA sign algo %s\n",
-					  gnutls_sign_get_name(algo));
+			_gnutls_debug_log(
+				"tpm2: unsupported RSA sign algo %s\n",
+				gnutls_sign_get_name(algo));
 			return 0;
 		}
 	}
@@ -218,14 +219,15 @@ int _gnutls_load_tpm2_key(gnutls_privkey_t pkey, const gnutls_datum_t *fdata)
 		if (value_buflen == 5) {
 			if (value_buf[0]) {
 				gnutls_assert();
-				_gnutls_debug_log("tpm2: failed to parse parent key\n");
+				_gnutls_debug_log(
+					"tpm2: failed to parse parent key\n");
 				ret = GNUTLS_E_TPM_ERROR;
 				goto out_tpmkey;
 			}
 			/* Skip the leading zero */
 			i++;
 		}
-		for ( ; i < value_buflen; i++) {
+		for (; i < value_buflen; i++) {
 			parent <<= 8;
 			parent |= value_buf[i];
 		}
@@ -258,8 +260,8 @@ int _gnutls_load_tpm2_key(gnutls_privkey_t pkey, const gnutls_datum_t *fdata)
 
 	/* Now we've extracted what we need from the ASN.1, invoke the
 	 * actual TPM2 code (whichever implementation we end up with */
-	ret = install_tpm2_key(info, pkey, parent, emptyauth,
-			       &privdata, &pubdata);
+	ret = install_tpm2_key(info, pkey, parent, emptyauth, &privdata,
+			       &pubdata);
 	if (ret < 0) {
 		goto out_tpmkey;
 	}
@@ -287,10 +289,10 @@ int _gnutls_load_tpm2_key(gnutls_privkey_t pkey, const gnutls_datum_t *fdata)
 	ret = 0;
 	info = NULL; /* part of pkey now */
 
- out_tpmkey:
+out_tpmkey:
 	asn1_delete_structure(&tpmkey);
 	release_tpm2_ctx(info);
- out_asn1:
+out_asn1:
 	gnutls_free(asn1.data);
 	return ret;
 }

@@ -66,6 +66,7 @@ static const struct option long_options[] =
   { "load-response", required_argument, 0, 'S' },
   { "ignore-errors", no_argument, 0, CHAR_MAX + 15 },
   { "verify-allow-broken", no_argument, 0, CHAR_MAX + 16 },
+  { "attime", required_argument, 0, CHAR_MAX + 17 },
   { "version", optional_argument, 0, 'v' },
   { "help", no_argument, 0, 'h' },
   { "more-help", no_argument, 0, '!' },
@@ -194,6 +195,11 @@ process_options (int argc, char **argv)
         opts->present.verify_allow_broken = true;
         opts->enabled.verify_allow_broken = true;
         break;
+      case CHAR_MAX + 17: /* --attime */
+        opts->present.attime = true;
+        opts->arg.attime = optarg;
+        opts->enabled.attime = true;
+        break;
       case 'v':
         opts->present.version = true;
         opts->arg.version = optarg;
@@ -297,8 +303,8 @@ process_options (int argc, char **argv)
       if (!OPT_ARG_VERSION || !strcmp (OPT_ARG_VERSION, "c"))
         {
           const char str[] =
-            "ocsptool 3.7.9\n"
-            "Copyright (C) 2000-2021 Free Software Foundation, and others\n"
+            "ocsptool 3.8.1\n"
+            "Copyright (C) 2000-2023 Free Software Foundation, and others\n"
             "This is free software. It is licensed for use, modification and\n"
             "redistribution under the terms of the GNU General Public License,\n"
             "version 3 or later <http://gnu.org/licenses/gpl.html>\n"
@@ -310,15 +316,15 @@ process_options (int argc, char **argv)
       else if (!strcmp (OPT_ARG_VERSION, "v"))
         {
           const char str[] =
-            "ocsptool 3.7.9\n";
+            "ocsptool 3.8.1\n";
           fprintf (stdout, "%s", str);
           exit(0);
         }
       else if (!strcmp (OPT_ARG_VERSION, "n"))
         {
           const char str[] =
-            "ocsptool 3.7.9\n"
-            "Copyright (C) 2000-2021 Free Software Foundation, and others\n"
+            "ocsptool 3.8.1\n"
+            "Copyright (C) 2000-2023 Free Software Foundation, and others\n"
             "This is free software. It is licensed for use, modification and\n"
             "redistribution under the terms of the GNU General Public License,\n"
             "version 3 or later <http://gnu.org/licenses/gpl.html>\n"
@@ -396,6 +402,7 @@ usage (FILE *out, int status)
     "				- file must pre-exist\n"
     "       --ignore-errors        Ignore any verification errors\n"
     "       --verify-allow-broken  Allow broken algorithms, such as MD5 for verification\n"
+    "       --attime=str           Perform validation at the timestamp instead of the system time\n"
     "\n"
     "Version, usage and configuration options:\n"
     "\n"
