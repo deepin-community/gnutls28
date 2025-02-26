@@ -1,17 +1,17 @@
 /* A POSIX <locale.h>.
-   Copyright (C) 2007-2021 Free Software Foundation, Inc.
+   Copyright (C) 2007-2025 Free Software Foundation, Inc.
 
-   This program is free software: you can redistribute it and/or modify
-   it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 3 of the License, or
-   (at your option) any later version.
+   This file is free software: you can redistribute it and/or modify
+   it under the terms of the GNU Lesser General Public License as
+   published by the Free Software Foundation; either version 2.1 of the
+   License, or (at your option) any later version.
 
-   This program is distributed in the hope that it will be useful,
+   This file is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   GNU General Public License for more details.
+   GNU Lesser General Public License for more details.
 
-   You should have received a copy of the GNU General Public License
+   You should have received a copy of the GNU Lesser General Public License
    along with this program.  If not, see <https://www.gnu.org/licenses/>.  */
 
 #if __GNUC__ >= 3
@@ -20,7 +20,7 @@
 @PRAGMA_COLUMNS@
 
 #if (defined _WIN32 && !defined __CYGWIN__ && defined __need_locale_t) \
-    || defined _GL_ALREADY_INCLUDING_LOCALE_H
+    || defined _@GUARD_PREFIX@_ALREADY_INCLUDING_LOCALE_H
 
 /* Special invocation convention:
    - Inside mingw header files,
@@ -34,15 +34,20 @@
 
 #ifndef _@GUARD_PREFIX@_LOCALE_H
 
-#define _GL_ALREADY_INCLUDING_LOCALE_H
+#define _@GUARD_PREFIX@_ALREADY_INCLUDING_LOCALE_H
 
 /* The include_next requires a split double-inclusion guard.  */
 #@INCLUDE_NEXT@ @NEXT_LOCALE_H@
 
-#undef _GL_ALREADY_INCLUDING_LOCALE_H
+#undef _@GUARD_PREFIX@_ALREADY_INCLUDING_LOCALE_H
 
 #ifndef _@GUARD_PREFIX@_LOCALE_H
 #define _@GUARD_PREFIX@_LOCALE_H
+
+/* This file uses GNULIB_POSIXCHECK, HAVE_RAW_DECL_*.  */
+#if !_GL_CONFIG_H_INCLUDED
+ #error "Please include config.h first."
+#endif
 
 /* NetBSD 5.0 mis-defines NULL.  */
 #include <stddef.h>
@@ -78,7 +83,8 @@
 
 /* Bionic libc's 'struct lconv' is just a dummy.  */
 #if @REPLACE_STRUCT_LCONV@
-# define lconv rpl_lconv
+# if !defined GNULIB_defined_struct_lconv
+#  define lconv rpl_lconv
 struct lconv
 {
   /* All 'char *' are actually 'const char *'.  */
@@ -155,6 +161,8 @@ struct lconv
      number.  */
   char int_n_sep_by_space;
 };
+#  define GNULIB_defined_struct_lconv 1
+# endif
 #endif
 
 #if @GNULIB_LOCALECONV@
@@ -163,7 +171,7 @@ struct lconv
 #   undef localeconv
 #   define localeconv rpl_localeconv
 #  endif
-_GL_FUNCDECL_RPL (localeconv, struct lconv *, (void));
+_GL_FUNCDECL_RPL (localeconv, struct lconv *, (void), );
 _GL_CXXALIAS_RPL (localeconv, struct lconv *, (void));
 # else
 _GL_CXXALIAS_SYS (localeconv, struct lconv *, (void));
@@ -172,8 +180,10 @@ _GL_CXXALIAS_SYS (localeconv, struct lconv *, (void));
 _GL_CXXALIASWARN (localeconv);
 # endif
 #elif @REPLACE_STRUCT_LCONV@
-# undef localeconv
-# define localeconv localeconv_used_without_requesting_gnulib_module_localeconv
+# if !GNULIB_LOCALECONV
+#  undef localeconv
+#  define localeconv localeconv_used_without_requesting_gnulib_module_localeconv
+# endif
 #elif defined GNULIB_POSIXCHECK
 # undef localeconv
 # if HAVE_RAW_DECL_LOCALECONV
@@ -190,7 +200,7 @@ _GL_WARN_ON_USE (localeconv,
 #   define setlocale rpl_setlocale
 #   define GNULIB_defined_setlocale 1
 #  endif
-_GL_FUNCDECL_RPL (setlocale, char *, (int category, const char *locale));
+_GL_FUNCDECL_RPL (setlocale, char *, (int category, const char *locale), );
 _GL_CXXALIAS_RPL (setlocale, char *, (int category, const char *locale));
 # else
 _GL_CXXALIAS_SYS (setlocale, char *, (int category, const char *locale));
@@ -211,7 +221,7 @@ _GL_WARN_ON_USE (setlocale, "setlocale works differently on native Windows - "
 # include "setlocale_null.h"
 #endif
 
-#if /*@GNULIB_NEWLOCALE@ ||*/ (@GNULIB_LOCALENAME@ && @LOCALENAME_ENHANCE_LOCALE_FUNCS@ && @HAVE_NEWLOCALE@)
+#if /*@GNULIB_NEWLOCALE@ ||*/ (@GNULIB_LOCALENAME_UNSAFE@ && @LOCALENAME_ENHANCE_LOCALE_FUNCS@ && @HAVE_NEWLOCALE@)
 # if @REPLACE_NEWLOCALE@
 #  if !(defined __cplusplus && defined GNULIB_NAMESPACE)
 #   undef newlocale
@@ -219,7 +229,7 @@ _GL_WARN_ON_USE (setlocale, "setlocale works differently on native Windows - "
 #   define GNULIB_defined_newlocale 1
 #  endif
 _GL_FUNCDECL_RPL (newlocale, locale_t,
-                  (int category_mask, const char *name, locale_t base)
+                  (int category_mask, const char *name, locale_t base),
                   _GL_ARG_NONNULL ((2)));
 _GL_CXXALIAS_RPL (newlocale, locale_t,
                   (int category_mask, const char *name, locale_t base));
@@ -229,7 +239,7 @@ _GL_CXXALIAS_SYS (newlocale, locale_t,
                   (int category_mask, const char *name, locale_t base));
 #  endif
 # endif
-# if @HAVE_NEWLOCALE@
+# if __GLIBC__ >= 2 && @HAVE_NEWLOCALE@
 _GL_CXXALIASWARN (newlocale);
 # endif
 # if @HAVE_NEWLOCALE@ || @REPLACE_NEWLOCALE@
@@ -244,24 +254,24 @@ _GL_WARN_ON_USE (newlocale, "newlocale is not portable");
 # endif
 #endif
 
-#if @GNULIB_DUPLOCALE@ || (@GNULIB_LOCALENAME@ && @LOCALENAME_ENHANCE_LOCALE_FUNCS@ && @HAVE_DUPLOCALE@)
-# if @REPLACE_DUPLOCALE@
-#  if !(defined __cplusplus && defined GNULIB_NAMESPACE)
-#   undef duplocale
-#   define duplocale rpl_duplocale
-#   define GNULIB_defined_duplocale 1
-#  endif
-_GL_FUNCDECL_RPL (duplocale, locale_t, (locale_t locale) _GL_ARG_NONNULL ((1)));
+#if @GNULIB_DUPLOCALE@ || (@GNULIB_LOCALENAME_UNSAFE@ && @LOCALENAME_ENHANCE_LOCALE_FUNCS@ && @HAVE_DUPLOCALE@)
+# if @HAVE_DUPLOCALE@ /* locale_t may be undefined if !@HAVE_DUPLOCALE@.  */
+#  if @REPLACE_DUPLOCALE@
+#   if !(defined __cplusplus && defined GNULIB_NAMESPACE)
+#    undef duplocale
+#    define duplocale rpl_duplocale
+#    define GNULIB_defined_duplocale 1
+#   endif
+_GL_FUNCDECL_RPL (duplocale, locale_t, (locale_t locale), _GL_ARG_NONNULL ((1)));
 _GL_CXXALIAS_RPL (duplocale, locale_t, (locale_t locale));
-# else
-#  if @HAVE_DUPLOCALE@
+#  else
 _GL_CXXALIAS_SYS (duplocale, locale_t, (locale_t locale));
 #  endif
 # endif
-# if @HAVE_DUPLOCALE@
+# if __GLIBC__ >= 2 && @HAVE_DUPLOCALE@
 _GL_CXXALIASWARN (duplocale);
 # endif
-# if @HAVE_DUPLOCALE@ || @REPLACE_DUPLOCALE@
+# if @HAVE_DUPLOCALE@
 #  ifndef HAVE_WORKING_DUPLOCALE
 #   define HAVE_WORKING_DUPLOCALE 1
 #  endif
@@ -274,14 +284,14 @@ _GL_WARN_ON_USE (duplocale, "duplocale is buggy on some glibc systems - "
 # endif
 #endif
 
-#if /*@GNULIB_FREELOCALE@ ||*/ (@GNULIB_LOCALENAME@ && @LOCALENAME_ENHANCE_LOCALE_FUNCS@ && @HAVE_FREELOCALE@)
+#if /*@GNULIB_FREELOCALE@ ||*/ (@GNULIB_LOCALENAME_UNSAFE@ && @LOCALENAME_ENHANCE_LOCALE_FUNCS@ && @HAVE_FREELOCALE@)
 # if @REPLACE_FREELOCALE@
 #  if !(defined __cplusplus && defined GNULIB_NAMESPACE)
 #   undef freelocale
 #   define freelocale rpl_freelocale
 #   define GNULIB_defined_freelocale 1
 #  endif
-_GL_FUNCDECL_RPL (freelocale, void, (locale_t locale) _GL_ARG_NONNULL ((1)));
+_GL_FUNCDECL_RPL (freelocale, void, (locale_t locale), _GL_ARG_NONNULL ((1)));
 _GL_CXXALIAS_RPL (freelocale, void, (locale_t locale));
 # else
 #  if @HAVE_FREELOCALE@
@@ -290,7 +300,7 @@ _GL_CXXALIAS_RPL (freelocale, void, (locale_t locale));
 _GL_CXXALIAS_SYS_CAST (freelocale, void, (locale_t locale));
 #  endif
 # endif
-# if @HAVE_FREELOCALE@
+# if __GLIBC__ >= 2 && @HAVE_FREELOCALE@
 _GL_CXXALIASWARN (freelocale);
 # endif
 #elif defined GNULIB_POSIXCHECK
@@ -302,4 +312,4 @@ _GL_WARN_ON_USE (freelocale, "freelocale is not portable");
 
 #endif /* _@GUARD_PREFIX@_LOCALE_H */
 #endif /* _@GUARD_PREFIX@_LOCALE_H */
-#endif /* !(__need_locale_t || _GL_ALREADY_INCLUDING_LOCALE_H) */
+#endif /* !(__need_locale_t || _@GUARD_PREFIX@_ALREADY_INCLUDING_LOCALE_H) */

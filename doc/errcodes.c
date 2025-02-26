@@ -38,19 +38,19 @@ typedef struct {
 	int error_index;
 } error_name;
 
-
 static int compar(const void *_n1, const void *_n2)
 {
-	const error_name *n1 = (const error_name *) _n1,
-	    *n2 = (const error_name *) _n2;
+	const error_name *n1 = (const error_name *)_n1,
+			 *n2 = (const error_name *)_n2;
 	return strcmp(n1->name, n2->name);
 }
 
 static const char headers[] = "\\tablefirsthead{%\n"
-    "\\hline\n"
-    "\\multicolumn{1}{|c}{Code} &\n"
-    "\\multicolumn{1}{c}{Name} &\n"
-    "\\multicolumn{1}{c|}{Description} \\\\\n" "\\hline}\n"
+			      "\\hline\n"
+			      "\\multicolumn{1}{|c}{Code} &\n"
+			      "\\multicolumn{1}{c}{Name} &\n"
+			      "\\multicolumn{1}{c|}{Description} \\\\\n"
+			      "\\hline}\n"
 #if 0
     "\\tablehead{%\n"
     "\\hline\n"
@@ -61,8 +61,8 @@ static const char headers[] = "\\tablefirsthead{%\n"
     "\\multicolumn{3}{|r|}{\\small\\sl continued on next page}\\\\\n"
     "\\hline}\n"
 #endif
-    "\\tablelasttail{\\hline}\n"
-    "\\bottomcaption{The error codes table}\n\n";
+			      "\\tablelasttail{\\hline}\n"
+			      "\\bottomcaption{The error codes table}\n\n";
 
 int main(int argc, char *argv[])
 {
@@ -80,7 +80,7 @@ static int main_texinfo(void)
 	const char *desc;
 	const char *_name;
 	char buffer[500];
-	error_name names_to_sort[MAX_CODES];	/* up to MAX_CODES names  */
+	error_name names_to_sort[MAX_CODES]; /* up to MAX_CODES names  */
 
 	printf("@multitable @columnfractions .15 .40 .37\n");
 
@@ -94,8 +94,7 @@ static int main_texinfo(void)
 		desc = gnutls_strerror(i);
 
 		printf("@item %d @tab %s @tab %s\n", i,
-		       escape_texi_string(_name, buffer, sizeof(buffer)),
-		       desc);
+		       escape_texi_string(_name, buffer, sizeof(buffer)), desc);
 
 		strcpy(names_to_sort[j].name, _name);
 		names_to_sort[j].error_index = i;
@@ -114,12 +113,11 @@ static void main_latex(void)
 	static char buffer2[500];
 	const char *desc;
 	const char *_name;
-	error_name names_to_sort[MAX_CODES];	/* up to MAX_CODES names  */
+	error_name names_to_sort[MAX_CODES]; /* up to MAX_CODES names  */
 
 	puts(headers);
 
-	printf
-	    ("\\begin{supertabular}{|p{.05\\linewidth}|p{.40\\linewidth}|p{.45\\linewidth}|}\n");
+	printf("\\begin{supertabular}{|p{.05\\linewidth}|p{.40\\linewidth}|p{.45\\linewidth}|}\n");
 
 	memset(names_to_sort, 0, sizeof(names_to_sort));
 	j = 0;
@@ -133,7 +131,7 @@ static void main_latex(void)
 		j++;
 	}
 
-//qsort( names_to_sort, j, sizeof(error_name), compar);
+	//qsort( names_to_sort, j, sizeof(error_name), compar);
 
 	for (i = 0; i < j; i++) {
 		_name = names_to_sort[i].name;
@@ -142,10 +140,8 @@ static void main_latex(void)
 			continue;
 
 		printf("%d & {\\scriptsize{%s}} & %s",
-		       names_to_sort[i].error_index, escape_string(_name,
-								   buffer1,
-								   sizeof
-								   (buffer1)),
+		       names_to_sort[i].error_index,
+		       escape_string(_name, buffer1, sizeof(buffer1)),
 		       escape_string(desc, buffer2, sizeof(buffer2)));
 		printf("\\\\\n");
 	}
@@ -153,5 +149,4 @@ static void main_latex(void)
 	printf("\\end{supertabular}\n\n");
 
 	return;
-
 }

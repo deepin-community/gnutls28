@@ -19,6 +19,7 @@ struct certtool_options
     bool verbose;
     bool infile;
     bool outfile;
+    bool attime;
     bool certificate_info;
     bool pubkey_info;
     bool generate_self_signed;
@@ -36,6 +37,7 @@ struct certtool_options
     bool p12_info;
     bool p12_name;
     bool to_p12;
+    bool pbmac1;
     bool key_info;
     bool p8_info;
     bool to_rsa;
@@ -89,6 +91,7 @@ struct certtool_options
     bool ecc;
     bool hash;
     bool salt_size;
+    bool label;
     bool inder;
     bool outder;
     bool disable_quick_random;
@@ -109,6 +112,7 @@ struct certtool_options
     const char *debug;
     const char *infile;
     const char *outfile;
+    const char *attime;
     const char *sign_params;
     const char *p12_name;
     const char *key_type;
@@ -131,6 +135,7 @@ struct certtool_options
     const char *password;
     const char *hash;
     const char *salt_size;
+    const char *label;
     const char *template;
     const char *pkcs_cipher;
     const char *provider;
@@ -152,6 +157,7 @@ struct certtool_options
     bool verbose;
     bool infile;
     bool outfile;
+    bool attime;
     bool certificate_info;
     bool pubkey_info;
     bool generate_self_signed;
@@ -169,6 +175,7 @@ struct certtool_options
     bool p12_info;
     bool p12_name;
     bool to_p12;
+    bool pbmac1;
     bool key_info;
     bool p8_info;
     bool to_rsa;
@@ -222,6 +229,7 @@ struct certtool_options
     bool ecc;
     bool hash;
     bool salt_size;
+    bool label;
     bool inder;
     bool outder;
     bool disable_quick_random;
@@ -248,6 +256,7 @@ struct certtool_options
 #define HAVE_OPT_VERBOSE certtool_options.present.verbose
 #define HAVE_OPT_INFILE certtool_options.present.infile
 #define HAVE_OPT_OUTFILE certtool_options.present.outfile
+#define HAVE_OPT_ATTIME certtool_options.present.attime
 #define HAVE_OPT_CERTIFICATE_INFO certtool_options.present.certificate_info
 #define HAVE_OPT_PUBKEY_INFO certtool_options.present.pubkey_info
 #define HAVE_OPT_GENERATE_SELF_SIGNED certtool_options.present.generate_self_signed
@@ -265,6 +274,7 @@ struct certtool_options
 #define HAVE_OPT_P12_INFO certtool_options.present.p12_info
 #define HAVE_OPT_P12_NAME certtool_options.present.p12_name
 #define HAVE_OPT_TO_P12 certtool_options.present.to_p12
+#define HAVE_OPT_PBMAC1 certtool_options.present.pbmac1
 #define HAVE_OPT_KEY_INFO certtool_options.present.key_info
 #define HAVE_OPT_P8_INFO certtool_options.present.p8_info
 #define HAVE_OPT_TO_RSA certtool_options.present.to_rsa
@@ -318,6 +328,7 @@ struct certtool_options
 #define HAVE_OPT_ECC certtool_options.present.ecc
 #define HAVE_OPT_HASH certtool_options.present.hash
 #define HAVE_OPT_SALT_SIZE certtool_options.present.salt_size
+#define HAVE_OPT_LABEL certtool_options.present.label
 #define HAVE_OPT_INDER certtool_options.present.inder
 #define HAVE_OPT_OUTDER certtool_options.present.outder
 #define HAVE_OPT_DISABLE_QUICK_RANDOM certtool_options.present.disable_quick_random
@@ -335,6 +346,7 @@ struct certtool_options
 #define OPT_ARG_VERBOSE certtool_options.arg.verbose
 #define OPT_ARG_INFILE certtool_options.arg.infile
 #define OPT_ARG_OUTFILE certtool_options.arg.outfile
+#define OPT_ARG_ATTIME certtool_options.arg.attime
 #define OPT_ARG_CERTIFICATE_INFO certtool_options.arg.certificate_info
 #define OPT_ARG_PUBKEY_INFO certtool_options.arg.pubkey_info
 #define OPT_ARG_GENERATE_SELF_SIGNED certtool_options.arg.generate_self_signed
@@ -352,6 +364,7 @@ struct certtool_options
 #define OPT_ARG_P12_INFO certtool_options.arg.p12_info
 #define OPT_ARG_P12_NAME certtool_options.arg.p12_name
 #define OPT_ARG_TO_P12 certtool_options.arg.to_p12
+#define OPT_ARG_PBMAC1 certtool_options.arg.pbmac1
 #define OPT_ARG_KEY_INFO certtool_options.arg.key_info
 #define OPT_ARG_P8_INFO certtool_options.arg.p8_info
 #define OPT_ARG_TO_RSA certtool_options.arg.to_rsa
@@ -405,6 +418,7 @@ struct certtool_options
 #define OPT_ARG_ECC certtool_options.arg.ecc
 #define OPT_ARG_HASH certtool_options.arg.hash
 #define OPT_ARG_SALT_SIZE certtool_options.arg.salt_size
+#define OPT_ARG_LABEL certtool_options.arg.label
 #define OPT_ARG_INDER certtool_options.arg.inder
 #define OPT_ARG_OUTDER certtool_options.arg.outder
 #define OPT_ARG_DISABLE_QUICK_RANDOM certtool_options.arg.disable_quick_random
@@ -426,6 +440,7 @@ struct certtool_options
 #define ENABLED_OPT_VERBOSE certtool_options.enabled.verbose
 #define ENABLED_OPT_INFILE certtool_options.enabled.infile
 #define ENABLED_OPT_OUTFILE certtool_options.enabled.outfile
+#define ENABLED_OPT_ATTIME certtool_options.enabled.attime
 #define ENABLED_OPT_CERTIFICATE_INFO certtool_options.enabled.certificate_info
 #define ENABLED_OPT_PUBKEY_INFO certtool_options.enabled.pubkey_info
 #define ENABLED_OPT_GENERATE_SELF_SIGNED certtool_options.enabled.generate_self_signed
@@ -443,6 +458,7 @@ struct certtool_options
 #define ENABLED_OPT_P12_INFO certtool_options.enabled.p12_info
 #define ENABLED_OPT_P12_NAME certtool_options.enabled.p12_name
 #define ENABLED_OPT_TO_P12 certtool_options.enabled.to_p12
+#define ENABLED_OPT_PBMAC1 certtool_options.enabled.pbmac1
 #define ENABLED_OPT_KEY_INFO certtool_options.enabled.key_info
 #define ENABLED_OPT_P8_INFO certtool_options.enabled.p8_info
 #define ENABLED_OPT_TO_RSA certtool_options.enabled.to_rsa
@@ -496,6 +512,7 @@ struct certtool_options
 #define ENABLED_OPT_ECC certtool_options.enabled.ecc
 #define ENABLED_OPT_HASH certtool_options.enabled.hash
 #define ENABLED_OPT_SALT_SIZE certtool_options.enabled.salt_size
+#define ENABLED_OPT_LABEL certtool_options.enabled.label
 #define ENABLED_OPT_INDER certtool_options.enabled.inder
 #define ENABLED_OPT_OUTDER certtool_options.enabled.outder
 #define ENABLED_OPT_DISABLE_QUICK_RANDOM certtool_options.enabled.disable_quick_random

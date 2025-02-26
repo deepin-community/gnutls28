@@ -1,9 +1,9 @@
 /* Test of explicit_bzero() function.
-   Copyright (C) 2020-2021 Free Software Foundation, Inc.
+   Copyright (C) 2020-2025 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 3 of the License, or
+   the Free Software Foundation, either version 3 of the License, or
    (at your option) any later version.
 
    This program is distributed in the hope that it will be useful,
@@ -24,7 +24,6 @@
 #include "signature.h"
 SIGNATURE_CHECK (explicit_bzero, void, (void *, size_t));
 
-#include <stdbool.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -42,6 +41,11 @@ static char zero[SECRET_SIZE] = { 0 };
 # define explicit_bzero(a, n)  memset (a, '\0', n)
 #endif
 
+/* Suppress GCC 13.2.1 false alarm, as this test needs a dangling pointer.  */
+#if _GL_GNUC_PREREQ (12, 0)
+# pragma GCC diagnostic ignored "-Wdangling-pointer"
+#endif
+
 /* =================== Verify operation on static memory =================== */
 
 static char stbuf[SECRET_SIZE];
@@ -56,8 +60,22 @@ test_static (void)
 
 /* =============== Verify operation on heap-allocated memory =============== */
 
+/* Skip this part when an address sanitizer is in use, because it would report
+   a "heap use after free".  */
+#ifndef __has_feature
+# define __has_feature(a) 0
+#endif
+#if defined __SANITIZE_ADDRESS__ || __has_feature (address_sanitizer)
+
+static void
+test_heap (void)
+{
+}
+
+#else
+
 /* Test whether an address range is mapped in memory.  */
-#if VMA_ITERATE_SUPPORTED
+# if VMA_ITERATE_SUPPORTED
 
 struct locals
 {
@@ -92,7 +110,7 @@ is_range_mapped (uintptr_t range_start, uintptr_t range_end)
   return l.range_start == l.range_end;
 }
 
-#else
+# else
 
 static bool
 is_range_mapped (uintptr_t range_start, uintptr_t range_end)
@@ -100,16 +118,18 @@ is_range_mapped (uintptr_t range_start, uintptr_t range_end)
   return true;
 }
 
-#endif
+# endif
 
 static void
 test_heap (void)
 {
   char *heapbuf = (char *) malloc (SECRET_SIZE);
-  uintptr_t addr = (uintptr_t) heapbuf;
+  ASSERT (heapbuf);
+  uintptr_t volatile addr = (uintptr_t) heapbuf;
   memcpy (heapbuf, SECRET, SECRET_SIZE);
   explicit_bzero (heapbuf, SECRET_SIZE);
   free (heapbuf);
+  heapbuf = (char *) addr;
   if (is_range_mapped (addr, addr + SECRET_SIZE))
     {
       /* some implementation could override freed memory by canaries so
@@ -121,26 +141,56 @@ test_heap (void)
     printf ("test_heap: address range is unmapped after free().\n");
 }
 
+#endif /* ! address sanitizer enabled */
+
 /* =============== Verify operation on stack-allocated memory =============== */
+
+/* Skip this part when an address sanitizer is in use, because it would report
+   a "stack use after return".  */
+#ifndef __has_feature
+# define __has_feature(a) 0
+#endif
+#if defined __SANITIZE_ADDRESS__ || __has_feature (address_sanitizer)
+
+static void
+test_stack (void)
+{
+}
+
+#else
 
 /* There are two passes:
      1. Put a secret in memory and invoke explicit_bzero on it.
      2. Verify that the memory has been erased.
    Implement them in the same function, so that they access the same memory
-   range on the stack.  */
-static int _GL_ATTRIBUTE_NOINLINE
-do_secret_stuff (volatile int pass)
+   range on the stack.  Declare the local scalars to be volatile so they
+   are not optimized away.  That way, the test verifies that the compiler
+   does not eliminate a call to explicit_bzero, even if data flow analysis
+   reveals that the stack area is dead at the end of the function.  */
+static bool _GL_ATTRIBUTE_NOINLINE
+# if _GL_GNUC_PREREQ (4, 5)
+__attribute__ ((__noclone__))
+# endif
+# if _GL_GNUC_PREREQ (8, 0)
+__attribute__ ((__noipa__))
+# endif
+do_secret_stuff (int volatile pass, char *volatile *volatile last_stackbuf)
 {
   char stackbuf[SECRET_SIZE];
   if (pass == 1)
     {
       memcpy (stackbuf, SECRET, SECRET_SIZE);
       explicit_bzero (stackbuf, SECRET_SIZE);
-      return 0;
+      *last_stackbuf = stackbuf;
+      return false;
     }
   else /* pass == 2 */
     {
-      return memcmp (zero, stackbuf, SECRET_SIZE) != 0;
+      /* Use *last_stackbuf here, because stackbuf may be allocated at a
+         different address than *last_stackbuf.  This can happen
+         when the compiler splits this function into different functions,
+         one for pass == 1 and one for pass != 1.  */
+      return memcmp (zero, *last_stackbuf, SECRET_SIZE) != 0;
     }
 }
 
@@ -149,11 +199,19 @@ test_stack (void)
 {
   int count = 0;
   int repeat;
+  char *volatile last_stackbuf;
 
-  for (repeat = 1000; repeat > 0; repeat--)
+  for (repeat = 2 * 1000; repeat > 0; repeat--)
     {
-      do_secret_stuff (1);
-      count += do_secret_stuff (2);
+      /* This odd way of writing two consecutive statements
+           do_secret_stuff (1, &last_stackbuf);
+           count += do_secret_stuff (2, &last_stackbuf);
+         ensures that the two do_secret_stuff calls are performed with the same
+         stack pointer value, on m68k.  */
+      if ((repeat % 2) == 0)
+        do_secret_stuff (1, &last_stackbuf);
+      else
+        count += do_secret_stuff (2, &last_stackbuf);
     }
   /* If explicit_bzero works, count is near 0.  (It may be > 0 if there were
      some asynchronous signal invocations between the two calls of
@@ -164,6 +222,8 @@ test_stack (void)
   ASSERT (count < 50);
 }
 
+#endif /* ! address sanitizer enabled */
+
 /* ========================================================================== */
 
 int
@@ -173,5 +233,5 @@ main ()
   test_heap ();
   test_stack ();
 
-  return 0;
+  return test_exit_status;
 }

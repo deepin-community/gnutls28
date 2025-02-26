@@ -42,7 +42,7 @@ int _gnutls13_psk_ext_parser_init(psk_ext_parser_st *p,
 	if (p->identities_len == 0)
 		return gnutls_assert_val(GNUTLS_E_REQUESTED_DATA_NOT_AVAILABLE);
 
-	p->identities_data = (unsigned char *) data;
+	p->identities_data = (unsigned char *)data;
 
 	DECR_LEN(len, p->identities_len);
 	data += p->identities_len;
@@ -74,7 +74,7 @@ int _gnutls13_psk_ext_iter_next_identity(psk_ext_iter_st *iter,
 		return gnutls_assert_val(GNUTLS_E_RECEIVED_ILLEGAL_PARAMETER);
 
 	iter->identities_data += 2;
-	psk->identity.data = (void*)iter->identities_data;
+	psk->identity.data = (void *)iter->identities_data;
 
 	DECR_LEN(iter->identities_len, psk->identity.size);
 	iter->identities_data += psk->identity.size;

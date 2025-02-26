@@ -1,17 +1,17 @@
 /* Open a stream to a file.
-   Copyright (C) 2007-2021 Free Software Foundation, Inc.
+   Copyright (C) 2007-2025 Free Software Foundation, Inc.
 
-   This program is free software: you can redistribute it and/or modify
-   it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 3 of the License, or
-   (at your option) any later version.
+   This file is free software: you can redistribute it and/or modify
+   it under the terms of the GNU Lesser General Public License as
+   published by the Free Software Foundation; either version 2.1 of the
+   License, or (at your option) any later version.
 
-   This program is distributed in the hope that it will be useful,
+   This file is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   GNU General Public License for more details.
+   GNU Lesser General Public License for more details.
 
-   You should have received a copy of the GNU General Public License
+   You should have received a copy of the GNU Lesser General Public License
    along with this program.  If not, see <https://www.gnu.org/licenses/>.  */
 
 /* Written by Bruno Haible <bruno@clisp.org>, 2007.  */
@@ -19,12 +19,12 @@
 /* If the user's config.h happens to include <stdio.h>, let it include only
    the system's <stdio.h> here, so that orig_fopen doesn't recurse to
    rpl_fopen.  */
-#define _GL_ALREADY_INCLUDING_STDIO_H
+#define _GL_SKIP_GNULIB_STDIO_H
 #include <config.h>
 
 /* Get the original definition of fopen.  It might be defined as a macro.  */
 #include <stdio.h>
-#undef _GL_ALREADY_INCLUDING_STDIO_H
+#undef _GL_SKIP_GNULIB_STDIO_H
 
 static FILE *
 orig_fopen (const char *filename, const char *mode)
@@ -33,13 +33,16 @@ orig_fopen (const char *filename, const char *mode)
 }
 
 /* Specification.  */
+#ifdef __osf__
 /* Write "stdio.h" here, not <stdio.h>, otherwise OSF/1 5.1 DTK cc eliminates
    this include because of the preliminary #include <stdio.h> above.  */
-#include "stdio.h"
+# include "stdio.h"
+#else
+# include <stdio.h>
+#endif
 
 #include <errno.h>
 #include <fcntl.h>
-#include <stdbool.h>
 #include <string.h>
 #include <unistd.h>
 #include <sys/types.h>
@@ -225,6 +228,10 @@ rpl_fopen (const char *filename, const char *mode)
       return fp;
     }
 #endif
+
+  /* open_direction is sometimes used, sometimes unused.
+     Silence gcc's warning about this situation.  */
+  (void) open_direction;
 
   return orig_fopen (filename, mode);
 }

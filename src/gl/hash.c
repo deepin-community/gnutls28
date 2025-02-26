@@ -1,20 +1,20 @@
 /* hash - hashing table processing.
 
-   Copyright (C) 1998-2004, 2006-2007, 2009-2021 Free Software Foundation, Inc.
+   Copyright (C) 1998-2004, 2006-2007, 2009-2025 Free Software Foundation, Inc.
 
    Written by Jim Meyering, 1992.
 
-   This program is free software: you can redistribute it and/or modify
-   it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 3 of the License, or
-   (at your option) any later version.
+   This file is free software: you can redistribute it and/or modify
+   it under the terms of the GNU Lesser General Public License as
+   published by the Free Software Foundation; either version 2.1 of the
+   License, or (at your option) any later version.
 
-   This program is distributed in the hope that it will be useful,
+   This file is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   GNU General Public License for more details.
+   GNU Lesser General Public License for more details.
 
-   You should have received a copy of the GNU General Public License
+   You should have received a copy of the GNU Lesser General Public License
    along with this program.  If not, see <https://www.gnu.org/licenses/>.  */
 
 /* A generic hash table package.  */
@@ -29,6 +29,7 @@
 #include "bitrotate.h"
 #include "xalloc-oversized.h"
 
+#include <errno.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -499,13 +500,17 @@ compute_bucket_size (size_t candidate, const Hash_tuning *tuning)
     {
       float new_candidate = candidate / tuning->growth_threshold;
       if ((float) SIZE_MAX <= new_candidate)
-        return 0;
+        goto nomem;
       candidate = new_candidate;
     }
   candidate = next_prime (candidate);
   if (xalloc_oversized (candidate, sizeof (struct hash_entry *)))
-    return 0;
+    goto nomem;
   return candidate;
+
+ nomem:
+  errno = ENOMEM;
+  return 0;
 }
 
 Hash_table *
@@ -534,6 +539,7 @@ hash_initialize (size_t candidate, const Hash_tuning *tuning,
          if the user provides invalid tuning options, we silently revert to
          using the defaults, and ignore further request to change the tuning
          options.  */
+      errno = EINVAL;
       goto fail;
     }
 
@@ -607,6 +613,7 @@ hash_free (Hash_table *table)
   struct hash_entry *bucket;
   struct hash_entry *cursor;
   struct hash_entry *next;
+  int err = errno;
 
   /* Call the user data_freer function.  */
   if (table->data_freer && table->n_entries)
@@ -649,6 +656,8 @@ hash_free (Hash_table *table)
   /* Free the remainder of the hash table structure.  */
   free (table->bucket);
   free (table);
+
+  errno = err;
 }
 
 /* Insertion and deletion.  */
@@ -762,8 +771,8 @@ hash_find_entry (Hash_table *table, const void *entry,
 /* Internal helper, to move entries from SRC to DST.  Both tables must
    share the same free entry list.  If SAFE, only move overflow
    entries, saving bucket heads for later, so that no allocations will
-   occur.  Return false if the free entry list is exhausted and an
-   allocation fails.  */
+   occur.  Return false (setting errno) if the free entry list is
+   exhausted and an allocation fails.  */
 
 static bool
 transfer_entries (Hash_table *dst, Hash_table *src, bool safe)
@@ -910,12 +919,14 @@ hash_rehash (Hash_table *table, size_t candidate)
      passes.  Two passes give worse cache performance and takes
      longer, but at this point, we're already out of memory, so slow
      and safe is better than failure.  */
+  int err = errno;
   table->free_entry_list = new_table->free_entry_list;
   if (! (transfer_entries (table, new_table, true)
          && transfer_entries (table, new_table, false)))
     abort ();
   /* table->n_entries already holds its value.  */
   free (new_table->bucket);
+  errno = err;
   return false;
 }
 
@@ -962,7 +973,10 @@ hash_insert_if_absent (Hash_table *table, void const *entry,
                 * tuning->growth_threshold));
 
           if ((float) SIZE_MAX <= candidate)
-            return -1;
+            {
+              errno = ENOMEM;
+              return -1;
+            }
 
           /* If the rehash fails, arrange to return NULL.  */
           if (!hash_rehash (table, candidate))

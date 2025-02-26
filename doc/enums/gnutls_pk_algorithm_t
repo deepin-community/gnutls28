@@ -28,6 +28,22 @@ GOST R 34.10-2012 algorithm, 512-bit key per rfc7091.
 Elliptic curve algorithm, restricted to ECDH as per rfc7748.
 @item GNUTLS_@-PK_@-EDDSA_@-ED448
 Edwards curve Digital signature algorithm. Used with SHAKE256 on signatures.
+@item GNUTLS_@-PK_@-RSA_@-OAEP
+RSA public-key algorithm, with OAEP padding.
+@item GNUTLS_@-PK_@-MLKEM768
+ML-KEM-768 key encapsulation algorithm as per FIPS 203.
+@item GNUTLS_@-PK_@-MLDSA44
+ML-DSA-44 digital signature algorithm as per FIPS 204.
+@item GNUTLS_@-PK_@-MLDSA65
+ML-DSA-65 digital signature algorithm as per FIPS 204.
+@item GNUTLS_@-PK_@-MLDSA87
+ML-DSA-87 digital signature algorithm as per FIPS 204.
+@item GNUTLS_@-PK_@-MLKEM1024
+ML-KEM-1024 key encapsulation algorithm as per FIPS 203.
 @item GNUTLS_@-PK_@-MAX
+-- undescribed --
+@item GNUTLS_@-PK_@-EXP_@-KYBER768
+-- undescribed --
+@item GNUTLS_@-PK_@-EXP_@-MAX
 -- undescribed --
 @end table

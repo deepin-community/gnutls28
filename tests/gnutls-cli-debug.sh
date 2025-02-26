@@ -23,6 +23,7 @@
 : ${srcdir=.}
 : ${SERV=../src/gnutls-serv${EXEEXT}}
 : ${DCLI=../src/gnutls-cli-debug${EXEEXT}}
+: ${TIMEOUT=timeout}
 OUTFILE=cli-debug.$$.tmp
 TMPFILE=config.$$.tmp
 unset RETCODE
@@ -48,8 +49,6 @@ SERV="${SERV} -q"
 
 . "${srcdir}/scripts/common.sh"
 
-skip_if_no_datefudge
-
 
 KEY1=${srcdir}/../doc/credentials/x509/key-rsa.pem
 CERT1=${srcdir}/../doc/credentials/x509/cert-rsa.pem
@@ -71,8 +70,8 @@ launch_server --echo --priority "NORMAL:-VERS-ALL:+VERS-TLS1.2:+VERS-TLS1.1" --x
 PID=$!
 wait_server ${PID}
 
-timeout 1800 datefudge "2017-08-9" \
-"${DCLI}" -p "${PORT}" localhost >$OUTFILE 2>&1 || fail ${PID} "gnutls-cli-debug run should have succeeded!"
+"$TIMEOUT" 1800 \
+"${DCLI}" --attime "2017-08-9" -p "${PORT}" localhost >$OUTFILE 2>&1 || fail ${PID} "gnutls-cli-debug run should have succeeded!"
 
 kill ${PID}
 wait
@@ -118,8 +117,8 @@ launch_server --echo --priority "NORMAL:-VERS-ALL:+VERS-TLS1.3:+VERS-TLS1.2" --x
 PID=$!
 wait_server ${PID}
 
-timeout 1800 datefudge "2017-08-9" \
-"${DCLI}" -p "${PORT}" localhost >$OUTFILE 2>&1 || fail ${PID} "gnutls-cli-debug run should have succeeded!"
+"$TIMEOUT" 1800 \
+"${DCLI}" --attime "2017-08-9" -p "${PORT}" localhost >$OUTFILE 2>&1 || fail ${PID} "gnutls-cli-debug run should have succeeded!"
 
 kill ${PID}
 wait
@@ -160,8 +159,8 @@ launch_server --echo --priority "NORMAL:-VERS-ALL:+VERS-TLS1.3:+VERS-TLS1.2:-RSA
 PID=$!
 wait_server ${PID}
 
-timeout 1800 datefudge "2017-08-9" \
-"${DCLI}" -p "${PORT}" localhost >$OUTFILE 2>&1 || fail ${PID} "gnutls-cli-debug run should have succeeded!"
+"$TIMEOUT" 1800 \
+"${DCLI}" --attime "2017-08-9" -p "${PORT}" localhost >$OUTFILE 2>&1 || fail ${PID} "gnutls-cli-debug run should have succeeded!"
 
 kill ${PID}
 wait
@@ -186,8 +185,8 @@ tls-disabled-cipher = CAMELLIA-256-CBC
 _EOF_
 
 GNUTLS_SYSTEM_PRIORITY_FILE="${TMPFILE}" \
-timeout 1800 datefudge "2017-08-9" \
-"${DCLI}" -p "${PORT}" localhost >$OUTFILE 2>&1 || fail ${PID} "gnutls-cli-debug run should have succeeded!"
+"$TIMEOUT" 1800 \
+"${DCLI}" --attime "2017-08-9" -p "${PORT}" localhost >$OUTFILE 2>&1 || fail ${PID} "gnutls-cli-debug run should have succeeded!"
 
 kill ${PID}
 wait
@@ -209,8 +208,8 @@ if test "${ENABLE_GOST}" = "1" && test "${GNUTLS_FORCE_FIPS_MODE}" != 1 ; then
 	PID=$!
 	wait_server ${PID}
 
-	timeout 1800 datefudge "2017-08-9" \
-	"${DCLI}" -p "${PORT}" localhost >$OUTFILE 2>&1 || fail ${PID} "gnutls-cli-debug run should have succeeded!"
+	"$TIMEOUT" 1800 \
+	"${DCLI}" --attime "2017-08-9" -p "${PORT}" localhost >$OUTFILE 2>&1 || fail ${PID} "gnutls-cli-debug run should have succeeded!"
 
 	kill ${PID}
 	wait

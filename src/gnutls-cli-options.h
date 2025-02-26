@@ -30,6 +30,7 @@ struct gnutls_cli_options
     bool verify_hostname;
     bool starttls;
     bool starttls_proto;
+    bool starttls_name;
     bool udp;
     bool mtu;
     bool crlf;
@@ -82,6 +83,7 @@ struct gnutls_cli_options
     bool keymatexportsize;
     bool waitresumption;
     bool ca_auto_retrieve;
+    bool attime;
     bool version;
     bool help;
     bool more_help;
@@ -95,6 +97,7 @@ struct gnutls_cli_options
     const char *sni_hostname;
     const char *verify_hostname;
     const char *starttls_proto;
+    const char *starttls_name;
     const char *mtu;
     const char *save_cert;
     const char *save_ocsp;
@@ -121,6 +124,7 @@ struct gnutls_cli_options
     const char *logfile;
     const char *keymatexport;
     const char *keymatexportsize;
+    const char *attime;
     const char *version;
   } arg;
 
@@ -159,6 +163,7 @@ struct gnutls_cli_options
     bool verify_hostname;
     bool starttls;
     bool starttls_proto;
+    bool starttls_name;
     bool udp;
     bool mtu;
     bool crlf;
@@ -211,6 +216,7 @@ struct gnutls_cli_options
     bool keymatexportsize;
     bool waitresumption;
     bool ca_auto_retrieve;
+    bool attime;
     bool version;
     bool help;
     bool more_help;
@@ -239,6 +245,7 @@ struct gnutls_cli_options
 #define HAVE_OPT_VERIFY_HOSTNAME gnutls_cli_options.present.verify_hostname
 #define HAVE_OPT_STARTTLS gnutls_cli_options.present.starttls
 #define HAVE_OPT_STARTTLS_PROTO gnutls_cli_options.present.starttls_proto
+#define HAVE_OPT_STARTTLS_NAME gnutls_cli_options.present.starttls_name
 #define HAVE_OPT_UDP gnutls_cli_options.present.udp
 #define HAVE_OPT_MTU gnutls_cli_options.present.mtu
 #define HAVE_OPT_CRLF gnutls_cli_options.present.crlf
@@ -291,6 +298,7 @@ struct gnutls_cli_options
 #define HAVE_OPT_KEYMATEXPORTSIZE gnutls_cli_options.present.keymatexportsize
 #define HAVE_OPT_WAITRESUMPTION gnutls_cli_options.present.waitresumption
 #define HAVE_OPT_CA_AUTO_RETRIEVE gnutls_cli_options.present.ca_auto_retrieve
+#define HAVE_OPT_ATTIME gnutls_cli_options.present.attime
 #define HAVE_OPT_VERSION gnutls_cli_options.present.version
 #define HAVE_OPT_HELP gnutls_cli_options.present.help
 #define HAVE_OPT_MORE_HELP gnutls_cli_options.present.more_help
@@ -310,6 +318,7 @@ struct gnutls_cli_options
 #define OPT_ARG_VERIFY_HOSTNAME gnutls_cli_options.arg.verify_hostname
 #define OPT_ARG_STARTTLS gnutls_cli_options.arg.starttls
 #define OPT_ARG_STARTTLS_PROTO gnutls_cli_options.arg.starttls_proto
+#define OPT_ARG_STARTTLS_NAME gnutls_cli_options.arg.starttls_name
 #define OPT_ARG_UDP gnutls_cli_options.arg.udp
 #define OPT_ARG_MTU gnutls_cli_options.arg.mtu
 #define OPT_ARG_CRLF gnutls_cli_options.arg.crlf
@@ -362,6 +371,7 @@ struct gnutls_cli_options
 #define OPT_ARG_KEYMATEXPORTSIZE gnutls_cli_options.arg.keymatexportsize
 #define OPT_ARG_WAITRESUMPTION gnutls_cli_options.arg.waitresumption
 #define OPT_ARG_CA_AUTO_RETRIEVE gnutls_cli_options.arg.ca_auto_retrieve
+#define OPT_ARG_ATTIME gnutls_cli_options.arg.attime
 #define OPT_ARG_VERSION gnutls_cli_options.arg.version
 #define OPT_ARG_HELP gnutls_cli_options.arg.help
 #define OPT_ARG_MORE_HELP gnutls_cli_options.arg.more_help
@@ -387,6 +397,7 @@ struct gnutls_cli_options
 #define ENABLED_OPT_VERIFY_HOSTNAME gnutls_cli_options.enabled.verify_hostname
 #define ENABLED_OPT_STARTTLS gnutls_cli_options.enabled.starttls
 #define ENABLED_OPT_STARTTLS_PROTO gnutls_cli_options.enabled.starttls_proto
+#define ENABLED_OPT_STARTTLS_NAME gnutls_cli_options.enabled.starttls_name
 #define ENABLED_OPT_UDP gnutls_cli_options.enabled.udp
 #define ENABLED_OPT_MTU gnutls_cli_options.enabled.mtu
 #define ENABLED_OPT_CRLF gnutls_cli_options.enabled.crlf
@@ -439,6 +450,7 @@ struct gnutls_cli_options
 #define ENABLED_OPT_KEYMATEXPORTSIZE gnutls_cli_options.enabled.keymatexportsize
 #define ENABLED_OPT_WAITRESUMPTION gnutls_cli_options.enabled.waitresumption
 #define ENABLED_OPT_CA_AUTO_RETRIEVE gnutls_cli_options.enabled.ca_auto_retrieve
+#define ENABLED_OPT_ATTIME gnutls_cli_options.enabled.attime
 #define ENABLED_OPT_VERSION gnutls_cli_options.enabled.version
 #define ENABLED_OPT_HELP gnutls_cli_options.enabled.help
 #define ENABLED_OPT_MORE_HELP gnutls_cli_options.enabled.more_help

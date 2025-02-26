@@ -13,26 +13,39 @@
 #
 # GnuTLS is distributed in the hope that it will be useful, but
 # WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
 # General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with GnuTLS; if not, write to the Free Software Foundation,
-# Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+# along with GnuTLS. If not, see <https://www.gnu.org/licenses/>.
 
-: ${builddir=.}
+: ${builddir=.} ${host_os=`uname`}
 
 . "$srcdir/scripts/common.sh"
 
-if ! grep '^tls ' /proc/modules 2>&1 /dev/null; then
-    exit 77
-fi
+case "$host_os" in
+    FreeBSD)
+	if ! sysctl -n kern.ipc.tls.enable | grep 1 > /dev/null; then 
+		exit 77 
+	fi
+	;;
+    Linux)
+	if ! grep '^tls ' /proc/modules 2>&1 /dev/null; then 
+		exit 77 
+	fi
+	case "$(uname -r)" in
+	    4.* | 5.[0-9].* | 5.10.*)
+		exit 77 
+		;;
+	esac
+	;;
+esac
 
 testdir=`create_testdir ktls`
 
 cfg="$testdir/config"
 
-cat <<EOF > "$cfg"
+cat << EOF > "$cfg"
 [global]
 ktls = true
 EOF

@@ -1,19 +1,19 @@
 /* Provide a netdb.h header file for systems lacking it (read: MinGW).
-   Copyright (C) 2008-2021 Free Software Foundation, Inc.
+   Copyright (C) 2008-2025 Free Software Foundation, Inc.
    Written by Simon Josefsson.
 
-   This program is free software; you can redistribute it and/or modify
-   it under the terms of the GNU Lesser General Public License as published by
-   the Free Software Foundation; either version 2.1, or (at your option)
-   any later version.
+   This file is free software: you can redistribute it and/or modify
+   it under the terms of the GNU Lesser General Public License as
+   published by the Free Software Foundation; either version 2.1 of the
+   License, or (at your option) any later version.
 
-   This program is distributed in the hope that it will be useful,
+   This file is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU Lesser General Public License for more details.
 
    You should have received a copy of the GNU Lesser General Public License
-   along with this program; if not, see <https://www.gnu.org/licenses/>.  */
+   along with this program.  If not, see <https://www.gnu.org/licenses/>.  */
 
 /* This file is supposed to be used on platforms that lack <netdb.h>.
    It is intended to provide definitions and prototypes needed by an
@@ -36,6 +36,11 @@
 #ifndef _@GUARD_PREFIX@_NETDB_H
 #define _@GUARD_PREFIX@_NETDB_H
 
+/* This file uses GNULIB_POSIXCHECK, HAVE_RAW_DECL_*.  */
+#if !_GL_CONFIG_H_INCLUDED
+ #error "Please include config.h first."
+#endif
+
 /* Get <netdb.h> definitions such as 'socklen_t' on IRIX 6.5 and OSF/1 4.0 and
    'struct hostent' on MinGW.  */
 #include <sys/socket.h>
@@ -48,6 +53,14 @@
 
 /* Declarations for a platform that lacks <netdb.h>, or where it is
    incomplete.  */
+
+/* Maximum length of a fully-qualified domain name.  */
+#undef NI_MAXHOST
+#define NI_MAXHOST 1025
+
+/* Maximum length of a service.  */
+#undef NI_MAXSERV
+#define NI_MAXSERV 32
 
 #if @GNULIB_GETADDRINFO@
 
@@ -171,7 +184,7 @@ _GL_FUNCDECL_RPL (getaddrinfo, int,
                   (const char *restrict nodename,
                    const char *restrict servname,
                    const struct addrinfo *restrict hints,
-                   struct addrinfo **restrict res)
+                   struct addrinfo **restrict res),
                   _GL_ARG_NONNULL ((4)));
 _GL_CXXALIAS_RPL (getaddrinfo, int,
                   (const char *restrict nodename,
@@ -184,7 +197,7 @@ _GL_FUNCDECL_SYS (getaddrinfo, int,
                   (const char *restrict nodename,
                    const char *restrict servname,
                    const struct addrinfo *restrict hints,
-                   struct addrinfo **restrict res)
+                   struct addrinfo **restrict res),
                   _GL_ARG_NONNULL ((4)));
 #  endif
 _GL_CXXALIAS_SYS (getaddrinfo, int,
@@ -203,12 +216,12 @@ _GL_CXXALIASWARN (getaddrinfo);
 #   undef freeaddrinfo
 #   define freeaddrinfo rpl_freeaddrinfo
 #  endif
-_GL_FUNCDECL_RPL (freeaddrinfo, void, (struct addrinfo *ai)
+_GL_FUNCDECL_RPL (freeaddrinfo, void, (struct addrinfo *ai),
                                       _GL_ARG_NONNULL ((1)));
 _GL_CXXALIAS_RPL (freeaddrinfo, void, (struct addrinfo *ai));
 # else
 #  if !@HAVE_DECL_FREEADDRINFO@
-_GL_FUNCDECL_SYS (freeaddrinfo, void, (struct addrinfo *ai)
+_GL_FUNCDECL_SYS (freeaddrinfo, void, (struct addrinfo *ai),
                                       _GL_ARG_NONNULL ((1)));
 #  endif
 _GL_CXXALIAS_SYS (freeaddrinfo, void, (struct addrinfo *ai));
@@ -220,14 +233,14 @@ _GL_CXXALIASWARN (freeaddrinfo);
 #   undef gai_strerror
 #   define gai_strerror rpl_gai_strerror
 #  endif
-_GL_FUNCDECL_RPL (gai_strerror, const char *, (int ecode));
+_GL_FUNCDECL_RPL (gai_strerror, const char *, (int ecode), );
 _GL_CXXALIAS_RPL (gai_strerror, const char *, (int ecode));
 # else
 #  if !@HAVE_DECL_GAI_STRERROR@
 /* Convert error return from getaddrinfo() to a string.
    For more details, see the POSIX:2008 specification
    <https://pubs.opengroup.org/onlinepubs/9699919799/functions/gai_strerror.html>.  */
-_GL_FUNCDECL_SYS (gai_strerror, const char *, (int ecode));
+_GL_FUNCDECL_SYS (gai_strerror, const char *, (int ecode), );
 #  endif
 _GL_CXXALIAS_SYS (gai_strerror, const char *, (int ecode));
 # endif
@@ -243,7 +256,7 @@ _GL_FUNCDECL_SYS (getnameinfo, int,
                   (const struct sockaddr *restrict sa, socklen_t salen,
                    char *restrict node, socklen_t nodelen,
                    char *restrict service, socklen_t servicelen,
-                   int flags)
+                   int flags),
                   _GL_ARG_NONNULL ((1)));
 # endif
 /* Need to cast, because on glibc systems, the seventh parameter is

@@ -297,16 +297,18 @@ def generate_source(desc: Desc, info: Info, outfile: TextIO):
             constraint_statements.write(f'''\
 {INDENT}if (HAVE_OPT({upper_opt}) && HAVE_OPT({mangle(conflict_opt).upper()}))
 {INDENT*2}{{
-{INDENT*3}error (EXIT_FAILURE, 0, "the '%s' and '%s' options conflict",
-{INDENT*3}       "{long_opt}", "{mangle(conflict_opt)}");
+{INDENT*3}fprintf (stderr, "the '%s' and '%s' options conflict\\n",
+{INDENT*3}         "{long_opt}", "{mangle(conflict_opt)}");
+{INDENT*3}exit (EXIT_FAILURE);
 {INDENT*2}}}
 ''')
         for require_opt in option.requires:
             constraint_statements.write(f'''\
 {INDENT}if (HAVE_OPT({upper_opt}) && !HAVE_OPT({mangle(require_opt).upper()}))
 {INDENT*2}{{
-{INDENT*3}error (EXIT_FAILURE, 0, "%s option requires the %s options",
-{INDENT*3}       "{long_opt}", "{mangle(require_opt)}");
+{INDENT*3}fprintf (stderr, "%s option requires the %s options\\n",
+{INDENT*3}         "{long_opt}", "{mangle(require_opt)}");
+{INDENT*3}exit (EXIT_FAILURE);
 {INDENT*2}}}
 ''')
         arg_range = option.argument_range
@@ -315,16 +317,18 @@ def generate_source(desc: Desc, info: Info, outfile: TextIO):
 {INDENT}if (HAVE_OPT({upper_opt}) && \
 OPT_VALUE_{upper_opt} < {arg_range.minimum})
 {INDENT*2}{{
-{INDENT*3}error (EXIT_FAILURE, 0, "%s option value %d is out of range.",
-{INDENT*3}       "{long_opt}", opts->value.{lower_opt});
+{INDENT*3}fprintf (stderr, "%s option value %d is out of range\\n",
+{INDENT*3}         "{long_opt}", opts->value.{lower_opt});
+{INDENT*3}exit (EXIT_FAILURE);
 {INDENT*2}}}
 ''')
             constraint_statements.write(f'''\
 {INDENT}if (HAVE_OPT({upper_opt}) && \
 OPT_VALUE_{upper_opt} > {arg_range.maximum})
 {INDENT*2}{{
-{INDENT*3}error (EXIT_FAILURE, 0, "%s option value %d is out of range",
-{INDENT*3}       "{long_opt}", opts->value.{lower_opt});
+{INDENT*3}fprintf (stderr, "%s option value %d is out of range\\n",
+{INDENT*3}         "{long_opt}", opts->value.{lower_opt});
+{INDENT*3}exit (EXIT_FAILURE);
 {INDENT*2}}}
 ''')
 
@@ -343,14 +347,16 @@ OPT_VALUE_{upper_opt} > {arg_range.maximum})
             argument_statement = f'''\
 {INDENT}if (optind == argc)
 {INDENT*2}{{
-{INDENT*3}error (EXIT_FAILURE, 0, "Command line arguments required");
+{INDENT*3}fprintf (stderr, "Command line arguments required\\n");
+{INDENT*3}exit (EXIT_FAILURE);
 {INDENT*2}}}
 '''
     else:
         argument_statement = f'''\
 {INDENT}if (optind < argc)
 {INDENT*2}{{
-{INDENT*3}error (EXIT_FAILURE, 0, "Command line arguments are not allowed.");
+{INDENT*3}fprintf (stderr, "Command line arguments are not allowed\\n");
+{INDENT*3}exit (EXIT_FAILURE);
 {INDENT*2}}}
 '''
 
@@ -383,10 +389,10 @@ OPT_VALUE_{upper_opt} > {arg_range.maximum})
 
 #include "{outfile_base}.h"
 #include <errno.h>
-#include <error.h>
 #include <getopt.h>
 #include <limits.h>
 #include <stdint.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #ifndef _WIN32
@@ -422,13 +428,19 @@ append_to_list (struct {mangle(desc.tool.name)}_list *list,
 {INDENT}size_t new_count = xsum (list->count, 1);
 
 {INDENT}if (size_overflow_p (new_count))
-{INDENT*2}error (EXIT_FAILURE, 0, "too many arguments for %s",
-{INDENT*2}       name);
+{INDENT*2}{{
+{INDENT*3}fprintf (stderr, "too many arguments for %s\\n",
+{INDENT*3}         name);
+{INDENT*3}exit (EXIT_FAILURE);
+{INDENT*2}}}
 
 {INDENT}tmp = reallocarray (list->args, new_count, sizeof (char *));
 {INDENT}if (!tmp)
-{INDENT*2}error (EXIT_FAILURE, 0, "unable to allocate memory for %s",
-{INDENT*2}       name);
+{INDENT*2}{{
+{INDENT*3}fprintf (stderr, "unable to allocate memory for %s\\n",
+{INDENT*3}         name);
+{INDENT*3}exit (EXIT_FAILURE);
+{INDENT*2}}}
 
 {INDENT}list->args = tmp;
 {INDENT}list->args[list->count] = optarg;
@@ -455,8 +467,14 @@ parse_number (const char *arg)
 {INDENT*2}result = strtol (arg, &endptr, 10);
 
 {INDENT}if (errno != 0 || (endptr && *endptr != '\\0'))
-{INDENT*2}error (EXIT_FAILURE, errno, "'%s' is not a recognizable number.",
-{INDENT*2}       arg);
+{INDENT*2}{{
+{INDENT*3}char buf[80];
+{INDENT*3}snprintf (buf, sizeof(buf),
+{INDENT*3}          "'%s' is not a recognizable number",
+{INDENT*3}          arg);
+{INDENT*3}perror (buf);
+{INDENT*3}exit (EXIT_FAILURE);
+{INDENT*2}}}
 
 {INDENT}return result;
 }}
@@ -517,11 +535,17 @@ process_options (int argc, char **argv)
 {INDENT*3}int pfds[2];
 
 {INDENT*3}if (pipe (pfds) < 0)
-{INDENT*4}error (EXIT_FAILURE, errno, "pipe");
+{INDENT*4}{{
+{INDENT*5}perror ("pipe");
+{INDENT*5}exit (EXIT_FAILURE);
+{INDENT*4}}}
 
 {INDENT*3}pid = fork ();
 {INDENT*3}if (pid < 0)
-{INDENT*4}error (EXIT_FAILURE, errno, "fork");
+{INDENT*4}{{
+{INDENT*5}perror ("fork");
+{INDENT*5}exit (EXIT_FAILURE);
+{INDENT*4}}}
 
 {INDENT*3}if (pid == 0)
 {INDENT*4}{{
@@ -580,11 +604,12 @@ process_options (int argc, char **argv)
 {INDENT*4}}}
 {INDENT*3}else
 {INDENT*4}{{
-{INDENT*5}error (EXIT_FAILURE, 0,
-{INDENT*5}       "version option argument 'a' invalid.  Use:\\n"
-{INDENT*5}       "	'v' - version only\\n"
-{INDENT*5}       "	'c' - version and copyright\\n"
-{INDENT*5}       "	'n' - version and full copyright notice");
+{INDENT*5}fprintf (stderr,
+{INDENT*5}         "version option argument 'a' invalid.  Use:\\n"
+{INDENT*5}         "	'v' - version only\\n"
+{INDENT*5}         "	'c' - version and copyright\\n"
+{INDENT*5}         "	'n' - version and full copyright notice\\n");
+{INDENT*5}exit (EXIT_FAILURE);
 {INDENT*4}}}
 {INDENT*2}}}
 

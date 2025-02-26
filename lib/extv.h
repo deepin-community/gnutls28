@@ -29,12 +29,10 @@
 /* Iterates through all TLS-type extensions in data, and
  * calls the callback function for each of them. The ctx, flags
  * and parse_type are passed verbatim to callback. */
-int _gnutls_extv_parse(void *ctx,
-		       gnutls_ext_raw_process_func cb,
-		       const uint8_t * data, int data_size);
+int _gnutls_extv_parse(void *ctx, gnutls_ext_raw_process_func cb,
+		       const uint8_t *data, int data_size);
 
-inline static
-int _gnutls_extv_append_init(gnutls_buffer_st *buf)
+inline static int _gnutls_extv_append_init(gnutls_buffer_st *buf)
 {
 	unsigned pos;
 	int ret;
@@ -51,8 +49,8 @@ int _gnutls_extv_append_init(gnutls_buffer_st *buf)
 /* its input is the buffer and the return value of _gnutls_extv_append_init()
  * @is_hello: should be true for client and server hello messages.
  */
-inline static
-int _gnutls_extv_append_final(gnutls_buffer_st *buf, unsigned init, unsigned is_hello)
+inline static int _gnutls_extv_append_final(gnutls_buffer_st *buf,
+					    unsigned init, unsigned is_hello)
 {
 	unsigned size = buf->length - init - 2;
 
@@ -72,10 +70,7 @@ int _gnutls_extv_append_final(gnutls_buffer_st *buf, unsigned init, unsigned is_
 
 typedef int (*extv_append_func)(void *ctx, gnutls_buffer_st *buf);
 
-int _gnutls_extv_append(gnutls_buffer_st *buf,
-			uint16_t tls_id,
-		        void *ctx,
-		        extv_append_func cb);
-
+int _gnutls_extv_append(gnutls_buffer_st *buf, uint16_t tls_id, void *ctx,
+			extv_append_func cb);
 
 #endif /* GNUTLS_LIB_EXTV_H */

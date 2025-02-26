@@ -16,8 +16,7 @@
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GnuTLS; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
+ * along with GnuTLS.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 #ifdef HAVE_CONFIG_H
@@ -31,7 +30,13 @@
 
 #include "utils.h"
 
-#define should_succeed(f) do{ int ret##__LINE__ = (f); if(ret##__LINE__ < 0) { fail(#f " failed %d\n", ret##__LINE__); } }while(0)
+#define should_succeed(f)                                       \
+	do {                                                    \
+		int ret##__LINE__ = (f);                        \
+		if (ret##__LINE__ < 0) {                        \
+			fail(#f " failed %d\n", ret##__LINE__); \
+		}                                               \
+	} while (0)
 
 void doit(void)
 {
@@ -43,7 +48,7 @@ void doit(void)
 	char path[256];
 	const char *src;
 	const char *id_on_xmppAddr =
-	    "very.long.username@so.the.asn1.length.is.a.valid.ascii.character";
+		"very.long.username@so.the.asn1.length.is.a.valid.ascii.character";
 
 	src = getenv("srcdir");
 	if (src == NULL)
@@ -57,7 +62,8 @@ void doit(void)
 
 	should_succeed(gnutls_x509_crt_init(&cert));
 	should_succeed(gnutls_load_file(path, &data));
-	should_succeed(gnutls_x509_crt_import(cert, &data, GNUTLS_X509_FMT_PEM));
+	should_succeed(
+		gnutls_x509_crt_import(cert, &data, GNUTLS_X509_FMT_PEM));
 	ret = gnutls_x509_crt_get_subject_alt_name(cert, 0, name, &name_len,
 						   NULL);
 	if (ret != GNUTLS_SAN_OTHERNAME_XMPP)

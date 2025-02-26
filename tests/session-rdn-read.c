@@ -20,7 +20,7 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#include "config.h"
 #endif
 
 #include <stdio.h>
@@ -52,12 +52,11 @@ static void tls_log_func(int level, const char *str)
 	fprintf(stderr, "%s|<%d>| %s", side, level, str);
 }
 
-static int
-cert_callback(gnutls_session_t session,
-	      const gnutls_datum_t * req_ca_rdn, int nreqs,
-	      const gnutls_pk_algorithm_t * pk_algos,
-	      int pk_algos_length, gnutls_pcert_st ** pcert,
-	      unsigned int *pcert_length, gnutls_privkey_t * pkey)
+static int cert_callback(gnutls_session_t session,
+			 const gnutls_datum_t *req_ca_rdn, int nreqs,
+			 const gnutls_pk_algorithm_t *pk_algos,
+			 int pk_algos_length, gnutls_pcert_st **pcert,
+			 unsigned int *pcert_length, gnutls_privkey_t *pkey)
 {
 	unsigned i;
 
@@ -65,12 +64,13 @@ cert_callback(gnutls_session_t session,
 		fail("cert_callback: found only %d RDNs\n", nreqs);
 	}
 
-	for (i = 0;i < TOTAL_CAS;i++) {
+	for (i = 0; i < TOTAL_CAS; i++) {
 		if (req_ca_rdn[i].size != ca_dn[i].size) {
 			fail("CA[%d] size mismatch\n", i);
 		}
 
-		if (memcmp(req_ca_rdn[i].data, ca_dn[i].data, ca_dn[i].size) != 0) {
+		if (memcmp(req_ca_rdn[i].data, ca_dn[i].data, ca_dn[i].size) !=
+		    0) {
 			fail("CA[%d] data mismatch\n", i);
 		}
 	}
@@ -98,24 +98,21 @@ static void start(const char *prio)
 
 	success("testing %s\n", prio);
 
-	/* General init. */
-	global_init();
-	gnutls_global_set_log_function(tls_log_func);
-	if (debug)
-		gnutls_global_set_log_level(2);
-
 	/* Init server */
 	gnutls_certificate_allocate_credentials(&serverx509cred);
 
-	assert(gnutls_certificate_set_x509_key_mem(serverx509cred, &server_cert, &server_key, GNUTLS_X509_FMT_PEM) >= 0);
+	assert(gnutls_certificate_set_x509_key_mem(serverx509cred, &server_cert,
+						   &server_key,
+						   GNUTLS_X509_FMT_PEM) >= 0);
 
-	assert(gnutls_certificate_set_x509_trust_mem(serverx509cred, CA1_PTR, GNUTLS_X509_FMT_PEM) >= 0);
-	assert(gnutls_certificate_set_x509_trust_mem(serverx509cred, CA2_PTR, GNUTLS_X509_FMT_PEM) >= 0);
+	assert(gnutls_certificate_set_x509_trust_mem(serverx509cred, CA1_PTR,
+						     GNUTLS_X509_FMT_PEM) >= 0);
+	assert(gnutls_certificate_set_x509_trust_mem(serverx509cred, CA2_PTR,
+						     GNUTLS_X509_FMT_PEM) >= 0);
 
 	gnutls_init(&server, GNUTLS_SERVER);
 	gnutls_credentials_set(server, GNUTLS_CRD_CERTIFICATE, serverx509cred);
-	assert(gnutls_priority_set_direct(server,
-				   prio, NULL) >= 0);
+	assert(gnutls_priority_set_direct(server, prio, NULL) >= 0);
 	gnutls_transport_set_push_function(server, server_push);
 	gnutls_transport_set_pull_function(server, server_pull);
 	gnutls_transport_set_ptr(server, server);
@@ -127,9 +124,8 @@ static void start(const char *prio)
 	if (ret < 0)
 		exit(1);
 
-	ret =
-	    gnutls_certificate_set_x509_trust_mem(clientx509cred, &ca3_cert,
-						  GNUTLS_X509_FMT_PEM);
+	ret = gnutls_certificate_set_x509_trust_mem(clientx509cred, &ca3_cert,
+						    GNUTLS_X509_FMT_PEM);
 	if (ret < 0)
 		exit(1);
 
@@ -145,7 +141,7 @@ static void start(const char *prio)
 	if (ret < 0)
 		exit(1);
 
-	assert(gnutls_priority_set_direct(client, prio, NULL)>=0);
+	assert(gnutls_priority_set_direct(client, prio, NULL) >= 0);
 	gnutls_transport_set_push_function(client, client_push);
 	gnutls_transport_set_pull_function(client, client_pull);
 	gnutls_transport_set_ptr(client, client);
@@ -161,8 +157,6 @@ static void start(const char *prio)
 	gnutls_certificate_free_credentials(serverx509cred);
 	gnutls_certificate_free_credentials(clientx509cred);
 
-	gnutls_global_deinit();
-
 	reset_buffers();
 }
 
@@ -170,7 +164,7 @@ static void find_dn(const gnutls_datum_t *cert, gnutls_datum_t *dn)
 {
 	gnutls_x509_crt_t crt;
 
-	assert(gnutls_x509_crt_init(&crt)>=0);
+	assert(gnutls_x509_crt_init(&crt) >= 0);
 	assert(gnutls_x509_crt_import(crt, cert, GNUTLS_X509_FMT_PEM) >= 0);
 	assert(gnutls_x509_crt_get_raw_dn(crt, dn) >= 0);
 	gnutls_x509_crt_deinit(crt);
@@ -178,10 +172,18 @@ static void find_dn(const gnutls_datum_t *cert, gnutls_datum_t *dn)
 
 void doit(void)
 {
+	/* General init. */
+	global_init();
+	gnutls_global_set_log_function(tls_log_func);
+	if (debug)
+		gnutls_global_set_log_level(2);
+
 	find_dn(CA1_PTR, &ca_dn[0]);
 	find_dn(CA2_PTR, &ca_dn[1]);
 	start("NORMAL:-VERS-TLS-ALL:+VERS-TLS1.3");
 	start("NORMAL:-VERS-TLS-ALL:+VERS-TLS1.2");
 	gnutls_free(ca_dn[0].data);
 	gnutls_free(ca_dn[1].data);
+
+	gnutls_global_deinit();
 }

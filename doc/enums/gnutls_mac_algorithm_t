@@ -57,11 +57,13 @@ The AES-GMAC-256 MAC algorithm (requires nonce).
 @item GNUTLS_@-MAC_@-GOST28147_@-TC26Z_@-IMIT
 The GOST 28147-89 working in IMIT mode with TC26 Z S-box.
 @item GNUTLS_@-MAC_@-SHAKE_@-128
-Reserved; unimplemented.
+The SHAKE128 extendable output function.
 @item GNUTLS_@-MAC_@-SHAKE_@-256
-Reserved; unimplemented.
+The SHAKE256 extendable output function.
 @item GNUTLS_@-MAC_@-MAGMA_@-OMAC
 GOST R 34.12-2015 (Magma) in OMAC (CMAC) mode.
 @item GNUTLS_@-MAC_@-KUZNYECHIK_@-OMAC
 GOST R 34.12-2015 (Kuznyechik) in OMAC (CMAC) mode.
+@item GNUTLS_@-MAC_@-PBMAC1
+-- undescribed --
 @end table

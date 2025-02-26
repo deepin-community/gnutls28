@@ -28,7 +28,7 @@
 
    You should have received copies of the GNU General Public License and
    the GNU Lesser General Public License along with this program.  If
-   not, see http://www.gnu.org/licenses/.
+   not, see https://www.gnu.org/licenses/.
 */
 
 #ifndef GNUTLS_LIB_NETTLE_MAGMA_H_INCLUDED
@@ -52,27 +52,19 @@ extern "C" {
 #define MAGMA_KEY_SIZE 32
 #define MAGMA_BLOCK_SIZE 8
 
-struct magma_ctx
-{
-  uint32_t key[MAGMA_KEY_SIZE/4];
+struct magma_ctx {
+	uint32_t key[MAGMA_KEY_SIZE / 4];
 };
 
-void
-magma_set_key(struct magma_ctx *ctx, const uint8_t *key);
+void magma_set_key(struct magma_ctx *ctx, const uint8_t *key);
 
-void
-magma_encrypt(const struct magma_ctx *ctx,
-	      size_t length, uint8_t *dst,
-	      const uint8_t *src);
-void
-magma_decrypt(const struct magma_ctx *ctx,
-	      size_t length, uint8_t *dst,
-	      const uint8_t *src);
+void magma_encrypt(const struct magma_ctx *ctx, size_t length, uint8_t *dst,
+		   const uint8_t *src);
+void magma_decrypt(const struct magma_ctx *ctx, size_t length, uint8_t *dst,
+		   const uint8_t *src);
 
 #ifdef __cplusplus
 }
 #endif
-
 #endif
-
 #endif /* GNUTLS_LIB_NETTLE_MAGMA_H_INCLUDED */

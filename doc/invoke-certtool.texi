@@ -37,6 +37,7 @@ None:
        --infile=file          Input file
 				- file must pre-exist
        --outfile=str          Output file
+       --attime=str           Perform validation at the timestamp instead of the system time
 
 Certificate related options:
 
@@ -63,6 +64,7 @@ PKCS#12 file related options:
        --p12-info             Print information on a PKCS #12 structure
        --p12-name=str         The PKCS #12 friendly name to use
        --to-p12               Generate a PKCS #12 structure
+       --pbmac1               Use PBMAC1 in a PKCS #12 structure
 
 Private key related options:
 
@@ -131,6 +133,7 @@ Other options:
        --cprint               In certain operations it prints the information in C-friendly format
        --hash=str             Hash algorithm to use for signing
        --salt-size=num        Specify the RSA-PSS key default salt size
+       --label=str            Specify the RSA-OAEP label, encoded in hexadecimal
        --inder                Use DER format for input certificates, private keys, and DH parameters 
        --inraw                an alias for the 'inder' option
        --outder               Use DER format for output certificates, private keys, and DH parameters
@@ -173,6 +176,16 @@ Please send bug reports to:  <bugs@@gnutls.org>
 This is the ``enable debugging'' option.
 This option takes a ArgumentType.NUMBER argument.
 Specifies the debug level.
+@subsubheading attime option.
+@anchor{certtool attime}
+
+This is the ``perform validation at the timestamp instead of the system time'' option.
+This option takes a ArgumentType.STRING argument @file{timestamp}.
+timestamp is an instance in time encoded as Unix time or in a human
+ readable timestring such as "29 Feb 2004", "2004-02-29".
+Full documentation available at 
+<https://www.gnu.org/software/coreutils/manual/html_node/Date-input-formats.html>
+or locally via info '(coreutils) date invocation'.
 @anchor{certtool cert-options}
 @subsubheading cert-options options
 Certificate related options.
@@ -261,8 +274,8 @@ cannot read RSA-PSS keys.
 @anchor{certtool generate-privkey}
 
 This is the ``generate a private key'' option.
-When generating RSA-PSS private keys, the --hash option will
-restrict the allowed hash for the key; in the same keys the --salt-size
+When generating RSA-PSS or RSA-OAEP private keys, the --hash option will
+restrict the allowed hash for the key; For RSA-PSS keys the --salt-size
 option is also acceptable.
 @subsubheading key-type option.
 @anchor{certtool key-type}
@@ -270,7 +283,7 @@ option is also acceptable.
 This is the ``specify the key type to use on key generation'' option.
 This option takes a ArgumentType.STRING argument.
 This option can be combined with --generate-privkey, to specify
-the key type to be generated. Valid options are, 'rsa', 'rsa-pss', 'dsa', 'ecdsa', 'ed25519, 'ed448', 'x25519', and 'x448'.'.
+the key type to be generated. Valid options are, 'rsa', 'rsa-pss', 'rsa-oaep', 'dsa', 'ecdsa', 'ed25519, 'ed448', 'x25519', and 'x448'.'.
 When combined with certificate generation it can be used to specify an
 RSA-PSS certificate when an RSA key is given.
 @subsubheading curve option.
@@ -576,6 +589,12 @@ Available hash functions are SHA1, RMD160, SHA256, SHA384, SHA512, SHA3-224, SHA
 
 This is the ``specify the rsa-pss key default salt size'' option.
 This option takes a ArgumentType.NUMBER argument.
+Typical keys shouldn't set or restrict this option.
+@subsubheading label option.
+@anchor{certtool label}
+
+This is the ``specify the rsa-oaep label, encoded in hexadecimal'' option.
+This option takes a ArgumentType.STRING argument.
 Typical keys shouldn't set or restrict this option.
 @subsubheading inder option.
 @anchor{certtool inder}

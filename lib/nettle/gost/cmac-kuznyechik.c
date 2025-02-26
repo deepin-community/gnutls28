@@ -32,23 +32,21 @@
 
 #include "gost/cmac.h"
 
-void
-cmac_kuznyechik_set_key(struct cmac_kuznyechik_ctx *ctx, const uint8_t *key)
+void cmac_kuznyechik_set_key(struct cmac_kuznyechik_ctx *ctx,
+			     const uint8_t *key)
 {
-  CMAC128_SET_KEY(ctx, kuznyechik_set_key, kuznyechik_encrypt, key);
+	CMAC128_SET_KEY(ctx, kuznyechik_set_key, kuznyechik_encrypt, key);
 }
 
-void
-cmac_kuznyechik_update (struct cmac_kuznyechik_ctx *ctx,
-			size_t length, const uint8_t *data)
+void cmac_kuznyechik_update(struct cmac_kuznyechik_ctx *ctx, size_t length,
+			    const uint8_t *data)
 {
-  CMAC128_UPDATE (ctx, kuznyechik_encrypt, length, data);
+	CMAC128_UPDATE(ctx, kuznyechik_encrypt, length, data);
 }
 
-void
-cmac_kuznyechik_digest(struct cmac_kuznyechik_ctx *ctx,
-		       size_t length, uint8_t *digest)
+void cmac_kuznyechik_digest(struct cmac_kuznyechik_ctx *ctx, size_t length,
+			    uint8_t *digest)
 {
-  CMAC128_DIGEST(ctx, kuznyechik_encrypt, length, digest);
+	CMAC128_DIGEST(ctx, kuznyechik_encrypt, length, digest);
 }
 #endif

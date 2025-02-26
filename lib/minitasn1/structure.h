@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2002-2021 Free Software Foundation, Inc.
+ * Copyright (C) 2002-2025 Free Software Foundation, Inc.
  *
  * This file is part of LIBTASN1.
  *
@@ -14,9 +14,8 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
- * 02110-1301, USA
+ * License along with this library; if not, see
+ * <https://www.gnu.org/licenses/>.
  */
 
 /*************************************************/
@@ -26,9 +25,9 @@
 /*************************************************/
 
 #ifndef _STRUCTURE_H
-#define _STRUCTURE_H
+# define _STRUCTURE_H
 
-#include "parser_aux.h" // list_type
+# include "parser_aux.h"	/* list_type */
 
 int _asn1_create_static_structure (asn1_node_const pointer,
 				   char *output_file_name, char *vector_name);
@@ -40,6 +39,7 @@ asn1_node _asn1_add_single_node (unsigned int type);
 asn1_node _asn1_find_left (asn1_node_const node);
 
 int
-_asn1_delete_structure (list_type *e_list, asn1_node *structure, unsigned int flags);
+_asn1_delete_structure (list_type * e_list, asn1_node * structure,
+			unsigned int flags);
 
 #endif

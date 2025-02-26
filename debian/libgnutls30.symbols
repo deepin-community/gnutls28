@@ -19,18 +19,22 @@ libgnutls.so.30 libgnutls30 #MINVER#
  GNUTLS_3_7_4@GNUTLS_3_7_4 3.7.4
  GNUTLS_3_7_5@GNUTLS_3_7_5 3.7.5
  GNUTLS_3_7_7@GNUTLS_3_7_7 3.7.7
+ GNUTLS_3_8_1@GNUTLS_3_8_1 3.8.1
+ GNUTLS_3_8_2@GNUTLS_3_8_2 3.8.2
+ GNUTLS_3_8_4@GNUTLS_3_8_4 3.8.4
+ GNUTLS_3_8_6@GNUTLS_3_8_6 3.8.6
  GNUTLS_FIPS140_3_4@GNUTLS_FIPS140_3_4 3.7.0
- (regex|optional)"@GNUTLS_PRIVATE_3_4$" 3.7.7-0+private+1
- _dsa_generate_dss_g@GNUTLS_FIPS140_3_4 3.7.7-0+private+1
- _dsa_generate_dss_pq@GNUTLS_FIPS140_3_4 3.7.7-0+private+1
- _dsa_validate_dss_g@GNUTLS_FIPS140_3_4 3.7.7-0+private+1
- _dsa_validate_dss_pq@GNUTLS_FIPS140_3_4 3.7.7-0+private+1
- _gnutls_cipher_get_iv@GNUTLS_FIPS140_3_4 3.7.7-0+private+1
- _gnutls_decode_ber_rs_raw@GNUTLS_FIPS140_3_4 3.7.7-0+private+1
- _gnutls_encode_ber_rs_raw@GNUTLS_FIPS140_3_4 3.7.7-0+private+1
- _gnutls_global_init_skip@GNUTLS_3_4 3.7.0
- _gnutls_prf_raw@GNUTLS_FIPS140_3_4 3.7.0
- _rsa_generate_fips186_4_keypair@GNUTLS_FIPS140_3_4 3.7.7-0+private+1
+ (regex|optional)"@GNUTLS_PRIVATE_3_4$" 3.8.6-0+private+1
+ _dsa_generate_dss_g@GNUTLS_FIPS140_3_4 3.8.6-0+private+1
+ _dsa_generate_dss_pq@GNUTLS_FIPS140_3_4 3.8.6-0+private+1
+ _dsa_validate_dss_g@GNUTLS_FIPS140_3_4 3.8.6-0+private+1
+ _dsa_validate_dss_pq@GNUTLS_FIPS140_3_4 3.8.6-0+private+1
+ _gnutls_cipher_get_iv@GNUTLS_FIPS140_3_4 3.8.6-0+private+1
+ _gnutls_decode_ber_rs_raw@GNUTLS_FIPS140_3_4 3.8.6-0+private+1
+ _gnutls_encode_ber_rs_raw@GNUTLS_FIPS140_3_4 3.8.6-0+private+1
+ _gnutls_global_init_skip@GNUTLS_3_4 3.8.6-0+private+1
+ _gnutls_prf_raw@GNUTLS_FIPS140_3_4 3.8.6-0+private+1
+ _rsa_generate_fips186_4_keypair@GNUTLS_FIPS140_3_4 3.8.6-0+private+1
  dsa_generate_dss_keypair@GNUTLS_FIPS140_3_4 3.7.0
  gnutls_aead_cipher_decrypt@GNUTLS_3_4 3.7.0
  gnutls_aead_cipher_decryptv2@GNUTLS_3_6_10 3.7.0
@@ -159,15 +163,15 @@ libgnutls.so.30 libgnutls30 #MINVER#
  gnutls_cipher_get_block_size@GNUTLS_3_4 3.7.0
  gnutls_cipher_get_id@GNUTLS_3_4 3.7.0
  gnutls_cipher_get_iv_size@GNUTLS_3_4 3.7.0
- gnutls_cipher_get_key_size@GNUTLS_3_4 3.7.0
- gnutls_cipher_get_name@GNUTLS_3_4 3.7.0
+ gnutls_cipher_get_key_size@GNUTLS_3_4 3.8.2
+ gnutls_cipher_get_name@GNUTLS_3_4 3.8.2
  gnutls_cipher_get_tag_size@GNUTLS_3_4 3.7.0
  gnutls_cipher_init@GNUTLS_3_4 3.7.0
  gnutls_cipher_list@GNUTLS_3_4 3.7.0
  gnutls_cipher_self_test@GNUTLS_FIPS140_3_4 3.7.0
  gnutls_cipher_set_iv@GNUTLS_3_4 3.7.0
- gnutls_cipher_suite_get_name@GNUTLS_3_4 3.7.0
- gnutls_cipher_suite_info@GNUTLS_3_4 3.7.0
+ gnutls_cipher_suite_get_name@GNUTLS_3_4 3.8.6
+ gnutls_cipher_suite_info@GNUTLS_3_4 3.8.6
  gnutls_cipher_tag@GNUTLS_3_4 3.7.0
  gnutls_ciphersuite_get@GNUTLS_3_7_4 3.7.4
  gnutls_compress_certificate_get_selected_method@GNUTLS_3_7_4 3.7.4
@@ -237,7 +241,7 @@ libgnutls.so.30 libgnutls30 #MINVER#
  gnutls_ecc_curve_get_id@GNUTLS_3_4 3.7.0
  gnutls_ecc_curve_get_name@GNUTLS_3_4 3.7.0
  gnutls_ecc_curve_get_oid@GNUTLS_3_4 3.7.0
- gnutls_ecc_curve_get_pk@GNUTLS_3_4 3.7.0
+ gnutls_ecc_curve_get_pk@GNUTLS_3_4 3.8.4
  gnutls_ecc_curve_get_size@GNUTLS_3_4 3.7.0
  gnutls_ecc_curve_list@GNUTLS_3_4 3.7.0
  gnutls_ecc_curve_set_enabled@GNUTLS_3_7_3 3.7.3
@@ -246,7 +250,7 @@ libgnutls.so.30 libgnutls30 #MINVER#
  gnutls_encode_rs_value@GNUTLS_3_6_0 3.7.0
  gnutls_error_is_fatal@GNUTLS_3_4 3.7.0
  gnutls_error_to_alert@GNUTLS_3_4 3.7.0
- gnutls_est_record_overhead_size@GNUTLS_3_4 3.7.0
+ gnutls_est_record_overhead_size@GNUTLS_3_4 3.8.6
  gnutls_ext_get_current_msg@GNUTLS_3_6_3 3.7.0
  gnutls_ext_get_data@GNUTLS_3_4 3.7.0
  gnutls_ext_get_name2@GNUTLS_3_6_14 3.7.0
@@ -320,6 +324,7 @@ libgnutls.so.30 libgnutls30 #MINVER#
  gnutls_hash_get_len@GNUTLS_3_4 3.7.0
  gnutls_hash_init@GNUTLS_3_4 3.7.0
  gnutls_hash_output@GNUTLS_3_4 3.7.0
+ gnutls_hash_squeeze@GNUTLS_3_8_6 3.8.6
  gnutls_heartbeat_allowed@GNUTLS_3_4 3.7.0
  gnutls_heartbeat_enable@GNUTLS_3_4 3.7.0
  gnutls_heartbeat_get_timeout@GNUTLS_3_4 3.7.0
@@ -345,19 +350,19 @@ libgnutls.so.30 libgnutls30 #MINVER#
  gnutls_hmac_set_nonce@GNUTLS_3_4 3.7.0
  gnutls_idna_map@GNUTLS_3_4 3.7.0
  gnutls_idna_reverse_map@GNUTLS_3_4 3.7.0
- gnutls_init@GNUTLS_3_4 3.7.5
+ gnutls_init@GNUTLS_3_4 3.8.1
  gnutls_key_generate@GNUTLS_3_4 3.7.0
  gnutls_kx_get@GNUTLS_3_4 3.7.0
  gnutls_kx_get_id@GNUTLS_3_4 3.7.0
  gnutls_kx_get_name@GNUTLS_3_4 3.7.0
  gnutls_kx_list@GNUTLS_3_4 3.7.0
  gnutls_load_file@GNUTLS_3_4 3.7.0
- gnutls_mac_get@GNUTLS_3_4 3.7.0
- gnutls_mac_get_id@GNUTLS_3_4 3.7.0
- gnutls_mac_get_key_size@GNUTLS_3_4 3.7.0
- gnutls_mac_get_name@GNUTLS_3_4 3.7.0
+ gnutls_mac_get@GNUTLS_3_4 3.8.6
+ gnutls_mac_get_id@GNUTLS_3_4 3.8.6
+ gnutls_mac_get_key_size@GNUTLS_3_4 3.8.6
+ gnutls_mac_get_name@GNUTLS_3_4 3.8.6
  gnutls_mac_get_nonce_size@GNUTLS_3_4 3.7.0
- gnutls_mac_list@GNUTLS_3_4 3.7.0
+ gnutls_mac_list@GNUTLS_3_4 3.8.6
  gnutls_mac_self_test@GNUTLS_FIPS140_3_4 3.7.0
  gnutls_malloc@GNUTLS_3_4 3.7.0
  gnutls_memcmp@GNUTLS_3_4 3.7.0
@@ -407,8 +412,8 @@ libgnutls.so.30 libgnutls30 #MINVER#
  gnutls_oid_to_digest@GNUTLS_3_4 3.7.0
  gnutls_oid_to_ecc_curve@GNUTLS_3_4 3.7.0
  gnutls_oid_to_gost_paramset@GNUTLS_3_6_3 3.7.0
- gnutls_oid_to_mac@GNUTLS_3_4 3.7.0
- gnutls_oid_to_pk@GNUTLS_3_4 3.7.0
+ gnutls_oid_to_mac@GNUTLS_3_4 3.8.6
+ gnutls_oid_to_pk@GNUTLS_3_4 3.8.4
  gnutls_oid_to_sign@GNUTLS_3_4 3.7.0
  gnutls_openpgp_crt_check_email@GNUTLS_3_4 3.7.0
  gnutls_openpgp_crt_check_hostname2@GNUTLS_3_4 3.7.0
@@ -500,14 +505,14 @@ libgnutls.so.30 libgnutls30 #MINVER#
  gnutls_pem_base64_encode2@GNUTLS_3_4 3.7.0
  gnutls_pem_base64_encode@GNUTLS_3_4 3.7.0
  gnutls_perror@GNUTLS_3_4 3.7.0
- gnutls_pk_algorithm_get_name@GNUTLS_3_4 3.7.0
+ gnutls_pk_algorithm_get_name@GNUTLS_3_4 3.8.4
  gnutls_pk_bits_to_sec_param@GNUTLS_3_4 3.7.0
- gnutls_pk_get_id@GNUTLS_3_4 3.7.0
- gnutls_pk_get_name@GNUTLS_3_4 3.7.0
- gnutls_pk_get_oid@GNUTLS_3_4 3.7.0
- gnutls_pk_list@GNUTLS_3_4 3.7.0
+ gnutls_pk_get_id@GNUTLS_3_4 3.8.4
+ gnutls_pk_get_name@GNUTLS_3_4 3.8.4
+ gnutls_pk_get_oid@GNUTLS_3_4 3.8.4
+ gnutls_pk_list@GNUTLS_3_4 3.8.4
  gnutls_pk_self_test@GNUTLS_FIPS140_3_4 3.7.0
- gnutls_pk_to_sign@GNUTLS_3_4 3.7.0
+ gnutls_pk_to_sign@GNUTLS_3_4 3.8.4
  gnutls_pkcs11_add_provider@GNUTLS_3_4 3.7.0
  gnutls_pkcs11_copy_attached_extension@GNUTLS_3_4 3.7.0
  gnutls_pkcs11_copy_pubkey@GNUTLS_3_4 3.7.0
@@ -583,6 +588,7 @@ libgnutls.so.30 libgnutls30 #MINVER#
  gnutls_pkcs12_export2@GNUTLS_3_4 3.7.0
  gnutls_pkcs12_export@GNUTLS_3_4 3.7.0
  gnutls_pkcs12_generate_mac2@GNUTLS_3_4 3.7.0
+ gnutls_pkcs12_generate_mac3@GNUTLS_3_8_6 3.8.6
  gnutls_pkcs12_generate_mac@GNUTLS_3_4 3.7.0
  gnutls_pkcs12_get_bag@GNUTLS_3_4 3.7.0
  gnutls_pkcs12_import@GNUTLS_3_4 3.7.0
@@ -649,6 +655,8 @@ libgnutls.so.30 libgnutls30 #MINVER#
  gnutls_privkey_decrypt_data2@GNUTLS_3_6_5 3.7.0
  gnutls_privkey_decrypt_data@GNUTLS_3_4 3.7.0
  gnutls_privkey_deinit@GNUTLS_3_4 3.7.0
+ gnutls_privkey_derive_secret@GNUTLS_3_8_2 3.8.2
+ gnutls_privkey_export_dh_raw@GNUTLS_3_8_2 3.8.2
  gnutls_privkey_export_dsa_raw2@GNUTLS_3_6_0 3.7.3
  gnutls_privkey_export_dsa_raw@GNUTLS_3_4 3.7.3
  gnutls_privkey_export_ecc_raw2@GNUTLS_3_6_0 3.7.3
@@ -665,6 +673,7 @@ libgnutls.so.30 libgnutls30 #MINVER#
  gnutls_privkey_get_seed@GNUTLS_3_4 3.7.0
  gnutls_privkey_get_spki@GNUTLS_3_6_0 3.7.0
  gnutls_privkey_get_type@GNUTLS_3_4 3.7.0
+ gnutls_privkey_import_dh_raw@GNUTLS_3_8_2 3.8.2
  gnutls_privkey_import_dsa_raw@GNUTLS_3_4 3.7.3
  gnutls_privkey_import_ecc_raw@GNUTLS_3_4 3.7.3
  gnutls_privkey_import_ext2@GNUTLS_3_4 3.7.3
@@ -700,6 +709,7 @@ libgnutls.so.30 libgnutls30 #MINVER#
  gnutls_psk_allocate_client_credentials@GNUTLS_3_4 3.7.0
  gnutls_psk_allocate_server_credentials@GNUTLS_3_4 3.7.0
  gnutls_psk_client_get_hint@GNUTLS_3_4 3.7.0
+ gnutls_psk_format_imported_identity@GNUTLS_3_8_1 3.8.1
  gnutls_psk_free_client_credentials@GNUTLS_3_4 3.7.0
  gnutls_psk_free_server_credentials@GNUTLS_3_4 3.7.0
  gnutls_psk_server_get_username2@GNUTLS_3_6_13 3.7.0
@@ -707,10 +717,12 @@ libgnutls.so.30 libgnutls30 #MINVER#
  gnutls_psk_set_client_credentials2@GNUTLS_3_6_13 3.7.0
  gnutls_psk_set_client_credentials@GNUTLS_3_4 3.7.0
  gnutls_psk_set_client_credentials_function2@GNUTLS_3_6_13 3.7.0
+ gnutls_psk_set_client_credentials_function3@GNUTLS_3_8_1 3.8.1
  gnutls_psk_set_client_credentials_function@GNUTLS_3_4 3.7.0
  gnutls_psk_set_params_function@GNUTLS_3_4 3.7.0
  gnutls_psk_set_server_credentials_file@GNUTLS_3_4 3.7.0
  gnutls_psk_set_server_credentials_function2@GNUTLS_3_6_13 3.7.0
+ gnutls_psk_set_server_credentials_function3@GNUTLS_3_8_1 3.8.1
  gnutls_psk_set_server_credentials_function@GNUTLS_3_4 3.7.0
  gnutls_psk_set_server_credentials_hint@GNUTLS_3_4 3.7.0
  gnutls_psk_set_server_dh_params@GNUTLS_3_4 3.7.0
@@ -720,6 +732,7 @@ libgnutls.so.30 libgnutls30 #MINVER#
  gnutls_pubkey_encrypt_data@GNUTLS_3_4 3.7.0
  gnutls_pubkey_export2@GNUTLS_3_4 3.7.0
  gnutls_pubkey_export@GNUTLS_3_4 3.7.0
+ gnutls_pubkey_export_dh_raw@GNUTLS_3_8_2 3.8.2
  gnutls_pubkey_export_dsa_raw2@GNUTLS_3_6_0 3.7.0
  gnutls_pubkey_export_dsa_raw@GNUTLS_3_4 3.7.0
  gnutls_pubkey_export_ecc_raw2@GNUTLS_3_6_0 3.7.0
@@ -735,6 +748,7 @@ libgnutls.so.30 libgnutls30 #MINVER#
  gnutls_pubkey_get_preferred_hash_algorithm@GNUTLS_3_4 3.7.0
  gnutls_pubkey_get_spki@GNUTLS_3_6_0 3.7.0
  gnutls_pubkey_import@GNUTLS_3_4 3.7.0
+ gnutls_pubkey_import_dh_raw@GNUTLS_3_8_2 3.8.2
  gnutls_pubkey_import_dsa_raw@GNUTLS_3_4 3.7.0
  gnutls_pubkey_import_ecc_raw@GNUTLS_3_4 3.7.0
  gnutls_pubkey_import_ecc_x962@GNUTLS_3_4 3.7.0
@@ -795,7 +809,7 @@ libgnutls.so.30 libgnutls30 #MINVER#
  gnutls_rnd_refresh@GNUTLS_3_4 3.7.0
  gnutls_safe_renegotiation_status@GNUTLS_3_4 3.7.0
  gnutls_sec_param_get_name@GNUTLS_3_4 3.7.0
- gnutls_sec_param_to_pk_bits@GNUTLS_3_4 3.7.0
+ gnutls_sec_param_to_pk_bits@GNUTLS_3_4 3.8.4
  gnutls_sec_param_to_symmetric_bits@GNUTLS_3_4 3.7.0
  gnutls_secure_malloc@GNUTLS_3_4 3.7.0
  gnutls_server_name_get@GNUTLS_3_4 3.7.0
@@ -823,7 +837,7 @@ libgnutls.so.30 libgnutls30 #MINVER#
  gnutls_session_set_data@GNUTLS_3_4 3.7.0
  gnutls_session_set_id@GNUTLS_3_4 3.7.0
  gnutls_session_set_keylog_function@GNUTLS_3_6_13 3.7.0
- gnutls_session_set_premaster@GNUTLS_3_4 3.7.0
+ gnutls_session_set_premaster@GNUTLS_3_4 3.8.6
  gnutls_session_set_ptr@GNUTLS_3_4 3.7.0
  gnutls_session_set_verify_cert2@GNUTLS_3_4 3.7.0
  gnutls_session_set_verify_cert@GNUTLS_3_4 3.7.0
@@ -839,7 +853,7 @@ libgnutls.so.30 libgnutls30 #MINVER#
  gnutls_sign_algorithm_get@GNUTLS_3_4 3.7.0
  gnutls_sign_algorithm_get_client@GNUTLS_3_4 3.7.0
  gnutls_sign_algorithm_get_requested@GNUTLS_3_4 3.7.0
- gnutls_sign_get_hash_algorithm@GNUTLS_3_4 3.7.0
+ gnutls_sign_get_hash_algorithm@GNUTLS_3_4 3.8.4
  gnutls_sign_get_id@GNUTLS_3_4 3.7.0
  gnutls_sign_get_name@GNUTLS_3_4 3.7.0
  gnutls_sign_get_oid@GNUTLS_3_4 3.7.0
@@ -849,7 +863,7 @@ libgnutls.so.30 libgnutls30 #MINVER#
  gnutls_sign_list@GNUTLS_3_4 3.7.0
  gnutls_sign_set_secure@GNUTLS_3_7_3 3.7.3
  gnutls_sign_set_secure_for_certs@GNUTLS_3_7_3 3.7.3
- gnutls_sign_supports_pk_algorithm@GNUTLS_3_6_0 3.7.0
+ gnutls_sign_supports_pk_algorithm@GNUTLS_3_6_0 3.8.4
  gnutls_srp_1024_group_generator@GNUTLS_3_4 3.7.0
  gnutls_srp_1024_group_prime@GNUTLS_3_4 3.7.0
  gnutls_srp_1536_group_generator@GNUTLS_3_4 3.7.0
@@ -880,12 +894,12 @@ libgnutls.so.30 libgnutls30 #MINVER#
  gnutls_srp_verifier@GNUTLS_3_4 3.7.0
  gnutls_srtp_get_keys@GNUTLS_3_4 3.7.0
  gnutls_srtp_get_mki@GNUTLS_3_4 3.7.0
- gnutls_srtp_get_profile_id@GNUTLS_3_4 3.7.0
- gnutls_srtp_get_profile_name@GNUTLS_3_4 3.7.0
- gnutls_srtp_get_selected_profile@GNUTLS_3_4 3.7.0
+ gnutls_srtp_get_profile_id@GNUTLS_3_4 3.8.0
+ gnutls_srtp_get_profile_name@GNUTLS_3_4 3.8.0
+ gnutls_srtp_get_selected_profile@GNUTLS_3_4 3.8.0
  gnutls_srtp_set_mki@GNUTLS_3_4 3.7.0
- gnutls_srtp_set_profile@GNUTLS_3_4 3.7.0
- gnutls_srtp_set_profile_direct@GNUTLS_3_4 3.7.0
+ gnutls_srtp_set_profile@GNUTLS_3_4 3.8.0
+ gnutls_srtp_set_profile_direct@GNUTLS_3_4 3.8.0
  gnutls_store_commitment@GNUTLS_3_4 3.7.0
  gnutls_store_pubkey@GNUTLS_3_4 3.7.0
  gnutls_strdup@GNUTLS_3_4 3.7.0
@@ -1252,7 +1266,7 @@ libgnutls.so.30 libgnutls30 #MINVER#
  gnutls_x509_privkey_export_rsa_raw2@GNUTLS_3_4 3.7.0
  gnutls_x509_privkey_export_rsa_raw@GNUTLS_3_4 3.7.0
  gnutls_x509_privkey_fix@GNUTLS_3_4 3.7.0
- gnutls_x509_privkey_generate2@GNUTLS_3_4 3.7.0
+ gnutls_x509_privkey_generate2@GNUTLS_3_4 3.8.2
  gnutls_x509_privkey_generate@GNUTLS_3_4 3.7.0
  gnutls_x509_privkey_get_key_id@GNUTLS_3_4 3.7.0
  gnutls_x509_privkey_get_pk_algorithm2@GNUTLS_3_4 3.7.0
@@ -1261,6 +1275,7 @@ libgnutls.so.30 libgnutls30 #MINVER#
  gnutls_x509_privkey_get_spki@GNUTLS_3_6_0 3.7.0
  gnutls_x509_privkey_import2@GNUTLS_3_4 3.7.0
  gnutls_x509_privkey_import@GNUTLS_3_4 3.7.0
+ gnutls_x509_privkey_import_dh_raw@GNUTLS_3_8_2 3.8.2
  gnutls_x509_privkey_import_dsa_raw@GNUTLS_3_4 3.7.0
  gnutls_x509_privkey_import_ecc_raw@GNUTLS_3_4 3.7.0
  gnutls_x509_privkey_import_gost_raw@GNUTLS_3_6_3 3.7.0
@@ -1282,8 +1297,10 @@ libgnutls.so.30 libgnutls30 #MINVER#
  gnutls_x509_rdn_get_by_oid@GNUTLS_3_4 3.7.0
  gnutls_x509_rdn_get_oid@GNUTLS_3_4 3.7.0
  gnutls_x509_spki_deinit@GNUTLS_3_6_0 3.7.0
+ gnutls_x509_spki_get_rsa_oaep_params@GNUTLS_3_8_4 3.8.4
  gnutls_x509_spki_get_rsa_pss_params@GNUTLS_3_6_0 3.7.0
  gnutls_x509_spki_init@GNUTLS_3_6_0 3.7.0
+ gnutls_x509_spki_set_rsa_oaep_params@GNUTLS_3_8_4 3.8.4
  gnutls_x509_spki_set_rsa_pss_params@GNUTLS_3_6_0 3.7.0
  gnutls_x509_tlsfeatures_add@GNUTLS_3_4 3.7.0
  gnutls_x509_tlsfeatures_check_crt@GNUTLS_3_4 3.7.0

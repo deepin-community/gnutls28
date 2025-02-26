@@ -16,14 +16,13 @@
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GnuTLS; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
+ * along with GnuTLS.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 /* This program tests functionality in gnutls_dh_params structure */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#include "config.h"
 #endif
 
 #include <gnutls/gnutls.h>
@@ -69,12 +68,15 @@ void doit(void)
 	unsigned bits = 0;
 	int ret;
 
+	global_init();
+
 	/* import DH parameters from DSA key and verify they are the same */
 	assert(gnutls_dh_params_init(&dh_params) >= 0);
 	assert(gnutls_dh_params_init(&tmp_params) >= 0);
 	assert(gnutls_x509_privkey_init(&privkey) >= 0);
 
-	ret = gnutls_x509_privkey_import(privkey, &dsa_key, GNUTLS_X509_FMT_PEM);
+	ret = gnutls_x509_privkey_import(privkey, &dsa_key,
+					 GNUTLS_X509_FMT_PEM);
 	if (ret < 0)
 		fail("error in %s: %d\n", __FILE__, __LINE__);
 
@@ -89,11 +91,12 @@ void doit(void)
 	if (ret < 0)
 		fail("error in %s: %d\n", __FILE__, __LINE__);
 
-	ret = gnutls_x509_privkey_export_dsa_raw(privkey, &p2, &q, &g2, NULL, NULL);
+	ret = gnutls_x509_privkey_export_dsa_raw(privkey, &p2, &q, &g2, NULL,
+						 NULL);
 	if (ret < 0)
 		fail("error in %s: %d\n", __FILE__, __LINE__);
 
-	if (bits > q.size*8  || bits < q.size*8-8)
+	if (bits > q.size * 8 || bits < q.size * 8 - 8)
 		fail("error in %s: %d\n", __FILE__, __LINE__);
 
 	if (compare(&p1, &p2) != 0)
@@ -111,4 +114,6 @@ void doit(void)
 	gnutls_dh_params_deinit(dh_params);
 	gnutls_x509_privkey_deinit(privkey);
 	success("all ok\n");
+
+	gnutls_global_deinit();
 }

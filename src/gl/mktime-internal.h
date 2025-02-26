@@ -1,24 +1,27 @@
 /* Internals of mktime and related functions
-   Copyright 2016-2021 Free Software Foundation, Inc.
+   Copyright 2016-2025 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Paul Eggert <eggert@cs.ucla.edu>.
 
    The GNU C Library is free software; you can redistribute it and/or
-   modify it under the terms of the GNU General Public
+   modify it under the terms of the GNU Lesser General Public
    License as published by the Free Software Foundation; either
-   version 3 of the License, or (at your option) any later version.
+   version 2.1 of the License, or (at your option) any later version.
 
    The GNU C Library is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-   General Public License for more details.
+   Lesser General Public License for more details.
 
-   You should have received a copy of the GNU General Public
+   You should have received a copy of the GNU Lesser General Public
    License along with the GNU C Library; if not, see
    <https://www.gnu.org/licenses/>.  */
 
 #ifndef _LIBC
 # include <time.h>
+# define __libc_lock_lock(lock) ((void) 0)
+# define __libc_lock_unlock(lock) ((void) 0)
+# define __tzset_unlocked() tzset ()
 #endif
 
 /* mktime_offset_t is a signed type wide enough to hold a UTC offset
@@ -71,9 +74,10 @@ typedef int mktime_offset_t;
 #endif
 
 /* Subroutine of mktime.  Return the time_t representation of TP and
-   normalize TP, given that a struct tm * maps to a time_t as performed
-   by FUNC.  Record next guess for localtime-gmtime offset in *OFFSET.  */
-extern __time64_t __mktime_internal (struct tm *tp,
-                                     struct tm *(*func) (__time64_t const *,
-                                                         struct tm *),
+   normalize TP, given that a struct tm * maps to a time_t.  If
+   LOCAL, the mapping is performed by localtime_r, otherwise by gmtime_r.
+   Record next guess for localtime-gmtime offset in *OFFSET.
+
+   If _LIBC, the caller must lock __tzset_lock.  */
+extern __time64_t __mktime_internal (struct tm *tp, bool local,
                                      mktime_offset_t *offset) attribute_hidden;

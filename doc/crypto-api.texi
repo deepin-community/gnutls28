@@ -690,7 +690,7 @@ an error code is returned.
 
 @subheading gnutls_encode_gost_rs_value
 @anchor{gnutls_encode_gost_rs_value}
-@deftypefun {int} {gnutls_encode_gost_rs_value} (gnutls_datum_t * @var{sig_value}, const gnutls_datum_t * @var{r}, const gnutls_datum_t  * @var{s})
+@deftypefun {int} {gnutls_encode_gost_rs_value} (gnutls_datum_t * @var{sig_value}, const gnutls_datum_t * @var{r}, const gnutls_datum_t * @var{s})
 @var{sig_value}: will hold a GOST signature according to RFC 4491 section 2.2.2
 
 @var{r}: must contain the r value
@@ -833,10 +833,32 @@ accelerator in use.
 
 @var{digest}: is the output value of the hash
 
-This function will output the current hash value
-and reset the state of the hash.
+This function will output the current hash value and reset the
+state of the hash. If  @code{digest} is @code{NULL} , it only resets the state of
+the hash.
 
 @strong{Since:} 2.10.0
+@end deftypefun
+
+@subheading gnutls_hash_squeeze
+@anchor{gnutls_hash_squeeze}
+@deftypefun {int} {gnutls_hash_squeeze} (gnutls_hash_hd_t @var{handle}, void * @var{output}, size_t @var{length})
+@var{handle}: a @code{gnutls_hash_hd_t} 
+
+@var{output}: destination to store the output; must be equal to or larger than  @code{length} 
+
+@var{length}: length of  @code{output} 
+
+This function will extract digest output of  @code{length} bytes. The  @code{handle} must
+be initialized with @code{gnutls_hash_init()}  as an extended output function (XOF),
+such as @code{GNUTLS_DIG_SHAKE_128}  or @code{GNUTLS_DIG_SHAKE_256} .
+
+This function can be called multiple times. To reset the state of  @code{handle} ,
+call @code{gnutls_hash_deinit()}  with @code{NULL}  as the digest argument.
+
+@strong{Returns:} @code{GNUTLS_E_SUCCESS}  (0) on success; negative error code otherwise.
+
+@strong{Since:} 3.8.6
 @end deftypefun
 
 @subheading gnutls_hkdf_expand

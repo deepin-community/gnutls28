@@ -21,7 +21,7 @@
  *
  */
 
-#include <config.h>
+#include "config.h"
 #include "gnutls_int.h"
 #include "errors.h"
 
@@ -29,21 +29,22 @@
 #include <errno.h>
 #include <sys/stat.h>
 #include <sys/types.h>
-#include <atfork.h>
+#include "atfork.h"
 
 unsigned int _gnutls_forkid = 0;
 
 #ifndef _WIN32
 
-# ifdef HAVE_ATFORK
+#ifdef HAVE_ATFORK
 static void fork_handler(void)
 {
 	_gnutls_forkid++;
 }
-# endif
+#endif
 
-# if defined(HAVE___REGISTER_ATFORK)
-extern int __register_atfork(void (*)(void), void(*)(void), void (*)(void), void *);
+#if defined(HAVE___REGISTER_ATFORK)
+extern int __register_atfork(void (*)(void), void (*)(void), void (*)(void),
+			     void *);
 extern void *__dso_handle;
 
 int _gnutls_register_fork_handler(void)
@@ -53,7 +54,7 @@ int _gnutls_register_fork_handler(void)
 	return 0;
 }
 
-# else
+#else
 
 unsigned int _gnutls_get_forkid(void)
 {
@@ -74,6 +75,6 @@ int _gnutls_register_fork_handler(void)
 	return 0;
 }
 
-# endif
+#endif
 
 #endif /* !_WIN32 */

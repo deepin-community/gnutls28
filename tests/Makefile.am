@@ -77,11 +77,12 @@ EXTRA_DIST = suppressions.valgrind eagain-common.h cert-common.h test-chains.h \
 	testpkcs11-certs/client.key testpkcs11-certs/server.crt testpkcs11-certs/server-tmpl \
 	testpkcs11-certs/ca.key testpkcs11-certs/client.crt testpkcs11-certs/client-tmpl testpkcs11-certs/server.key \
 	crt_type-neg-common.c \
-	system-override-default-priority-string.bad.config system-override-default-priority-string.none.config system-override-default-priority-string.only-tls13.config \
-	client-secrets.h server-secrets.h
+	system-override-default-priority-string.bad.config system-override-default-priority-string.none.config system-override-default-priority-string.only-tls13.config system-override-session-hash.sh \
+	client-secrets.h server-secrets.h dh-compute.h
 
 AM_CFLAGS = $(WARN_CFLAGS) $(WERROR_CFLAGS)
 AM_CPPFLAGS = \
+	$(LIBIDN2_CFLAGS) \
 	$(P11_KIT_CFLAGS) \
 	-I$(top_srcdir)/lib/includes		\
 	-I$(top_builddir)/lib/includes		\
@@ -106,6 +107,8 @@ dane_strcodes_LDADD = $(LDADD) ../libdane/libgnutls-dane.la
 
 if ENABLE_MINITASN1
 AM_CPPFLAGS += -I$(srcdir)/../lib/minitasn1
+else
+AM_CPPFLAGS += $(LIBTASN1_CFLAGS)
 endif
 
 noinst_LTLIBRARIES = libutils.la
@@ -166,23 +169,24 @@ ctests += mini-record-2 simple gnutls_hmac_fast set_pkcs12_cred cert certuniquei
 	 tls13-rehandshake-cert gnutls_ext_raw_parse handshake-large-cert \
 	 x509cert x509cert-tl x509cert-ct infoaccess mini-dtls-hello-verify sign-verify-ed25519-rfc8080 \
 	 trustdb-tofu dtls-rehandshake-anon mini-alpn mini-dtls-large \
-	 mini-termination mini-x509-cas mini-x509-2 pkcs12_simple tls-pthread \
+	 mini-termination mini-x509-cas mini-x509-2 pkcs12_simple \
 	 mini-emsgsize-dtls chainverify-unsorted mini-overhead tls12-ffdhe \
 	 mini-dtls-heartbeat mini-x509-callbacks key-openssl priorities priorities-groups	\
 	 gnutls_x509_privkey_import gnutls_x509_crt_list_import time x509-server-verify \
 	 sign-verify-ext4 tls-neg-ext4-key resume-lifetime \
 	 mini-dtls-srtp rsa-encrypt-decrypt mini-loss-time gnutls-strcodes \
 	 mini-record mini-dtls-record handshake-timeout mini-record-range \
-	 cert-status fips-mode-pthread rsa-psk global-init sec-params sign-verify-data \
+	 cert-status rsa-psk global-init sec-params sign-verify-data \
 	 fips-test fips-override-test mini-global-load name-constraints x509-extensions \
 	 long-session-id mini-x509-callbacks-intr mini-dtls-lowmtu set_x509_key_file-late \
 	 crlverify mini-dtls-discard mini-record-failure openconnect-dtls12 \
 	 tls12-rehandshake-cert-2 custom-urls set_x509_key_mem set_x509_key_file \
 	 tls12-rehandshake-cert-auto tls12-rehandshake-set-prio \
-	 mini-chain-unsorted x509-verify-with-crl mini-dtls-mtu privkey-verify-broken \
+	 mini-chain-unsorted x509-verify-duplicate x509-verify-with-crl mini-dtls-mtu privkey-verify-broken \
 	 mini-dtls-record-asym key-import-export priority-set priority-set2 \
-	 pubkey-import-export sign-is-secure spki spki-abstract rsa-rsa-pss \
-	 mini-dtls-fork dtls-pthread mini-key-material x509cert-invalid \
+	 pubkey-import-export sign-is-secure spki spki-abstract \
+	 rsa-rsa-oaep rsa-rsa-pss \
+	 mini-dtls-fork mini-key-material x509cert-invalid \
 	 tls-ext-register tls-supplemental mini-dtls0-9 duplicate-extensions \
 	 record-retvals mini-server-name tls-etm tls-force-etm x509-cert-callback alerts \
 	 client-sign-md5-rep tls12-invalid-key-exchanges session-rdn-read \
@@ -208,7 +212,7 @@ ctests += mini-record-2 simple gnutls_hmac_fast set_pkcs12_cred cert certuniquei
 	 dtls12-cert-key-exchange dtls10-cert-key-exchange x509-cert-callback-legacy \
 	 keylog-env ssl2-hello tlsfeature-ext dtls-rehandshake-cert-2 dtls-session-ticket-lost \
 	 tlsfeature-crt dtls-rehandshake-cert-3 resume-with-false-start \
-	 set_x509_key_file_ocsp client-fastopen rng-sigint srp rng-pthread \
+	 set_x509_key_file_ocsp client-fastopen rng-sigint srp \
 	 safe-renegotiation/srn0 safe-renegotiation/srn1 safe-renegotiation/srn2 \
 	 safe-renegotiation/srn3 safe-renegotiation/srn4 safe-renegotiation/srn5 \
 	 rsa-illegal-import set_x509_ocsp_multi_invalid set_key set_x509_key_file_ocsp_multi2 \
@@ -220,7 +224,7 @@ ctests += mini-record-2 simple gnutls_hmac_fast set_pkcs12_cred cert certuniquei
 	 session-tickets-missing set_x509_key_file_legacy status-request-ext \
 	 gnutls_x509_crt_sign gnutls_x509_crq_sign dtls-repro-20170915 \
 	 rng-no-onload dtls1-2-mtu-check crl_apis cert_verify_inv_utf8 no-extensions \
-	 hostname-check-utf8 pkcs8-key-decode-encrypted priority-mix pkcs7 \
+	 no-status-request hostname-check-utf8 pkcs8-key-decode-encrypted priority-mix pkcs7 \
 	 send-data-before-handshake recv-data-before-handshake crt_inv_write \
 	 x509sign-verify-error rng-op-nonce rng-op-random rng-op-key x509-dn-decode-compat \
 	 ip-check mini-x509-ipaddr trust-store base64-raw random-art dhex509self \
@@ -233,8 +237,9 @@ ctests += mini-record-2 simple gnutls_hmac_fast set_pkcs12_cred cert certuniquei
 	 tls13-without-timeout-func buffer status-request-revoked \
 	 set_x509_ocsp_multi_cli kdf-api keylog-func handshake-write \
 	 x509cert-dntypes id-on-xmppAddr tls13-compat-mode ciphersuite-name \
-	 x509-upnconstraint cipher-padding pkcs7-verify-double-free \
-	 fips-rsa-sizes
+	 x509-upnconstraint xts-key-check cipher-padding pkcs7-verify-double-free \
+	 fips-rsa-sizes tls12-rehandshake-ticket pathbuf tls-force-ems \
+	 psk-importer privkey-derive dh-compute2 ecdh-compute2
 
 ctests += tls-channel-binding
 
@@ -279,10 +284,14 @@ ip_utils_CPPFLAGS = $(AM_CPPFLAGS) \
 
 endif
 
+# FIXME: pthread tests hangs under qemu-user-static on Fedora 40
+if !CROSS_COMPILING
+ctests += tls-pthread fips-mode-pthread dtls-pthread rng-pthread
 tls_pthread_LDADD = $(LDADD) -lpthread
 fips_mode_pthread_LDADD = $(LDADD) -lpthread
 dtls_pthread_LDADD = $(LDADD) -lpthread
 rng_pthread_LDADD = $(LDADD) -lpthread
+endif
 
 tls12_rollback_detection_CFLAGS = -DTLS12
 tls12_rollback_detection_SOURCES = tls13/rnd-rollback-detection.c
@@ -341,6 +350,11 @@ noinst_LTLIBRARIES += libpkcs11mock2.la
 libpkcs11mock2_la_SOURCES = pkcs11/pkcs11-mock2.c
 libpkcs11mock2_la_LDFLAGS = -shared -rpath $(pkglibdir) -module -no-undefined -avoid-version
 libpkcs11mock2_la_LIBADD =  ../gl/libgnu.la
+
+noinst_LTLIBRARIES += libpkcs11mock3.la
+libpkcs11mock3_la_SOURCES = pkcs11/pkcs11-mock3.c
+libpkcs11mock3_la_LDFLAGS = -shared -rpath $(pkglibdir) -module -no-undefined -avoid-version
+libpkcs11mock3_la_LIBADD =  ../gl/libgnu.la
 
 pkcs11_cert_import_url_exts_SOURCES = pkcs11/pkcs11-cert-import-url-exts.c
 pkcs11_cert_import_url_exts_DEPENDENCIES = libpkcs11mock1.la libutils.la
@@ -480,14 +494,20 @@ buffer_CPPFLAGS = $(AM_CPPFLAGS) \
 	-I$(top_srcdir)/gl	\
 	-I$(top_builddir)/gl
 
+pathbuf_CPPFLAGS = $(AM_CPPFLAGS) \
+	-I$(top_srcdir)/gl	\
+	-I$(top_builddir)/gl
+
 if ENABLE_PKCS11
 if !WINDOWS
 ctests += tls13/post-handshake-with-cert-pkcs11 pkcs11/tls-neg-pkcs11-no-key \
-	global-init-override
+	global-init-override pkcs11/distrust-after
 tls13_post_handshake_with_cert_pkcs11_DEPENDENCIES = libpkcs11mock2.la libutils.la
 tls13_post_handshake_with_cert_pkcs11_LDADD = $(LDADD) $(LIBDL)
 pkcs11_tls_neg_pkcs11_no_key_DEPENDENCIES = libpkcs11mock2.la libutils.la
 pkcs11_tls_neg_pkcs11_no_key_LDADD = $(LDADD) $(LIBDL)
+pkcs11_distrust_after_DEPENDENCIES = libpkcs11mock3.la libutils.la
+pkcs11_distrust_after_LDADD = $(LDADD) $(LIBDL)
 endif
 endif
 
@@ -500,6 +520,8 @@ endif
 if ENABLE_KTLS
 indirect_tests += gnutls_ktls
 dist_check_SCRIPTS += ktls.sh
+indirect_tests += ktls_keyupdate
+dist_check_SCRIPTS += ktls_keyupdate.sh
 endif
 
 if !WINDOWS
@@ -541,6 +563,11 @@ dist_check_SCRIPTS += system-override-sig-allowlist.sh \
 	protocol-set-allowlist.sh
 indirect_tests += system-override-curves-allowlist
 indirect_tests += protocol-set-allowlist
+
+dist_check_SCRIPTS += system-override-allow-rsa-pkcs1-encrypt.sh
+indirect_tests += rsaes-pkcs1-v1_5
+rsaes_pkcs1_v1_5_SOURCES = rsaes-pkcs1-v1_5.c
+rsaes_pkcs1_v1_5_LDADD = $(COMMON_GNUTLS_LDADD)
 endif
 
 dist_check_SCRIPTS += gnutls-cli-self-signed.sh gnutls-cli-invalid-crl.sh gnutls-cli-rawpk.sh
@@ -548,7 +575,7 @@ dist_check_SCRIPTS += gnutls-cli-self-signed.sh gnutls-cli-invalid-crl.sh gnutls
 dist_check_SCRIPTS += dh-fips-approved.sh
 
 if ENABLE_PKCS11
-dist_check_SCRIPTS += p11-kit-trust.sh testpkcs11.sh certtool-pkcs11.sh
+dist_check_SCRIPTS += p11-kit-trust.sh testpkcs11.sh certtool-pkcs11.sh pkcs11-tool.sh
 
 if HAVE_PKCS11_TRUST_STORE
 if P11KIT_0_23_11_API
@@ -576,6 +603,8 @@ ctests += win32-certopenstore
 
 endif
 
+dist_check_SCRIPTS += pqc-hybrid-kx.sh
+
 cpptests =
 if ENABLE_CXX
 if HAVE_CMOCKA
@@ -583,16 +612,9 @@ if HAVE_CMOCKA
 cpptests += sanity-cpp
 
 sanity_cpp_SOURCES = sanity-cpp.cpp
-sanity_cpp_LDADD = $(CMOCKA_LDADD) ../lib/libgnutlsxx.la
-sanity_cpp_CXXFLAGS = $(AM_CPPFLAGS) \
-	-I$(top_srcdir)/gl	\
-	-I$(top_builddir)/gl
+sanity_cpp_LDADD = $(CMOCKA_LDADD)
+sanity_cpp_CXXFLAGS = $(AM_CPPFLAGS) $(CMOCKA_CFLAGS)
 endif
-endif
-
-if !WINDOWS
-indirect_tests += datefudge-check
-noinst_PROGRAMS = datefudge-check
 endif
 
 check_PROGRAMS = $(cpptests) $(ctests) $(indirect_tests)
@@ -601,11 +623,13 @@ TESTS = $(cpptests) $(ctests) $(dist_check_SCRIPTS)
 TESTS_ENVIRONMENT +=						\
 	CC="$(CC)"						\
 	CFLAGS="$(CFLAGS)"					\
+	LDFLAGS="$(LDFLAGS)"					\
 	LC_ALL="C"						\
 	LSAN_OPTIONS=suppressions=$(srcdir)/gnutls-asan.supp	\
 	CAFILE=$(srcdir)/cert-tests/data/ca-certs.pem		\
 	P11MOCKLIB1=$(abs_builddir)/.libs/libpkcs11mock1.so	\
 	P11MOCKLIB2=$(abs_builddir)/.libs/libpkcs11mock2.so	\
+	P11MOCKLIB3=$(abs_builddir)/.libs/libpkcs11mock3.so	\
 	PKCS12_MANY_CERTS_FILE=$(srcdir)/cert-tests/data/pkcs12_5certs.p12	\
 	PKCS12FILE=$(srcdir)/cert-tests/data/client.p12		\
 	PKCS12PASSWORD=foobar					\
@@ -618,6 +642,7 @@ TESTS_ENVIRONMENT +=						\
 	OPENSSL_ia32cap=0x00000000				\
 	EXEEXT=$(EXEEXT)					\
 	GNUTLS_TEST_SUITE_RUN=1					\
+	ac_cv_sizeof_time_t="$(ac_cv_sizeof_time_t)"		\
 	builddir="$(builddir)"					\
 	top_builddir="$(top_builddir)"				\
 	abs_top_builddir="$(abs_top_builddir)"			\
@@ -630,11 +655,22 @@ else
 TESTS_ENVIRONMENT += ENABLE_SSL3=0
 endif
 
+if ENABLE_DSA
+TESTS_ENVIRONMENT += ENABLE_DSA=1
+else
+TESTS_ENVIRONMENT += ENABLE_DSA=0
+endif
+
 if ENABLE_GOST
 TESTS_ENVIRONMENT += ENABLE_GOST=1
 else
 TESTS_ENVIRONMENT += ENABLE_GOST=0
 endif
+
+TESTS_ENVIRONMENT +=					\
+	FAKETIME="$(FAKETIME)"				\
+	FAKETIME_F_OPT="$(FAKETIME_F_OPT)"		\
+	gnutls_cv_faketime_works="$(gnutls_cv_faketime_works)"
 
 TEST_EXTENSIONS = .sh
 SH_LOG_COMPILER = $(SHELL)

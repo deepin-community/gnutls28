@@ -14,8 +14,7 @@
 # General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this file; if not, write to the Free Software Foundation,
-# Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+# along with this file.  If not, see <https://www.gnu.org/licenses/>.
 
 AM_CFLAGS = $(WARN_CFLAGS)
 AM_CPPFLAGS = \
@@ -43,20 +42,16 @@ scripts_to_test = chain.sh \
 	testcompat-polarssl-serv.sh \
 	testcompat-polarssl-serv-compat.sh \
 	testcompat-polarssl-serv-no-etm.sh \
-	testcompat-openssl-cli.sh \
-	testcompat-openssl-cli-compat.sh \
-	testcompat-openssl-cli-no-etm.sh \
-	testcompat-openssl-serv.sh \
-	testcompat-openssl-serv-compat.sh \
-	testcompat-openssl-serv-no-etm.sh \
-	testcompat-openssl-serv-no-tickets.sh \
-	testcompat-openssl-serv-no-safe-renegotiation.sh \
-	testcompat-openssl-serv-safe-renegotiation.sh \
-	testrandom.sh tls-fuzzer/tls-fuzzer-nocert.sh \
+	testrandom.sh \
+	test-ciphersuite-names.sh \
+	multi-ticket-reception.sh
+
+if HAVE_PYTHON_SIX
+scripts_to_test += tls-fuzzer/tls-fuzzer-nocert.sh \
 	tls-fuzzer/tls-fuzzer-cert.sh tls-fuzzer/tls-fuzzer-alpn.sh \
 	tls-fuzzer/tls-fuzzer-nocert-tls13.sh tls-fuzzer/tls-fuzzer-psk.sh \
-	tls-fuzzer/tls-fuzzer-nolimit.sh tls-fuzzer/tls-fuzzer-nolimit-tls13.sh \
-	multi-ticket-reception.sh
+	tls-fuzzer/tls-fuzzer-nolimit.sh tls-fuzzer/tls-fuzzer-nolimit-tls13.sh
+endif
 
 TESTS_ENVIRONMENT = EXEEXT=$(EXEEXT)					\
 	LC_ALL="C"							\
@@ -75,15 +70,16 @@ TESTS_ENVIRONMENT += ENABLE_NON_SUITEB_CURVES=1
 endif
 
 if ENABLE_SSL3
+if HAVE_PYTHON_SIX
 scripts_to_test += tls-fuzzer/tls-fuzzer-nocert-ssl3.sh
+endif
 TESTS_ENVIRONMENT += ENABLE_SSL3=1
 endif
 
-if ENABLE_TLS13_INTEROP
-scripts_to_test += \
-	testcompat-openssl-tls13-cli.sh \
-	testcompat-openssl-tls13-serv.sh
-endif
+TESTS_ENVIRONMENT +=					\
+	FAKETIME="$(FAKETIME)"				\
+	FAKETIME_F_OPT="$(FAKETIME_F_OPT)"		\
+	gnutls_cv_faketime_works="$(gnutls_cv_faketime_works)"
 
 if ENABLE_OLDGNUTLS_INTEROP
 scripts_to_test += testcompat-oldgnutls.sh

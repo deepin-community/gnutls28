@@ -93,6 +93,7 @@
 @item -110 @tab GNUTLS_@-E_@-PREMATURE_@-TERMINATION @tab The TLS connection was non-properly terminated.
 @item -111 @tab GNUTLS_@-E_@-MALFORMED_@-CIDR @tab CIDR name constraint is malformed in size or structure.
 @item -112 @tab GNUTLS_@-E_@-CERTIFICATE_@-REQUIRED @tab Certificate is required.
+@item -113 @tab GNUTLS_@-E_@-UNSUPPORTED_@-ENCRYPTION_@-ALGORITHM @tab The encryption algorithm is not supported.
 @item -201 @tab GNUTLS_@-E_@-BASE64_@-ENCODING_@-ERROR @tab Base64 encoding error.
 @item -202 @tab GNUTLS_@-E_@-INCOMPATIBLE_@-GCRYPT_@-LIBRARY @tab The crypto library version is too old.
 @item -203 @tab GNUTLS_@-E_@-INCOMPATIBLE_@-LIBTASN1_@-LIBRARY @tab The tasn1 library version is too old.
