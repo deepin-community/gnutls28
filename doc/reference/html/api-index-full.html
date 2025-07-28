@@ -7,7 +7,7 @@
 <link rel="home" href="index.html" title="GnuTLS API Reference Manual">
 <link rel="up" href="index.html" title="GnuTLS API Reference Manual">
 <link rel="prev" href="gnutls-tpm.html" title="tpm">
-<meta name="generator" content="GTK-Doc V1.33.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.34.0 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -106,6 +106,18 @@ aarch64_sha512_update, function in sha-aarch64
 </dt>
 <dd></dd>
 <dt>
+AARCH64_SIGN_LINK_REGISTER, macro in aarch64-common
+</dt>
+<dd></dd>
+<dt>
+AARCH64_VALIDATE_LINK_REGISTER, macro in aarch64-common
+</dt>
+<dd></dd>
+<dt>
+AARCH64_VALID_CALL_TARGET, macro in aarch64-common
+</dt>
+<dd></dd>
+<dt>
 acpkm_crypt, macro in acpkm
 </dt>
 <dd></dd>
@@ -171,6 +183,14 @@ aesni_xts_decrypt, function in aes-x86
 <dd></dd>
 <dt>
 aesni_xts_encrypt, function in aes-x86
+</dt>
+<dd></dd>
+<dt>
+aes_gcm_aead_decrypt, function in aes-gcm-aead
+</dt>
+<dd></dd>
+<dt>
+aes_gcm_aead_encrypt, function in aes-gcm-aead
 </dt>
 <dd></dd>
 <dt>
@@ -654,6 +674,10 @@ asn1_node, typedef in libtasn1
 </dt>
 <dd></dd>
 <dt>
+asn1_node_array_st, struct in int
+</dt>
+<dd></dd>
+<dt>
 asn1_node_const, typedef in libtasn1
 </dt>
 <dd></dd>
@@ -739,10 +763,6 @@ ASN1_SMALL_VALUE_SIZE, macro in int
 <dd></dd>
 <dt>
 asn1_static_node_t, macro in libtasn1
-</dt>
-<dd></dd>
-<dt>
-asn1_strerror, function in libtasn1
 </dt>
 <dd></dd>
 <dt>
@@ -906,6 +926,14 @@ ATTRIBUTE_CONST, macro in attribute
 </dt>
 <dd></dd>
 <dt>
+ATTRIBUTE_DEALLOC, macro in attribute
+</dt>
+<dd></dd>
+<dt>
+ATTRIBUTE_DEALLOC_FREE, macro in attribute
+</dt>
+<dd></dd>
+<dt>
 ATTRIBUTE_ERROR, macro in attribute
 </dt>
 <dd></dd>
@@ -934,7 +962,7 @@ ATTRIBUTE_NOINLINE, macro in attribute
 </dt>
 <dd></dd>
 <dt>
-ATTRIBUTE_NONNULL, function in datum
+ATTRIBUTE_NONNULL, function in mem
 </dt>
 <dd></dd>
 <dt>
@@ -1023,6 +1051,14 @@ bitmap_lookup, function in bitmap
 </dt>
 <dd></dd>
 <dt>
+BITS_TO_LIMBS, macro in dsa-compute-k
+</dt>
+<dd></dd>
+<dt>
+block16_bswap, function in block-internal
+</dt>
+<dd></dd>
+<dt>
 block16_mulx_be, function in block-internal
 </dt>
 <dd></dd>
@@ -1039,6 +1075,10 @@ BLOCK16_POLY, macro in block-internal
 </dt>
 <dd></dd>
 <dt>
+block16_set, function in block-internal
+</dt>
+<dd></dd>
+<dt>
 block16_xor, function in block-internal
 </dt>
 <dd></dd>
@@ -1048,6 +1088,10 @@ block16_xor3, function in block-internal
 <dd></dd>
 <dt>
 block16_xor_bytes, function in block-internal
+</dt>
+<dd></dd>
+<dt>
+block16_zero, function in block-internal
 </dt>
 <dd></dd>
 <dt>
@@ -1071,11 +1115,31 @@ block8_xor_bytes, function in block-internal
 </dt>
 <dd></dd>
 <dt>
-_Bool, typedef in stdbool.in
+BOOL_MAX, macro in limits.in
 </dt>
 <dd></dd>
 <dt>
-bool, macro in stdbool.in
+BOOL_WIDTH, macro in limits.in
+</dt>
+<dd></dd>
+<dt>
+bswap32_if_be, macro in bswap-internal
+</dt>
+<dd></dd>
+<dt>
+bswap32_if_le, macro in bswap-internal
+</dt>
+<dd></dd>
+<dt>
+bswap32_n_if_le, macro in bswap-internal
+</dt>
+<dd></dd>
+<dt>
+bswap64_if_be, macro in bswap-internal
+</dt>
+<dd></dd>
+<dt>
+bswap64_if_le, macro in bswap-internal
 </dt>
 <dd></dd>
 <dt>
@@ -1168,6 +1232,10 @@ cbc_mac_verify, function in cipher
 </dt>
 <dd></dd>
 <dt>
+CertEnumCRLsInStoreFunc, user_function in system
+</dt>
+<dd></dd>
+<dt>
 certificate_credentials_st, struct in cert
 </dt>
 <dd></dd>
@@ -1244,11 +1312,19 @@ cipher_setkey_func, user_function in cipher_int
 </dt>
 <dd></dd>
 <dt>
+cipher_suite_get, function in algorithms
+</dt>
+<dd></dd>
+<dt>
 cipher_tag_func, user_function in cipher_int
 </dt>
 <dd></dd>
 <dt>
 cipher_to_entry, macro in algorithms
+</dt>
+<dd></dd>
+<dt>
+cipher_type_t, enum in gnutls_int
 </dt>
 <dd></dd>
 <dt>
@@ -1424,10 +1500,6 @@ copy_func, user_function in hash_int
 </dt>
 <dd></dd>
 <dt>
-credentials, function in gnutlsxx
-</dt>
-<dd></dd>
-<dt>
 CRED_RET_SUCCESS, macro in cert-cred
 </dt>
 <dd></dd>
@@ -1465,6 +1537,26 @@ CS_INVALID_MAJOR, macro in algorithms
 <dd></dd>
 <dt>
 CS_INVALID_MINOR, macro in algorithms
+</dt>
+<dd></dd>
+<dt>
+CTR_BUFFER_LIMIT, macro in ctr-internal
+</dt>
+<dd></dd>
+<dt>
+CTR_CRYPT, macro in ctr
+</dt>
+<dd></dd>
+<dt>
+ctr_crypt, macro in ctr
+</dt>
+<dd></dd>
+<dt>
+CTR_CTX, macro in ctr
+</dt>
+<dd></dd>
+<dt>
+CTR_SET_COUNTER, macro in ctr
 </dt>
 <dd></dd>
 <dt>
@@ -1753,7 +1845,11 @@ DERIVED_LABEL, macro in handshake-defs
 </dt>
 <dd></dd>
 <dt>
-dev_t, macro in types
+DERIVED_PSK_LABEL, macro in handshake-defs
+</dt>
+<dd></dd>
+<dt>
+dev_t, macro in sys_types.in
 </dt>
 <dd></dd>
 <dt>
@@ -1853,6 +1949,10 @@ drbg_aes_self_test, function in drbg-aes
 </dt>
 <dd></dd>
 <dt>
+DSA_COMPUTE_K_ITCH, macro in dsa-compute-k
+</dt>
+<dd></dd>
+<dt>
 DSA_G, macro in crypto-backend
 </dt>
 <dd></dd>
@@ -1897,6 +1997,10 @@ dss_params_validation_seeds, struct in dsa-fips
 </dt>
 <dd></dd>
 <dt>
+dst, variable in gnutlsxx
+</dt>
+<dd></dd>
+<dt>
 DTLS_DEFAULT_MTU, macro in gnutls_int
 </dt>
 <dd></dd>
@@ -1927,10 +2031,6 @@ EARLY_EXPORTER_MASTER_LABEL, macro in handshake-defs
 <dd></dd>
 <dt>
 EARLY_TRAFFIC_LABEL, macro in handshake-defs
-</dt>
-<dd></dd>
-<dt>
-ecc_curve, struct in ecc-gost-curve
 </dt>
 <dd></dd>
 <dt>
@@ -2059,6 +2159,10 @@ EXTRA_COMP_SIZE, macro in gnutls_int
 <dd></dd>
 <dt>
 EXT_BINDER_LABEL, macro in handshake-defs
+</dt>
+<dd></dd>
+<dt>
+ext_master_secret_t, enum in gnutls_int
 </dt>
 <dd></dd>
 <dt>
@@ -2235,7 +2339,7 @@ FRIENDLY_NAME_OID, macro in x509_int
 </dt>
 <dd></dd>
 <dt>
-FUNC, function in u-normalize-internal
+FUNC, function in zstd
 </dt>
 <dd></dd>
 <a name="idxG"></a><h3 class="title">G</h3>
@@ -2272,6 +2376,10 @@ get_entropy_func, user_function in rnd-common
 </dt>
 <dd></dd>
 <dt>
+get_group, function in state
+</dt>
+<dd></dd>
+<dt>
 get_handshake_last_out, function in gnutlsxx
 </dt>
 <dd></dd>
@@ -2297,6 +2405,10 @@ get_total_headers2, function in record
 <dd></dd>
 <dt>
 get_transport_ptr, function in gnutlsxx
+</dt>
+<dd></dd>
+<dt>
+get_type, function in gnutlsxx
 </dt>
 <dd></dd>
 <dt>
@@ -2404,7 +2516,31 @@ gl_uninorm_decomp_index_table, variable in decomposition-table2
 </dt>
 <dd></dd>
 <dt>
-GNULIB_defined_dev_t, macro in types
+gmp_alloc, macro in gmp-glue
+</dt>
+<dd></dd>
+<dt>
+gmp_alloc_limbs, macro in gmp-glue
+</dt>
+<dd></dd>
+<dt>
+gmp_free, macro in gmp-glue
+</dt>
+<dd></dd>
+<dt>
+gmp_free_limbs, macro in gmp-glue
+</dt>
+<dd></dd>
+<dt>
+GMP_LIMB_BITS, macro in gmp-glue
+</dt>
+<dd></dd>
+<dt>
+GNULIB_defined_dev_t, macro in sys_types.in
+</dt>
+<dd></dd>
+<dt>
+GNULIB_defined_off64_t, macro in sys_types.in
 </dt>
 <dd></dd>
 <dt>
@@ -2448,7 +2584,7 @@ GNULIB_defined_stdint_types, macro in stdint.in
 </dt>
 <dd></dd>
 <dt>
-<a class="link" href="gnutls-gnutls.html#gnutls-alert-get" title="gnutls_alert_get ()">gnutls_alert_get</a>, function in <a class="link" href="gnutls-gnutls.html" title="gnutls">gnutls</a>
+<a class="link" href="gnutls-gnutls.html#gnutls-alert-get" title="gnutls_alert_get ()">gnutls_alert_get</a>, function in gnutlsxx
 </dt>
 <dd></dd>
 <dt>
@@ -2652,6 +2788,38 @@ gnutls_bigint_format_t, enum in crypto-backend
 </dt>
 <dd></dd>
 <dt>
+gnutls_brotlidec_ensure_library, function in brotlidec
+</dt>
+<dd></dd>
+<dt>
+GNUTLS_BROTLIDEC_FUNC, macro in brotlidec
+</dt>
+<dd></dd>
+<dt>
+gnutls_brotlidec_is_usable, function in brotlidec
+</dt>
+<dd></dd>
+<dt>
+gnutls_brotlidec_unload_library, function in brotlidec
+</dt>
+<dd></dd>
+<dt>
+gnutls_brotlienc_ensure_library, function in brotlienc
+</dt>
+<dd></dd>
+<dt>
+GNUTLS_BROTLIENC_FUNC, macro in brotlienc
+</dt>
+<dd></dd>
+<dt>
+gnutls_brotlienc_is_usable, function in brotlienc
+</dt>
+<dd></dd>
+<dt>
+gnutls_brotlienc_unload_library, function in brotlienc
+</dt>
+<dd></dd>
+<dt>
 <a class="link" href="gnutls-gnutls.html#gnutls-buffer-append-data" title="gnutls_buffer_append_data ()">gnutls_buffer_append_data</a>, function in <a class="link" href="gnutls-gnutls.html" title="gnutls">gnutls</a>
 </dt>
 <dd></dd>
@@ -2672,11 +2840,15 @@ gnutls_buffer_st, struct in str
 </dt>
 <dd></dd>
 <dt>
-<a class="link" href="gnutls-gnutls.html#gnutls-certificate-activation-time-peers" title="gnutls_certificate_activation_time_peers ()">gnutls_certificate_activation_time_peers</a>, function in <a class="link" href="gnutls-gnutls.html" title="gnutls">gnutls</a>
+<a class="link" href="gnutls-gnutls.html#gnutls-certificate-activation-time-peers" title="gnutls_certificate_activation_time_peers ()">gnutls_certificate_activation_time_peers</a>, function in gnutlsxx
 </dt>
 <dd></dd>
 <dt>
 <a class="link" href="gnutls-gnutls.html#gnutls-certificate-allocate-credentials" title="gnutls_certificate_allocate_credentials ()">gnutls_certificate_allocate_credentials</a>, function in <a class="link" href="gnutls-gnutls.html" title="gnutls">gnutls</a>
+</dt>
+<dd></dd>
+<dt>
+<a class="link" href="gnutls-gnutls.html#gnutls-certificate-client-credentials" title="gnutls_certificate_client_credentials">gnutls_certificate_client_credentials</a>, typedef in <a class="link" href="gnutls-gnutls.html" title="gnutls">gnutls</a>
 </dt>
 <dd></dd>
 <dt>
@@ -2688,7 +2860,7 @@ gnutls_buffer_st, struct in str
 </dt>
 <dd></dd>
 <dt>
-<a class="link" href="gnutls-gnutls.html#gnutls-certificate-expiration-time-peers" title="gnutls_certificate_expiration_time_peers ()">gnutls_certificate_expiration_time_peers</a>, function in <a class="link" href="gnutls-gnutls.html" title="gnutls">gnutls</a>
+<a class="link" href="gnutls-gnutls.html#gnutls-certificate-expiration-time-peers" title="gnutls_certificate_expiration_time_peers ()">gnutls_certificate_expiration_time_peers</a>, function in gnutlsxx
 </dt>
 <dd></dd>
 <dt>
@@ -2777,6 +2949,10 @@ gnutls_buffer_st, struct in str
 <dd></dd>
 <dt>
 <a class="link" href="gnutls-gnutls.html#gnutls-certificate-send-x509-rdn-sequence" title="gnutls_certificate_send_x509_rdn_sequence ()">gnutls_certificate_send_x509_rdn_sequence</a>, function in <a class="link" href="gnutls-gnutls.html" title="gnutls">gnutls</a>
+</dt>
+<dd></dd>
+<dt>
+<a class="link" href="gnutls-gnutls.html#gnutls-certificate-server-credentials" title="gnutls_certificate_server_credentials">gnutls_certificate_server_credentials</a>, typedef in <a class="link" href="gnutls-gnutls.html" title="gnutls">gnutls</a>
 </dt>
 <dd></dd>
 <dt>
@@ -2956,7 +3132,7 @@ gnutls_buffer_st, struct in str
 </dt>
 <dd></dd>
 <dt>
-<a class="link" href="gnutls-gnutls.html#gnutls-certificate-type-get" title="gnutls_certificate_type_get ()">gnutls_certificate_type_get</a>, function in <a class="link" href="gnutls-gnutls.html" title="gnutls">gnutls</a>
+<a class="link" href="gnutls-gnutls.html#gnutls-certificate-type-get" title="gnutls_certificate_type_get ()">gnutls_certificate_type_get</a>, function in gnutlsxx
 </dt>
 <dd></dd>
 <dt>
@@ -3100,7 +3276,7 @@ GNUTLS_CIPHER_FLAG_XOR_NONCE, macro in gnutls_int
 </dt>
 <dd></dd>
 <dt>
-<a class="link" href="gnutls-gnutls.html#gnutls-cipher-get" title="gnutls_cipher_get ()">gnutls_cipher_get</a>, function in <a class="link" href="gnutls-gnutls.html" title="gnutls">gnutls</a>
+<a class="link" href="gnutls-gnutls.html#gnutls-cipher-get" title="gnutls_cipher_get ()">gnutls_cipher_get</a>, function in gnutlsxx
 </dt>
 <dd></dd>
 <dt>
@@ -3180,7 +3356,7 @@ gnutls_cipher_suite_entry_st, struct in gnutls_int
 </dt>
 <dd></dd>
 <dt>
-gnutls_compression_get, function in compat
+gnutls_compression_get, function in gnutlsxx
 </dt>
 <dd></dd>
 <dt>
@@ -4512,6 +4688,10 @@ GNUTLS_EXT_FLAG_SET_ONLY_FLAGS_MASK, macro in hello_ext
 </dt>
 <dd></dd>
 <dt>
+<a class="link" href="gnutls-gnutls.html#GNUTLS-E-UNSUPPORTED-ENCRYPTION-ALGORITHM:CAPS" title="GNUTLS_E_UNSUPPORTED_ENCRYPTION_ALGORITHM">GNUTLS_E_UNSUPPORTED_ENCRYPTION_ALGORITHM</a>, macro in <a class="link" href="gnutls-gnutls.html" title="gnutls">gnutls</a>
+</dt>
+<dd></dd>
+<dt>
 <a class="link" href="gnutls-gnutls.html#GNUTLS-E-UNSUPPORTED-SIGNATURE-ALGORITHM:CAPS" title="GNUTLS_E_UNSUPPORTED_SIGNATURE_ALGORITHM">GNUTLS_E_UNSUPPORTED_SIGNATURE_ALGORITHM</a>, macro in <a class="link" href="gnutls-gnutls.html" title="gnutls">gnutls</a>
 </dt>
 <dd></dd>
@@ -4748,15 +4928,19 @@ gnutls_group_entry_st, struct in gnutls_int
 </dt>
 <dd></dd>
 <dt>
+<a class="link" href="gnutls-gnutls.html#gnutls-handshake-description-get-name" title="gnutls_handshake_description_get_name ()">gnutls_handshake_description_get_name</a>, function in <a class="link" href="gnutls-gnutls.html" title="gnutls">gnutls</a>
+</dt>
+<dd></dd>
+<dt>
 <a class="link" href="gnutls-gnutls.html#gnutls-handshake-description-t" title="enum gnutls_handshake_description_t">gnutls_handshake_description_t</a>, enum in <a class="link" href="gnutls-gnutls.html" title="gnutls">gnutls</a>
 </dt>
 <dd></dd>
 <dt>
-<a class="link" href="gnutls-gnutls.html#gnutls-handshake-get-last-in" title="gnutls_handshake_get_last_in ()">gnutls_handshake_get_last_in</a>, function in <a class="link" href="gnutls-gnutls.html" title="gnutls">gnutls</a>
+<a class="link" href="gnutls-gnutls.html#gnutls-handshake-get-last-in" title="gnutls_handshake_get_last_in ()">gnutls_handshake_get_last_in</a>, function in gnutlsxx
 </dt>
 <dd></dd>
 <dt>
-<a class="link" href="gnutls-gnutls.html#gnutls-handshake-get-last-out" title="gnutls_handshake_get_last_out ()">gnutls_handshake_get_last_out</a>, function in <a class="link" href="gnutls-gnutls.html" title="gnutls">gnutls</a>
+<a class="link" href="gnutls-gnutls.html#gnutls-handshake-get-last-out" title="gnutls_handshake_get_last_out ()">gnutls_handshake_get_last_out</a>, function in gnutlsxx
 </dt>
 <dd></dd>
 <dt>
@@ -4837,6 +5021,10 @@ gnutls_group_entry_st, struct in gnutls_int
 <dd></dd>
 <dt>
 <a class="link" href="gnutls-crypto.html#gnutls-hash-output" title="gnutls_hash_output ()">gnutls_hash_output</a>, function in <a class="link" href="gnutls-crypto.html" title="crypto">crypto</a>
+</dt>
+<dd></dd>
+<dt>
+<a class="link" href="gnutls-crypto.html#gnutls-hash-squeeze" title="gnutls_hash_squeeze ()">gnutls_hash_squeeze</a>, function in <a class="link" href="gnutls-crypto.html" title="crypto">crypto</a>
 </dt>
 <dd></dd>
 <dt>
@@ -5100,7 +5288,7 @@ gnutls_key_st, struct in gnutls_int
 </dt>
 <dd></dd>
 <dt>
-<a class="link" href="gnutls-gnutls.html#gnutls-kx-get" title="gnutls_kx_get ()">gnutls_kx_get</a>, function in <a class="link" href="gnutls-gnutls.html" title="gnutls">gnutls</a>
+<a class="link" href="gnutls-gnutls.html#gnutls-kx-get" title="gnutls_kx_get ()">gnutls_kx_get</a>, function in gnutlsxx
 </dt>
 <dd></dd>
 <dt>
@@ -5156,7 +5344,11 @@ GNUTLS_MAC_FLAG_PREIMAGE_INSECURE_REVERTIBLE, macro in gnutls_int
 </dt>
 <dd></dd>
 <dt>
-<a class="link" href="gnutls-gnutls.html#gnutls-mac-get" title="gnutls_mac_get ()">gnutls_mac_get</a>, function in <a class="link" href="gnutls-gnutls.html" title="gnutls">gnutls</a>
+GNUTLS_MAC_FLAG_XOF, macro in gnutls_int
+</dt>
+<dd></dd>
+<dt>
+<a class="link" href="gnutls-gnutls.html#gnutls-mac-get" title="gnutls_mac_get ()">gnutls_mac_get</a>, function in gnutlsxx
 </dt>
 <dd></dd>
 <dt>
@@ -5324,10 +5516,6 @@ gnutls_mutex_unlock, variable in locks
 </dt>
 <dd></dd>
 <dt>
-gnutls_name_constraints_st, struct in x509_int
-</dt>
-<dd></dd>
-<dt>
 gnutls_nettle_backport_nettle_block16, union in block8
 </dt>
 <dd></dd>
@@ -5340,7 +5528,11 @@ gnutls_nettle_backport_nettle_block8, union in block8
 </dt>
 <dd></dd>
 <dt>
-<a class="link" href="gnutls-gnutls.html#GNUTLS-NO-EXTENSIONS:CAPS">GNUTLS_NO_EXTENSIONS</a>, macro in <a class="link" href="gnutls-gnutls.html" title="gnutls">gnutls</a>
+<a class="link" href="gnutls-gnutls.html#GNUTLS-NO-DEFAULT-EXTENSIONS:CAPS">GNUTLS_NO_DEFAULT_EXTENSIONS</a>, macro in <a class="link" href="gnutls-gnutls.html" title="gnutls">gnutls</a>
+</dt>
+<dd></dd>
+<dt>
+<a class="link" href="gnutls-gnutls.html#GNUTLS-NO-EXTENSIONS:CAPS" title="GNUTLS_NO_EXTENSIONS">GNUTLS_NO_EXTENSIONS</a>, macro in <a class="link" href="gnutls-gnutls.html" title="gnutls">gnutls</a>
 </dt>
 <dd></dd>
 <dt>
@@ -5872,6 +6064,10 @@ GNUTLS_OPENPGP_KEY, macro in compat
 </dt>
 <dd></dd>
 <dt>
+<a class="link" href="gnutls-openpgp.html#gnutls-openpgp-keyid-t" title="gnutls_openpgp_keyid_t">gnutls_openpgp_keyid_t</a>, typedef in <a class="link" href="gnutls-openpgp.html" title="openpgp">openpgp</a>
+</dt>
+<dd></dd>
+<dt>
 <a class="link" href="gnutls-openpgp.html#gnutls-openpgp-keyring-check-id" title="gnutls_openpgp_keyring_check_id ()">gnutls_openpgp_keyring_check_id</a>, function in <a class="link" href="gnutls-openpgp.html" title="openpgp">openpgp</a>
 </dt>
 <dd></dd>
@@ -6092,6 +6288,22 @@ gnutls_openpgp_send_key, macro in compat
 </dt>
 <dd></dd>
 <dt>
+gnutls_oqs_ensure_library, function in oqs
+</dt>
+<dd></dd>
+<dt>
+GNUTLS_OQS_FUNC, macro in oqs
+</dt>
+<dd></dd>
+<dt>
+gnutls_oqs_is_usable, function in oqs
+</dt>
+<dd></dd>
+<dt>
+gnutls_oqs_unload_library, function in oqs
+</dt>
+<dd></dd>
+<dt>
 <a class="link" href="gnutls-gnutls.html#gnutls-packet-deinit" title="gnutls_packet_deinit ()">gnutls_packet_deinit</a>, function in <a class="link" href="gnutls-gnutls.html" title="gnutls">gnutls</a>
 </dt>
 <dd></dd>
@@ -6112,7 +6324,11 @@ gnutls_openpgp_send_key, macro in compat
 </dt>
 <dd></dd>
 <dt>
-GNUTLS_PATH_MAX, macro in system
+gnutls_pathbuf_st, struct in pathbuf
+</dt>
+<dd></dd>
+<dt>
+GNUTLS_PATH_MAX, macro in pathbuf
 </dt>
 <dd></dd>
 <dt>
@@ -6728,11 +6944,19 @@ GNUTLS_PKCS11_OBJ_FLAG_FIRST_CLOSE_MATCH, macro in pkcs11_int
 </dt>
 <dd></dd>
 <dt>
+<a class="link" href="gnutls-pkcs12.html#gnutls-pkcs12-flags-t" title="enum gnutls_pkcs12_flags_t">gnutls_pkcs12_flags_t</a>, enum in <a class="link" href="gnutls-pkcs12.html" title="pkcs12">pkcs12</a>
+</dt>
+<dd></dd>
+<dt>
 <a class="link" href="gnutls-pkcs12.html#gnutls-pkcs12-generate-mac" title="gnutls_pkcs12_generate_mac ()">gnutls_pkcs12_generate_mac</a>, function in <a class="link" href="gnutls-pkcs12.html" title="pkcs12">pkcs12</a>
 </dt>
 <dd></dd>
 <dt>
 <a class="link" href="gnutls-pkcs12.html#gnutls-pkcs12-generate-mac2" title="gnutls_pkcs12_generate_mac2 ()">gnutls_pkcs12_generate_mac2</a>, function in <a class="link" href="gnutls-pkcs12.html" title="pkcs12">pkcs12</a>
+</dt>
+<dd></dd>
+<dt>
+<a class="link" href="gnutls-pkcs12.html#gnutls-pkcs12-generate-mac3" title="gnutls_pkcs12_generate_mac3 ()">gnutls_pkcs12_generate_mac3</a>, function in <a class="link" href="gnutls-pkcs12.html" title="pkcs12">pkcs12</a>
 </dt>
 <dd></dd>
 <dt>
@@ -7204,6 +7428,14 @@ gnutls_priority_compression_list, function in compat
 </dt>
 <dd></dd>
 <dt>
+<a class="link" href="gnutls-abstract.html#gnutls-privkey-derive-secret" title="gnutls_privkey_derive_secret ()">gnutls_privkey_derive_secret</a>, function in <a class="link" href="gnutls-abstract.html" title="abstract">abstract</a>
+</dt>
+<dd></dd>
+<dt>
+<a class="link" href="gnutls-abstract.html#gnutls-privkey-export-dh-raw" title="gnutls_privkey_export_dh_raw ()">gnutls_privkey_export_dh_raw</a>, function in <a class="link" href="gnutls-abstract.html" title="abstract">abstract</a>
+</dt>
+<dd></dd>
+<dt>
 <a class="link" href="gnutls-abstract.html#gnutls-privkey-export-dsa-raw" title="gnutls_privkey_export_dsa_raw ()">gnutls_privkey_export_dsa_raw</a>, function in <a class="link" href="gnutls-abstract.html" title="abstract">abstract</a>
 </dt>
 <dd></dd>
@@ -7265,6 +7497,10 @@ gnutls_priority_compression_list, function in compat
 <dd></dd>
 <dt>
 <a class="link" href="gnutls-abstract.html#gnutls-privkey-get-spki" title="gnutls_privkey_get_spki ()">gnutls_privkey_get_spki</a>, function in <a class="link" href="gnutls-abstract.html" title="abstract">abstract</a>
+</dt>
+<dd></dd>
+<dt>
+<a class="link" href="gnutls-abstract.html#gnutls-privkey-import-dh-raw" title="gnutls_privkey_import_dh_raw ()">gnutls_privkey_import_dh_raw</a>, function in <a class="link" href="gnutls-abstract.html" title="abstract">abstract</a>
 </dt>
 <dd></dd>
 <dt>
@@ -7444,6 +7680,10 @@ gnutls_privkey_pk_params_func, user_function in abstract_int
 </dt>
 <dd></dd>
 <dt>
+gnutls_protocol_get_version, function in gnutlsxx
+</dt>
+<dd></dd>
+<dt>
 <a class="link" href="gnutls-gnutls.html#gnutls-protocol-set-enabled" title="gnutls_protocol_set_enabled ()">gnutls_protocol_set_enabled</a>, function in <a class="link" href="gnutls-gnutls.html" title="gnutls">gnutls</a>
 </dt>
 <dd></dd>
@@ -7460,7 +7700,15 @@ gnutls_privkey_pk_params_func, user_function in abstract_int
 </dt>
 <dd></dd>
 <dt>
+<a class="link" href="gnutls-gnutls.html#gnutls-psk-client-credentials-t" title="gnutls_psk_client_credentials_t">gnutls_psk_client_credentials_t</a>, typedef in <a class="link" href="gnutls-gnutls.html" title="gnutls">gnutls</a>
+</dt>
+<dd></dd>
+<dt>
 <a class="link" href="gnutls-gnutls.html#gnutls-psk-client-get-hint" title="gnutls_psk_client_get_hint ()">gnutls_psk_client_get_hint</a>, function in <a class="link" href="gnutls-gnutls.html" title="gnutls">gnutls</a>
+</dt>
+<dd></dd>
+<dt>
+<a class="link" href="gnutls-gnutls.html#gnutls-psk-format-imported-identity" title="gnutls_psk_format_imported_identity ()">gnutls_psk_format_imported_identity</a>, function in <a class="link" href="gnutls-gnutls.html" title="gnutls">gnutls</a>
 </dt>
 <dd></dd>
 <dt>
@@ -7476,7 +7724,11 @@ gnutls_privkey_pk_params_func, user_function in abstract_int
 </dt>
 <dd></dd>
 <dt>
-<a class="link" href="gnutls-gnutls.html#gnutls-psk-server-get-username" title="gnutls_psk_server_get_username ()">gnutls_psk_server_get_username</a>, function in <a class="link" href="gnutls-gnutls.html" title="gnutls">gnutls</a>
+<a class="link" href="gnutls-gnutls.html#gnutls-psk-server-credentials-t" title="gnutls_psk_server_credentials_t">gnutls_psk_server_credentials_t</a>, typedef in <a class="link" href="gnutls-gnutls.html" title="gnutls">gnutls</a>
+</dt>
+<dd></dd>
+<dt>
+<a class="link" href="gnutls-gnutls.html#gnutls-psk-server-get-username" title="gnutls_psk_server_get_username ()">gnutls_psk_server_get_username</a>, function in gnutlsxx
 </dt>
 <dd></dd>
 <dt>
@@ -7500,6 +7752,10 @@ gnutls_privkey_pk_params_func, user_function in abstract_int
 </dt>
 <dd></dd>
 <dt>
+<a class="link" href="gnutls-gnutls.html#gnutls-psk-set-client-credentials-function3" title="gnutls_psk_set_client_credentials_function3 ()">gnutls_psk_set_client_credentials_function3</a>, function in <a class="link" href="gnutls-gnutls.html" title="gnutls">gnutls</a>
+</dt>
+<dd></dd>
+<dt>
 <a class="link" href="gnutls-gnutls.html#gnutls-psk-set-params-function" title="gnutls_psk_set_params_function ()">gnutls_psk_set_params_function</a>, function in <a class="link" href="gnutls-gnutls.html" title="gnutls">gnutls</a>
 </dt>
 <dd></dd>
@@ -7513,6 +7769,10 @@ gnutls_privkey_pk_params_func, user_function in abstract_int
 <dd></dd>
 <dt>
 <a class="link" href="gnutls-gnutls.html#gnutls-psk-set-server-credentials-function2" title="gnutls_psk_set_server_credentials_function2 ()">gnutls_psk_set_server_credentials_function2</a>, function in <a class="link" href="gnutls-gnutls.html" title="gnutls">gnutls</a>
+</dt>
+<dd></dd>
+<dt>
+<a class="link" href="gnutls-gnutls.html#gnutls-psk-set-server-credentials-function3" title="gnutls_psk_set_server_credentials_function3 ()">gnutls_psk_set_server_credentials_function3</a>, function in <a class="link" href="gnutls-gnutls.html" title="gnutls">gnutls</a>
 </dt>
 <dd></dd>
 <dt>
@@ -7545,6 +7805,10 @@ gnutls_privkey_pk_params_func, user_function in abstract_int
 <dd></dd>
 <dt>
 <a class="link" href="gnutls-abstract.html#gnutls-pubkey-export2" title="gnutls_pubkey_export2 ()">gnutls_pubkey_export2</a>, function in <a class="link" href="gnutls-abstract.html" title="abstract">abstract</a>
+</dt>
+<dd></dd>
+<dt>
+<a class="link" href="gnutls-abstract.html#gnutls-pubkey-export-dh-raw" title="gnutls_pubkey_export_dh_raw ()">gnutls_pubkey_export_dh_raw</a>, function in <a class="link" href="gnutls-abstract.html" title="abstract">abstract</a>
 </dt>
 <dd></dd>
 <dt>
@@ -7625,6 +7889,10 @@ gnutls_privkey_pk_params_func, user_function in abstract_int
 <dd></dd>
 <dt>
 <a class="link" href="gnutls-abstract.html#gnutls-pubkey-import" title="gnutls_pubkey_import ()">gnutls_pubkey_import</a>, function in <a class="link" href="gnutls-abstract.html" title="abstract">abstract</a>
+</dt>
+<dd></dd>
+<dt>
+<a class="link" href="gnutls-abstract.html#gnutls-pubkey-import-dh-raw" title="gnutls_pubkey_import_dh_raw ()">gnutls_pubkey_import_dh_raw</a>, function in <a class="link" href="gnutls-abstract.html" title="abstract">abstract</a>
 </dt>
 <dd></dd>
 <dt>
@@ -7800,7 +8068,7 @@ gnutls_realloc_fast, function in mem
 </dt>
 <dd></dd>
 <dt>
-<a class="link" href="gnutls-gnutls.html#gnutls-record-check-pending" title="gnutls_record_check_pending ()">gnutls_record_check_pending</a>, function in <a class="link" href="gnutls-gnutls.html" title="gnutls">gnutls</a>
+<a class="link" href="gnutls-gnutls.html#gnutls-record-check-pending" title="gnutls_record_check_pending ()">gnutls_record_check_pending</a>, function in gnutlsxx
 </dt>
 <dd></dd>
 <dt>
@@ -7820,7 +8088,7 @@ gnutls_realloc_fast, function in mem
 </dt>
 <dd></dd>
 <dt>
-<a class="link" href="gnutls-gnutls.html#gnutls-record-get-direction" title="gnutls_record_get_direction ()">gnutls_record_get_direction</a>, function in <a class="link" href="gnutls-gnutls.html" title="gnutls">gnutls</a>
+<a class="link" href="gnutls-gnutls.html#gnutls-record-get-direction" title="gnutls_record_get_direction ()">gnutls_record_get_direction</a>, function in gnutlsxx
 </dt>
 <dd></dd>
 <dt>
@@ -7832,7 +8100,7 @@ gnutls_realloc_fast, function in mem
 </dt>
 <dd></dd>
 <dt>
-<a class="link" href="gnutls-gnutls.html#gnutls-record-get-max-size" title="gnutls_record_get_max_size ()">gnutls_record_get_max_size</a>, function in <a class="link" href="gnutls-gnutls.html" title="gnutls">gnutls</a>
+<a class="link" href="gnutls-gnutls.html#gnutls-record-get-max-size" title="gnutls_record_get_max_size ()">gnutls_record_get_max_size</a>, function in gnutlsxx
 </dt>
 <dd></dd>
 <dt>
@@ -8044,6 +8312,10 @@ GNUTLS_SELF_TEST_FLAG_NO_COMPAT, macro in self-test
 </dt>
 <dd></dd>
 <dt>
+gnutls_session_get_client_random, function in compat
+</dt>
+<dd></dd>
+<dt>
 <a class="link" href="gnutls-gnutls.html#gnutls-session-get-data" title="gnutls_session_get_data ()">gnutls_session_get_data</a>, function in <a class="link" href="gnutls-gnutls.html" title="gnutls">gnutls</a>
 </dt>
 <dd></dd>
@@ -8076,11 +8348,15 @@ GNUTLS_SELF_TEST_FLAG_NO_COMPAT, macro in self-test
 </dt>
 <dd></dd>
 <dt>
-<a class="link" href="gnutls-gnutls.html#gnutls-session-get-ptr" title="gnutls_session_get_ptr ()">gnutls_session_get_ptr</a>, function in <a class="link" href="gnutls-gnutls.html" title="gnutls">gnutls</a>
+<a class="link" href="gnutls-gnutls.html#gnutls-session-get-ptr" title="gnutls_session_get_ptr ()">gnutls_session_get_ptr</a>, function in gnutlsxx
 </dt>
 <dd></dd>
 <dt>
 <a class="link" href="gnutls-gnutls.html#gnutls-session-get-random" title="gnutls_session_get_random ()">gnutls_session_get_random</a>, function in <a class="link" href="gnutls-gnutls.html" title="gnutls">gnutls</a>
+</dt>
+<dd></dd>
+<dt>
+gnutls_session_get_server_random, function in compat
 </dt>
 <dd></dd>
 <dt>
@@ -8260,6 +8536,10 @@ GNUTLS_SIGN_FLAG_TLS13_OK, macro in algorithms
 </dt>
 <dd></dd>
 <dt>
+<a class="link" href="gnutls-gnutls.html#gnutls-srp-client-credentials-t" title="gnutls_srp_client_credentials_t">gnutls_srp_client_credentials_t</a>, typedef in <a class="link" href="gnutls-gnutls.html" title="gnutls">gnutls</a>
+</dt>
+<dd></dd>
+<dt>
 <a class="link" href="gnutls-gnutls.html#gnutls-srp-free-client-credentials" title="gnutls_srp_free_client_credentials ()">gnutls_srp_free_client_credentials</a>, function in <a class="link" href="gnutls-gnutls.html" title="gnutls">gnutls</a>
 </dt>
 <dd></dd>
@@ -8268,7 +8548,11 @@ GNUTLS_SIGN_FLAG_TLS13_OK, macro in algorithms
 </dt>
 <dd></dd>
 <dt>
-<a class="link" href="gnutls-gnutls.html#gnutls-srp-server-get-username" title="gnutls_srp_server_get_username ()">gnutls_srp_server_get_username</a>, function in <a class="link" href="gnutls-gnutls.html" title="gnutls">gnutls</a>
+<a class="link" href="gnutls-gnutls.html#gnutls-srp-server-credentials-t" title="gnutls_srp_server_credentials_t">gnutls_srp_server_credentials_t</a>, typedef in <a class="link" href="gnutls-gnutls.html" title="gnutls">gnutls</a>
+</dt>
+<dd></dd>
+<dt>
+<a class="link" href="gnutls-gnutls.html#gnutls-srp-server-get-username" title="gnutls_srp_server_get_username ()">gnutls_srp_server_get_username</a>, function in gnutlsxx
 </dt>
 <dd></dd>
 <dt>
@@ -8352,6 +8636,10 @@ gnutls_static_mutex_unlock, macro in locks
 </dt>
 <dd></dd>
 <dt>
+<a class="link" href="gnutls-gnutls.html#gnutls-status-request-ocsp-func" title="gnutls_status_request_ocsp_func ()">gnutls_status_request_ocsp_func</a>, user_function in <a class="link" href="gnutls-gnutls.html" title="gnutls">gnutls</a>
+</dt>
+<dd></dd>
+<dt>
 gnutls_stek_rotation_callback_t, user_function in gnutls_int
 </dt>
 <dd></dd>
@@ -8364,7 +8652,7 @@ gnutls_stek_rotation_callback_t, user_function in gnutls_int
 </dt>
 <dd></dd>
 <dt>
-<a class="link" href="gnutls-gnutls.html#gnutls-strerror" title="gnutls_strerror ()">gnutls_strerror</a>, function in <a class="link" href="gnutls-gnutls.html" title="gnutls">gnutls</a>
+<a class="link" href="gnutls-gnutls.html#gnutls-strerror" title="gnutls_strerror ()">gnutls_strerror</a>, function in gnutlsxx
 </dt>
 <dd></dd>
 <dt>
@@ -8388,11 +8676,19 @@ gnutls_subject_alt_names_set, function in x509-ext
 </dt>
 <dd></dd>
 <dt>
+gnutls_subject_alt_names_st, struct in x509_ext_int
+</dt>
+<dd></dd>
+<dt>
 gnutls_subject_alt_names_t, typedef in x509-ext
 </dt>
 <dd></dd>
 <dt>
 <a class="link" href="gnutls-gnutls.html#gnutls-supplemental-data-format-type-t" title="enum gnutls_supplemental_data_format_type_t">gnutls_supplemental_data_format_type_t</a>, enum in <a class="link" href="gnutls-gnutls.html" title="gnutls">gnutls</a>
+</dt>
+<dd></dd>
+<dt>
+<a class="link" href="gnutls-gnutls.html#gnutls-supplemental-get-name" title="gnutls_supplemental_get_name ()">gnutls_supplemental_get_name</a>, function in <a class="link" href="gnutls-gnutls.html" title="gnutls">gnutls</a>
 </dt>
 <dd></dd>
 <dt>
@@ -8552,7 +8848,7 @@ gnutls_tlsprf_self_test, function in self-test
 </dt>
 <dd></dd>
 <dt>
-<a class="link" href="gnutls-gnutls.html#gnutls-transport-get-ptr" title="gnutls_transport_get_ptr ()">gnutls_transport_get_ptr</a>, function in <a class="link" href="gnutls-gnutls.html" title="gnutls">gnutls</a>
+<a class="link" href="gnutls-gnutls.html#gnutls-transport-get-ptr" title="gnutls_transport_get_ptr ()">gnutls_transport_get_ptr</a>, function in gnutlsxx
 </dt>
 <dd></dd>
 <dt>
@@ -8560,11 +8856,11 @@ gnutls_tlsprf_self_test, function in self-test
 </dt>
 <dd></dd>
 <dt>
-gnutls_transport_is_ktls_enabled, function in socket
+<a class="link" href="gnutls-gnutls.html#gnutls-transport-is-ktls-enabled" title="gnutls_transport_is_ktls_enabled ()">gnutls_transport_is_ktls_enabled</a>, function in <a class="link" href="gnutls-gnutls.html" title="gnutls">gnutls</a>
 </dt>
 <dd></dd>
 <dt>
-gnutls_transport_ktls_enable_flags_t, enum in socket
+<a class="link" href="gnutls-gnutls.html#gnutls-transport-ktls-enable-flags-t" title="enum gnutls_transport_ktls_enable_flags_t">gnutls_transport_ktls_enable_flags_t</a>, enum in <a class="link" href="gnutls-gnutls.html" title="gnutls">gnutls</a>
 </dt>
 <dd></dd>
 <dt>
@@ -8617,6 +8913,54 @@ gnutls_transport_set_fastopen, function in socket
 <dd></dd>
 <dt>
 <a class="link" href="gnutls-x509.html#gnutls-trust-list-flags-t" title="enum gnutls_trust_list_flags_t">gnutls_trust_list_flags_t</a>, enum in <a class="link" href="gnutls-x509.html" title="x509">x509</a>
+</dt>
+<dd></dd>
+<dt>
+gnutls_tss2_esys_ensure_library, function in tss2_esys
+</dt>
+<dd></dd>
+<dt>
+GNUTLS_TSS2_ESYS_FUNC, macro in tss2_esys
+</dt>
+<dd></dd>
+<dt>
+gnutls_tss2_esys_is_usable, function in tss2_esys
+</dt>
+<dd></dd>
+<dt>
+gnutls_tss2_esys_unload_library, function in tss2_esys
+</dt>
+<dd></dd>
+<dt>
+gnutls_tss2_mu_ensure_library, function in tss2_mu
+</dt>
+<dd></dd>
+<dt>
+GNUTLS_TSS2_MU_FUNC, macro in tss2_mu
+</dt>
+<dd></dd>
+<dt>
+gnutls_tss2_mu_is_usable, function in tss2_mu
+</dt>
+<dd></dd>
+<dt>
+gnutls_tss2_mu_unload_library, function in tss2_mu
+</dt>
+<dd></dd>
+<dt>
+gnutls_tss2_tctildr_ensure_library, function in tss2_tctildr
+</dt>
+<dd></dd>
+<dt>
+GNUTLS_TSS2_TCTILDR_FUNC, macro in tss2_tctildr
+</dt>
+<dd></dd>
+<dt>
+gnutls_tss2_tctildr_is_usable, function in tss2_tctildr
+</dt>
+<dd></dd>
+<dt>
+gnutls_tss2_tctildr_unload_library, function in tss2_tctildr
 </dt>
 <dd></dd>
 <dt>
@@ -10216,6 +10560,10 @@ gnutls_x509_policies_t, typedef in x509-ext
 </dt>
 <dd></dd>
 <dt>
+<a class="link" href="gnutls-x509.html#gnutls-x509-privkey-import-dh-raw" title="gnutls_x509_privkey_import_dh_raw ()">gnutls_x509_privkey_import_dh_raw</a>, function in <a class="link" href="gnutls-x509.html" title="x509">x509</a>
+</dt>
+<dd></dd>
+<dt>
 <a class="link" href="gnutls-x509.html#gnutls-x509-privkey-import-dsa-raw" title="gnutls_x509_privkey_import_dsa_raw ()">gnutls_x509_privkey_import_dsa_raw</a>, function in <a class="link" href="gnutls-x509.html" title="x509">x509</a>
 </dt>
 <dd></dd>
@@ -10312,11 +10660,19 @@ gnutls_x509_privkey_sign_hash, function in compat
 </dt>
 <dd></dd>
 <dt>
+<a class="link" href="gnutls-x509.html#gnutls-x509-spki-get-rsa-oaep-params" title="gnutls_x509_spki_get_rsa_oaep_params ()">gnutls_x509_spki_get_rsa_oaep_params</a>, function in <a class="link" href="gnutls-x509.html" title="x509">x509</a>
+</dt>
+<dd></dd>
+<dt>
 <a class="link" href="gnutls-x509.html#gnutls-x509-spki-get-rsa-pss-params" title="gnutls_x509_spki_get_rsa_pss_params ()">gnutls_x509_spki_get_rsa_pss_params</a>, function in <a class="link" href="gnutls-x509.html" title="x509">x509</a>
 </dt>
 <dd></dd>
 <dt>
 <a class="link" href="gnutls-x509.html#gnutls-x509-spki-init" title="gnutls_x509_spki_init ()">gnutls_x509_spki_init</a>, function in <a class="link" href="gnutls-x509.html" title="x509">x509</a>
+</dt>
+<dd></dd>
+<dt>
+<a class="link" href="gnutls-x509.html#gnutls-x509-spki-set-rsa-oaep-params" title="gnutls_x509_spki_set_rsa_oaep_params ()">gnutls_x509_spki_set_rsa_oaep_params</a>, function in <a class="link" href="gnutls-x509.html" title="x509">x509</a>
 </dt>
 <dd></dd>
 <dt>
@@ -10469,6 +10825,46 @@ gnutls_x509_trust_list_st, struct in verify-high
 <dd></dd>
 <dt>
 GNUTLS_XML_SHOW_ALL, macro in common
+</dt>
+<dd></dd>
+<dt>
+gnutls_zlib_ensure_library, function in zlib
+</dt>
+<dd></dd>
+<dt>
+GNUTLS_ZLIB_FUNC, macro in zlib
+</dt>
+<dd></dd>
+<dt>
+gnutls_zlib_is_usable, function in zlib
+</dt>
+<dd></dd>
+<dt>
+gnutls_zlib_unload_library, function in zlib
+</dt>
+<dd></dd>
+<dt>
+gnutls_zstd_ensure_library, function in zstd
+</dt>
+<dd></dd>
+<dt>
+GNUTLS_ZSTD_FUNC, macro in zstd
+</dt>
+<dd></dd>
+<dt>
+gnutls_zstd_is_usable, function in zstd
+</dt>
+<dd></dd>
+<dt>
+gnutls_zstd_unload_library, function in zstd
+</dt>
+<dd></dd>
+<dt>
+GNU_PROPERTY_AARCH64_BTI, macro in aarch64-common
+</dt>
+<dd></dd>
+<dt>
+GNU_PROPERTY_AARCH64_POINTER_AUTH, macro in aarch64-common
 </dt>
 <dd></dd>
 <dt>
@@ -10636,23 +11032,11 @@ gost28147_set_param, macro in gost28147
 </dt>
 <dd></dd>
 <dt>
-gostdsa_generate_keypair, macro in ecc-gost-curve
-</dt>
-<dd></dd>
-<dt>
 gostdsa_unmask_key, macro in gostdsa2
 </dt>
 <dd></dd>
 <dt>
 GOST_K, macro in crypto-backend
-</dt>
-<dd></dd>
-<dt>
-gost_point_mul_g, macro in ecc-gost-curve
-</dt>
-<dd></dd>
-<dt>
-gost_point_set, macro in ecc-gost-curve
 </dt>
 <dd></dd>
 <dt>
@@ -10702,6 +11086,10 @@ HANDSHAKE_SERVER_TRAFFIC_LABEL, macro in handshake-defs
 <dd></dd>
 <dt>
 handshake_state_t, enum in gnutls_int
+</dt>
+<dd></dd>
+<dt>
+hash, function in dsa-fips
 </dt>
 <dd></dd>
 <dt>
@@ -10785,15 +11173,15 @@ HASH_OID_STREEBOG_512, macro in x509_int
 </dt>
 <dd></dd>
 <dt>
+hash_security_level_t, enum in algorithms
+</dt>
+<dd></dd>
+<dt>
 hash_to_entry, macro in algorithms
 </dt>
 <dd></dd>
 <dt>
 HAVE_ATFORK, macro in atfork
-</dt>
-<dd></dd>
-<dt>
-HAVE_CKM_EDDSA, macro in pkcs11_int
 </dt>
 <dd></dd>
 <dt>
@@ -10806,6 +11194,10 @@ HAVE_LIB_ERROR, macro in fips
 <dd></dd>
 <dt>
 HAVE_NO_LOCKS, macro in system
+</dt>
+<dd></dd>
+<dt>
+HAVE_PKCS11_EDDSA, macro in pkcs11_int
 </dt>
 <dd></dd>
 <dt>
@@ -10943,6 +11335,10 @@ import_pkcs3, function in gnutlsxx
 <dd></dd>
 <dt>
 import_raw, function in gnutlsxx
+</dt>
+<dd></dd>
+<dt>
+IMP_BINDER_LABEL, macro in handshake-defs
 </dt>
 <dd></dd>
 <dt>
@@ -11282,7 +11678,7 @@ is_cert_type_enabled, function in cert_types
 </dt>
 <dd></dd>
 <dt>
-is_cipher_algo_allowed, macro in fips
+is_cipher_algo_allowed, function in fips
 </dt>
 <dd></dd>
 <dt>
@@ -11298,7 +11694,19 @@ IS_EC, macro in algorithms
 </dt>
 <dd></dd>
 <dt>
+IS_ECDHX, macro in algorithms
+</dt>
+<dd></dd>
+<dt>
 IS_GOSTEC, macro in algorithms
+</dt>
+<dd></dd>
+<dt>
+IS_GROUP_HYBRID, macro in algorithms
+</dt>
+<dd></dd>
+<dt>
+IS_KEM, macro in algorithms
 </dt>
 <dd></dd>
 <dt>
@@ -11306,11 +11714,15 @@ IS_KTLS_ENABLED, macro in gnutls_int
 </dt>
 <dd></dd>
 <dt>
-is_mac_algo_allowed, macro in fips
+is_mac_algo_allowed, function in fips
 </dt>
 <dd></dd>
 <dt>
 is_mac_algo_approved_in_fips, function in fips
+</dt>
+<dd></dd>
+<dt>
+IS_ML_DSA, macro in algorithms
 </dt>
 <dd></dd>
 <dt>
@@ -11325,13 +11737,17 @@ IS_SERVER, macro in gnutls_int
 IS_SRP_KX, macro in srp
 </dt>
 <dd></dd>
-<a name="idxK"></a><h3 class="title">K</h3>
 <dt>
-KEY_ID_OID, macro in x509_int
+is_zero_limb, function in gmp-glue
 </dt>
 <dd></dd>
 <dt>
-key_type_to_pk, function in pkcs11_int
+IS_ZERO_SMALL, macro in nettle-internal
+</dt>
+<dd></dd>
+<a name="idxK"></a><h3 class="title">K</h3>
+<dt>
+KEY_ID_OID, macro in x509_int
 </dt>
 <dd></dd>
 <dt>
@@ -11397,6 +11813,10 @@ LIBGNUTLS_VERSION_NUMBER, macro in compat
 <dd></dd>
 <dt>
 LIBGNUTLS_VERSION_PATCH, macro in compat
+</dt>
+<dd></dd>
+<dt>
+LIBUNISTRING_DLL_VARIABLE, macro in uninorm.in
 </dt>
 <dd></dd>
 <dt>
@@ -11585,15 +12005,23 @@ MAX_HANDSHAKE_PACKET_SIZE, macro in gnutls_int
 </dt>
 <dd></dd>
 <dt>
+MAX_HASH_BITS, macro in dsa-compute-k
+</dt>
+<dd></dd>
+<dt>
+MAX_HASH_LIMBS, macro in dsa-compute-k
+</dt>
+<dd></dd>
+<dt>
 MAX_HASH_SIZE, macro in gnutls_int
 </dt>
 <dd></dd>
 <dt>
-MAX_HASH_VALUE, macro in composition-table
+MAX_HEARTBEAT_LENGTH, macro in heartbeat
 </dt>
 <dd></dd>
 <dt>
-MAX_HEARTBEAT_LENGTH, macro in heartbeat
+MAX_HYBRID_GROUPS, macro in gnutls_int
 </dt>
 <dd></dd>
 <dt>
@@ -11661,6 +12089,18 @@ MAX_PVP_SEED_SIZE, macro in gnutls_int
 </dt>
 <dd></dd>
 <dt>
+MAX_Q_BITS, macro in dsa-compute-k
+</dt>
+<dd></dd>
+<dt>
+MAX_Q_LIMBS, macro in dsa-compute-k
+</dt>
+<dd></dd>
+<dt>
+MAX_Q_SIZE, macro in dsa-compute-k
+</dt>
+<dd></dd>
+<dt>
 MAX_RECORD_HEADER_SIZE, macro in gnutls_int
 </dt>
 <dd></dd>
@@ -11670,10 +12110,6 @@ max_record_recv_size, function in record
 <dd></dd>
 <dt>
 MAX_RECORD_SEND_OVERHEAD, macro in gnutls_int
-</dt>
-<dd></dd>
-<dt>
-MAX_RECORD_SEND_SIZE, macro in gnutls_int
 </dt>
 <dd></dd>
 <dt>
@@ -11713,10 +12149,6 @@ MAX_VERIFY_DEPTH, macro in gnutls_int
 </dt>
 <dd></dd>
 <dt>
-MAX_WORD_LENGTH, macro in composition-table
-</dt>
-<dd></dd>
-<dt>
 MAYBE_UNUSED, macro in attribute
 </dt>
 <dd></dd>
@@ -11730,6 +12162,18 @@ mbuffer_head_st, struct in gnutls_int
 <dd></dd>
 <dt>
 mbuffer_st, struct in gnutls_int
+</dt>
+<dd></dd>
+<dt>
+MB_LEN_MAX, macro in limits.in
+</dt>
+<dd></dd>
+<dt>
+MD_FILL_OR_RETURN, macro in md-internal
+</dt>
+<dd></dd>
+<dt>
+MD_FILL_OR_RETURN_INDEX, macro in md-internal
 </dt>
 <dd></dd>
 <dt>
@@ -11749,10 +12193,6 @@ MIN_COMPRESS_CERTIFICATE_METHODS, macro in compress_certificate
 </dt>
 <dd></dd>
 <dt>
-MIN_HASH_VALUE, macro in composition-table
-</dt>
-<dd></dd>
-<dt>
 MIN_RECORD_SIZE, macro in gnutls_int
 </dt>
 <dd></dd>
@@ -11761,11 +12201,59 @@ MIN_RECORD_SIZE_SMALL, macro in gnutls_int
 </dt>
 <dd></dd>
 <dt>
-MIN_WORD_LENGTH, macro in composition-table
+MLDSA44_OID, macro in common
 </dt>
 <dd></dd>
 <dt>
-mode, variable in fips
+MLDSA44_PRIVKEY_SIZE, macro in algorithms
+</dt>
+<dd></dd>
+<dt>
+MLDSA44_PUBKEY_SIZE, macro in algorithms
+</dt>
+<dd></dd>
+<dt>
+MLDSA65_OID, macro in common
+</dt>
+<dd></dd>
+<dt>
+MLDSA65_PRIVKEY_SIZE, macro in algorithms
+</dt>
+<dd></dd>
+<dt>
+MLDSA65_PUBKEY_SIZE, macro in algorithms
+</dt>
+<dd></dd>
+<dt>
+MLDSA87_OID, macro in common
+</dt>
+<dd></dd>
+<dt>
+MLDSA87_PRIVKEY_SIZE, macro in algorithms
+</dt>
+<dd></dd>
+<dt>
+MLDSA87_PUBKEY_SIZE, macro in algorithms
+</dt>
+<dd></dd>
+<dt>
+MLKEM1024_CIPHERTEXT_SIZE, macro in algorithms
+</dt>
+<dd></dd>
+<dt>
+MLKEM1024_PUBKEY_SIZE, macro in algorithms
+</dt>
+<dd></dd>
+<dt>
+MLKEM768_CIPHERTEXT_SIZE, macro in algorithms
+</dt>
+<dd></dd>
+<dt>
+MLKEM768_PUBKEY_SIZE, macro in algorithms
+</dt>
+<dd></dd>
+<dt>
+ML_DSA_PRIVATE_PARAMS, macro in crypto-backend
 </dt>
 <dd></dd>
 <dt>
@@ -11781,11 +12269,47 @@ mpi_dprint_func, user_function in mpi
 </dt>
 <dd></dd>
 <dt>
+mpn_cnd_add_n, function in gmp-glue
+</dt>
+<dd></dd>
+<dt>
+mpn_cnd_sub_n, function in gmp-glue
+</dt>
+<dd></dd>
+<dt>
+mpn_cnd_swap, function in gmp-glue
+</dt>
+<dd></dd>
+<dt>
 mpn_get_base256, function in mpn-base256
 </dt>
 <dd></dd>
 <dt>
+mpn_get_base256_le, macro in gmp-glue
+</dt>
+<dd></dd>
+<dt>
+mpn_sec_tabselect, function in gmp-glue
+</dt>
+<dd></dd>
+<dt>
 mpn_set_base256, function in mpn-base256
+</dt>
+<dd></dd>
+<dt>
+mpn_set_base256_le, macro in gmp-glue
+</dt>
+<dd></dd>
+<dt>
+mpz_limbs_copy, macro in gmp-glue
+</dt>
+<dd></dd>
+<dt>
+mpz_seed_sizeinbase_256_u, function in dsa-fips
+</dt>
+<dd></dd>
+<dt>
+mpz_set_n, macro in gmp-glue
 </dt>
 <dd></dd>
 <dt>
@@ -11814,10 +12338,6 @@ muc, variable in u-normalize-internal
 <dd></dd>
 <a name="idxN"></a><h3 class="title">N</h3>
 <dt>
-name_constraints_node_st, struct in x509_int
-</dt>
-<dd></dd>
-<dt>
 name_st, struct in x509_ext_int
 </dt>
 <dd></dd>
@@ -11834,11 +12354,39 @@ nettle_block8, macro in block8
 </dt>
 <dd></dd>
 <dt>
-nettle_get_gost_gc256b, macro in ecc-gost-curve
+nettle_bswap32, macro in bswap-internal
 </dt>
 <dd></dd>
 <dt>
-nettle_get_gost_gc512a, macro in ecc-gost-curve
+nettle_bswap32_n, function in bswap-internal
+</dt>
+<dd></dd>
+<dt>
+nettle_bswap64, macro in bswap-internal
+</dt>
+<dd></dd>
+<dt>
+NETTLE_MAX_CIPHER_BLOCK_SIZE, macro in nettle-internal
+</dt>
+<dd></dd>
+<dt>
+NETTLE_MAX_CIPHER_KEY_SIZE, macro in nettle-internal
+</dt>
+<dd></dd>
+<dt>
+NETTLE_MAX_HASH_BLOCK_SIZE, macro in nettle-internal
+</dt>
+<dd></dd>
+<dt>
+NETTLE_MAX_HASH_CONTEXT_SIZE, macro in nettle-internal
+</dt>
+<dd></dd>
+<dt>
+NETTLE_MAX_HASH_DIGEST_SIZE, macro in nettle-internal
+</dt>
+<dd></dd>
+<dt>
+NETTLE_MAX_SEXP_ASSOC, macro in nettle-internal
 </dt>
 <dd></dd>
 <dt>
@@ -11858,7 +12406,7 @@ nettle_mpz_sizeinbase_256_u_le, macro in bignum-le
 </dt>
 <dd></dd>
 <dt>
-NETTLE_PURE, macro in ecc-gost-curve
+NETTLE_OCTET_SIZE_TO_LIMB_SIZE, macro in gmp-glue
 </dt>
 <dd></dd>
 <dt>
@@ -11915,7 +12463,11 @@ N_, macro in str
 <dd></dd>
 <a name="idxO"></a><h3 class="title">O</h3>
 <dt>
-off_t, macro in types
+off64_t, typedef in sys_types.in
+</dt>
+<dd></dd>
+<dt>
+off_t, macro in sys_types.in
 </dt>
 <dd></dd>
 <dt>
@@ -12113,10 +12665,6 @@ PEM_X509_CERT2, macro in common
 <dd></dd>
 <dt>
 pin_info_st, struct in gnutls_int
-</dt>
-<dd></dd>
-<dt>
-pk, variable in algorithms
 </dt>
 <dd></dd>
 <dt>
@@ -12328,6 +12876,10 @@ pkcs_cipher_schema_st, struct in pkcs7_int
 </dt>
 <dd></dd>
 <dt>
+PKIX1_RSA_OAEP_P_SPECIFIED_OID, macro in common
+</dt>
+<dd></dd>
+<dt>
 PKIX1_RSA_PSS_MGF1_OID, macro in common
 </dt>
 <dd></dd>
@@ -12353,6 +12905,10 @@ PK_GOST_R3410_94_OID, macro in common
 <dd></dd>
 <dt>
 pk_hash_data, function in pk
+</dt>
+<dd></dd>
+<dt>
+PK_PKIX1_RSA_OAEP_OID, macro in common
 </dt>
 <dd></dd>
 <dt>
@@ -12425,6 +12981,10 @@ psk_server_cred_st, struct in psk
 <dd></dd>
 <dt>
 psk_st, struct in psk_ext_parser
+</dt>
+<dd></dd>
+<dt>
+pss_mgf1, macro in pss-mgf1
 </dt>
 <dd></dd>
 <dt>
@@ -12505,6 +13065,14 @@ release_tpm2_ctx, function in tpm2
 </dt>
 <dd></dd>
 <dt>
+remove_function, function in gnutlsxx
+</dt>
+<dd></dd>
+<dt>
+REPRODUCIBLE, macro in attribute
+</dt>
+<dd></dd>
+<dt>
 reset_binders, function in state
 </dt>
 <dd></dd>
@@ -12525,7 +13093,15 @@ ret, variable in u-normalize-internal
 </dt>
 <dd></dd>
 <dt>
+retrieve_function, function in gnutlsxx
+</dt>
+<dd></dd>
+<dt>
 RETURN_DTLS_EAGAIN_OR_TIMEOUT, macro in <a class="link" href="gnutls-dtls.html" title="dtls">dtls</a>
+</dt>
+<dd></dd>
+<dt>
+RETWRAP, function in gnutlsxx
 </dt>
 <dd></dd>
 <dt>
@@ -12537,7 +13113,7 @@ RMS_MASTER_LABEL, macro in handshake-defs
 </dt>
 <dd></dd>
 <dt>
-rpl_dev_t, typedef in types
+rpl_dev_t, typedef in sys_types.in
 </dt>
 <dd></dd>
 <dt>
@@ -12558,6 +13134,30 @@ rsa_generate_fips186_4_keypair, function in rsa-fips
 <dd></dd>
 <dt>
 RSA_MODULUS, macro in crypto-backend
+</dt>
+<dd></dd>
+<dt>
+rsa_oaep_sha256_decrypt, macro in rsa-oaep
+</dt>
+<dd></dd>
+<dt>
+rsa_oaep_sha256_encrypt, macro in rsa-oaep
+</dt>
+<dd></dd>
+<dt>
+rsa_oaep_sha384_decrypt, macro in rsa-oaep
+</dt>
+<dd></dd>
+<dt>
+rsa_oaep_sha384_encrypt, macro in rsa-oaep
+</dt>
+<dd></dd>
+<dt>
+rsa_oaep_sha512_decrypt, macro in rsa-oaep
+</dt>
+<dd></dd>
+<dt>
+rsa_oaep_sha512_encrypt, macro in rsa-oaep
 </dt>
 <dd></dd>
 <dt>
@@ -12590,10 +13190,6 @@ RSHIFT_ALIEN_UINT64, macro in block-internal
 <dd></dd>
 <a name="idxS"></a><h3 class="title">S</h3>
 <dt>
-safe_memset, function in gstr
-</dt>
-<dd></dd>
-<dt>
 safe_renegotiation_t, enum in gnutls_int
 </dt>
 <dd></dd>
@@ -12611,6 +13207,10 @@ schema_id, enum in pkcs7_int
 <dd></dd>
 <dt>
 security_parameters_st, struct in gnutls_int
+</dt>
+<dd></dd>
+<dt>
+sec_zero_p, macro in gmp-glue
 </dt>
 <dd></dd>
 <dt>
@@ -12775,6 +13375,50 @@ set_x509_trust, function in gnutlsxx
 <dd></dd>
 <dt>
 set_x509_trust_file, function in gnutlsxx
+</dt>
+<dd></dd>
+<dt>
+SHA3_128_BLOCK_SIZE, macro in sha3-shake
+</dt>
+<dd></dd>
+<dt>
+sha3_128_ctx, macro in sha3-shake
+</dt>
+<dd></dd>
+<dt>
+SHA3_128_DIGEST_SIZE, macro in sha3-shake
+</dt>
+<dd></dd>
+<dt>
+sha3_128_init, macro in sha3-shake
+</dt>
+<dd></dd>
+<dt>
+sha3_128_shake, macro in sha3-shake
+</dt>
+<dd></dd>
+<dt>
+sha3_128_shake_output, macro in sha3-shake
+</dt>
+<dd></dd>
+<dt>
+sha3_128_update, macro in sha3-shake
+</dt>
+<dd></dd>
+<dt>
+sha3_256_shake, macro in sha3-shake
+</dt>
+<dd></dd>
+<dt>
+sha3_256_shake_output, macro in sha3-shake
+</dt>
+<dd></dd>
+<dt>
+SHA3_HASH_MAGIC, macro in sha3-internal
+</dt>
+<dd></dd>
+<dt>
+SHA3_SHAKE_MAGIC, macro in sha3-internal
 </dt>
 <dd></dd>
 <dt>
@@ -12946,6 +13590,42 @@ SIG_SEM_TLS13, macro in algorithms
 </dt>
 <dd></dd>
 <dt>
+siv_gcm_aes128_decrypt_message, macro in siv-gcm
+</dt>
+<dd></dd>
+<dt>
+siv_gcm_aes128_encrypt_message, macro in siv-gcm
+</dt>
+<dd></dd>
+<dt>
+siv_gcm_aes256_decrypt_message, macro in siv-gcm
+</dt>
+<dd></dd>
+<dt>
+siv_gcm_aes256_encrypt_message, macro in siv-gcm
+</dt>
+<dd></dd>
+<dt>
+SIV_GCM_BLOCK_SIZE, macro in siv-gcm
+</dt>
+<dd></dd>
+<dt>
+siv_gcm_decrypt_message, macro in siv-gcm
+</dt>
+<dd></dd>
+<dt>
+SIV_GCM_DIGEST_SIZE, macro in siv-gcm
+</dt>
+<dd></dd>
+<dt>
+siv_gcm_encrypt_message, macro in siv-gcm
+</dt>
+<dd></dd>
+<dt>
+SIV_GCM_NONCE_SIZE, macro in siv-gcm
+</dt>
+<dd></dd>
+<dt>
 sizeof, function in u-normalize-internal
 </dt>
 <dd></dd>
@@ -12990,6 +13670,10 @@ sr_ext_st, struct in safe_renegotiation
 </dt>
 <dd></dd>
 <dt>
+SSIZE_MAX, macro in limits.in
+</dt>
+<dd></dd>
+<dt>
 ssize_t, typedef in gnutls_int
 </dt>
 <dd></dd>
@@ -13007,6 +13691,10 @@ STATUS_REQUEST_TLS_ID, macro in status_request
 <dd></dd>
 <dt>
 STEK_ROTATION_PERIOD_PRODUCT, macro in gnutls_int
+</dt>
+<dd></dd>
+<dt>
+store_function, function in gnutlsxx
 </dt>
 <dd></dd>
 <dt>
@@ -13195,19 +13883,35 @@ TLS_SIGN_AID_UNKNOWN, macro in algorithms
 </dt>
 <dd></dd>
 <dt>
-TMP_ALLOC, macro in nettle-alloca
+TMP_ALLOC, macro in nettle-internal
 </dt>
 <dd></dd>
 <dt>
-TMP_DECL, macro in nettle-alloca
+TMP_ALLOC_ALIGN, macro in nettle-internal
+</dt>
+<dd></dd>
+<dt>
+TMP_DECL, macro in nettle-internal
+</dt>
+<dd></dd>
+<dt>
+TMP_DECL_ALIGN, macro in nettle-internal
+</dt>
+<dd></dd>
+<dt>
+TMP_GMP_ALLOC, macro in gmp-glue
+</dt>
+<dd></dd>
+<dt>
+TMP_GMP_DECL, macro in gmp-glue
+</dt>
+<dd></dd>
+<dt>
+TMP_GMP_FREE, macro in gmp-glue
 </dt>
 <dd></dd>
 <dt>
 TOMPZ, macro in gnettle
-</dt>
-<dd></dd>
-<dt>
-TOTAL_KEYWORDS, macro in composition-table
 </dt>
 <dd></dd>
 <dt>
@@ -13320,6 +14024,10 @@ u16_normxfrm, function in uninorm.in
 </dt>
 <dd></dd>
 <dt>
+u16_pcpy, function in unistr.in
+</dt>
+<dd></dd>
+<dt>
 u16_prev, function in unistr.in
 </dt>
 <dd></dd>
@@ -13345,10 +14053,6 @@ u16_strcoll, function in unistr.in
 <dd></dd>
 <dt>
 u16_strcpy, function in unistr.in
-</dt>
-<dd></dd>
-<dt>
-u16_strdup, function in unistr.in
 </dt>
 <dd></dd>
 <dt>
@@ -13428,6 +14132,10 @@ u32_normxfrm, function in uninorm.in
 </dt>
 <dd></dd>
 <dt>
+u32_pcpy, function in unistr.in
+</dt>
+<dd></dd>
+<dt>
 u32_prev, function in unistr.in
 </dt>
 <dd></dd>
@@ -13453,10 +14161,6 @@ u32_strcoll, function in unistr.in
 <dd></dd>
 <dt>
 u32_strcpy, function in unistr.in
-</dt>
-<dd></dd>
-<dt>
-u32_strdup, function in unistr.in
 </dt>
 <dd></dd>
 <dt>
@@ -13544,6 +14248,10 @@ u8_normxfrm, function in uninorm.in
 </dt>
 <dd></dd>
 <dt>
+u8_pcpy, function in unistr.in
+</dt>
+<dd></dd>
+<dt>
 u8_prev, function in unistr.in
 </dt>
 <dd></dd>
@@ -13561,10 +14269,6 @@ u8_stpncpy, function in unistr.in
 <dd></dd>
 <dt>
 u8_strcat, function in unistr.in
-</dt>
-<dd></dd>
-<dt>
-u8_strchr, function in unistr.in
 </dt>
 <dd></dd>
 <dt>
@@ -13625,158 +14329,6 @@ uc_canonical_decomposition, function in uninorm.in
 <dd></dd>
 <dt>
 UC_CASED_LETTER, macro in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_CATEGORY_C, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_CATEGORY_Cc, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_CATEGORY_Cf, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_CATEGORY_Cn, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_CATEGORY_Co, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_CATEGORY_Cs, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_CATEGORY_L, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_CATEGORY_LC, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_CATEGORY_Ll, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_CATEGORY_Lm, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_CATEGORY_Lo, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_CATEGORY_Lt, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_CATEGORY_Lu, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_CATEGORY_M, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_CATEGORY_Mc, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_CATEGORY_Me, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_CATEGORY_Mn, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_CATEGORY_N, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_CATEGORY_Nd, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_CATEGORY_Nl, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_CATEGORY_No, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_CATEGORY_P, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_CATEGORY_Pc, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_CATEGORY_Pd, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_CATEGORY_Pe, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_CATEGORY_Pf, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_CATEGORY_Pi, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_CATEGORY_Po, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_CATEGORY_Ps, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_CATEGORY_S, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_CATEGORY_Sc, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_CATEGORY_Sk, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_CATEGORY_Sm, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_CATEGORY_So, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_CATEGORY_Z, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_CATEGORY_Zl, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_CATEGORY_Zp, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_CATEGORY_Zs, variable in unictype.in
 </dt>
 <dd></dd>
 <dt>
@@ -13940,355 +14492,11 @@ UC_PRIVATE_USE, macro in unictype.in
 </dt>
 <dd></dd>
 <dt>
-UC_PROPERTY_ALPHABETIC, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_PROPERTY_ASCII_HEX_DIGIT, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_PROPERTY_BIDI_ARABIC_DIGIT, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_PROPERTY_BIDI_ARABIC_RIGHT_TO_LEFT, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_PROPERTY_BIDI_BLOCK_SEPARATOR, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_PROPERTY_BIDI_BOUNDARY_NEUTRAL, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_PROPERTY_BIDI_COMMON_SEPARATOR, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_PROPERTY_BIDI_CONTROL, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_PROPERTY_BIDI_EMBEDDING_OR_OVERRIDE, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_PROPERTY_BIDI_EUROPEAN_DIGIT, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_PROPERTY_BIDI_EUR_NUM_SEPARATOR, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_PROPERTY_BIDI_EUR_NUM_TERMINATOR, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_PROPERTY_BIDI_HEBREW_RIGHT_TO_LEFT, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_PROPERTY_BIDI_LEFT_TO_RIGHT, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_PROPERTY_BIDI_NON_SPACING_MARK, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_PROPERTY_BIDI_OTHER_NEUTRAL, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_PROPERTY_BIDI_PDF, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_PROPERTY_BIDI_SEGMENT_SEPARATOR, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_PROPERTY_BIDI_WHITESPACE, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
 uc_property_byname, function in unictype.in
 </dt>
 <dd></dd>
 <dt>
-UC_PROPERTY_CASED, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_PROPERTY_CASE_IGNORABLE, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_PROPERTY_CHANGES_WHEN_CASEFOLDED, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_PROPERTY_CHANGES_WHEN_CASEMAPPED, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_PROPERTY_CHANGES_WHEN_LOWERCASED, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_PROPERTY_CHANGES_WHEN_TITLECASED, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_PROPERTY_CHANGES_WHEN_UPPERCASED, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_PROPERTY_COMBINING, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_PROPERTY_COMPOSITE, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_PROPERTY_CURRENCY_SYMBOL, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_PROPERTY_DASH, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_PROPERTY_DECIMAL_DIGIT, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_PROPERTY_DEFAULT_IGNORABLE_CODE_POINT, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_PROPERTY_DEPRECATED, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_PROPERTY_DIACRITIC, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_PROPERTY_EXTENDER, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_PROPERTY_FORMAT_CONTROL, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_PROPERTY_GRAPHEME_BASE, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_PROPERTY_GRAPHEME_EXTEND, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_PROPERTY_GRAPHEME_LINK, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_PROPERTY_HEX_DIGIT, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_PROPERTY_HYPHEN, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_PROPERTY_IDEOGRAPHIC, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_PROPERTY_IDS_BINARY_OPERATOR, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_PROPERTY_IDS_TRINARY_OPERATOR, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_PROPERTY_ID_CONTINUE, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_PROPERTY_ID_START, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_PROPERTY_IGNORABLE_CONTROL, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_PROPERTY_ISO_CONTROL, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
 uc_property_is_valid, macro in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_PROPERTY_JOIN_CONTROL, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_PROPERTY_LEFT_OF_PAIR, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_PROPERTY_LINE_SEPARATOR, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_PROPERTY_LOGICAL_ORDER_EXCEPTION, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_PROPERTY_LOWERCASE, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_PROPERTY_MATH, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_PROPERTY_NON_BREAK, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_PROPERTY_NOT_A_CHARACTER, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_PROPERTY_NUMERIC, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_PROPERTY_OTHER_ALPHABETIC, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_PROPERTY_OTHER_DEFAULT_IGNORABLE_CODE_POINT, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_PROPERTY_OTHER_GRAPHEME_EXTEND, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_PROPERTY_OTHER_ID_CONTINUE, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_PROPERTY_OTHER_ID_START, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_PROPERTY_OTHER_LOWERCASE, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_PROPERTY_OTHER_MATH, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_PROPERTY_OTHER_UPPERCASE, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_PROPERTY_PAIRED_PUNCTUATION, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_PROPERTY_PARAGRAPH_SEPARATOR, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_PROPERTY_PATTERN_SYNTAX, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_PROPERTY_PATTERN_WHITE_SPACE, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_PROPERTY_PRIVATE_USE, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_PROPERTY_PUNCTUATION, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_PROPERTY_QUOTATION_MARK, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_PROPERTY_RADICAL, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_PROPERTY_SENTENCE_TERMINAL, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_PROPERTY_SOFT_DOTTED, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_PROPERTY_SPACE, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_PROPERTY_TERMINAL_PUNCTUATION, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_PROPERTY_TITLECASE, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_PROPERTY_UNASSIGNED_CODE_VALUE, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_PROPERTY_UNIFIED_IDEOGRAPH, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_PROPERTY_UPPERCASE, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_PROPERTY_VARIATION_SELECTOR, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_PROPERTY_WHITE_SPACE, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_PROPERTY_XID_CONTINUE, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_PROPERTY_XID_START, variable in unictype.in
-</dt>
-<dd></dd>
-<dt>
-UC_PROPERTY_ZERO_WIDTH, variable in unictype.in
 </dt>
 <dd></dd>
 <dt>
@@ -14532,6 +14740,14 @@ unicode_normalization_form, struct in normalize-internal
 </dt>
 <dd></dd>
 <dt>
+UNINORM_COMPOSE_MAX_ARG1, macro in composition-table-bounds
+</dt>
+<dd></dd>
+<dt>
+UNINORM_COMPOSE_MAX_ARG2, macro in composition-table-bounds
+</dt>
+<dd></dd>
+<dt>
 uninorm_filter, struct in uninorm.in
 </dt>
 <dd></dd>
@@ -14556,6 +14772,10 @@ unlikely, function in gnutls_int
 </dt>
 <dd></dd>
 <dt>
+UNSEQUENCED, macro in attribute
+</dt>
+<dd></dd>
+<dt>
 UP, macro in int
 </dt>
 <dd></dd>
@@ -14570,6 +14790,10 @@ version_entry_st, struct in gnutls_int
 <dd></dd>
 <dt>
 version_to_entry, macro in algorithms
+</dt>
+<dd></dd>
+<dt>
+VOID_FUNC, macro in zstd
 </dt>
 <dd></dd>
 <dt>
@@ -14689,6 +14913,6 @@ zrelease_temp_mpi_key, macro in mem
 <dd></dd>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.33.1</div>
+<hr>Generated by GTK-Doc V1.34.0</div>
 </body>
 </html>

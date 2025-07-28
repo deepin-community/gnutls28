@@ -9,7 +9,7 @@
 
 This function will verify the peer's certificate and store
 the status in the  @code{status} variable as a bitwise OR of gnutls_certificate_status_t
-values or zero if the certificate is trusted. Note that value in  @code{status} is set only when the return value of this function is success (i.e, failure 
+values or zero if the certificate is trusted. Note that value in  @code{status} is set only when the return value of this function is success (i.e, failure
 to trust a certificate does not imply a negative return value).
 The default verification flags used by this function can be overridden
 using @code{gnutls_certificate_set_verify_flags()} .

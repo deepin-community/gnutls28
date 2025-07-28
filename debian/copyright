@@ -20,11 +20,12 @@ Ludovic Courtès <ludo at gnu.org>
 Timo Schulz <twoaday at gnutls.org>
 Jonathan Bastien-Filiatrault <joe at x2a.org>
 Andreas Metzler <ametzler at debian.org>
-Alon Bar-Lev <alon.barlev at gmail.com>
+Zoltan Fridrich <zfridric at redhat.com>
 Alexander Sosedkin <asosedkin at redhat.com>
+Alon Bar-Lev <alon.barlev at gmail.com>
 Daniel Kahn Gillmor <dkg at fifthhorseman.net>
 Tom Vrancken <dev at tomvrancken.nl>
-Zoltan Fridrich <zfridric at redhat.com>
+František Krenželok <krenzelok.frantisek at gmail.com>
 Martin Storsjo <martin at martin.st>
 Tim Kosse <tim.kosse at filezilla-project.org>
 Simo Sorce <simo at redhat.com>
@@ -33,67 +34,87 @@ Fabio Fiorina <fiorinaf at gnutls.org>
 Stef Walter <stefw at redhat.com>
 Anderson Toshiyuki Sasaki <ansasaki at redhat.com>
 Armin Burgmeier <armin at arbur.net>
-František Krenželok <krenzelok.frantisek at gmail.com>
 Andrew McDonald <admcd at gnutls.org>
 Fiona Klute <fiona.klute at gmx.de>
 Alex Gaynor <alex.gaynor at gmail.com>
 Ander Juaristi <a at juaristi.eus>
 Martin Ukrop <mukrop at redhat.com>
 Jaak Ristioja <jaak.ristioja at cyber.ee>
+Jakub Jelen <jjelen at redhat.com>
 Attila Molnar <attilamolnar at hush.com>
 Hugo Beauzée-Luyssen <hugo at beauzee.fr>
+Stanislav Zidek <szidek at redhat.com>
 Stefan Berger <stefanb at linux.ibm.com>
 Steve Lhomme <robux4 at ycbcr.xyz>
-Jakub Jelen <jjelen at redhat.com>
+xuraoqing <xuraoqing at huawei.com>
 Martin Sucha <anty.sk+git at gmail.com>
 David Woodhouse <dwmw2 at infradead.org>
+Maxim Cournoyer <maxim.cournoyer at gmail.com>
+Bill Roberts <bill.roberts at arm.com>
 Jan Vcelak <jan.vcelak at nic.cz>
 Kevin Cernekee <cernekee at gmail.com>
 Nikolay Sivov <nsivov at codeweavers.com>
 Sahana Prasad <sahana at redhat.com>
+Tobias Heider <tobias.heider at canonical.com>
+Eric Blake <eblake at redhat.com>
 Michael Catanzaro <mcatanzaro at gnome.org>
+Stefan Kangas <stefankangas at gmail.com>
+xuraoqing <609179072 at qq.com>
 Daniel Lenski <dlenski at gmail.com>
 JonasZhou <JonasZhou at zhaoxin.com>
 Stefan Sørensen <stefan.sorensen at spectralink.com>
-Tobias Heider <tobias.heider at canonical.com>
+d-Dudas <david.dudas03 at e-uvt.ro>
 Adam Sampson <ats at offog.org>
 Alfredo Pironti <alfredo at pironti.eu>
+Angel Yankov <angel.yankov at suse.com>
 Brad Hards <bradh at frogmouth.net>
 Dimitri John Ledkov <xnox at ubuntu.com>
 Hubert Kario <hkario at redhat.com>
 Michael Weiser <michael.weiser at gmx.de>
 Patrick Pelletier <code at funwithsoftware.org>
+Pedro Monreal <pmgdeb at gmail.com>
 Rolf Eike Beer <eike at sf-mail.de>
 Ruslan N. Marchenko <me at ruff.mobi>
 Sjoerd Simons <sjoerd.simons at collabora.co.uk>
 Stefan Bühler <stbuehler at web.de>
 Thomas Klute <thomas2.klute at uni-dortmund.de>
 Wolfgang Meyer zu Bergsten <w.bergsten at sirrix.com>
+peonix <ajeetsinghchahar2 at gmail.com>
+Avinash Sonawane <rootkea at gmail.com>
 Christian Grothoff <christian at grothoff.org>
+Clemens Lang <cllang at redhat.com>
 Daniel P. Berrange <berrange at redhat.com>
+Dimitri Papadopoulos <3350651-DimitriPapadopoulos at users.noreply.gitlab.com>
 Evgeny Grin <k2k at narod.ru>
 Gustavo Zacarias <gustavo at zacarias.com.ar>
 James Bottomley <James.Bottomley at HansenPartnership.com>
 Jiří Klimeš <jklimes at redhat.com>
 Karsten Ohme <k_o_ at users.sourceforge.net>
 Kurt Roeckx <kurt at roeckx.be>
+Miroslav Lichvar <mlichvar at redhat.com>
+Nikolaos Chatzikonstantinou <nchatz314 at gmail.com>
 Peter Wu <peter at lekensteyn.nl>
-Stanislav Zidek <szidek at redhat.com>
+Sam James <sam at gentoo.org>
 Stephan Mueller <smueller at chronox.de>
 Thierry Quemerais <tquemerais at awox.com>
 Tom Carroll <incentivedesign at gmail.com>
 Vitezslav Cizek <vcizek at suse.com>
+Ajit Singh <ajeetsinghchahar2 at gmail.com>
 Alessandro Ghedini <alessandro at ghedini.me>
 Alex Monk <krenair at gmail.com>
 Benjamin Herrenschmidt <benh at kernel.crashing.org>
 Bernhard M. Wiedemann <bwiedemann at suse.de>
+Brad Smith <brad at comstyle.com>
 Craig Gallek <cgallek at gmail.com>
 David Caldwell <david at porkrind.org>
+David Dudas <david.dudas03 at e-uvt.ro>
 Diego Elio Pettenò <flameeyes at flameeyes.eu>
+Elias Gustafsson <elias.skondal at gmail.com>
 Elta Koepp <alexi_2019 at protonmail.com>
 Fabrice Fontaine <fontaine.fabrice at gmail.com>
 Giuseppe Scrivano <gscrivano at gnu.org>
 Ilya Tumaykin <itumaykin at gmail.com>
+Jeff Mattson <jmattson at sei.cmu.edu>
 Karl Tarbe <karl.tarbe at cyber.ee>
 Ke Zhao <kzhao at redhat.com>
 Leonardo Bras <leobras.c at gmail.com>
@@ -102,36 +123,43 @@ Matthias-Christian Ott <ott at mirix.org>
 Maya Rashish <coypu at sdf.org>
 Michael Catanzaro <mcatanzaro at igalia.com>
 Michał Górny <mgorny at gentoo.org>
-Miroslav Lichvar <mlichvar at redhat.com>
-Pedro Monreal <pmgdeb at gmail.com>
 Pedro Monreal <pmonrealgonzalez at suse.de>
+Peter Leitmann <pleitman at redhat.com>
 Petr Písař <petr.pisar at atlas.cz>
 Pierre Ossman <ossman at cendio.se>
 Roman Bogorodskiy <bogorodskiy at gmail.com>
-Sam James <sam at gentoo.org>
+Sahil Siddiq <icegambit91 at gmail.com>
+Sahil Siddiq <sahilcdq at proton.me>
+Samuel Thibault <samuel.thibault at ens-lyon.org>
 Simon South <simon at simonsouth.net>
 Steffen Jaeckel <jaeckel-floss at eyet-services.de>
 Steve Dispensa <dispensa at phonefactor.com>
+Xin Long <lucien.xin at gmail.com>
+Yongye Zhu <zyy1102000 at gmail.com>
 nia <nia at NetBSD.org>
 raspa0 <raspa0 at protonmail.com>
+ at Ajit <ajeetsinghchahar2 at gmail.com>
+ATHARVA S MARATHE <atharvamarathe8 at gmail.com>
+Adrian Bunk <bunk at debian.org>
+Alan Coopersmith <alan.coopersmith at oracle.com>
 Alban Crequy <alban.crequy at collabora.co.uk>
 Albrecht Dreß <albrecht.dress at arcor.de>
 Aleksei Nikiforov <darktemplar at basealt.ru>
 Alexander Kanavin <alex.kanavin at gmail.com>
 Alexandre Bique <bique.alexandre at gmail.com>
+Alyssa Ross <hi at alyssa.is>
 Andreas Schneider <asn at samba.org>
 Andreas Schwab <schwab at suse.de>
 Asad Mehmood <asad78611 at googlemail.com>
-Avinash Sonawane <rootkea at gmail.com>
 Bas van Schaik <gitlab.com at s.traiectum.net>
 Bjoern Jacke <bjacke at samba.org>
 Björn Jacke <bjacke at samba.org>
 Bjørn Christensen <bhc at insight.dk>
-Brad Smith <brad at comstyle.com>
 Brian Wickman <bwickman97 at outlook.com>
 Carolin Latze <latze at angry-red-pla.net>
 Chen Hongzhi <hongzhi.chen at me.com>
 Chris Barry <chris at barry.im>
+Christopher Baines <mail at cbaines.net>
 Colin Walters <walters at verbum.org>
 Dan Fandrich <dan at coneharvesters.com>
 Daniel Schaefer <git at danielschaefer.me>
@@ -142,9 +170,11 @@ Dmitriy Tsvettsikh <dmitrycvet at gmail.com>
 Dosenpfand <m at sad.bz>
 Doug Nazar <nazard at nazar.ca>
 Edward Stangler <estangler at bradmark.com>
+Ekaterina Zilotina <zilotina.ed at npc-ksb.ru>
 Elias Pipping <pipping at exherbo.org>
 Elta Koepp <elta_koepp at gmail.com>
 Frank Morgner <morgner at informatik.hu-berlin.de>
+Frediano Ziglio <freddy77 at gmail.com>
 Gregor Jasny <gjasny at googlemail.com>
 Günther Deschner <gd at samba.org>
 Hani Benhabiles <kroosec at gmail.com>
@@ -158,9 +188,11 @@ Jay Foad <jay.foad at gmail.com>
 Jeffrey Walton <noloader at gmail.com>
 Jens Lechtenboerger <jens.lechtenboerger at fsfe.org>
 Jussi Kukkonen <jussi.kukkonen at intel.com>
+Kai Pastor <dg0yt at darc.de>
 Kenneth J. Miller <ken at miller.ec>
 Lei Maohui <leimaohui at cn.fujitsu.com>
 Lili Quan <13132239506 at 163.com>
+Loganaden Velvindron <loganaden at gmail.com>
 Lucas Fisher <lucas.fisher at gmail.com>
 Ludwig Nussel <ludwig.nussel at suse.de>
 Luis G.F <luisgf at gmail.com>
@@ -171,6 +203,7 @@ Marcin Cieślak <saper at saper.info>
 Marcus Meissner <meissner at suse.de>
 Marga Manterola <marga at google.com>
 Marius Bakke <mbakke at fastmail.com>
+Mark Harfouche <mark.harfouche at gmail.com>
 Marti Raudsepp <marti at juffo.org>
 Marvin Scholz <epirat07 at gmail.com>
 Matt Turner <mattst88 at gmail.com>
@@ -184,15 +217,20 @@ Nils Maier <maierman at web.de>
 Norbert Pocs <npocs at redhat.com>
 Olga <olyasib12 at gmail.com>
 Ondrej Moris <omoris at redhat.com>
+Pedro Marzo <marzo.pedro at gmail.com>
 Petr Pavlu <petr.pavlu at suse.com>
 Philippe Proulx <eeppeliteloop at gmail.com>
 Philippe Widmer <pw at earthwave.ch>
+Pravek Sharma <sharmapravek at gmail.com>
 R. Andrew Bailey <bailey at akamai.com>
+Radostin Stoyanov <radostin at redhat.com>
 Raj Raman <rajramanca at gmail.com>
+Ramesh Adhikari <adhikari.resume at gmail.com>
 Remi Olivier <remi_8 at hotmail.com>
 Rical Jasan <ricaljasan at pacific.net>
 Ricardo M. Correia <rcorreia at wizy.org>
 Richard Costa <richard.costa at suse.com>
+Richard W.M. Jones <rjones at redhat.com>
 Rickard Bellgrim <rickard at opendnssec.org>
 Robert Scheck <robert at fedoraproject.org>
 Roberto Newmon <robertonewmon at fake-box.com>
@@ -204,6 +242,7 @@ Saurav Babu <saurav.babu at samsung.com>
 Sebastian Dröge <sebastian at centricular.com>
 Seppo Yli-Olli <seppo.yliolli at gmail.com>
 Simon Arlott <sa.me.uk>
+Stephen Paul Weber <singpolyma at singpolyma.net>
 Tatsuhiro Tsujikawa <tatsuhiro.t at gmail.com>
 Thomas Klausner <wiz at NetBSD.org>
 Tobias Polzer <tobias.polzer at fau.de>
@@ -211,8 +250,10 @@ Tomas Hoger <thoger at redhat.com>
 Tomas Mraz <tmraz at fedoraproject.org>
 Tristan Matthews <le.businessman at gmail.com>
 Werner Koch <wk at gnupg.org>
+Wilbur Wetterquarz <freaxmate at protonmail.com>
 Yuriy M. Kaminskiy <yumkam at gmail.com>
 ihsinme <ihsinme at gmail.com>
+pohsingwu <pohsingwu at synology.com>
 rrivers2 <5981058-rrivers2 at users.noreply.gitlab.com>
 sskaje <sskaje at gmail.com>
 Łukasz Stelmach <stlman at poczta.fm>
@@ -220,18 +261,18 @@ sskaje <sskaje at gmail.com>
 
 The translators list is autogenerated from po file history
 
-Anders Jonsson
 Benno Schulenberg
 Cristian Othón Martínez Vera
 Felipe Castro
 Jakub Bogusz
 Jorma Karvonen
-Mario Blättermann
+Kristian Nordin
 Milo Casagrande
 Mingye Wang (Arthur2e5)
 Petr Pisar
 Rafael Fontenelle
 Remus-Gabriel Chelu
+Roland Illig
 Sharuzzaman Ahmat Raslan
 Stéphane Aulery
 Temuri Doghonadze
@@ -257,7 +298,7 @@ version were LGPLv3+ only.)
 Copyright:
 --------------------
 /* -*- c -*-
- * Copyright (C) 2000-2019 Free Software Foundation, Inc.
+ * Copyright (C) 2000-2025 Free Software Foundation, Inc.
  *
  * Author: Nikos Mavrogiannopoulos
  *
@@ -302,8 +343,8 @@ Copyright:
 The documentation is distributed under the terms of the GNU Free
 Documentation License (FDL):
 --------------------
-Copyright (C) 2001-2023 Free Software Foundation, Inc.
-Copyright (C) 2001-2023 Nikos Mavrogiannopoulos
+Copyright (C) 2001-2025 Free Software Foundation, Inc.
+Copyright (C) 2001-2025 Nikos Mavrogiannopoulos
 
      Permission is granted to copy, distribute and/or modify this
      document under the terms of the GNU Free Documentation License,
@@ -338,6 +379,7 @@ the headers currently also list these authors/copyright holders::
 * IBM Corporation
 * INRIA Paris-Rocquencourt
 * Intel Corporation.
+* Jakub Jelen
 * Joe Orton
 * Karl Tarbe
 * KU Leuven
@@ -594,9 +636,9 @@ License: Apache-2.0
 
 ============================================
 
-lib/unistring/*
+Files: lib/unistring/*
 Author: Bruno Haible <bruno@clisp.org>
-Copyright (C) 2009-2020 Free Software Foundation, Inc.
+Copyright: 2009-2024 Free Software Foundation, Inc.
 Comment: Debian package is built against libunistring-dev package.
 License: LGPLv3+_or_GPLv2+
 
@@ -610,13 +652,13 @@ License: Apache-2.0
  On Debian systems the complete text of the license can be found in
  /usr/share/common-licenses/Apache-2.0
 
-fuzz/gnutls_dn_parser_fuzzer.c fuzz/gnutls_idna_parser_fuzzer.c
+Files: fuzz/gnutls_dn_parser_fuzzer.c fuzz/gnutls_idna_parser_fuzzer.c
  fuzz/gnutls_pkcs12_key_parser_fuzzer.c fuzz/gnutls_pkcs8_key_parser_fuzzer.c
  fuzz/gnutls_reverse_idna_parser_fuzzer.c
-Copyright 2016 Nikos Mavrogiannopoulos
+Copyright: 2016 Nikos Mavrogiannopoulos
 Comment: On Debian systems the complete license text is available in
  /usr/share/common-licenses/Apache-2.0
-License
+License:
  # Licensed under the Apache License, Version 2.0 (the "License");
  # you may not use this file except in compliance with the License.
  # You may obtain a copy of the License at
@@ -732,7 +774,7 @@ Files: fuzz/gnutls_x509_crq_parser_fuzzer.c
 Copyright: 2020 Dmitry Baryshkov
 License: LGPLv2.1+
 
-Files: lib/compress.c
+Files: lib/compress.c tests/pathbuf.c
 Copyright: 2017-2022 Red Hat, Inc.
 License: LGPLv2.1+
 
@@ -784,8 +826,10 @@ License: Expat
 
 Files: lib/nettle/int/drbg-aes.h lib/nettle/int/dsa-fips.h
  lib/nettle/int/dsa-keygen-fips186.c lib/nettle/int/dsa-validate.c
- lib/nettle/int/provable-prime.c
-Copyright: 2013 Red Hat | Copyright 2013, 2014 Red Hat
+ lib/nettle/int/provable-prime.c lib/nettle/backport/siv-gcm-aes128.c
+ lib/nettle/backport/siv-gcm-aes256.c lib/nettle/backport/siv-gcm.c
+ lib/nettle/backport/siv-gcm.h
+Copyright: 2013, 2014, 2022 Red Hat
 License: LGPLv3+_or_GPLv2+
 
 
@@ -808,12 +852,18 @@ Files: lib/nettle/gost/write-le32.c
 Copyright: 2001, 2011 Niels Möller
 License: LGPLv3+_or_GPLv2+
 
-Files: lib/nettle/int/block8.h
-Copyright: 2005, 2014 Niels Möller
+Files: lib/nettle/backport/write-le64.c
+Copyright: 2001, 2011, 2012 Niels Möller
+License: LGPLv3+_or_GPLv2+
+
+Files: lib/nettle/int/block8.h lib/nettle/backport/ctr.h
+ nettle/backport/ctr-internal.h lib/nettle/int/nettle-internal.h
+Copyright: 2002, 2005, 2014, 2018 Niels Möller
 License: LGPLv3+_or_GPLv2+
 
 Files: lib/nettle/int/mpn-base256.c
  lib/nettle/int/mpn-base256.h
+ lib/nettle/backport/gmp-glue.c lib/nettle/backport/gmp-glue.h
 Copyright: 2013 Niels Möller
     2013 Red Hat
 License: LGPLv3+_or_GPLv2+
@@ -823,11 +873,22 @@ Copyright: 2015 Dmitry Eremin-Solenikov
  2012 Nikos Mavrogiannopoulos, Niels Möller
 License: LGPLv3+_or_GPLv2+
 
+Files: lib/nettle/backport/md-internal.h
+Copyright: 2001, 2010, 2022 Niels Möller
+License: LGPLv3+_or_GPLv2+
+
+Files: lib/nettle/backport/rsa-sign-tr.c
+Copyright: 2001, 2015 Niels Möller
+ 2012 Nikos Mavrogiannopoulos
+ 2018 Red Hat Inc.
+License: LGPLv3+_or_GPLv2+
+
 Files: lib/nettle/gost/streebog-meta.c
 Copyright: 2012 Nikos Mavrogiannopoulos, Niels Möller
 License: LGPLv3+_or_GPLv2+
 
-Files: lib/nettle/gost/hmac-gost.h
+Files: lib/nettle/gost/hmac-gost.h lib/nettle/backport/rsa-internal.h
+ lib/nettle/int/rsa-oaep.h
 Copyright: 2001, 2002 Niels Möller
 License: LGPLv3+_or_GPLv2+
 
@@ -835,8 +896,43 @@ Files: lib/nettle/gost/hmac-streebog.c
 Copyright: 2016 Dmitry Eremin-Solenikov
 License: LGPLv3+_or_GPLv2+
 
-Files: lib/nettle/gost/nettle-write.h
+Files: lib/nettle/gost/nettle-write.h nettle/backport/nettle-write.h
 Copyright: 2010 Niels Möller
+License: LGPLv3+_or_GPLv2+
+
+Files: lib/nettle/backport/sha3.c lib/nettle/backport/sha3-internal.h
+ lib/nettle/int/sha3-shake.h
+Copyright: 2012 Niels Möller
+License: LGPLv3+_or_GPLv2+
+
+Files: lib/nettle/backport/sha3-shake.c
+Copyright: 2017, 2024 Daiki Ueno
+ 2017 Red Hat, Inc.
+ 2024 Niels Möller
+License: LGPLv3+_or_GPLv2+
+
+Files: lib/nettle/backport/shake128.c lib/nettle/backport/shake256.c
+Copyright: 2017 Daiki Ueno
+ 2017 Red Hat, Inc.
+License: LGPLv3+_or_GPLv2+
+
+Files: lib/nettle/backport/bswap-internal.h lib/nettle/backport/ghash-internal.h
+Copyright: 2022 Niels Möller
+License: LGPLv3+_or_GPLv2+
+
+Files: lib/nettle/backport/oaep.c lib/nettle/backport/oaep.h
+ nettle/backport/rsa-oaep-decrypt.c lib/nettle/backport/rsa-oaep-encrypt.c
+Copyright: 2021-2024 Nicolas Mora
+ 2024 Daiki Ueno
+License: LGPLv3+_or_GPLv2+
+
+Files: lib/nettle/backport/pss-mgf1.c lib/nettle/backport/pss-mgf1.h
+Copyright: 2017 Daiki Ueno
+License: LGPLv3+_or_GPLv2+
+
+Files: lib/nettle/backport/ctr16.c lib/nettle/backport/rsa-sec-compute-root.c
+Copyright: 2005-2018 Niels Möller
+ 2018 Red Hat, Inc.
 License: LGPLv3+_or_GPLv2+
 
 Files: lib/nettle/gost/streebog.c
@@ -860,6 +956,13 @@ License: LGPLv3+_or_GPLv2+
 
 Files: lib/nettle/gost/gostdsa-mask.c
 Copyright: 2018 Dmitry Eremin-Solenikov
+License: LGPLv3+_or_GPLv2+
+
+Files: lib/nettle/backport/ghash-set-key.c lib/nettle/backport/ghash-update.c
+ lib/nettle/backport/siv-ghash-set-key.c lib/nettle/backport/siv-ghash-update.c
+Copyright: 2011 Katholieke Universiteit Leuven
+ (C) 2011, 2013, 2018, 2022 Niels Möller
+ (C) 2018, 2022 Red Hat, Inc.
 License: LGPLv3+_or_GPLv2+
 
 Files: lib/nettle/gost/gost-wrap.c
@@ -914,9 +1017,9 @@ License:
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-Files: lib/nettle/rnd-fuzzer.c
-Copyright 2017 Red Hat
- Copyright 1995-2017 Free Software Foundation, Inc.
+Files: lib/nettle/rnd-fuzzer.c lib/pathbuf.c lib/pathbuf.h
+Copyright 2017 2022 Red Hat
+ Copyright 1995-2022 Free Software Foundation, Inc.
 License
  * This file is part of the GNU C Library.
  * Contributed by Ulrich Drepper <drepper@gnu.ai.mit.edu>, August 1995.
@@ -990,16 +1093,22 @@ Files: tests/no-extensions.c tests/system-override-curves.sh
  tests/ocsp-tests/ocsp-load-chain.sh
  tests/ocsp-tests/ocsp-must-staple-connection.sh
  tests/ocsp-tests/ocsptool.sh
+ tests/pkcs11-tool.sh
  tests/tls13/compress-cert-cli.c
  tests/tls13/hello_retry_request_resume.c
  tests/client-secrets.h
  tests/sanity-lib.sh
  tests/server-secrets.h
+ tests/system-override-session-hash.sh
  tests/tls13/compress-cert.c tests/tls13/compress-cert-neg2.c
  tests/tls13/compress-cert-neg.c
- tests/tls13/psk-ke-modes.c
+ tests/tls13/psk-ke-modes.c tests/ktls_keyupdate.c tests/ktls_keyupdate.sh
+ tests/no-status-request.c tests/pkcs11/distrust-after.c
+ tests/pkcs11/pkcs11-mock3.c tests/tls12-rehandshake-ticket.c
+ tests/tls-force-ems.c tests/x509-verify-duplicate.c
+ tests/xts-key-check.c
 License: GPLv3+
-Copyright: 2014-2022 Red Hat, Inc
+Copyright: 2014-2023 Red Hat, Inc
 
 Files: tests/server-weak-keys.sh tests/cert-tests/alt-chain.sh
  tests/cert-tests/cert-critical.sh tests/cert-tests/certtool-ecdsa.sh
@@ -1013,6 +1122,10 @@ Files: tests/server-weak-keys.sh tests/cert-tests/alt-chain.sh
  tests/cert-tests/provable-privkey.sh tests/ocsp-tests/ocsp-test.sh
 License: GPLv3+
 Copyright: 2014-2018 Nikos Mavrogiannopoulos
+
+Files: tests/cert-tests/pkcs12-pbmac1.sh
+Copyright: 2004-2006, 2008, 2010, 2012, 2024 Free Software Foundation, Inc.
+License: GPLv3+
 
 Files: tests/openconnect-dtls12.c tests/system-override-invalid.sh
  tests/system-override-sig-hash.sh tests/cert-tests/x509-duplicate-ext.sh
@@ -1041,6 +1154,10 @@ Copyright: 2016-2017 Red Hat, Inc.
 Files: tests/kdf-api.c
 License: LGPLv2.1+
 Copyright: 2020 Red Hat, Inc.
+
+Files: tests/pqc-hybrid-kx.sh
+License: GPLv3+
+Copyright: 2022 Red Hat, Inc.
 
 Files: lib/fipshmac.c
 License: LGPLv2.1+
@@ -1085,6 +1202,21 @@ License: GPLv3+
 Copyright: 2015 Red Hat, Inc.
  2019 Nikos Mavrogiannopoulos
 
+Files: tests/cert-tests/certtool-rsa-oaep.sh
+Copyright: 2024 Daiki Ueno
+License: GPLv3+
+
+Files: tests/rsaes-pkcs1-v1_5.c
+ tests/system-override-allow-rsa-pkcs1-encrypt.sh
+ tests/dh-compute.h tests/rsa-rsa-oaep.c
+Copyright: 2024 Red Hat, Inc.
+License: GPLv3+
+
+Files: tests/cert-tests/mldsa.sh
+Copyright: 2021 Free Software Foundation, Inc.
+ 2024 Red Hat, Inc.
+License: GPLv3+
+
 Files: tests/x509-upnconstraint.c
 License: GPLv3+
 Copyright: 2022 Brian Wickman
@@ -1122,6 +1254,10 @@ Files: fuzz/gnutls_ext_raw_parse_fuzzer.c tests/keylog-func.c
 License: LGPLv2.1+
 Copyright: 2019 Red Hat, Inc.
 
+Files: tests/dh-compute2.c tests/ecdh-compute2.c tests/privkey-derive.c
+License: GPLv3+
+Copyright: 2019-2023 Red Hat, Inc.
+
 Files: tests/pskself2.c
 Copyright: 2004-2012 Free Software Foundation, Inc.
  2013 Adam Sampson <ats@offog.org>
@@ -1142,6 +1278,10 @@ Copyright: 2018 Dmitry Eremin-Solenikov
  2004-2006, 2010, 2012 Free Software Foundation, Inc.
 License: GPLv3+
 
+Files: tests/cert-tests/reject-negative-serial.sh
+Copyright: 2023 Elias Gustafsson
+License: GPLv3+
+
 Files: tests/id-on-xmppAddr.c
 Copyright: 2021 Steffen Jaeckel
 License: GPLv3+
@@ -1158,6 +1298,9 @@ Files: lib/accelerated/afalg.c
 Copyright: 2017 Stephan Mueller <smueller@chronox.de>
 License: LGPLv2.1+
 
+Files: lib/liboqs/sha2.c lib/liboqs/sha2.h lib/liboqs/sha3x4.h
+Copyright: 2024 Red Hat, Inc.
+License: LGPLv2.1+
 
 Files: lib/inih/*
 Copyright: 2009-2019, Ben Hoyt
@@ -1186,4 +1329,19 @@ License: BSD-3-Clause
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 Comment: https://github.com/benhoyt/inih
-~
+
+Files: lib/liboqs/sha3x4.c
+Copyright: 2024 David Dudas
+License: LGPLv2.1+
+
+Files: lib/dlwrap/brotlidec.c lib/dlwrap/brotlidec.h lib/dlwrap/brotlienc.c
+ lib/dlwrap/brotliencfuncs.h lib/dlwrap/brotlienc.h lib/dlwrap/oqs.c
+ lib/dlwrap/oqs.h lib/dlwrap/tss2_esys.c lib/dlwrap/tss2_esys.h
+ lib/dlwrap/tss2_mu.c lib/dlwrap/tss2_mu.h lib/dlwrap/tss2_tctildr.c
+ lib/dlwrap/tss2_tctildr.h lib/dlwrap/zlib.c lib/dlwrap/zlib.h
+ lib/dlwrap/zstd.c lib/dlwrap/zstd.h
+License: FSFAP
+ Copying and distribution of this file, with or without modification,
+ are permitted in any medium without royalty provided the copyright
+ notice and this notice are preserved.  This file is offered as-is,
+ without any warranty.

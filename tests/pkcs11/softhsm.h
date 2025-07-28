@@ -14,39 +14,39 @@
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GnuTLS; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
+ * along with GnuTLS.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 #ifndef SOFTHSM_H
-# define SOFTHSM_H
+#define SOFTHSM_H
 
 #include <sys/stat.h>
 
 #define SOFTHSM_V2
 
 #ifdef SOFTHSM_V1
-# define SOFTHSM_URL "pkcs11:model=SoftHSM;manufacturer=SoftHSM;serial=1;token=test"
-# define LIB1 "/usr/lib64/pkcs11/libsofthsm.so"
-# define LIB2 "/usr/lib/pkcs11/libsofthsm.so"
-# define LIB3 "/usr/lib/softhsm/libsofthsm.so"
-# define LIB4 "/usr/local/lib/softhsm/libsofthsm.so"
-# define SOFTHSM_BIN1 "/usr/bin/softhsm"
-# define SOFTHSM_BIN2 "/usr/local/bin/softhsm"
-# define SOFTHSM_ENV "SOFTHSM_CONF"
+#define SOFTHSM_URL \
+	"pkcs11:model=SoftHSM;manufacturer=SoftHSM;serial=1;token=test"
+#define LIB1 "/usr/lib64/pkcs11/libsofthsm.so"
+#define LIB2 "/usr/lib/pkcs11/libsofthsm.so"
+#define LIB3 "/usr/lib/softhsm/libsofthsm.so"
+#define LIB4 "/usr/local/lib/softhsm/libsofthsm.so"
+#define SOFTHSM_BIN1 "/usr/bin/softhsm"
+#define SOFTHSM_BIN2 "/usr/local/bin/softhsm"
+#define SOFTHSM_ENV "SOFTHSM_CONF"
 #else
-# define SOFTHSM_URL "pkcs11:model=SoftHSM%20v2;manufacturer=SoftHSM%20project;token=test"
-# define LIB1 "/usr/lib64/pkcs11/libsofthsm2.so"
-# define LIB2 "/usr/lib/pkcs11/libsofthsm2.so"
-# define LIB3 "/usr/lib/softhsm/libsofthsm2.so"
-# define LIB4 "/usr/lib/x86_64-linux-gnu/softhsm/libsofthsm2.so"
-# define SOFTHSM_BIN1 "/usr/bin/softhsm2-util"
-# define SOFTHSM_BIN2 "/usr/local/bin/softhsm2-util"
-# define SOFTHSM_ENV "SOFTHSM2_CONF"
+#define SOFTHSM_URL \
+	"pkcs11:model=SoftHSM%20v2;manufacturer=SoftHSM%20project;token=test"
+#define LIB1 "/usr/lib64/pkcs11/libsofthsm2.so"
+#define LIB2 "/usr/lib/pkcs11/libsofthsm2.so"
+#define LIB3 "/usr/lib/softhsm/libsofthsm2.so"
+#define LIB4 "/usr/lib/x86_64-linux-gnu/softhsm/libsofthsm2.so"
+#define SOFTHSM_BIN1 "/usr/bin/softhsm2-util"
+#define SOFTHSM_BIN2 "/usr/local/bin/softhsm2-util"
+#define SOFTHSM_ENV "SOFTHSM2_CONF"
 #endif
 
-
-inline static const char *softhsm_lib(void) 
+inline static const char *softhsm_lib(void)
 {
 	const char *lib;
 
@@ -66,7 +66,7 @@ inline static const char *softhsm_lib(void)
 	return lib;
 }
 
-inline static const char *softhsm_bin(void) 
+inline static const char *softhsm_bin(void)
 {
 	const char *bin;
 
@@ -82,8 +82,7 @@ inline static const char *softhsm_bin(void)
 	return bin;
 }
 
-static
-void set_softhsm_conf(const char *config)
+static void set_softhsm_conf(const char *config)
 {
 	char buf[128];
 	char db_dir[128];
@@ -98,7 +97,6 @@ void set_softhsm_conf(const char *config)
 		fprintf(stderr, "error writing %s\n", config);
 		exit(1);
 	}
-
 #ifdef SOFTHSM_V1
 	remove(db_dir);
 	snprintf(buf, sizeof(buf), "0:./%s\n", db_dir);

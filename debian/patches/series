@@ -1,5 +1,11 @@
 14_version_gettextcat.diff
-30_guile-snarf.diff
 40_srptest_doubletimeout.diff
-50_Fix-removal-of-duplicate-certs-during-verification.patch
-51_add-gnulib-linkedhash-list-module.diff
+41_run_cligen_on_debian.diff
+45_lib-x509-x509_ext.c-Add-gnutls_free-to-avoid-memory-.patch
+46_lib-hello_ext.c-Add-gnutls_free-to-avoid-memory-leak.patch
+47_0001-x509-fix-read-buffer-overrun-in-SCT-timestamps.patch
+47_0002-psk-fix-read-buffer-overrun-in-the-pre_shared_key-ex.patch
+47_0003-x509-reject-zero-length-version-in-certificate-reque.patch
+47_0004-x509-avoid-double-free-when-exporting-othernames-in-.patch
+47_0005-certtool-avoid-1-byte-write-buffer-overrun-when-pars.patch
+47_0006-handshake-clear-HSK_PSK_SELECTED-is-when-resetting-b.patch

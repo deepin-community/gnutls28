@@ -2,7 +2,7 @@
 
 
 
-@deftypefun {int} {gnutls_encode_gost_rs_value} (gnutls_datum_t * @var{sig_value}, const gnutls_datum_t * @var{r}, const gnutls_datum_t  * @var{s})
+@deftypefun {int} {gnutls_encode_gost_rs_value} (gnutls_datum_t * @var{sig_value}, const gnutls_datum_t * @var{r}, const gnutls_datum_t * @var{s})
 @var{sig_value}: will hold a GOST signature according to RFC 4491 section 2.2.2
 
 @var{r}: must contain the r value

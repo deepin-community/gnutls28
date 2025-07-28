@@ -4,10 +4,10 @@
 
 #include "p11tool-options.h"
 #include <errno.h>
-#include <error.h>
 #include <getopt.h>
 #include <limits.h>
 #include <stdint.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #ifndef _WIN32
@@ -33,8 +33,14 @@ parse_number (const char *arg)
     result = strtol (arg, &endptr, 10);
 
   if (errno != 0 || (endptr && *endptr != '\0'))
-    error (EXIT_FAILURE, errno, "'%s' is not a recognizable number.",
-           arg);
+    {
+      char buf[80];
+      snprintf (buf, sizeof(buf),
+                "'%s' is not a recognizable number",
+                arg);
+      perror (buf);
+      exit (EXIT_FAILURE);
+    }
 
   return result;
 }
@@ -479,98 +485,117 @@ process_options (int argc, char **argv)
 
   if (HAVE_OPT(EXPORT) && HAVE_OPT(EXPORT_STAPLED))
     {
-      error (EXIT_FAILURE, 0, "the '%s' and '%s' options conflict",
-             "export", "export_stapled");
+      fprintf (stderr, "the '%s' and '%s' options conflict\n",
+               "export", "export_stapled");
+      exit (EXIT_FAILURE);
     }
   if (HAVE_OPT(EXPORT) && HAVE_OPT(EXPORT_CHAIN))
     {
-      error (EXIT_FAILURE, 0, "the '%s' and '%s' options conflict",
-             "export", "export_chain");
+      fprintf (stderr, "the '%s' and '%s' options conflict\n",
+               "export", "export_chain");
+      exit (EXIT_FAILURE);
     }
   if (HAVE_OPT(EXPORT) && HAVE_OPT(EXPORT_PUBKEY))
     {
-      error (EXIT_FAILURE, 0, "the '%s' and '%s' options conflict",
-             "export", "export_pubkey");
+      fprintf (stderr, "the '%s' and '%s' options conflict\n",
+               "export", "export_pubkey");
+      exit (EXIT_FAILURE);
     }
   if (HAVE_OPT(EXPORT_STAPLED) && HAVE_OPT(EXPORT))
     {
-      error (EXIT_FAILURE, 0, "the '%s' and '%s' options conflict",
-             "export-stapled", "export");
+      fprintf (stderr, "the '%s' and '%s' options conflict\n",
+               "export-stapled", "export");
+      exit (EXIT_FAILURE);
     }
   if (HAVE_OPT(EXPORT_STAPLED) && HAVE_OPT(EXPORT_CHAIN))
     {
-      error (EXIT_FAILURE, 0, "the '%s' and '%s' options conflict",
-             "export-stapled", "export_chain");
+      fprintf (stderr, "the '%s' and '%s' options conflict\n",
+               "export-stapled", "export_chain");
+      exit (EXIT_FAILURE);
     }
   if (HAVE_OPT(EXPORT_STAPLED) && HAVE_OPT(EXPORT_PUBKEY))
     {
-      error (EXIT_FAILURE, 0, "the '%s' and '%s' options conflict",
-             "export-stapled", "export_pubkey");
+      fprintf (stderr, "the '%s' and '%s' options conflict\n",
+               "export-stapled", "export_pubkey");
+      exit (EXIT_FAILURE);
     }
   if (HAVE_OPT(EXPORT_CHAIN) && HAVE_OPT(EXPORT_STAPLED))
     {
-      error (EXIT_FAILURE, 0, "the '%s' and '%s' options conflict",
-             "export-chain", "export_stapled");
+      fprintf (stderr, "the '%s' and '%s' options conflict\n",
+               "export-chain", "export_stapled");
+      exit (EXIT_FAILURE);
     }
   if (HAVE_OPT(EXPORT_CHAIN) && HAVE_OPT(EXPORT))
     {
-      error (EXIT_FAILURE, 0, "the '%s' and '%s' options conflict",
-             "export-chain", "export");
+      fprintf (stderr, "the '%s' and '%s' options conflict\n",
+               "export-chain", "export");
+      exit (EXIT_FAILURE);
     }
   if (HAVE_OPT(EXPORT_CHAIN) && HAVE_OPT(EXPORT_PUBKEY))
     {
-      error (EXIT_FAILURE, 0, "the '%s' and '%s' options conflict",
-             "export-chain", "export_pubkey");
+      fprintf (stderr, "the '%s' and '%s' options conflict\n",
+               "export-chain", "export_pubkey");
+      exit (EXIT_FAILURE);
     }
   if (HAVE_OPT(EXPORT_PUBKEY) && HAVE_OPT(EXPORT_STAPLED))
     {
-      error (EXIT_FAILURE, 0, "the '%s' and '%s' options conflict",
-             "export-pubkey", "export_stapled");
+      fprintf (stderr, "the '%s' and '%s' options conflict\n",
+               "export-pubkey", "export_stapled");
+      exit (EXIT_FAILURE);
     }
   if (HAVE_OPT(EXPORT_PUBKEY) && HAVE_OPT(EXPORT))
     {
-      error (EXIT_FAILURE, 0, "the '%s' and '%s' options conflict",
-             "export-pubkey", "export");
+      fprintf (stderr, "the '%s' and '%s' options conflict\n",
+               "export-pubkey", "export");
+      exit (EXIT_FAILURE);
     }
   if (HAVE_OPT(EXPORT_PUBKEY) && HAVE_OPT(EXPORT_CHAIN))
     {
-      error (EXIT_FAILURE, 0, "the '%s' and '%s' options conflict",
-             "export-pubkey", "export_chain");
+      fprintf (stderr, "the '%s' and '%s' options conflict\n",
+               "export-pubkey", "export_chain");
+      exit (EXIT_FAILURE);
     }
   if (HAVE_OPT(SET_ID) && HAVE_OPT(WRITE))
     {
-      error (EXIT_FAILURE, 0, "the '%s' and '%s' options conflict",
-             "set-id", "write");
+      fprintf (stderr, "the '%s' and '%s' options conflict\n",
+               "set-id", "write");
+      exit (EXIT_FAILURE);
     }
   if (HAVE_OPT(SET_LABEL) && HAVE_OPT(WRITE))
     {
-      error (EXIT_FAILURE, 0, "the '%s' and '%s' options conflict",
-             "set-label", "write");
+      fprintf (stderr, "the '%s' and '%s' options conflict\n",
+               "set-label", "write");
+      exit (EXIT_FAILURE);
     }
   if (HAVE_OPT(SET_LABEL) && HAVE_OPT(SET_ID))
     {
-      error (EXIT_FAILURE, 0, "the '%s' and '%s' options conflict",
-             "set-label", "set_id");
+      fprintf (stderr, "the '%s' and '%s' options conflict\n",
+               "set-label", "set_id");
+      exit (EXIT_FAILURE);
     }
   if (HAVE_OPT(MARK_TRUSTED) && HAVE_OPT(MARK_DISTRUSTED))
     {
-      error (EXIT_FAILURE, 0, "the '%s' and '%s' options conflict",
-             "mark-trusted", "mark_distrusted");
+      fprintf (stderr, "the '%s' and '%s' options conflict\n",
+               "mark-trusted", "mark_distrusted");
+      exit (EXIT_FAILURE);
     }
   if (HAVE_OPT(MARK_DISTRUSTED) && HAVE_OPT(MARK_TRUSTED))
     {
-      error (EXIT_FAILURE, 0, "the '%s' and '%s' options conflict",
-             "mark-distrusted", "mark_trusted");
+      fprintf (stderr, "the '%s' and '%s' options conflict\n",
+               "mark-distrusted", "mark_trusted");
+      exit (EXIT_FAILURE);
     }
   if (HAVE_OPT(DEBUG) && OPT_VALUE_DEBUG < 0)
     {
-      error (EXIT_FAILURE, 0, "%s option value %d is out of range.",
-             "debug", opts->value.debug);
+      fprintf (stderr, "%s option value %d is out of range\n",
+               "debug", opts->value.debug);
+      exit (EXIT_FAILURE);
     }
   if (HAVE_OPT(DEBUG) && OPT_VALUE_DEBUG > 9999)
     {
-      error (EXIT_FAILURE, 0, "%s option value %d is out of range",
-             "debug", opts->value.debug);
+      fprintf (stderr, "%s option value %d is out of range\n",
+               "debug", opts->value.debug);
+      exit (EXIT_FAILURE);
     }
 
 
@@ -590,11 +615,17 @@ process_options (int argc, char **argv)
       int pfds[2];
 
       if (pipe (pfds) < 0)
-        error (EXIT_FAILURE, errno, "pipe");
+        {
+          perror ("pipe");
+          exit (EXIT_FAILURE);
+        }
 
       pid = fork ();
       if (pid < 0)
-        error (EXIT_FAILURE, errno, "fork");
+        {
+          perror ("fork");
+          exit (EXIT_FAILURE);
+        }
 
       if (pid == 0)
         {
@@ -633,8 +664,8 @@ process_options (int argc, char **argv)
       if (!OPT_ARG_VERSION || !strcmp (OPT_ARG_VERSION, "c"))
         {
           const char str[] =
-            "p11tool 3.7.9\n"
-            "Copyright (C) 2000-2021 Free Software Foundation, and others\n"
+            "p11tool 3.8.9\n"
+            "Copyright (C) 2000-2023 Free Software Foundation, and others\n"
             "This is free software. It is licensed for use, modification and\n"
             "redistribution under the terms of the GNU General Public License,\n"
             "version 3 or later <http://gnu.org/licenses/gpl.html>\n"
@@ -646,15 +677,15 @@ process_options (int argc, char **argv)
       else if (!strcmp (OPT_ARG_VERSION, "v"))
         {
           const char str[] =
-            "p11tool 3.7.9\n";
+            "p11tool 3.8.9\n";
           fprintf (stdout, "%s", str);
           exit(0);
         }
       else if (!strcmp (OPT_ARG_VERSION, "n"))
         {
           const char str[] =
-            "p11tool 3.7.9\n"
-            "Copyright (C) 2000-2021 Free Software Foundation, and others\n"
+            "p11tool 3.8.9\n"
+            "Copyright (C) 2000-2023 Free Software Foundation, and others\n"
             "This is free software. It is licensed for use, modification and\n"
             "redistribution under the terms of the GNU General Public License,\n"
             "version 3 or later <http://gnu.org/licenses/gpl.html>\n"
@@ -678,11 +709,12 @@ process_options (int argc, char **argv)
         }
       else
         {
-          error (EXIT_FAILURE, 0,
-                 "version option argument 'a' invalid.  Use:\n"
-                 "	'v' - version only\n"
-                 "	'c' - version and copyright\n"
-                 "	'n' - version and full copyright notice");
+          fprintf (stderr,
+                   "version option argument 'a' invalid.  Use:\n"
+                   "	'v' - version only\n"
+                   "	'c' - version and copyright\n"
+                   "	'n' - version and full copyright notice\n");
+          exit (EXIT_FAILURE);
         }
     }
 
@@ -765,7 +797,7 @@ usage (FILE *out, int status)
     "       --mark-wrap            Marks the generated key to be a wrapping key\n"
     "       --mark-trusted         Marks the object to be written as trusted\n"
     "				- prohibits the option 'mark-distrusted'\n"
-    "       --mark-distrusted      When retrieving objects, it requires the objects to be distrusted (blacklisted)\n"
+    "       --mark-distrusted      When retrieving objects, it requires the objects to be distrusted\n"
     "				- prohibits the option 'mark-trusted'\n"
     "       --mark-decrypt         Marks the object to be written for decryption\n"
     "       --mark-sign            Marks the object to be written for signature generation\n"

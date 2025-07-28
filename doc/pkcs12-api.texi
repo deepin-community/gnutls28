@@ -333,6 +333,26 @@ This function will generate a MAC for the PKCS12 structure.
 negative error value.
 @end deftypefun
 
+@subheading gnutls_pkcs12_generate_mac3
+@anchor{gnutls_pkcs12_generate_mac3}
+@deftypefun {int} {gnutls_pkcs12_generate_mac3} (gnutls_pkcs12_t @var{pkcs12}, gnutls_mac_algorithm_t @var{mac}, const char * @var{pass}, unsigned int @var{flags})
+@var{pkcs12}: A pkcs12 type
+
+@var{mac}: the MAC algorithm to use
+
+@var{pass}: The password for the MAC
+
+@var{flags}: an ORed sequence of gnutls_pkcs12_flags_t
+
+This function will generate a MAC for the PKCS12 structure.
+
+If  @code{flags} contains @code{GNUTLS_PKCS12_USE_PBMAC1} , it uses PBMAC1 key
+derivation function instead of the PKCS@code{12}  one.
+
+@strong{Returns:} On success, @code{GNUTLS_E_SUCCESS}  (0) is returned, otherwise a
+negative error value.
+@end deftypefun
+
 @subheading gnutls_pkcs12_get_bag
 @anchor{gnutls_pkcs12_get_bag}
 @deftypefun {int} {gnutls_pkcs12_get_bag} (gnutls_pkcs12_t @var{pkcs12}, int @var{indx}, gnutls_pkcs12_bag_t @var{bag})

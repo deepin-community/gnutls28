@@ -1,8 +1,8 @@
-# Copyright (C) 2002-2021 Free Software Foundation, Inc.
+# Copyright (C) 2002-2025 Free Software Foundation, Inc.
 #
 # This file is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 3 of the License, or
+# the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
 # This file is distributed in the hope that it will be useful,
@@ -27,7 +27,8 @@
 
 
 # Specification in the form of a command-line invocation:
-# gnulib-tool --import --local-dir=src/gl/override \
+# gnulib-tool --import \
+#  --local-dir=src/gl/override \
 #  --lib=libgnu_gpl \
 #  --source-base=src/gl \
 #  --m4-base=src/gl/m4 \
@@ -47,6 +48,7 @@
 #  byteswap \
 #  c-ctype \
 #  c-strcase \
+#  canonicalize-lgpl \
 #  close \
 #  close-stream \
 #  connect \
@@ -65,6 +67,7 @@
 #  intprops \
 #  inttypes \
 #  linked-list \
+#  linkedhash-list \
 #  listen \
 #  lock \
 #  memmem-simple \
@@ -72,6 +75,7 @@
 #  netdb \
 #  netinet_in \
 #  parse-datetime \
+#  pathmax \
 #  progname \
 #  read-file \
 #  reallocarray \
@@ -100,6 +104,7 @@
 #  sys_types \
 #  threadlib \
 #  time_r \
+#  tls \
 #  unistd \
 #  valgrind-tests \
 #  vasprintf \
@@ -121,6 +126,7 @@ gl_MODULES([
   byteswap
   c-ctype
   c-strcase
+  canonicalize-lgpl
   close
   close-stream
   connect
@@ -139,6 +145,7 @@ gl_MODULES([
   intprops
   inttypes
   linked-list
+  linkedhash-list
   listen
   lock
   memmem-simple
@@ -146,6 +153,7 @@ gl_MODULES([
   netdb
   netinet_in
   parse-datetime
+  pathmax
   progname
   read-file
   reallocarray
@@ -174,6 +182,7 @@ gl_MODULES([
   sys_types
   threadlib
   time_r
+  tls
   unistd
   valgrind-tests
   vasprintf

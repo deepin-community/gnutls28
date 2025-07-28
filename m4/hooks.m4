@@ -40,9 +40,9 @@ AC_DEFUN([LIBGNUTLS_HOOKS],
   #     in CONTRIBUTION.md for more info.
   #
   # Interfaces removed:                           AGE=0 (+bump all symbol versions in .map)
-  AC_SUBST(LT_CURRENT, 64)
+  AC_SUBST(LT_CURRENT, 70)
   AC_SUBST(LT_REVISION, 3)
-  AC_SUBST(LT_AGE, 34)
+  AC_SUBST(LT_AGE, 40)
 
   AC_SUBST(LT_SSL_CURRENT, 27)
   AC_SUBST(LT_SSL_REVISION, 2)
@@ -97,7 +97,7 @@ AC_MSG_ERROR([[
     GMP_CFLAGS=""
     GMP_LIBS=""
   else
-    if test x$GMP_LIBS = x; then
+    if test "x$GMP_LIBS" = "x"; then
 	AC_CHECK_LIB(gmp, __gmpz_cmp, [GMP_LIBS="-lgmp"], [AC_MSG_ERROR([[
 ***
 *** gmp was not found.
@@ -128,21 +128,6 @@ LIBTASN1_MINIMUM=4.9
   if test "$included_libtasn1" = "no"; then
     GNUTLS_REQUIRES_PRIVATE="${GNUTLS_REQUIRES_PRIVATE}, libtasn1"
   fi
-
-  AC_MSG_CHECKING([whether C99 macros are supported])
-  AC_TRY_COMPILE(,
-  [
-    #define test_mac(...)
-    int z,y,x;
-    test_mac(x,y,z);
-    return 0;
-  ], [
-    AC_DEFINE([C99_MACROS], 1, [C99 macros are supported])
-    AC_MSG_RESULT(yes)
-  ], [
-    AC_MSG_RESULT(no)
-    AC_MSG_WARN([C99 macros not supported. This may affect compiling.])
-  ])
 
   ac_strict_der_time=yes
   AC_MSG_CHECKING([whether to disable strict DER time encodings for backwards compatibility])
@@ -232,11 +217,11 @@ LIBTASN1_MINIMUM=4.9
   fi
   AM_CONDITIONAL(ENABLE_ALPN, test "$ac_enable_alpn" != "no")
 
-  ac_enable_heartbeat=yes
+  ac_enable_heartbeat=no
   AC_MSG_CHECKING([whether to enable TLS heartbeat support])
   AC_ARG_ENABLE(heartbeat-support,
-    AS_HELP_STRING([--disable-heartbeat-support],
-                   [disable support for the heartbeat extension]),
+    AS_HELP_STRING([--enable-heartbeat-support],
+                   [enable support for the heartbeat extension]),
     ac_enable_heartbeat=$enableval)
   if test x$ac_enable_heartbeat != xno; then
    AC_MSG_RESULT(yes)
@@ -246,18 +231,18 @@ LIBTASN1_MINIMUM=4.9
   fi
   AM_CONDITIONAL(ENABLE_HEARTBEAT, test "$ac_enable_heartbeat" != "no")
 
-  ac_enable_srp=yes
-  AC_MSG_CHECKING([whether to disable SRP authentication support])
+  ac_enable_srp=no
+  AC_MSG_CHECKING([whether to enable SRP authentication support])
   AC_ARG_ENABLE(srp-authentication,
-    AS_HELP_STRING([--disable-srp-authentication],
-                   [disable the SRP authentication support]),
+    AS_HELP_STRING([--enable-srp-authentication],
+                   [enable the SRP authentication support]),
     ac_enable_srp=$enableval)
   if test x$ac_enable_srp != xno; then
-   AC_MSG_RESULT(no)
+   AC_MSG_RESULT(yes)
    AC_DEFINE([ENABLE_SRP], 1, [enable SRP authentication])
   else
    ac_full=0
-   AC_MSG_RESULT(yes)
+   AC_MSG_RESULT(no)
   fi
   AM_CONDITIONAL(ENABLE_SRP, test "$ac_enable_srp" != "no")
 
@@ -367,11 +352,19 @@ LIBTASN1_MINIMUM=4.9
   AC_MSG_RESULT($enable_ktls)
 
   if test "$enable_ktls" = "yes"; then
-    AC_CHECK_HEADERS([linux/tls.h], [
-      AC_DEFINE([HAVE_KTLS],[1],[KTLS headers found at compile time])
-    ], [
-      AC_MSG_ERROR([<linux/tls.h> not found])
-    ])
+    AC_MSG_CHECKING([whether KTLS is supported by the OS])
+    AS_CASE([$host_os],
+      [freebsd*], [AC_CHECK_HEADERS([sys/ktls.h], [
+        AC_DEFINE([HAVE_KTLS],[1],[KTLS headers found at compile time])
+      ], [
+        AC_MSG_ERROR([<sys/ktls.h> not found])
+      ])],
+      [linux*], [AC_CHECK_HEADERS([linux/tls.h], [
+        AC_DEFINE([HAVE_KTLS],[1],[KTLS headers found at compile time])
+      ], [
+        AC_MSG_ERROR([<linux/tls.h> not found])
+      ])]
+    )
     AC_DEFINE([ENABLE_KTLS], 1, [Enable KTLS support])
   fi
   AM_CONDITIONAL(ENABLE_KTLS, test "$enable_ktls" != "no")
@@ -412,4 +405,19 @@ dnl this is called from somewhere else
 dnl #AM_ICONV
 dnl m4_ifdef([gl_ICONV_MODULE_INDICATOR],
 dnl  [gl_ICONV_MODULE_INDICATOR([iconv])])
+])
+
+AC_DEFUN([LIBGNUTLS_CHECK_SONAME],
+[
+  m4_pushdef([soname], AS_TR_SH([$1]))
+  m4_pushdef([SONAME], AS_TR_CPP([$1]))
+  AC_CACHE_CHECK([$1 [soname]], [gnutls_cv_soname_[]soname],
+    [AC_LINK_IFELSE([$2],
+      [gnutls_cv_soname_[]soname=`(eval "$LDDPROG conftest$EXEEXT $LDDPOSTPROC") | grep '^lib[]$1\.so'`],
+      [gnutls_cv_soname_[]soname=none])])
+  AS_IF([test -z "$gnutls_cv_soname_[]soname"], [gnutls_cv_soname_[]soname=none],
+        [SONAME[]_LIBRARY_SONAME="$gnutls_cv_soname_[]soname"
+	 AC_DEFINE_UNQUOTED([SONAME[]_LIBRARY_SONAME], ["$gnutls_cv_soname_[]soname"], [The soname of $1 library])])
+  m4_popdef([soname])
+  m4_popdef([SONAME])
 ])

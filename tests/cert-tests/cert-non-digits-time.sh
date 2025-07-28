@@ -15,8 +15,7 @@
 # General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with GnuTLS; if not, write to the Free Software Foundation,
-# Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+# along with GnuTLS.  If not, see <https://www.gnu.org/licenses/>.
 
 #set -e
 
@@ -32,11 +31,8 @@ if ! test -z "${VALGRIND}"; then
     VALGRIND="${LIBTOOL:-libtool} --mode=execute ${VALGRIND}"
 fi
 
-skip_if_no_datefudge
-
 # Check whether certificates with non-digits time fields are accepted
-datefudge -s "2019-12-19" \
-${VALGRIND}"${CERTTOOL}" --verify --load-ca-certificate "${srcdir}/data/cert-with-non-digits-time-ca.pem" --infile "${srcdir}/data/cert-with-non-digits-time.pem"
+${VALGRIND}"${CERTTOOL}" --attime "2019-12-19" --verify --load-ca-certificate "${srcdir}/data/cert-with-non-digits-time-ca.pem" --infile "${srcdir}/data/cert-with-non-digits-time.pem"
 rc=$?
 
 if test "${rc}" = "0";then

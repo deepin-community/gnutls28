@@ -8,7 +8,7 @@
 <link rel="up" href="intro.html" title="GnuTLS API Reference Manual">
 <link rel="prev" href="gnutls-gnutls.html" title="gnutls">
 <link rel="next" href="gnutls-x509.html" title="x509">
-<meta name="generator" content="GTK-Doc V1.33.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.34.0 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -288,6 +288,14 @@
 <span class="returnvalue">int</span>
 </td>
 <td class="function_name">
+<a class="link" href="gnutls-abstract.html#gnutls-pubkey-export-dh-raw" title="gnutls_pubkey_export_dh_raw ()">gnutls_pubkey_export_dh_raw</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">int</span>
+</td>
+<td class="function_name">
 <a class="link" href="gnutls-abstract.html#gnutls-pubkey-export-ecc-raw2" title="gnutls_pubkey_export_ecc_raw2 ()">gnutls_pubkey_export_ecc_raw2</a> <span class="c_punctuation">()</span>
 </td>
 </tr>
@@ -383,6 +391,14 @@
 </td>
 <td class="function_name">
 <a class="link" href="gnutls-abstract.html#gnutls-pubkey-import-dsa-raw" title="gnutls_pubkey_import_dsa_raw ()">gnutls_pubkey_import_dsa_raw</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">int</span>
+</td>
+<td class="function_name">
+<a class="link" href="gnutls-abstract.html#gnutls-pubkey-import-dh-raw" title="gnutls_pubkey_import_dh_raw ()">gnutls_pubkey_import_dh_raw</a> <span class="c_punctuation">()</span>
 </td>
 </tr>
 <tr>
@@ -726,6 +742,14 @@
 <span class="returnvalue">int</span>
 </td>
 <td class="function_name">
+<a class="link" href="gnutls-abstract.html#gnutls-privkey-import-dh-raw" title="gnutls_privkey_import_dh_raw ()">gnutls_privkey_import_dh_raw</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">int</span>
+</td>
+<td class="function_name">
 <a class="link" href="gnutls-abstract.html#gnutls-privkey-import-rsa-raw" title="gnutls_privkey_import_rsa_raw ()">gnutls_privkey_import_rsa_raw</a> <span class="c_punctuation">()</span>
 </td>
 </tr>
@@ -836,6 +860,14 @@
 <span class="returnvalue">int</span>
 </td>
 <td class="function_name">
+<a class="link" href="gnutls-abstract.html#gnutls-privkey-export-dh-raw" title="gnutls_privkey_export_dh_raw ()">gnutls_privkey_export_dh_raw</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">int</span>
+</td>
+<td class="function_name">
 <a class="link" href="gnutls-abstract.html#gnutls-privkey-export-ecc-raw" title="gnutls_privkey_export_ecc_raw ()">gnutls_privkey_export_ecc_raw</a> <span class="c_punctuation">()</span>
 </td>
 </tr>
@@ -853,6 +885,14 @@
 </td>
 <td class="function_name">
 <a class="link" href="gnutls-abstract.html#gnutls-privkey-export-gost-raw2" title="gnutls_privkey_export_gost_raw2 ()">gnutls_privkey_export_gost_raw2</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">int</span>
+</td>
+<td class="function_name">
+<a class="link" href="gnutls-abstract.html#gnutls-privkey-derive-secret" title="gnutls_privkey_derive_secret ()">gnutls_privkey_derive_secret</a> <span class="c_punctuation">()</span>
 </td>
 </tr>
 <tr>
@@ -1153,13 +1193,13 @@
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-SIGN-ALGO-TO-FLAGS:CAPS"></a><h3>GNUTLS_SIGN_ALGO_TO_FLAGS()</h3>
-<pre class="programlisting">#define GNUTLS_SIGN_ALGO_TO_FLAGS(sig) (unsigned int)((sig)&lt;&lt;20)
+<pre class="programlisting">#define GNUTLS_SIGN_ALGO_TO_FLAGS(sig) (unsigned int)((sig) &lt;&lt; 20)
 </pre>
 </div>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-FLAGS-TO-SIGN-ALGO:CAPS"></a><h3>GNUTLS_FLAGS_TO_SIGN_ALGO()</h3>
-<pre class="programlisting">#define GNUTLS_FLAGS_TO_SIGN_ALGO(flags) (unsigned int)((flags)&gt;&gt;20)
+<pre class="programlisting">#define GNUTLS_FLAGS_TO_SIGN_ALGO(flags) (unsigned int)((flags) &gt;&gt; 20)
 </pre>
 </div>
 <hr>
@@ -1593,7 +1633,7 @@ gnutls_pubkey_import_openpgp (<em class="parameter"><code><a class="link" href="
 gnutls_pubkey_import_openpgp_raw (<em class="parameter"><code><a class="link" href="gnutls-gnutls.html#gnutls-pubkey-t" title="gnutls_pubkey_t"><span class="type">gnutls_pubkey_t</span></a> pkey</code></em>,
                                   <em class="parameter"><code>const <a class="link" href="gnutls-gnutls.html#gnutls-datum-t" title="gnutls_datum_t"><span class="type">gnutls_datum_t</span></a> *data</code></em>,
                                   <em class="parameter"><code><a class="link" href="gnutls-openpgp.html#gnutls-openpgp-crt-fmt-t" title="enum gnutls_openpgp_crt_fmt_t"><span class="type">gnutls_openpgp_crt_fmt_t</span></a> format</code></em>,
-                                  <em class="parameter"><code>const <span class="type">gnutls_openpgp_keyid_t</span> keyid</code></em>,
+                                  <em class="parameter"><code>const <a class="link" href="gnutls-openpgp.html#gnutls-openpgp-keyid-t" title="gnutls_openpgp_keyid_t"><span class="type">gnutls_openpgp_keyid_t</span></a> keyid</code></em>,
                                   <em class="parameter"><code>unsigned <span class="type">int</span> flags</code></em>);</pre>
 <p>This function is no-op.</p>
 <div class="refsect3">
@@ -2154,6 +2194,58 @@ the given certificate.  The new parameters will be allocated using
 </div>
 <hr>
 <div class="refsect2">
+<a name="gnutls-pubkey-export-dh-raw"></a><h3>gnutls_pubkey_export_dh_raw ()</h3>
+<pre class="programlisting"><span class="returnvalue">int</span>
+gnutls_pubkey_export_dh_raw (<em class="parameter"><code><a class="link" href="gnutls-gnutls.html#gnutls-pubkey-t" title="gnutls_pubkey_t"><span class="type">gnutls_pubkey_t</span></a> key</code></em>,
+                             <em class="parameter"><code><a class="link" href="gnutls-gnutls.html#gnutls-dh-params-t" title="gnutls_dh_params_t"><span class="type">gnutls_dh_params_t</span></a> params</code></em>,
+                             <em class="parameter"><code><a class="link" href="gnutls-gnutls.html#gnutls-datum-t" title="gnutls_datum_t"><span class="type">gnutls_datum_t</span></a> *y</code></em>,
+                             <em class="parameter"><code><span class="type">unsigned </span> flags</code></em>);</pre>
+<p>This function will export the Diffie-Hellman public key parameter
+found in the given public key.  The new parameter will be allocated
+using <code class="function">gnutls_malloc()</code> and will be stored in the appropriate datum.</p>
+<p>To retrieve other parameters common in both public key and private
+key, use <a class="link" href="gnutls-gnutls.html#gnutls-dh-params-export-raw" title="gnutls_dh_params_export_raw ()"><code class="function">gnutls_dh_params_export_raw()</code></a>.</p>
+<p>This function allows for <code class="literal">NULL</code> parameters since 3.4.1.</p>
+<div class="refsect3">
+<a name="gnutls-pubkey-export-dh-raw.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>key</p></td>
+<td class="parameter_description"><p>Holds the public key</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>params</p></td>
+<td class="parameter_description"><p>will hold the Diffie-Hellman parameter (optional), must be initialized</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>y</p></td>
+<td class="parameter_description"><p>will hold the y</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>flags</p></td>
+<td class="parameter_description"><p>flags from <a class="link" href="gnutls-abstract.html#gnutls-abstract-export-flags-t" title="enum gnutls_abstract_export_flags_t"><code class="literal">gnutls_abstract_export_flags_t</code></a></p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="gnutls-pubkey-export-dh-raw.returns"></a><h4>Returns</h4>
+<p> <a class="link" href="gnutls-gnutls.html#GNUTLS-E-SUCCESS:CAPS" title="GNUTLS_E_SUCCESS"><code class="literal">GNUTLS_E_SUCCESS</code></a> on success, otherwise a negative error code.</p>
+</div>
+<p class="since">Since: 3.8.2</p>
+</div>
+<hr>
+<div class="refsect2">
 <a name="gnutls-pubkey-export-ecc-raw2"></a><h3>gnutls_pubkey_export_ecc_raw2 ()</h3>
 <pre class="programlisting"><span class="returnvalue">int</span>
 gnutls_pubkey_export_ecc_raw2 (<em class="parameter"><code><a class="link" href="gnutls-gnutls.html#gnutls-pubkey-t" title="gnutls_pubkey_t"><span class="type">gnutls_pubkey_t</span></a> key</code></em>,
@@ -2668,8 +2760,7 @@ negative error value.</p>
 <hr>
 <div class="refsect2">
 <a name="gnutls-pubkey-import-pkcs11-url"></a><h3>gnutls_pubkey_import_pkcs11_url()</h3>
-<pre class="programlisting">#define gnutls_pubkey_import_pkcs11_url(key, url, flags) gnutls_pubkey_import_url(key, url, flags)
-</pre>
+<pre class="programlisting">#define             gnutls_pubkey_import_pkcs11_url(key, url, flags)</pre>
 <p>This function will import a PKCS 11 certificate to a <a class="link" href="gnutls-gnutls.html#gnutls-pubkey-t" title="gnutls_pubkey_t"><span class="type">gnutls_pubkey_t</span></a>
 structure.</p>
 <div class="refsect3">
@@ -2762,6 +2853,51 @@ in <em class="parameter"><code>key</code></em>
 negative error value.</p>
 </div>
 <p class="since">Since: 2.12.0</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gnutls-pubkey-import-dh-raw"></a><h3>gnutls_pubkey_import_dh_raw ()</h3>
+<pre class="programlisting"><span class="returnvalue">int</span>
+gnutls_pubkey_import_dh_raw (<em class="parameter"><code><a class="link" href="gnutls-gnutls.html#gnutls-pubkey-t" title="gnutls_pubkey_t"><span class="type">gnutls_pubkey_t</span></a> key</code></em>,
+                             <em class="parameter"><code>const <a class="link" href="gnutls-gnutls.html#gnutls-dh-params-t" title="gnutls_dh_params_t"><span class="type">gnutls_dh_params_t</span></a> params</code></em>,
+                             <em class="parameter"><code>const <a class="link" href="gnutls-gnutls.html#gnutls-datum-t" title="gnutls_datum_t"><span class="type">gnutls_datum_t</span></a> *y</code></em>);</pre>
+<p>This function will convert the given Diffie-Hellman raw parameters
+to the native <a class="link" href="gnutls-gnutls.html#gnutls-pubkey-t" title="gnutls_pubkey_t"><span class="type">gnutls_pubkey_t</span></a> format.  The output will be stored
+in <em class="parameter"><code>key</code></em>
+.</p>
+<div class="refsect3">
+<a name="gnutls-pubkey-import-dh-raw.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>key</p></td>
+<td class="parameter_description"><p>The structure to store the parsed key</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>params</p></td>
+<td class="parameter_description"><p>holds the <a class="link" href="gnutls-gnutls.html#gnutls-dh-params-t" title="gnutls_dh_params_t"><code class="literal">gnutls_dh_params_t</code></a></p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>y</p></td>
+<td class="parameter_description"><p>holds the y</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="gnutls-pubkey-import-dh-raw.returns"></a><h4>Returns</h4>
+<p> On success, <a class="link" href="gnutls-gnutls.html#GNUTLS-E-SUCCESS:CAPS" title="GNUTLS_E_SUCCESS"><code class="literal">GNUTLS_E_SUCCESS</code></a> (0) is returned, otherwise a
+negative error value.</p>
+</div>
+<p class="since">Since: 3.8.2</p>
 </div>
 <hr>
 <div class="refsect2">
@@ -3278,8 +3414,7 @@ gnutls_privkey_deinit (<em class="parameter"><code><a class="link" href="gnutls-
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-SUBGROUP-TO-BITS:CAPS"></a><h3>GNUTLS_SUBGROUP_TO_BITS()</h3>
-<pre class="programlisting">#define GNUTLS_SUBGROUP_TO_BITS(group, subgroup) (unsigned int)((subgroup&lt;&lt;16)|(group))
-</pre>
+<pre class="programlisting">#define             GNUTLS_SUBGROUP_TO_BITS(group, subgroup)</pre>
 </div>
 <hr>
 <div class="refsect2">
@@ -4064,7 +4199,7 @@ negative error value.</p>
 gnutls_privkey_import_openpgp_raw (<em class="parameter"><code><a class="link" href="gnutls-gnutls.html#gnutls-privkey-t" title="gnutls_privkey_t"><span class="type">gnutls_privkey_t</span></a> pkey</code></em>,
                                    <em class="parameter"><code>const <a class="link" href="gnutls-gnutls.html#gnutls-datum-t" title="gnutls_datum_t"><span class="type">gnutls_datum_t</span></a> *data</code></em>,
                                    <em class="parameter"><code><a class="link" href="gnutls-openpgp.html#gnutls-openpgp-crt-fmt-t" title="enum gnutls_openpgp_crt_fmt_t"><span class="type">gnutls_openpgp_crt_fmt_t</span></a> format</code></em>,
-                                   <em class="parameter"><code>const <span class="type">gnutls_openpgp_keyid_t</span> keyid</code></em>,
+                                   <em class="parameter"><code>const <a class="link" href="gnutls-openpgp.html#gnutls-openpgp-keyid-t" title="gnutls_openpgp_keyid_t"><span class="type">gnutls_openpgp_keyid_t</span></a> keyid</code></em>,
                                    <em class="parameter"><code>const <span class="type">char</span> *password</code></em>);</pre>
 <p>This function is no-op.</p>
 <div class="refsect3">
@@ -4341,7 +4476,7 @@ negative error value.</p>
 <pre class="programlisting"><span class="returnvalue">int</span>
 gnutls_privkey_import_pkcs11_url (<em class="parameter"><code><a class="link" href="gnutls-gnutls.html#gnutls-privkey-t" title="gnutls_privkey_t"><span class="type">gnutls_privkey_t</span></a> key</code></em>,
                                   <em class="parameter"><code>const <span class="type">char</span> *url</code></em>);</pre>
-<p>This function will import a PKCS 11 private key to a <span class="type">gnutls_private_key_t</span>
+<p>This function will import a PKCS 11 private key to a <a class="link" href="gnutls-gnutls.html#gnutls-privkey-t" title="gnutls_privkey_t"><span class="type">gnutls_privkey_t</span></a>
 type.</p>
 <div class="refsect3">
 <a name="gnutls-privkey-import-pkcs11-url.parameters"></a><h4>Parameters</h4>
@@ -4751,6 +4886,57 @@ in <em class="parameter"><code>key</code></em>
 <p> On success, <a class="link" href="gnutls-gnutls.html#GNUTLS-E-SUCCESS:CAPS" title="GNUTLS_E_SUCCESS"><code class="literal">GNUTLS_E_SUCCESS</code></a> (0) is returned, otherwise a
 negative error value.</p>
 </div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gnutls-privkey-import-dh-raw"></a><h3>gnutls_privkey_import_dh_raw ()</h3>
+<pre class="programlisting"><span class="returnvalue">int</span>
+gnutls_privkey_import_dh_raw (<em class="parameter"><code><a class="link" href="gnutls-gnutls.html#gnutls-privkey-t" title="gnutls_privkey_t"><span class="type">gnutls_privkey_t</span></a> key</code></em>,
+                              <em class="parameter"><code>const <a class="link" href="gnutls-gnutls.html#gnutls-dh-params-t" title="gnutls_dh_params_t"><span class="type">gnutls_dh_params_t</span></a> params</code></em>,
+                              <em class="parameter"><code>const <a class="link" href="gnutls-gnutls.html#gnutls-datum-t" title="gnutls_datum_t"><span class="type">gnutls_datum_t</span></a> *y</code></em>,
+                              <em class="parameter"><code>const <a class="link" href="gnutls-gnutls.html#gnutls-datum-t" title="gnutls_datum_t"><span class="type">gnutls_datum_t</span></a> *x</code></em>);</pre>
+<p>This function will convert the given Diffie-Hellman raw parameters
+to the native <a class="link" href="gnutls-gnutls.html#gnutls-privkey-t" title="gnutls_privkey_t"><span class="type">gnutls_privkey_t</span></a> format.  The output will be stored
+in <em class="parameter"><code>key</code></em>
+.</p>
+<div class="refsect3">
+<a name="gnutls-privkey-import-dh-raw.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>key</p></td>
+<td class="parameter_description"><p>The structure to store the parsed key</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>params</p></td>
+<td class="parameter_description"><p>holds the <a class="link" href="gnutls-gnutls.html#gnutls-dh-params-t" title="gnutls_dh_params_t"><code class="literal">gnutls_dh_params_t</code></a></p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>y</p></td>
+<td class="parameter_description"><p>holds the y (optional)</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>x</p></td>
+<td class="parameter_description"><p>holds the x</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="gnutls-privkey-import-dh-raw.returns"></a><h4>Returns</h4>
+<p> On success, <a class="link" href="gnutls-gnutls.html#GNUTLS-E-SUCCESS:CAPS" title="GNUTLS_E_SUCCESS"><code class="literal">GNUTLS_E_SUCCESS</code></a> (0) is returned, otherwise a
+negative error value.</p>
+</div>
+<p class="since">Since: 3.8.2</p>
 </div>
 <hr>
 <div class="refsect2">
@@ -5621,6 +5807,64 @@ in the given structure. The new parameters will be allocated using
 </div>
 <hr>
 <div class="refsect2">
+<a name="gnutls-privkey-export-dh-raw"></a><h3>gnutls_privkey_export_dh_raw ()</h3>
+<pre class="programlisting"><span class="returnvalue">int</span>
+gnutls_privkey_export_dh_raw (<em class="parameter"><code><a class="link" href="gnutls-gnutls.html#gnutls-privkey-t" title="gnutls_privkey_t"><span class="type">gnutls_privkey_t</span></a> key</code></em>,
+                              <em class="parameter"><code><a class="link" href="gnutls-gnutls.html#gnutls-dh-params-t" title="gnutls_dh_params_t"><span class="type">gnutls_dh_params_t</span></a> params</code></em>,
+                              <em class="parameter"><code><a class="link" href="gnutls-gnutls.html#gnutls-datum-t" title="gnutls_datum_t"><span class="type">gnutls_datum_t</span></a> *y</code></em>,
+                              <em class="parameter"><code><a class="link" href="gnutls-gnutls.html#gnutls-datum-t" title="gnutls_datum_t"><span class="type">gnutls_datum_t</span></a> *x</code></em>,
+                              <em class="parameter"><code>unsigned <span class="type">int</span> flags</code></em>);</pre>
+<p>This function will export the Diffie-Hellman private key parameter
+found in the given <a class="link" href="gnutls-gnutls.html#gnutls-privkey-t" title="gnutls_privkey_t"><code class="literal">gnutls_privkey_t</code></a> structure. The new parameter
+will be allocated using <code class="function">gnutls_malloc()</code> and will be stored in the
+appropriate datum.</p>
+<p>To retrieve other parameters common in both public key and private
+key, use <a class="link" href="gnutls-gnutls.html#gnutls-dh-params-export-raw" title="gnutls_dh_params_export_raw ()"><code class="function">gnutls_dh_params_export_raw()</code></a>.</p>
+<div class="refsect3">
+<a name="gnutls-privkey-export-dh-raw.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>key</p></td>
+<td class="parameter_description"><p>Holds the private key</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>params</p></td>
+<td class="parameter_description"><p>will hold the Diffie-Hellman parameters (optional), must be initialized</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>y</p></td>
+<td class="parameter_description"><p>will hold the y (optional)</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>x</p></td>
+<td class="parameter_description"><p>will hold the x</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>flags</p></td>
+<td class="parameter_description"><p>flags from <a class="link" href="gnutls-abstract.html#gnutls-abstract-export-flags-t" title="enum gnutls_abstract_export_flags_t"><code class="literal">gnutls_abstract_export_flags_t</code></a></p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="gnutls-privkey-export-dh-raw.returns"></a><h4>Returns</h4>
+<p> <a class="link" href="gnutls-gnutls.html#GNUTLS-E-SUCCESS:CAPS" title="GNUTLS_E_SUCCESS"><code class="literal">GNUTLS_E_SUCCESS</code></a> on success, otherwise a negative error code.</p>
+</div>
+<p class="since">Since: 3.8.2</p>
+</div>
+<hr>
+<div class="refsect2">
 <a name="gnutls-privkey-export-ecc-raw"></a><h3>gnutls_privkey_export_ecc_raw ()</h3>
 <pre class="programlisting"><span class="returnvalue">int</span>
 gnutls_privkey_export_ecc_raw (<em class="parameter"><code><a class="link" href="gnutls-gnutls.html#gnutls-privkey-t" title="gnutls_privkey_t"><span class="type">gnutls_privkey_t</span></a> key</code></em>,
@@ -5815,6 +6059,68 @@ version 3.6.3 this was incorrectly returned in big-endian format.</p>
 <p> <a class="link" href="gnutls-gnutls.html#GNUTLS-E-SUCCESS:CAPS" title="GNUTLS_E_SUCCESS"><code class="literal">GNUTLS_E_SUCCESS</code></a> on success, otherwise a negative error code.</p>
 </div>
 <p class="since">Since: 3.6.3</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gnutls-privkey-derive-secret"></a><h3>gnutls_privkey_derive_secret ()</h3>
+<pre class="programlisting"><span class="returnvalue">int</span>
+gnutls_privkey_derive_secret (<em class="parameter"><code><a class="link" href="gnutls-gnutls.html#gnutls-privkey-t" title="gnutls_privkey_t"><span class="type">gnutls_privkey_t</span></a> privkey</code></em>,
+                              <em class="parameter"><code><a class="link" href="gnutls-gnutls.html#gnutls-pubkey-t" title="gnutls_pubkey_t"><span class="type">gnutls_pubkey_t</span></a> pubkey</code></em>,
+                              <em class="parameter"><code>const <a class="link" href="gnutls-gnutls.html#gnutls-datum-t" title="gnutls_datum_t"><span class="type">gnutls_datum_t</span></a> *nonce</code></em>,
+                              <em class="parameter"><code><a class="link" href="gnutls-gnutls.html#gnutls-datum-t" title="gnutls_datum_t"><span class="type">gnutls_datum_t</span></a> *secret</code></em>,
+                              <em class="parameter"><code>unsigned <span class="type">int</span> flags</code></em>);</pre>
+<p>This function will calculate a shared secret from our <em class="parameter"><code>privkey</code></em>
+ and
+peer's <em class="parameter"><code>pubkey</code></em>
+. The result will be stored in <em class="parameter"><code>secret</code></em>
+, whose data
+member should be freed after use using <a class="link" href="gnutls-gnutls.html#gnutls-free" title="gnutls_free()"><code class="function">gnutls_free()</code></a>. <em class="parameter"><code>privkey</code></em>
+ and
+<em class="parameter"><code>pubkey</code></em>
+ must be backed by the X.509 keys.</p>
+<div class="refsect3">
+<a name="gnutls-privkey-derive-secret.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>privkey</p></td>
+<td class="parameter_description"><p>a private key of type <a class="link" href="gnutls-gnutls.html#gnutls-privkey-t" title="gnutls_privkey_t"><span class="type">gnutls_privkey_t</span></a></p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>pubkey</p></td>
+<td class="parameter_description"><p>a public key of type <a class="link" href="gnutls-gnutls.html#gnutls-pubkey-t" title="gnutls_pubkey_t"><span class="type">gnutls_pubkey_t</span></a></p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>nonce</p></td>
+<td class="parameter_description"><p>an optional nonce value</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>secret</p></td>
+<td class="parameter_description"><p>where shared secret will be stored</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>flags</p></td>
+<td class="parameter_description"><p>must be zero</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="gnutls-privkey-derive-secret.returns"></a><h4>Returns</h4>
+<p> On success, <a class="link" href="gnutls-gnutls.html#GNUTLS-E-SUCCESS:CAPS" title="GNUTLS_E_SUCCESS"><code class="literal">GNUTLS_E_SUCCESS</code></a> (0) is returned, otherwise a
+negative error value.</p>
+</div>
+<p class="since">Since: 3.8.2</p>
 </div>
 <hr>
 <div class="refsect2">
@@ -6277,7 +6583,7 @@ negative error value.</p>
 gnutls_pcert_import_openpgp_raw (<em class="parameter"><code><a class="link" href="gnutls-abstract.html#gnutls-pcert-st" title="gnutls_pcert_st"><span class="type">gnutls_pcert_st</span></a> *pcert</code></em>,
                                  <em class="parameter"><code>const <a class="link" href="gnutls-gnutls.html#gnutls-datum-t" title="gnutls_datum_t"><span class="type">gnutls_datum_t</span></a> *cert</code></em>,
                                  <em class="parameter"><code><a class="link" href="gnutls-openpgp.html#gnutls-openpgp-crt-fmt-t" title="enum gnutls_openpgp_crt_fmt_t"><span class="type">gnutls_openpgp_crt_fmt_t</span></a> format</code></em>,
-                                 <em class="parameter"><code><span class="type">gnutls_openpgp_keyid_t</span> keyid</code></em>,
+                                 <em class="parameter"><code><a class="link" href="gnutls-openpgp.html#gnutls-openpgp-keyid-t" title="gnutls_openpgp_keyid_t"><span class="type">gnutls_openpgp_keyid_t</span></a> keyid</code></em>,
                                  <em class="parameter"><code>unsigned <span class="type">int</span> flags</code></em>);</pre>
 <p>This function is no-op.</p>
 <div class="refsect3">
@@ -6848,19 +7154,19 @@ negative error value.</p>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-PRIVKEY-INFO-SIGN-ALGO:CAPS"></a><h3>GNUTLS_PRIVKEY_INFO_SIGN_ALGO</h3>
-<pre class="programlisting">#define GNUTLS_PRIVKEY_INFO_SIGN_ALGO (1&lt;&lt;1)
+<pre class="programlisting">#define GNUTLS_PRIVKEY_INFO_SIGN_ALGO (1 &lt;&lt; 1)
 </pre>
 </div>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-PRIVKEY-INFO-HAVE-SIGN-ALGO:CAPS"></a><h3>GNUTLS_PRIVKEY_INFO_HAVE_SIGN_ALGO</h3>
-<pre class="programlisting">#define GNUTLS_PRIVKEY_INFO_HAVE_SIGN_ALGO (1&lt;&lt;2)
+<pre class="programlisting">#define GNUTLS_PRIVKEY_INFO_HAVE_SIGN_ALGO (1 &lt;&lt; 2)
 </pre>
 </div>
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-PRIVKEY-INFO-PK-ALGO-BITS:CAPS"></a><h3>GNUTLS_PRIVKEY_INFO_PK_ALGO_BITS</h3>
-<pre class="programlisting">#define GNUTLS_PRIVKEY_INFO_PK_ALGO_BITS (1&lt;&lt;3)
+<pre class="programlisting">#define GNUTLS_PRIVKEY_INFO_PK_ALGO_BITS (1 &lt;&lt; 3)
 </pre>
 </div>
 <hr>
@@ -7022,6 +7328,6 @@ negative error value.</p>
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.33.1</div>
+<hr>Generated by GTK-Doc V1.34.0</div>
 </body>
 </html>

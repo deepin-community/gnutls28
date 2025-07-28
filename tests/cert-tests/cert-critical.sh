@@ -15,8 +15,7 @@
 # General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with GnuTLS; if not, write to the Free Software Foundation,
-# Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+# along with GnuTLS.  If not, see <https://www.gnu.org/licenses/>.
 
 #set -e
 
@@ -36,10 +35,7 @@ export TZ="UTC"
 
 . ${srcdir}/../scripts/common.sh
 
-skip_if_no_datefudge
-
-datefudge "2017-2-28" \
-${VALGRIND} "${CERTTOOL}" --verify-chain --infile ${srcdir}/data/chain-with-critical-on-root.pem
+${VALGRIND} "${CERTTOOL}" --attime "2017-2-28" --verify-chain --infile ${srcdir}/data/chain-with-critical-on-root.pem
 rc=$?
 
 if test "${rc}" != "1"; then
@@ -47,8 +43,7 @@ if test "${rc}" != "1"; then
 	exit 1
 fi
 
-datefudge "2017-2-28" \
-${VALGRIND} "${CERTTOOL}" --verify-chain --infile ${srcdir}/data/chain-with-critical-on-endcert.pem
+${VALGRIND} "${CERTTOOL}" --attime "2017-2-28" --verify-chain --infile ${srcdir}/data/chain-with-critical-on-endcert.pem
 rc=$?
 
 if test "${rc}" != "1"; then
@@ -56,8 +51,7 @@ if test "${rc}" != "1"; then
 	exit 1
 fi
 
-datefudge "2017-2-28" \
-${VALGRIND} "${CERTTOOL}" --verify-chain --infile ${srcdir}/data/chain-with-critical-on-intermediate.pem
+${VALGRIND} "${CERTTOOL}" --attime "2017-2-28" --verify-chain --infile ${srcdir}/data/chain-with-critical-on-intermediate.pem
 rc=$?
 
 if test "${rc}" != "1"; then

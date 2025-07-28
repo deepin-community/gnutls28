@@ -16,8 +16,7 @@
 # General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this file; if not, write to the Free Software Foundation,
-# Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+# along with this file.  If not, see <https://www.gnu.org/licenses/>.
 
 man_MANS =
 EXTRA_DIST = stamp_mans
@@ -50,7 +49,7 @@ CLIGEN_ARGS = \
 	--package '$(PACKAGE)' \
 	--version='$(VERSION)' \
 	--authors='Nikos Mavrogiannopoulos, Simon Josefsson and others; see /usr/share/doc/gnutls/AUTHORS for a complete list.' \
-	--copyright-year=2020-2021 \
+	--copyright-year=2020-2023 \
 	--copyright-holder='Free Software Foundation, and others all rights reserved.' \
 	--bug-email=bugs@gnutls.org
 
@@ -420,6 +419,7 @@ APIMANS += gnutls_hash_fast.3
 APIMANS += gnutls_hash_get_len.3
 APIMANS += gnutls_hash_init.3
 APIMANS += gnutls_hash_output.3
+APIMANS += gnutls_hash_squeeze.3
 APIMANS += gnutls_heartbeat_allowed.3
 APIMANS += gnutls_heartbeat_enable.3
 APIMANS += gnutls_heartbeat_get_timeout.3
@@ -611,6 +611,7 @@ APIMANS += gnutls_pkcs12_export.3
 APIMANS += gnutls_pkcs12_export2.3
 APIMANS += gnutls_pkcs12_generate_mac.3
 APIMANS += gnutls_pkcs12_generate_mac2.3
+APIMANS += gnutls_pkcs12_generate_mac3.3
 APIMANS += gnutls_pkcs12_get_bag.3
 APIMANS += gnutls_pkcs12_import.3
 APIMANS += gnutls_pkcs12_init.3
@@ -681,6 +682,8 @@ APIMANS += gnutls_priority_string_list.3
 APIMANS += gnutls_privkey_decrypt_data.3
 APIMANS += gnutls_privkey_decrypt_data2.3
 APIMANS += gnutls_privkey_deinit.3
+APIMANS += gnutls_privkey_derive_secret.3
+APIMANS += gnutls_privkey_export_dh_raw.3
 APIMANS += gnutls_privkey_export_dsa_raw.3
 APIMANS += gnutls_privkey_export_dsa_raw2.3
 APIMANS += gnutls_privkey_export_ecc_raw.3
@@ -697,6 +700,7 @@ APIMANS += gnutls_privkey_get_pk_algorithm.3
 APIMANS += gnutls_privkey_get_seed.3
 APIMANS += gnutls_privkey_get_spki.3
 APIMANS += gnutls_privkey_get_type.3
+APIMANS += gnutls_privkey_import_dh_raw.3
 APIMANS += gnutls_privkey_import_dsa_raw.3
 APIMANS += gnutls_privkey_import_ecc_raw.3
 APIMANS += gnutls_privkey_import_ext.3
@@ -733,6 +737,7 @@ APIMANS += gnutls_protocol_set_enabled.3
 APIMANS += gnutls_psk_allocate_client_credentials.3
 APIMANS += gnutls_psk_allocate_server_credentials.3
 APIMANS += gnutls_psk_client_get_hint.3
+APIMANS += gnutls_psk_format_imported_identity.3
 APIMANS += gnutls_psk_free_client_credentials.3
 APIMANS += gnutls_psk_free_server_credentials.3
 APIMANS += gnutls_psk_server_get_username.3
@@ -741,10 +746,12 @@ APIMANS += gnutls_psk_set_client_credentials.3
 APIMANS += gnutls_psk_set_client_credentials2.3
 APIMANS += gnutls_psk_set_client_credentials_function.3
 APIMANS += gnutls_psk_set_client_credentials_function2.3
+APIMANS += gnutls_psk_set_client_credentials_function3.3
 APIMANS += gnutls_psk_set_params_function.3
 APIMANS += gnutls_psk_set_server_credentials_file.3
 APIMANS += gnutls_psk_set_server_credentials_function.3
 APIMANS += gnutls_psk_set_server_credentials_function2.3
+APIMANS += gnutls_psk_set_server_credentials_function3.3
 APIMANS += gnutls_psk_set_server_credentials_hint.3
 APIMANS += gnutls_psk_set_server_dh_params.3
 APIMANS += gnutls_psk_set_server_known_dh_params.3
@@ -753,6 +760,7 @@ APIMANS += gnutls_pubkey_deinit.3
 APIMANS += gnutls_pubkey_encrypt_data.3
 APIMANS += gnutls_pubkey_export.3
 APIMANS += gnutls_pubkey_export2.3
+APIMANS += gnutls_pubkey_export_dh_raw.3
 APIMANS += gnutls_pubkey_export_dsa_raw.3
 APIMANS += gnutls_pubkey_export_dsa_raw2.3
 APIMANS += gnutls_pubkey_export_ecc_raw.3
@@ -768,6 +776,7 @@ APIMANS += gnutls_pubkey_get_pk_algorithm.3
 APIMANS += gnutls_pubkey_get_preferred_hash_algorithm.3
 APIMANS += gnutls_pubkey_get_spki.3
 APIMANS += gnutls_pubkey_import.3
+APIMANS += gnutls_pubkey_import_dh_raw.3
 APIMANS += gnutls_pubkey_import_dsa_raw.3
 APIMANS += gnutls_pubkey_import_ecc_raw.3
 APIMANS += gnutls_pubkey_import_ecc_x962.3
@@ -1279,6 +1288,7 @@ APIMANS += gnutls_x509_privkey_get_seed.3
 APIMANS += gnutls_x509_privkey_get_spki.3
 APIMANS += gnutls_x509_privkey_import.3
 APIMANS += gnutls_x509_privkey_import2.3
+APIMANS += gnutls_x509_privkey_import_dh_raw.3
 APIMANS += gnutls_x509_privkey_import_dsa_raw.3
 APIMANS += gnutls_x509_privkey_import_ecc_raw.3
 APIMANS += gnutls_x509_privkey_import_gost_raw.3
@@ -1300,8 +1310,10 @@ APIMANS += gnutls_x509_rdn_get2.3
 APIMANS += gnutls_x509_rdn_get_by_oid.3
 APIMANS += gnutls_x509_rdn_get_oid.3
 APIMANS += gnutls_x509_spki_deinit.3
+APIMANS += gnutls_x509_spki_get_rsa_oaep_params.3
 APIMANS += gnutls_x509_spki_get_rsa_pss_params.3
 APIMANS += gnutls_x509_spki_init.3
+APIMANS += gnutls_x509_spki_set_rsa_oaep_params.3
 APIMANS += gnutls_x509_spki_set_rsa_pss_params.3
 APIMANS += gnutls_x509_tlsfeatures_add.3
 APIMANS += gnutls_x509_tlsfeatures_check_crt.3
@@ -1365,7 +1377,7 @@ stamp_mans: $(HEADER_FILES)
 			-pkg-site "https://www.gnutls.org" \
 			-include "gnutls/`basename $$header .in`" \
 			-seeinfo $(PACKAGE) -verbatimcopying \
-			-copyright "2001-$(YEAR) Free Software Foundation, Inc., and others" \
+			-copyright "2001-2023 Free Software Foundation, Inc., and others" \
 			-function $$i \
 			$(C_SOURCE_FILES) > $$i.3 && \
 		echo $(ECHO_N) "."; \

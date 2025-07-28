@@ -42,8 +42,8 @@
 #undef shutdown
 
 /* XXX: See lib/gnutls_int.h. */
-#define GNUTLS_POINTER_TO_INT(_) ((int) GNUTLS_POINTER_TO_INT_CAST (_))
-#define GNUTLS_INT_TO_POINTER(_) ((void*) GNUTLS_POINTER_TO_INT_CAST (_))
+#define GNUTLS_POINTER_TO_INT(_) ((int)GNUTLS_POINTER_TO_INT_CAST(_))
+#define GNUTLS_INT_TO_POINTER(_) ((void *)GNUTLS_POINTER_TO_INT_CAST(_))
 
 /* WARNING: Error functions aren't currently thread-safe */
 
@@ -62,14 +62,13 @@ void OpenSSL_add_all_algorithms(void)
 {
 }
 
-
 /* SSL_CTX structure handling */
 
-SSL_CTX *SSL_CTX_new(SSL_METHOD * method)
+SSL_CTX *SSL_CTX_new(SSL_METHOD *method)
 {
 	SSL_CTX *ctx;
 
-	ctx = (SSL_CTX *) calloc(1, sizeof(SSL_CTX));
+	ctx = (SSL_CTX *)calloc(1, sizeof(SSL_CTX));
 	if (!ctx)
 		return NULL;
 
@@ -78,21 +77,20 @@ SSL_CTX *SSL_CTX_new(SSL_METHOD * method)
 	return ctx;
 }
 
-void SSL_CTX_free(SSL_CTX * ctx)
+void SSL_CTX_free(SSL_CTX *ctx)
 {
 	free(ctx->method);
 	free(ctx);
 }
 
-int SSL_CTX_set_default_verify_paths(SSL_CTX * ctx)
+int SSL_CTX_set_default_verify_paths(SSL_CTX *ctx)
 {
 	return 0;
 }
 
-int
-SSL_CTX_use_certificate_file(SSL_CTX * ctx, const char *certfile, int type)
+int SSL_CTX_use_certificate_file(SSL_CTX *ctx, const char *certfile, int type)
 {
-	ctx->certfile = (char *) calloc(1, strlen(certfile) + 1);
+	ctx->certfile = (char *)calloc(1, strlen(certfile) + 1);
 	if (!ctx->certfile)
 		return -1;
 	memcpy(ctx->certfile, certfile, strlen(certfile));
@@ -102,10 +100,9 @@ SSL_CTX_use_certificate_file(SSL_CTX * ctx, const char *certfile, int type)
 	return 1;
 }
 
-int
-SSL_CTX_use_PrivateKey_file(SSL_CTX * ctx, const char *keyfile, int type)
+int SSL_CTX_use_PrivateKey_file(SSL_CTX *ctx, const char *keyfile, int type)
 {
-	ctx->keyfile = (char *) calloc(1, strlen(keyfile) + 1);
+	ctx->keyfile = (char *)calloc(1, strlen(keyfile) + 1);
 	if (!ctx->keyfile)
 		return -1;
 	memcpy(ctx->keyfile, keyfile, strlen(keyfile));
@@ -113,28 +110,26 @@ SSL_CTX_use_PrivateKey_file(SSL_CTX * ctx, const char *keyfile, int type)
 	ctx->keyfile_type = type;
 
 	return 1;
-
 }
 
-void
-SSL_CTX_set_verify(SSL_CTX * ctx, int verify_mode,
-		   int (*verify_callback) (int, X509_STORE_CTX *))
+void SSL_CTX_set_verify(SSL_CTX *ctx, int verify_mode,
+			int (*verify_callback)(int, X509_STORE_CTX *))
 {
 	ctx->verify_mode = verify_mode;
 	ctx->verify_callback = verify_callback;
 }
 
-unsigned long SSL_CTX_set_options(SSL_CTX * ctx, unsigned long options)
+unsigned long SSL_CTX_set_options(SSL_CTX *ctx, unsigned long options)
 {
 	return (ctx->options |= options);
 }
 
-long SSL_CTX_set_mode(SSL_CTX * ctx, long mode)
+long SSL_CTX_set_mode(SSL_CTX *ctx, long mode)
 {
 	return 0;
 }
 
-int SSL_CTX_set_cipher_list(SSL_CTX * ctx, const char *list)
+int SSL_CTX_set_cipher_list(SSL_CTX *ctx, const char *list)
 {
 	/* FIXME: ignore this for the moment */
 	/* We're going to have to parse the "list" string to do this */
@@ -145,69 +140,66 @@ int SSL_CTX_set_cipher_list(SSL_CTX * ctx, const char *list)
 	return 1;
 }
 
-
 /* SSL_CTX statistics */
 
-long SSL_CTX_sess_number(SSL_CTX * ctx)
+long SSL_CTX_sess_number(SSL_CTX *ctx)
 {
 	return 0;
 }
 
-long SSL_CTX_sess_connect(SSL_CTX * ctx)
+long SSL_CTX_sess_connect(SSL_CTX *ctx)
 {
 	return 0;
 }
 
-long SSL_CTX_sess_connect_good(SSL_CTX * ctx)
+long SSL_CTX_sess_connect_good(SSL_CTX *ctx)
 {
 	return 0;
 }
 
-long SSL_CTX_sess_connect_renegotiate(SSL_CTX * ctx)
+long SSL_CTX_sess_connect_renegotiate(SSL_CTX *ctx)
 {
 	return 0;
 }
 
-long SSL_CTX_sess_accept(SSL_CTX * ctx)
+long SSL_CTX_sess_accept(SSL_CTX *ctx)
 {
 	return 0;
 }
 
-long SSL_CTX_sess_accept_good(SSL_CTX * ctx)
+long SSL_CTX_sess_accept_good(SSL_CTX *ctx)
 {
 	return 0;
 }
 
-long SSL_CTX_sess_accept_renegotiate(SSL_CTX * ctx)
+long SSL_CTX_sess_accept_renegotiate(SSL_CTX *ctx)
 {
 	return 0;
 }
 
-long SSL_CTX_sess_hits(SSL_CTX * ctx)
+long SSL_CTX_sess_hits(SSL_CTX *ctx)
 {
 	return 0;
 }
 
-long SSL_CTX_sess_misses(SSL_CTX * ctx)
+long SSL_CTX_sess_misses(SSL_CTX *ctx)
 {
 	return 0;
 }
 
-long SSL_CTX_sess_timeouts(SSL_CTX * ctx)
+long SSL_CTX_sess_timeouts(SSL_CTX *ctx)
 {
 	return 0;
 }
-
-
 
 /* SSL structure handling */
 
-SSL *SSL_new(SSL_CTX * ctx)
+SSL *SSL_new(SSL_CTX *ctx)
 {
 	SSL *ssl;
 	int err;
 
-	ssl = (SSL *) calloc(1, sizeof(SSL));
+	ssl = (SSL *)calloc(1, sizeof(SSL));
 	if (!ssl)
 		return NULL;
 
@@ -226,9 +218,8 @@ SSL *SSL_new(SSL_CTX * ctx)
 	gnutls_credentials_set(ssl->gnutls_state, GNUTLS_CRD_CERTIFICATE,
 			       ssl->gnutls_cred);
 	if (ctx->certfile)
-		gnutls_certificate_set_x509_trust_file(ssl->gnutls_cred,
-						       ctx->certfile,
-						       ctx->certfile_type);
+		gnutls_certificate_set_x509_trust_file(
+			ssl->gnutls_cred, ctx->certfile, ctx->certfile_type);
 	if (ctx->keyfile)
 		gnutls_certificate_set_x509_key_file(ssl->gnutls_cred,
 						     ctx->certfile,
@@ -240,13 +231,13 @@ SSL *SSL_new(SSL_CTX * ctx)
 
 	ssl->options = ctx->options;
 
-	ssl->rfd = (gnutls_transport_ptr_t) - 1;
-	ssl->wfd = (gnutls_transport_ptr_t) - 1;
+	ssl->rfd = (gnutls_transport_ptr_t)-1;
+	ssl->wfd = (gnutls_transport_ptr_t)-1;
 
 	return ssl;
 }
 
-void SSL_free(SSL * ssl)
+void SSL_free(SSL *ssl)
 {
 	gnutls_certificate_free_credentials(ssl->gnutls_cred);
 	gnutls_deinit(ssl->gnutls_state);
@@ -257,7 +248,7 @@ void SSL_load_error_strings(void)
 {
 }
 
-int SSL_get_error(SSL * ssl, int ret)
+int SSL_get_error(SSL *ssl, int ret)
 {
 	if (ret > 0)
 		return SSL_ERROR_NONE;
@@ -265,59 +256,57 @@ int SSL_get_error(SSL * ssl, int ret)
 	return SSL_ERROR_ZERO_RETURN;
 }
 
-int SSL_set_fd(SSL * ssl, int fd)
+int SSL_set_fd(SSL *ssl, int fd)
 {
-	gnutls_transport_set_ptr(ssl->gnutls_state,
-				 GNUTLS_INT_TO_POINTER(fd));
+	gnutls_transport_set_ptr(ssl->gnutls_state, GNUTLS_INT_TO_POINTER(fd));
 	return 1;
 }
 
-int SSL_set_rfd(SSL * ssl, int fd)
+int SSL_set_rfd(SSL *ssl, int fd)
 {
 	ssl->rfd = GNUTLS_INT_TO_POINTER(fd);
 
-	if (ssl->wfd != (gnutls_transport_ptr_t) - 1)
+	if (ssl->wfd != (gnutls_transport_ptr_t)-1)
 		gnutls_transport_set_ptr2(ssl->gnutls_state, ssl->rfd,
 					  ssl->wfd);
 
 	return 1;
 }
 
-int SSL_set_wfd(SSL * ssl, int fd)
+int SSL_set_wfd(SSL *ssl, int fd)
 {
 	ssl->wfd = GNUTLS_INT_TO_POINTER(fd);
 
-	if (ssl->rfd != (gnutls_transport_ptr_t) - 1)
+	if (ssl->rfd != (gnutls_transport_ptr_t)-1)
 		gnutls_transport_set_ptr2(ssl->gnutls_state, ssl->rfd,
 					  ssl->wfd);
 
 	return 1;
 }
 
-void SSL_set_bio(SSL * ssl, BIO * rbio, BIO * wbio)
+void SSL_set_bio(SSL *ssl, BIO *rbio, BIO *wbio)
 {
 	gnutls_transport_set_ptr2(ssl->gnutls_state, rbio->fd, wbio->fd);
 	/*    free(BIO); ? */
 }
 
-void SSL_set_connect_state(SSL * ssl)
+void SSL_set_connect_state(SSL *ssl)
 {
 }
 
-int SSL_pending(SSL * ssl)
+int SSL_pending(SSL *ssl)
 {
 	return gnutls_record_check_pending(ssl->gnutls_state);
 }
 
-void
-SSL_set_verify(SSL * ssl, int verify_mode,
-	       int (*verify_callback) (int, X509_STORE_CTX *))
+void SSL_set_verify(SSL *ssl, int verify_mode,
+		    int (*verify_callback)(int, X509_STORE_CTX *))
 {
 	ssl->verify_mode = verify_mode;
 	ssl->verify_callback = verify_callback;
 }
 
-const X509 *SSL_get_peer_certificate(SSL * ssl)
+const X509 *SSL_get_peer_certificate(SSL *ssl)
 {
 	const gnutls_datum_t *cert_list;
 	unsigned int cert_list_size = 0;
@@ -330,7 +319,7 @@ const X509 *SSL_get_peer_certificate(SSL * ssl)
 
 /* SSL connection open/close/read/write functions */
 
-int SSL_connect(SSL * ssl)
+int SSL_connect(SSL *ssl)
 {
 	X509_STORE_CTX *store;
 	unsigned int cert_list_size = 0;
@@ -342,9 +331,8 @@ int SSL_connect(SSL * ssl)
 	if (ssl->options & SSL_OP_NO_TLSv1) {
 		snprintf(x_priority, sizeof(x_priority), "%s:-VERS-TLS1.0",
 			 ssl->ctx->method->priority_string);
-		err =
-		    gnutls_priority_set_direct(ssl->gnutls_state,
-					       x_priority, NULL);
+		err = gnutls_priority_set_direct(ssl->gnutls_state, x_priority,
+						 NULL);
 		if (err < 0) {
 			last_error = err;
 			return 0;
@@ -359,7 +347,7 @@ int SSL_connect(SSL * ssl)
 		return 0;
 	}
 
-	store = (X509_STORE_CTX *) calloc(1, sizeof(X509_STORE_CTX));
+	store = (X509_STORE_CTX *)calloc(1, sizeof(X509_STORE_CTX));
 	if (!store)
 		return 0;
 
@@ -380,7 +368,7 @@ int SSL_connect(SSL * ssl)
 	return 1;
 }
 
-int SSL_accept(SSL * ssl)
+int SSL_accept(SSL *ssl)
 {
 	X509_STORE_CTX *store;
 	unsigned int cert_list_size = 0;
@@ -392,9 +380,8 @@ int SSL_accept(SSL * ssl)
 	if (ssl->options & SSL_OP_NO_TLSv1) {
 		snprintf(x_priority, sizeof(x_priority), "%s:-VERS-TLS1.0",
 			 ssl->ctx->method->priority_string);
-		err =
-		    gnutls_priority_set_direct(ssl->gnutls_state,
-					       x_priority, NULL);
+		err = gnutls_priority_set_direct(ssl->gnutls_state, x_priority,
+						 NULL);
 		if (err < 0) {
 			last_error = err;
 			return 0;
@@ -411,7 +398,7 @@ int SSL_accept(SSL * ssl)
 		return 0;
 	}
 
-	store = (X509_STORE_CTX *) calloc(1, sizeof(X509_STORE_CTX));
+	store = (X509_STORE_CTX *)calloc(1, sizeof(X509_STORE_CTX));
 	if (!store)
 		return 0;
 	store->ssl = ssl;
@@ -431,7 +418,7 @@ int SSL_accept(SSL * ssl)
 	return 1;
 }
 
-int SSL_shutdown(SSL * ssl)
+int SSL_shutdown(SSL *ssl)
 {
 	if (!ssl->shutdown) {
 		gnutls_bye(ssl->gnutls_state, GNUTLS_SHUT_WR);
@@ -445,7 +432,7 @@ int SSL_shutdown(SSL * ssl)
 	return 1;
 }
 
-int SSL_read(SSL * ssl, void *buf, int len)
+int SSL_read(SSL *ssl, void *buf, int len)
 {
 	int ret;
 
@@ -460,7 +447,7 @@ int SSL_read(SSL * ssl, void *buf, int len)
 	return ret;
 }
 
-int SSL_write(SSL * ssl, const void *buf, int len)
+int SSL_write(SSL *ssl, const void *buf, int len)
 {
 	int ret;
 
@@ -475,23 +462,21 @@ int SSL_write(SSL * ssl, const void *buf, int len)
 	return ret;
 }
 
-int SSL_want(SSL * ssl)
+int SSL_want(SSL *ssl)
 {
 	return SSL_NOTHING;
 }
-
 
 /* SSL_METHOD functions */
 
 SSL_METHOD *SSLv23_client_method(void)
 {
 	SSL_METHOD *m;
-	m = (SSL_METHOD *) calloc(1, sizeof(SSL_METHOD));
+	m = (SSL_METHOD *)calloc(1, sizeof(SSL_METHOD));
 	if (!m)
 		return NULL;
 
-	strcpy(m->priority_string,
-	       "NORMAL");
+	strcpy(m->priority_string, "NORMAL");
 
 	m->connend = GNUTLS_CLIENT;
 
@@ -501,12 +486,11 @@ SSL_METHOD *SSLv23_client_method(void)
 SSL_METHOD *SSLv23_server_method(void)
 {
 	SSL_METHOD *m;
-	m = (SSL_METHOD *) calloc(1, sizeof(SSL_METHOD));
+	m = (SSL_METHOD *)calloc(1, sizeof(SSL_METHOD));
 	if (!m)
 		return NULL;
 
-	strcpy(m->priority_string,
-	       "NORMAL");
+	strcpy(m->priority_string, "NORMAL");
 	m->connend = GNUTLS_SERVER;
 
 	return m;
@@ -515,7 +499,7 @@ SSL_METHOD *SSLv23_server_method(void)
 SSL_METHOD *SSLv3_client_method(void)
 {
 	SSL_METHOD *m;
-	m = (SSL_METHOD *) calloc(1, sizeof(SSL_METHOD));
+	m = (SSL_METHOD *)calloc(1, sizeof(SSL_METHOD));
 	if (!m)
 		return NULL;
 
@@ -529,7 +513,7 @@ SSL_METHOD *SSLv3_client_method(void)
 SSL_METHOD *SSLv3_server_method(void)
 {
 	SSL_METHOD *m;
-	m = (SSL_METHOD *) calloc(1, sizeof(SSL_METHOD));
+	m = (SSL_METHOD *)calloc(1, sizeof(SSL_METHOD));
 	if (!m)
 		return NULL;
 
@@ -543,7 +527,7 @@ SSL_METHOD *SSLv3_server_method(void)
 SSL_METHOD *TLSv1_client_method(void)
 {
 	SSL_METHOD *m;
-	m = (SSL_METHOD *) calloc(1, sizeof(SSL_METHOD));
+	m = (SSL_METHOD *)calloc(1, sizeof(SSL_METHOD));
 	if (!m)
 		return NULL;
 
@@ -557,7 +541,7 @@ SSL_METHOD *TLSv1_client_method(void)
 SSL_METHOD *TLSv1_server_method(void)
 {
 	SSL_METHOD *m;
-	m = (SSL_METHOD *) calloc(1, sizeof(SSL_METHOD));
+	m = (SSL_METHOD *)calloc(1, sizeof(SSL_METHOD));
 	if (!m)
 		return NULL;
 
@@ -568,37 +552,35 @@ SSL_METHOD *TLSv1_server_method(void)
 	return m;
 }
 
-
 /* SSL_CIPHER functions */
 
-SSL_CIPHER *SSL_get_current_cipher(SSL * ssl)
+SSL_CIPHER *SSL_get_current_cipher(SSL *ssl)
 {
 	if (!ssl)
 		return NULL;
 
 	ssl->ciphersuite.version =
-	    gnutls_protocol_get_version(ssl->gnutls_state);
+		gnutls_protocol_get_version(ssl->gnutls_state);
 	ssl->ciphersuite.cipher = gnutls_cipher_get(ssl->gnutls_state);
 	ssl->ciphersuite.kx = gnutls_kx_get(ssl->gnutls_state);
 	ssl->ciphersuite.mac = gnutls_mac_get(ssl->gnutls_state);
 	ssl->ciphersuite.compression =
-	    gnutls_compression_get(ssl->gnutls_state);
-	ssl->ciphersuite.cert =
-	    gnutls_certificate_type_get(ssl->gnutls_state);
+		gnutls_compression_get(ssl->gnutls_state);
+	ssl->ciphersuite.cert = gnutls_certificate_type_get(ssl->gnutls_state);
 
 	return &(ssl->ciphersuite);
 }
 
-const char *SSL_CIPHER_get_name(SSL_CIPHER * cipher)
+const char *SSL_CIPHER_get_name(SSL_CIPHER *cipher)
 {
 	if (!cipher)
 		return ("NONE");
 
-	return gnutls_cipher_suite_get_name(cipher->kx,
-					    cipher->cipher, cipher->mac);
+	return gnutls_cipher_suite_get_name(cipher->kx, cipher->cipher,
+					    cipher->mac);
 }
 
-int SSL_CIPHER_get_bits(SSL_CIPHER * cipher, int *bits)
+int SSL_CIPHER_get_bits(SSL_CIPHER *cipher, int *bits)
 {
 	int bit_result;
 
@@ -613,7 +595,7 @@ int SSL_CIPHER_get_bits(SSL_CIPHER * cipher, int *bits)
 	return bit_result;
 }
 
-const char *SSL_CIPHER_get_version(SSL_CIPHER * cipher)
+const char *SSL_CIPHER_get_version(SSL_CIPHER *cipher)
 {
 	const char *ret;
 
@@ -627,7 +609,7 @@ const char *SSL_CIPHER_get_version(SSL_CIPHER * cipher)
 	return ("unknown");
 }
 
-char *SSL_CIPHER_description(SSL_CIPHER * cipher, char *buf, int size)
+char *SSL_CIPHER_description(SSL_CIPHER *cipher, char *buf, int size)
 {
 	char *tmpbuf;
 	int tmpsize;
@@ -638,7 +620,7 @@ char *SSL_CIPHER_description(SSL_CIPHER * cipher, char *buf, int size)
 		tmpsize = size;
 		local_alloc = 0;
 	} else {
-		tmpbuf = (char *) malloc(128);
+		tmpbuf = (char *)malloc(128);
 		tmpsize = 128;
 		local_alloc = 1;
 	}
@@ -650,19 +632,18 @@ char *SSL_CIPHER_description(SSL_CIPHER * cipher, char *buf, int size)
 		     gnutls_mac_get_name(cipher->mac)) == -1) {
 		if (local_alloc)
 			free(tmpbuf);
-		return (char *) "Buffer too small";
+		return (char *)"Buffer too small";
 	}
 
 	return tmpbuf;
 }
 
-
 /* X509 functions */
 
-X509_NAME *X509_get_subject_name(const X509 * cert)
+X509_NAME *X509_get_subject_name(const X509 *cert)
 {
 	gnutls_x509_dn *dn;
-	dn = (gnutls_x509_dn *) calloc(1, sizeof(gnutls_x509_dn));
+	dn = (gnutls_x509_dn *)calloc(1, sizeof(gnutls_x509_dn));
 	if (!dn)
 		return (NULL);
 	if (gnutls_x509_extract_certificate_dn(cert, dn) < 0) {
@@ -672,10 +653,10 @@ X509_NAME *X509_get_subject_name(const X509 * cert)
 	return dn;
 }
 
-X509_NAME *X509_get_issuer_name(const X509 * cert)
+X509_NAME *X509_get_issuer_name(const X509 *cert)
 {
 	gnutls_x509_dn *dn;
-	dn = (gnutls_x509_dn *) calloc(1, sizeof(gnutls_x509_dn));
+	dn = (gnutls_x509_dn *)calloc(1, sizeof(gnutls_x509_dn));
 	if (!dn)
 		return (NULL);
 	if (gnutls_x509_extract_certificate_issuer_dn(cert, dn) < 0) {
@@ -685,15 +666,14 @@ X509_NAME *X509_get_issuer_name(const X509 * cert)
 	return dn;
 }
 
-char *X509_NAME_oneline(gnutls_x509_dn * name, char *buf, int len)
+char *X509_NAME_oneline(gnutls_x509_dn *name, char *buf, int len)
 {
 	/* XXX openssl allocates buffer if buf == NULL */
 	if (!buf)
 		return NULL;
 	memset(buf, 0, len);
 
-	snprintf(buf, len - 1,
-		 "C=%s, ST=%s, L=%s, O=%s, OU=%s, CN=%s/Email=%s",
+	snprintf(buf, len - 1, "C=%s, ST=%s, L=%s, O=%s, OU=%s, CN=%s/Email=%s",
 		 name->country, name->state_or_province_name,
 		 name->locality_name, name->organization,
 		 name->organizational_unit_name, name->common_name,
@@ -701,18 +681,16 @@ char *X509_NAME_oneline(gnutls_x509_dn * name, char *buf, int len)
 	return buf;
 }
 
-void X509_free(const X509 * cert)
+void X509_free(const X509 *cert)
 {
 	/* only get certificates as const items */
 }
-
 
 /* BIO functions */
 
 void BIO_get_fd(gnutls_session_t gnutls_state, int *fd)
 {
-	gnutls_transport_ptr_t tmp =
-	    gnutls_transport_get_ptr(gnutls_state);
+	gnutls_transport_ptr_t tmp = gnutls_transport_get_ptr(gnutls_state);
 	*fd = GNUTLS_POINTER_TO_INT(tmp);
 }
 
@@ -720,7 +698,7 @@ BIO *BIO_new_socket(int sock, int close_flag)
 {
 	BIO *bio;
 
-	bio = (BIO *) malloc(sizeof(BIO));
+	bio = (BIO *)malloc(sizeof(BIO));
 	if (!bio)
 		return NULL;
 
@@ -728,7 +706,6 @@ BIO *BIO_new_socket(int sock, int close_flag)
 
 	return bio;
 }
-
 
 /* error handling */
 
@@ -746,7 +723,6 @@ const char *ERR_error_string(unsigned long e, char *buf)
 {
 	return gnutls_strerror(-1 * e);
 }
-
 
 /* RAND functions */
 
@@ -792,23 +768,22 @@ int RAND_egd_bytes(const char *path, int bytes)
 	return bytes;
 }
 
-
 /* message digest functions */
 
-void MD5_Init(MD5_CTX * ctx)
+void MD5_Init(MD5_CTX *ctx)
 {
 	int ret;
-	ret = gnutls_hash_init((void *) &ctx->handle, GNUTLS_DIG_MD5);
+	ret = gnutls_hash_init((void *)&ctx->handle, GNUTLS_DIG_MD5);
 	if (ret < 0)
 		abort();
 }
 
-void MD5_Update(MD5_CTX * ctx, const void *buf, int len)
+void MD5_Update(MD5_CTX *ctx, const void *buf, int len)
 {
 	gnutls_hash(ctx->handle, buf, len);
 }
 
-void MD5_Final(unsigned char *md, MD5_CTX * ctx)
+void MD5_Final(unsigned char *md, MD5_CTX *ctx)
 {
 	gnutls_hash_deinit(ctx->handle, md);
 }
@@ -824,20 +799,20 @@ unsigned char *MD5(const unsigned char *buf, unsigned long len,
 	return md;
 }
 
-void RIPEMD160_Init(RIPEMD160_CTX * ctx)
+void RIPEMD160_Init(RIPEMD160_CTX *ctx)
 {
 	int ret;
-	ret = gnutls_hash_init((void *) &ctx->handle, GNUTLS_DIG_RMD160);
+	ret = gnutls_hash_init((void *)&ctx->handle, GNUTLS_DIG_RMD160);
 	if (ret < 0)
 		abort();
 }
 
-void RIPEMD160_Update(RIPEMD160_CTX * ctx, const void *buf, int len)
+void RIPEMD160_Update(RIPEMD160_CTX *ctx, const void *buf, int len)
 {
 	gnutls_hash(ctx->handle, buf, len);
 }
 
-void RIPEMD160_Final(unsigned char *md, RIPEMD160_CTX * ctx)
+void RIPEMD160_Final(unsigned char *md, RIPEMD160_CTX *ctx)
 {
 	gnutls_hash_deinit(ctx->handle, md);
 }

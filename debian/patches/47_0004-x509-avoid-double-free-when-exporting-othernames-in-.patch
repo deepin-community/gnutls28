@@ -1,0 +1,57 @@
+From 608829769cbc247679ffe98841109fc73875e573 Mon Sep 17 00:00:00 2001
+From: Daiki Ueno <ueno@gnu.org>
+Date: Mon, 7 Jul 2025 10:44:12 +0900
+Subject: [PATCH 4/6] x509: avoid double free when exporting othernames in SAN
+
+Previously, the _gnutls_write_new_othername function, called by
+gnutls_x509_ext_export_subject_alt_names to export "otherName" in a
+certificate's SAN extension, freed the caller allocated ASN.1
+structure upon error, resulting in a potential double-free.
+
+Reported by OpenAI Security Research Team.
+
+Signed-off-by: Daiki Ueno <ueno@gnu.org>
+---
+ NEWS                  | 5 +++++
+ lib/x509/extensions.c | 2 --
+ 2 files changed, 5 insertions(+), 2 deletions(-)
+
+--- a/NEWS
++++ b/NEWS
+@@ -10,10 +10,13 @@ See the end for copying conditions.
+ ** libgnutls: Fix heap read buffer overrun in parsing X.509 SCTS timestamps
+    Spotted by oss-fuzz and reported by OpenAI Security Research Team,
+    and fix developed by Andrew Hamilton. [GNUTLS-SA-2025-07-07-1,
+    CVSS: medium] [CVE-2025-32989]
+ 
++** libgnutls: Fix double-free upon error when exporting otherName in SAN
++   Reported by OpenAI Security Research Team. [GNUTLS-SA-2025-07-07-2,
++   CVSS: low] [CVE-2025-32988]
+ 
+ * Version 3.8.9 (released 2025-02-07)
+ 
+ ** libgnutls: leancrypto was added as an interim option for PQC
+    The library can now be built with leancrypto instead of liboqs for
+--- a/lib/x509/extensions.c
++++ b/lib/x509/extensions.c
+@@ -752,20 +752,18 @@ int _gnutls_write_new_othername(asn1_nod
+ 	snprintf(name2, sizeof(name2), "%s.otherName.type-id", name);
+ 
+ 	result = asn1_write_value(ext, name2, oid, 1);
+ 	if (result != ASN1_SUCCESS) {
+ 		gnutls_assert();
+-		asn1_delete_structure(&ext);
+ 		return _gnutls_asn2err(result);
+ 	}
+ 
+ 	snprintf(name2, sizeof(name2), "%s.otherName.value", name);
+ 
+ 	result = asn1_write_value(ext, name2, data, data_size);
+ 	if (result != ASN1_SUCCESS) {
+ 		gnutls_assert();
+-		asn1_delete_structure(&ext);
+ 		return _gnutls_asn2err(result);
+ 	}
+ 
+ 	return 0;
+ }

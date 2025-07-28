@@ -30,43 +30,46 @@
 #include "krb5.h"
 #include "virt-san.h"
 
-static
-int san_othername_to_virtual(const char *oid, size_t size)
+static int san_othername_to_virtual(const char *oid, size_t size)
 {
 	if (oid) {
-		if ((unsigned) size == (sizeof(XMPP_OID)-1)
-		    && memcmp(oid, XMPP_OID, sizeof(XMPP_OID)-1) == 0)
+		if ((unsigned)size == (sizeof(XMPP_OID) - 1) &&
+		    memcmp(oid, XMPP_OID, sizeof(XMPP_OID) - 1) == 0)
 			return GNUTLS_SAN_OTHERNAME_XMPP;
-		else if ((unsigned) size == (sizeof(KRB5_PRINCIPAL_OID)-1)
-		    && memcmp(oid, KRB5_PRINCIPAL_OID, sizeof(KRB5_PRINCIPAL_OID)-1) == 0)
+		else if ((unsigned)size == (sizeof(KRB5_PRINCIPAL_OID) - 1) &&
+			 memcmp(oid, KRB5_PRINCIPAL_OID,
+				sizeof(KRB5_PRINCIPAL_OID) - 1) == 0)
 			return GNUTLS_SAN_OTHERNAME_KRB5PRINCIPAL;
-		else if ((unsigned) size == (sizeof(MSUSER_PRINCIPAL_NAME_OID)-1)
-		    && memcmp(oid, MSUSER_PRINCIPAL_NAME_OID, sizeof(MSUSER_PRINCIPAL_NAME_OID)-1) == 0)
+		else if ((unsigned)size ==
+				 (sizeof(MSUSER_PRINCIPAL_NAME_OID) - 1) &&
+			 memcmp(oid, MSUSER_PRINCIPAL_NAME_OID,
+				sizeof(MSUSER_PRINCIPAL_NAME_OID) - 1) == 0)
 			return GNUTLS_SAN_OTHERNAME_MSUSERPRINCIPAL;
 	}
 
 	return GNUTLS_SAN_OTHERNAME;
 }
 
-static
-const char * virtual_to_othername_oid(unsigned type)
+static const char *virtual_to_othername_oid(unsigned type)
 {
-	switch(type) {
-		case GNUTLS_SAN_OTHERNAME_XMPP:
-			return XMPP_OID;
-		case GNUTLS_SAN_OTHERNAME_KRB5PRINCIPAL:
-			return KRB5_PRINCIPAL_OID;
-		case GNUTLS_SAN_OTHERNAME_MSUSERPRINCIPAL:
-			return MSUSER_PRINCIPAL_NAME_OID;
-		default:
-			return NULL;
+	switch (type) {
+	case GNUTLS_SAN_OTHERNAME_XMPP:
+		return XMPP_OID;
+	case GNUTLS_SAN_OTHERNAME_KRB5PRINCIPAL:
+		return KRB5_PRINCIPAL_OID;
+	case GNUTLS_SAN_OTHERNAME_MSUSERPRINCIPAL:
+		return MSUSER_PRINCIPAL_NAME_OID;
+	default:
+		return NULL;
 	}
 }
 
-int _gnutls_alt_name_assign_virt_type(struct name_st *name, unsigned type, gnutls_datum_t *san, const char *othername_oid, unsigned raw)
+int _gnutls_alt_name_assign_virt_type(struct name_st *name, unsigned type,
+				      gnutls_datum_t *san,
+				      const char *othername_oid, unsigned raw)
 {
-	gnutls_datum_t encoded = {NULL, 0};
-	gnutls_datum_t xmpp = {NULL,0};
+	gnutls_datum_t encoded = { NULL, 0 };
+	gnutls_datum_t xmpp = { NULL, 0 };
 	int ret;
 
 	if (type < 1000) {
@@ -77,7 +80,7 @@ int _gnutls_alt_name_assign_virt_type(struct name_st *name, unsigned type, gnutl
 		gnutls_free(san->data);
 
 		if (othername_oid) {
-			name->othername_oid.data = (uint8_t *) othername_oid;
+			name->othername_oid.data = (uint8_t *)othername_oid;
 			name->othername_oid.size = strlen(othername_oid);
 		} else {
 			name->othername_oid.data = NULL;
@@ -89,39 +92,42 @@ int _gnutls_alt_name_assign_virt_type(struct name_st *name, unsigned type, gnutl
 		if (oid == NULL)
 			return gnutls_assert_val(GNUTLS_E_INVALID_REQUEST);
 
-		switch(type) {
-			case GNUTLS_SAN_OTHERNAME_XMPP:
+		switch (type) {
+		case GNUTLS_SAN_OTHERNAME_XMPP:
 
-				ret = gnutls_idna_map((char*)san->data, san->size, &xmpp, 0);
-				if (ret < 0)
-					return gnutls_assert_val(ret);
+			ret = gnutls_idna_map((char *)san->data, san->size,
+					      &xmpp, 0);
+			if (ret < 0)
+				return gnutls_assert_val(ret);
 
-				ret = _gnutls_x509_encode_string(ASN1_ETYPE_UTF8_STRING,
-					xmpp.data, xmpp.size, &encoded);
+			ret = _gnutls_x509_encode_string(ASN1_ETYPE_UTF8_STRING,
+							 xmpp.data, xmpp.size,
+							 &encoded);
 
-				gnutls_free(xmpp.data);
-				if (ret < 0)
-					return gnutls_assert_val(ret);
+			gnutls_free(xmpp.data);
+			if (ret < 0)
+				return gnutls_assert_val(ret);
 
-				name->type = GNUTLS_SAN_OTHERNAME;
-				name->san.data = encoded.data;
-				name->san.size = encoded.size;
-				name->othername_oid.data = (void*)gnutls_strdup(oid);
-				name->othername_oid.size = strlen(oid);
-				break;
+			name->type = GNUTLS_SAN_OTHERNAME;
+			name->san.data = encoded.data;
+			name->san.size = encoded.size;
+			name->othername_oid.data = (void *)gnutls_strdup(oid);
+			name->othername_oid.size = strlen(oid);
+			break;
 
-			case GNUTLS_SAN_OTHERNAME_KRB5PRINCIPAL:
-				ret = _gnutls_krb5_principal_to_der((char*)san->data, &name->san);
-				if (ret < 0)
-					return gnutls_assert_val(ret);
+		case GNUTLS_SAN_OTHERNAME_KRB5PRINCIPAL:
+			ret = _gnutls_krb5_principal_to_der((char *)san->data,
+							    &name->san);
+			if (ret < 0)
+				return gnutls_assert_val(ret);
 
-				name->othername_oid.data = (void*)gnutls_strdup(oid);
-				name->othername_oid.size = strlen(oid);
-				name->type = GNUTLS_SAN_OTHERNAME;
-				break;
+			name->othername_oid.data = (void *)gnutls_strdup(oid);
+			name->othername_oid.size = strlen(oid);
+			name->type = GNUTLS_SAN_OTHERNAME;
+			break;
 
-			default:
-				return gnutls_assert_val(GNUTLS_E_INVALID_REQUEST);
+		default:
+			return gnutls_assert_val(GNUTLS_E_INVALID_REQUEST);
 		}
 
 		gnutls_free(san->data);
@@ -144,7 +150,7 @@ int _gnutls_alt_name_assign_virt_type(struct name_st *name, unsigned type, gnutl
  *
  * Since: 3.3.8
  **/
-int gnutls_x509_othername_to_virtual(const char *oid, 
+int gnutls_x509_othername_to_virtual(const char *oid,
 				     const gnutls_datum_t *othername,
 				     unsigned int *virt_type,
 				     gnutls_datum_t *virt)
@@ -159,33 +165,33 @@ int gnutls_x509_othername_to_virtual(const char *oid,
 	if (virt_type)
 		*virt_type = type;
 
-	switch(type) {
-		case GNUTLS_SAN_OTHERNAME_XMPP:
-			ret = _gnutls_x509_decode_string
-				    (ASN1_ETYPE_UTF8_STRING, othername->data,
-				     othername->size, virt, 0);
-			if (ret < 0) {
-				gnutls_assert();
-				return ret;
-			}
-			return 0;
-		case GNUTLS_SAN_OTHERNAME_KRB5PRINCIPAL:
-			ret = _gnutls_krb5_der_to_principal(othername, virt);
-			if (ret < 0) {
-				gnutls_assert();
-				return ret;
-			}
-			return 0;
-		case GNUTLS_SAN_OTHERNAME_MSUSERPRINCIPAL:
-			ret = _gnutls_x509_decode_string
-				    (ASN1_ETYPE_UTF8_STRING, othername->data,
-				     othername->size, virt, 0);
-			if (ret < 0) {
-				gnutls_assert();
-				return ret;
-			}
-			return 0;
-		default:
-			return gnutls_assert_val(GNUTLS_E_INTERNAL_ERROR);
+	switch (type) {
+	case GNUTLS_SAN_OTHERNAME_XMPP:
+		ret = _gnutls_x509_decode_string(ASN1_ETYPE_UTF8_STRING,
+						 othername->data,
+						 othername->size, virt, 0);
+		if (ret < 0) {
+			gnutls_assert();
+			return ret;
+		}
+		return 0;
+	case GNUTLS_SAN_OTHERNAME_KRB5PRINCIPAL:
+		ret = _gnutls_krb5_der_to_principal(othername, virt);
+		if (ret < 0) {
+			gnutls_assert();
+			return ret;
+		}
+		return 0;
+	case GNUTLS_SAN_OTHERNAME_MSUSERPRINCIPAL:
+		ret = _gnutls_x509_decode_string(ASN1_ETYPE_UTF8_STRING,
+						 othername->data,
+						 othername->size, virt, 0);
+		if (ret < 0) {
+			gnutls_assert();
+			return ret;
+		}
+		return 0;
+	default:
+		return gnutls_assert_val(GNUTLS_E_INTERNAL_ERROR);
 	}
 }

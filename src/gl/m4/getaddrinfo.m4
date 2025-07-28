@@ -1,8 +1,10 @@
-# getaddrinfo.m4 serial 34
-dnl Copyright (C) 2004-2021 Free Software Foundation, Inc.
+# getaddrinfo.m4
+# serial 35
+dnl Copyright (C) 2004-2025 Free Software Foundation, Inc.
 dnl This file is free software; the Free Software Foundation
 dnl gives unlimited permission to copy and/or distribute it,
 dnl with or without modifications, as long as this notice is preserved.
+dnl This file is offered as-is, without any warranty.
 
 AC_DEFUN([gl_GETADDRINFO],
 [
@@ -41,7 +43,7 @@ AC_DEFUN([gl_GETADDRINFO],
     AC_CACHE_CHECK([for getaddrinfo in ws2tcpip.h and -lws2_32],
                    gl_cv_w32_getaddrinfo, [
       gl_cv_w32_getaddrinfo=no
-      am_save_LIBS="$LIBS"
+      gl_saved_LIBS="$LIBS"
       LIBS="$LIBS -lws2_32"
       AC_LINK_IFELSE([AC_LANG_PROGRAM([[
 #ifdef HAVE_WS2TCPIP_H
@@ -49,7 +51,7 @@ AC_DEFUN([gl_GETADDRINFO],
 #endif
 #include <stddef.h>
 ]], [[getaddrinfo(NULL, NULL, NULL, NULL);]])], [gl_cv_w32_getaddrinfo=yes])
-      LIBS="$am_save_LIBS"
+      LIBS="$gl_saved_LIBS"
     ])
     if test "$gl_cv_w32_getaddrinfo" = "yes"; then
       GETADDRINFO_LIB="-lws2_32"

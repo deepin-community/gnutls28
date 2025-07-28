@@ -20,7 +20,7 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#include "config.h"
 #endif
 
 #include <stdio.h>
@@ -164,12 +164,13 @@ static void tls_log_func(int level, const char *str)
 	fprintf(stderr, "%s |<%d>| %s", "err", level, str);
 }
 
-#define CHECK(X)\
-{\
-	r = X;\
-	if (r < 0)\
-		fail("error in %d: %s\n", __LINE__, gnutls_strerror(r));\
-}\
+#define CHECK(X)                                            \
+	{                                                   \
+		r = X;                                      \
+		if (r < 0)                                  \
+			fail("error in %d: %s\n", __LINE__, \
+			     gnutls_strerror(r));           \
+	}
 
 void doit(void)
 {
@@ -181,14 +182,16 @@ void doit(void)
 	gnutls_pkcs7_t pkcs7 = NULL;
 	gnutls_datum_t data = { (unsigned char *)"xxx", 3 };
 
+	global_init();
+
 	if (debug) {
 		gnutls_global_set_log_function(tls_log_func);
 		gnutls_global_set_log_level(4711);
 	}
-
 	// Import certificates
 	CHECK(gnutls_x509_crt_init(&rca_cert));
-	CHECK(gnutls_x509_crt_import(rca_cert, &rca_datum, GNUTLS_X509_FMT_PEM));
+	CHECK(gnutls_x509_crt_import(rca_cert, &rca_datum,
+				     GNUTLS_X509_FMT_PEM));
 	CHECK(gnutls_x509_crt_init(&ca_cert));
 	CHECK(gnutls_x509_crt_import(ca_cert, &ca_datum, GNUTLS_X509_FMT_PEM));
 	CHECK(gnutls_x509_crt_init(&ee_cert));
@@ -196,7 +199,8 @@ void doit(void)
 
 	// Setup trust store
 	CHECK(gnutls_x509_trust_list_init(&tlist, 0));
-	CHECK(gnutls_x509_trust_list_add_named_crt(tlist, rca_cert, "rca", 3, 0));
+	CHECK(gnutls_x509_trust_list_add_named_crt(tlist, rca_cert, "rca", 3,
+						   0));
 	CHECK(gnutls_x509_trust_list_add_named_crt(tlist, ca_cert, "ca", 2, 0));
 	CHECK(gnutls_x509_trust_list_add_named_crt(tlist, ee_cert, "ee", 2, 0));
 
@@ -212,4 +216,6 @@ void doit(void)
 	gnutls_x509_crt_deinit(ee_cert);
 	gnutls_x509_trust_list_deinit(tlist, 0);
 	gnutls_pkcs7_deinit(pkcs7);
+
+	gnutls_global_deinit();
 }

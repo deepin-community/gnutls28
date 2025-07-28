@@ -2,8 +2,9 @@
 
 |Branch|CI system|Status|Test suite coverage|Fuzzer coverage|
 |:----:|:-------:|-----:|:------:|:-------------:|
-|Master/3.7.x|Gitlab|[![build status](https://gitlab.com/gnutls/gnutls/badges/master/pipeline.svg)](https://gitlab.com/gnutls/gnutls/commits/master)|[![coverage report](https://gitlab.com/gnutls/gnutls/badges/master/coverage.svg)](https://gnutls.gitlab.io/coverage/master)|[![Fuzzer coverage report](https://gnutls.gitlab.io/coverage/master-fuzz/badge.svg)](https://gnutls.gitlab.io/coverage/master-fuzz)|
-|Master/3.7.x|Github Actions|[![build status](https://github.com/gnutls/gnutls/workflows/MacOS%20CI/badge.svg)](https://github.com/gnutls/gnutls/actions)|N/A|N/A|
+|Master/3.8.x|Gitlab|[![build status](https://gitlab.com/gnutls/gnutls/badges/master/pipeline.svg)](https://gitlab.com/gnutls/gnutls/commits/master)|[![coverage report](https://gitlab.com/gnutls/gnutls/badges/master/coverage.svg)](https://gnutls.gitlab.io/coverage/master)|[![Fuzzer coverage report](https://gnutls.gitlab.io/coverage/master-fuzz/badge.svg)](https://gnutls.gitlab.io/coverage/master-fuzz)|
+|Master/3.8.x|Github Actions|[![build status](https://github.com/gnutls/gnutls/workflows/MacOS%20CI/badge.svg)](https://github.com/gnutls/gnutls/actions)|N/A|N/A|
+|3.7.x|Gitlab|[![build status](https://gitlab.com/gnutls/gnutls/badges/gnutls_3_7_x/pipeline.svg)](https://gitlab.com/gnutls/gnutls/commits/gnutls_3_7_x)|N/A|N/A|
 |3.6.x|Gitlab|[![build status](https://gitlab.com/gnutls/gnutls/badges/gnutls_3_6_x/pipeline.svg)](https://gitlab.com/gnutls/gnutls/commits/gnutls_3_6_x)|N/A|N/A|
 
 
@@ -33,7 +34,6 @@ We require several tools to check out and build the software, including:
 * [Git](https://git-scm.com/)
 * [Perl](https://www.cpan.org/)
 * [Nettle](https://www.lysator.liu.se/~nisse/nettle/)
-* [Guile](https://www.gnu.org/software/guile/)
 * [p11-kit](https://p11-glue.github.io/p11-glue/p11-kit.html)
 * [gperf](https://www.gnu.org/software/gperf/)
 * [libtasn1](https://www.gnu.org/software/libtasn1/) (optional)
@@ -60,19 +60,19 @@ Debian/Ubuntu:
 ```
 apt-get install -y dash git-core autoconf libtool gettext autopoint
 apt-get install -y automake python3 nettle-dev libp11-kit-dev libtspi-dev libunistring-dev
-apt-get install -y guile-2.2-dev libtasn1-bin libtasn1-6-dev libidn2-0-dev gawk gperf
+apt-get install -y libtasn1-bin libtasn1-6-dev libidn2-0-dev gawk gperf
 apt-get install -y libtss2-dev libunbound-dev dns-root-data bison gtk-doc-tools
-apt-get install -y texinfo texlive texlive-generic-recommended texlive-extra-utils
+apt-get install -y texinfo texlive texlive-plain-generic texlive-extra-utils
 ```
 
 __NOTE:__ Some software versions might not be available in older releases, e.g. `nettle-dev`. 
-Available backport repos, APT-Pinning or source code compilating can be used to install these versions (and dependencies) from a newer release.
+Available backport repos, APT-Pinning or source code compiling can be used to install these versions (and dependencies) from a newer release.
 
 Fedora/RHEL:
 ```
 yum install -y dash git autoconf libtool gettext-devel automake patch
 yum install -y nettle-devel p11-kit-devel libunistring-devel
-yum install -y tpm2-tss-devel trousers-devel guile22-devel libtasn1-devel libidn2-devel gawk gperf
+yum install -y tpm2-tss-devel trousers-devel libtasn1-devel libidn2-devel gawk gperf
 yum install -y libtasn1-tools unbound-devel bison gtk-doc texinfo texlive
 ```
 
@@ -85,7 +85,8 @@ and mbedtls.
 
 * [Valgrind](https://valgrind.org/) (optional)
 * [Libasan](https://gcc.gnu.org//) (optional)
-* [datefudge](https://packages.debian.org/datefudge) (optional)
+* [faketime](https://github.com/wolfcw/libfaketime) (preferred) or
+  [datefudge](https://packages.debian.org/datefudge) (optional)
 * [nodejs](https://nodejs.org/) (needed for certain test cases)
 * [softhsm](https://www.opendnssec.org/softhsm/) (for testing smart card support)
 * [dieharder](https://www.phy.duke.edu/~rgb/General/dieharder.php) (for testing PRNG)
@@ -95,7 +96,7 @@ and mbedtls.
 
 Debian/Ubuntu:
 ```
-apt-get install -y valgrind nodejs softhsm2 datefudge lcov libssl-dev libcmocka-dev expect libev-dev
+apt-get install -y valgrind nodejs softhsm2 faketime lcov libssl-dev libcmocka-dev expect libev-dev
 apt-get install -y dieharder openssl abigail-tools socat net-tools ppp util-linux
 ```
 
@@ -107,7 +108,7 @@ apt-get install -y v libubsan0 libasan1
 
 Fedora/RHEL:
 ```
-yum install -y valgrind libasan libasan-static libubsan nodejs softhsm datefudge lcov openssl-devel expect libev-devel
+yum install -y valgrind libasan libasan-static libubsan nodejs softhsm faketime lcov openssl-devel expect libev-devel
 yum install -y dieharder mbedtls-utils openssl libabigail libcmocka-devel socat util-linux
 ```
 
@@ -176,6 +177,32 @@ phase is on every commit to gnutls project.
 
 The Travis based CI, is used to test compilation on MacOSX based systems.
 
+
+# Licensing
+
+The GnuTLS distribution consists of the main libraries (libgnutls and
+libdane, located in the lib/ and libdane/ directories), gnutls-openssl
+extra library (in the extra/ directory), applications (in the src/
+directory), tests (in the tests/ directory) and documentation.
+
+Since GnuTLS version 3.1.10, the main libraries are released under the
+GNU Lesser General Public License version 2.1 or later (LGPLv2+, see
+COPYING.LESSERv2 for the license terms), while the others are under
+the GNU General Public License version 3 or later (GPLv3+, see COPYING
+for the license terms), unless otherwise specified in the indivual
+source files.
+
+The documentation in the doc/ directory is under the GNU Free
+Documentation License version 1.3 or later (GFDLv1.3+).
+
+
+Note, however, that the nettle and the gmp libraries which are GnuTLS
+dependencies, are distributed under a LGPLv3+ or GPLv2+ dual
+license. As such binaries linking to them need to adhere to either
+LGPLv3+ or the GPLv2+ license.
+
+For any copyright year range specified as YYYY-ZZZZ in this package
+note that the range specifies every single year in that closed interval.
 
 # Contributing
 

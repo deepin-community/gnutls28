@@ -20,7 +20,7 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#include "config.h"
 #endif
 
 #include <stdbool.h>
@@ -49,7 +49,8 @@ static void tls_log_func(int level, const char *str)
 }
 
 #define MAX_BUF 1024
-#define MSG "Hello TLS, and hi and how are you and more data here... and more... and even more and even more more data..."
+#define MSG \
+	"Hello TLS, and hi and how are you and more data here... and more... and even more and even more more data..."
 
 /* These must match the definitions in lib/tls13/key_update.c. */
 #define KEY_UPDATES_WINDOW 1000
@@ -59,7 +60,8 @@ static unsigned key_update_msg_inc = 0;
 static unsigned key_update_msg_out = 0;
 
 static int hsk_callback(gnutls_session_t session, unsigned int htype,
-			unsigned post, unsigned int incoming, const gnutls_datum_t *msg)
+			unsigned post, unsigned int incoming,
+			const gnutls_datum_t *msg)
 {
 	assert(post == GNUTLS_HOOK_PRE);
 
@@ -91,24 +93,15 @@ static void run(const char *name, bool exceed_limit)
 
 	success("%s\n", name);
 
-	/* General init. */
-	global_init();
-	gnutls_global_set_log_function(tls_log_func);
-	if (debug)
-		gnutls_global_set_log_level(9);
-
 	/* Init server */
 	assert(gnutls_certificate_allocate_credentials(&scred) >= 0);
-	assert(gnutls_certificate_set_x509_key_mem(scred,
-						   &server_ca3_localhost_cert,
-						   &server_ca3_key,
-						   GNUTLS_X509_FMT_PEM) >= 0);
+	assert(gnutls_certificate_set_x509_key_mem(
+		       scred, &server_ca3_localhost_cert, &server_ca3_key,
+		       GNUTLS_X509_FMT_PEM) >= 0);
 
 	assert(gnutls_init(&server, GNUTLS_SERVER) >= 0);
-	ret =
-	    gnutls_priority_set_direct(server,
-				       "NORMAL:-VERS-TLS-ALL:+VERS-TLS1.3",
-				       NULL);
+	ret = gnutls_priority_set_direct(
+		server, "NORMAL:-VERS-TLS-ALL:+VERS-TLS1.3", NULL);
 	if (ret < 0)
 		exit(1);
 
@@ -119,14 +112,12 @@ static void run(const char *name, bool exceed_limit)
 
 	/* Init client */
 	assert(gnutls_certificate_allocate_credentials(&ccred) >= 0);
-	assert(gnutls_certificate_set_x509_trust_mem
-	       (ccred, &ca3_cert, GNUTLS_X509_FMT_PEM) >= 0);
+	assert(gnutls_certificate_set_x509_trust_mem(ccred, &ca3_cert,
+						     GNUTLS_X509_FMT_PEM) >= 0);
 
 	gnutls_init(&client, GNUTLS_CLIENT);
-	ret =
-	    gnutls_priority_set_direct(client,
-				       "NORMAL:-VERS-TLS-ALL:+VERS-TLS1.3",
-				       NULL);
+	ret = gnutls_priority_set_direct(
+		client, "NORMAL:-VERS-TLS-ALL:+VERS-TLS1.3", NULL);
 	assert(ret >= 0);
 
 	ret = gnutls_credentials_set(client, GNUTLS_CRD_CERTIFICATE, ccred);
@@ -137,7 +128,6 @@ static void run(const char *name, bool exceed_limit)
 	gnutls_transport_set_pull_function(client, client_pull);
 	gnutls_transport_set_ptr(client, client);
 
-
 	HANDSHAKE(client, server);
 	if (debug)
 		success("Handshake established\n");
@@ -145,7 +135,8 @@ static void run(const char *name, bool exceed_limit)
 	key_update_msg_inc = 0;
 	key_update_msg_out = 0;
 
-	gnutls_handshake_set_hook_function(client, -1, GNUTLS_HOOK_PRE, hsk_callback);
+	gnutls_handshake_set_hook_function(client, -1, GNUTLS_HOOK_PRE,
+					   hsk_callback);
 
 	/* schedule multiple key updates */
 	for (i = 0; i < KEY_UPDATES_PER_WINDOW; i++) {
@@ -163,7 +154,7 @@ static void run(const char *name, bool exceed_limit)
 
 	if (key_update_msg_out != KEY_UPDATES_PER_WINDOW)
 		fail("unexpected number of key updates are sent: %d\n",
-			key_update_msg_out);
+		     key_update_msg_out);
 	else {
 		if (debug)
 			success("successfully sent %d key updates\n",
@@ -171,7 +162,7 @@ static void run(const char *name, bool exceed_limit)
 	}
 	if (key_update_msg_inc != 1)
 		fail("unexpected number of key updates received: %d\n",
-			key_update_msg_inc);
+		     key_update_msg_inc);
 	else {
 		if (debug)
 			success("successfully received 1 key update\n");
@@ -219,14 +210,21 @@ static void run(const char *name, bool exceed_limit)
 	gnutls_certificate_free_credentials(scred);
 	gnutls_certificate_free_credentials(ccred);
 
-	gnutls_global_deinit();
 	reset_buffers();
 }
 
 void doit(void)
 {
+	/* General init. */
+	global_init();
+	gnutls_global_set_log_function(tls_log_func);
+	if (debug)
+		gnutls_global_set_log_level(9);
+
 	virt_time_init();
 
 	run("not exceeding limit", 0);
 	run("exceeding limit", 1);
+
+	gnutls_global_deinit();
 }

@@ -1,24 +1,15 @@
 /* Elementary Unicode string functions.
-   Copyright (C) 2001-2002, 2005-2021 Free Software Foundation, Inc.
+   Copyright (C) 2001-2002, 2005-2025 Free Software Foundation, Inc.
 
-   This program is free software: you can redistribute it and/or
-   modify it under the terms of either:
+   This file is free software: you can redistribute it and/or modify
+   it under the terms of the GNU Lesser General Public License as
+   published by the Free Software Foundation; either version 2.1 of the
+   License, or (at your option) any later version.
 
-     * the GNU Lesser General Public License as published by the Free
-       Software Foundation; either version 3 of the License, or (at your
-       option) any later version.
-
-   or
-
-     * the GNU General Public License as published by the Free
-       Software Foundation; either version 2 of the License, or (at your
-       option) any later version.
-
-   or both in parallel, as here.
-   This program is distributed in the hope that it will be useful,
+   This file is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-   Lesser General Public License for more details.
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU Lesser General Public License for more details.
 
    You should have received a copy of the GNU Lesser General Public License
    along with this program.  If not, see <https://www.gnu.org/licenses/>.  */
@@ -28,14 +19,14 @@
 
 #include "unitypes.h"
 
-/* Get common macros for C.  */
-#include "unused-parameter.h"
-
 /* Get bool.  */
 #include <stdbool.h>
 
 /* Get size_t, ptrdiff_t.  */
 #include <stddef.h>
+
+/* Get free().  */
+#include <stdlib.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -202,7 +193,7 @@ extern int
 # else
 static inline int
 u32_mbtouc_unsafe (ucs4_t *puc,
-                   const uint32_t *s, size_t n _GL_UNUSED_PARAMETER)
+                   const uint32_t *s, _GL_ATTRIBUTE_MAYBE_UNUSED size_t n)
 {
   uint32_t c = *s;
 
@@ -268,7 +259,8 @@ extern int
        u32_mbtouc (ucs4_t *puc, const uint32_t *s, size_t n);
 # else
 static inline int
-u32_mbtouc (ucs4_t *puc, const uint32_t *s, size_t n _GL_UNUSED_PARAMETER)
+u32_mbtouc (ucs4_t *puc, const uint32_t *s,
+            _GL_ATTRIBUTE_MAYBE_UNUSED size_t n)
 {
   uint32_t c = *s;
 
@@ -387,6 +379,15 @@ extern uint16_t *
        u16_cpy (uint16_t *_UC_RESTRICT dest, const uint16_t *src, size_t n);
 extern uint32_t *
        u32_cpy (uint32_t *_UC_RESTRICT dest, const uint32_t *src, size_t n);
+
+/* Copy N units from SRC to DEST, returning pointer after last written unit.  */
+/* Similar to mempcpy().  */
+extern uint8_t *
+       u8_pcpy (uint8_t *_UC_RESTRICT dest, const uint8_t *src, size_t n);
+extern uint16_t *
+       u16_pcpy (uint16_t *_UC_RESTRICT dest, const uint16_t *src, size_t n);
+extern uint32_t *
+       u32_pcpy (uint32_t *_UC_RESTRICT dest, const uint32_t *src, size_t n);
 
 /* Copy N units from SRC to DEST, guaranteeing correct behavior for
    overlapping memory areas.  */
@@ -635,11 +636,14 @@ extern int
 /* Duplicate S, returning an identical malloc'd string.  */
 /* Similar to strdup(), wcsdup().  */
 extern uint8_t *
-       u8_strdup (const uint8_t *s);
+       u8_strdup (const uint8_t *s)
+       _GL_ATTRIBUTE_MALLOC _GL_ATTRIBUTE_DEALLOC_FREE;
 extern uint16_t *
-       u16_strdup (const uint16_t *s);
+       u16_strdup (const uint16_t *s)
+       _GL_ATTRIBUTE_MALLOC _GL_ATTRIBUTE_DEALLOC_FREE;
 extern uint32_t *
-       u32_strdup (const uint32_t *s);
+       u32_strdup (const uint32_t *s)
+       _GL_ATTRIBUTE_MALLOC _GL_ATTRIBUTE_DEALLOC_FREE;
 
 /* Find the first occurrence of UC in STR.  */
 /* Similar to strchr(), wcschr().  */

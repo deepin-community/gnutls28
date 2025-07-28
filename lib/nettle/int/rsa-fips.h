@@ -16,9 +16,7 @@
  * License for more details.
  * 
  * You should have received a copy of the GNU Lesser General Public License
- * along with the nettle library; see the file COPYING.LIB.  If not, write to
- * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
- * MA 02111-1301, USA.
+ * along with the nettle library.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 #ifndef GNUTLS_LIB_NETTLE_INT_RSA_FIPS_H
@@ -26,24 +24,21 @@
 
 #include <nettle/rsa.h>
 
-int
-_rsa_generate_fips186_4_keypair(struct rsa_public_key *pub,
-				struct rsa_private_key *key,
-				unsigned seed_length, uint8_t * seed,
-				void *progress_ctx,
-				nettle_progress_func * progress,
-				/* Desired size of modulo, in bits */
-				unsigned n_size);
+int _rsa_generate_fips186_4_keypair(struct rsa_public_key *pub,
+				    struct rsa_private_key *key,
+				    unsigned seed_length, uint8_t *seed,
+				    void *progress_ctx,
+				    nettle_progress_func *progress,
+				    /* Desired size of modulo, in bits */
+				    unsigned n_size);
 
-int
-rsa_generate_fips186_4_keypair(struct rsa_public_key *pub,
-			       struct rsa_private_key *key,
-			       void *random_ctx, nettle_random_func * random,
-			       void *progress_ctx,
-			       nettle_progress_func * progress,
-			       unsigned *rseed_size,
-			       void *rseed,
-			       /* Desired size of modulo, in bits */
-			       unsigned n_size);
+int rsa_generate_fips186_4_keypair(struct rsa_public_key *pub,
+				   struct rsa_private_key *key,
+				   void *random_ctx, nettle_random_func *random,
+				   void *progress_ctx,
+				   nettle_progress_func *progress,
+				   unsigned *rseed_size, void *rseed,
+				   /* Desired size of modulo, in bits */
+				   unsigned n_size);
 
 #endif /* GNUTLS_LIB_NETTLE_INT_RSA_FIPS_H */
