@@ -1,3 +1,15 @@
+gnutls28 (3.7.9-2+deb12u6) bookworm-security; urgency=medium
+
+  * SECURITY UPDATE: No action required for bookworm.
+  * gnutls28 3.7.x (bookworm) is NOT affected by CVE-2026-1584.
+  * The vulnerable retry_binder code path was introduced in gnutls 3.8.11
+    (commit 33034a91) and fixed in 3.8.12 (commit acf67a4a6).
+  * The bookworm baseline (3.7.9-2+deb12u5) does not contain this code.
+  * Reference: https://security-tracker.debian.org/tracker/CVE-2026-1584
+  * GitLab upstream fix: https://gitlab.com/gnutls/gnutls/-/commit/acf67a4a68bc6d9ab7b882469c67f6cf28db56a0
+
+ -- DeepIn Security <security@deepin.org>  Tue, 14 Apr 2026 19:00:00 +0800
+
 gnutls28 (3.7.9-2+deb12u5deepin2) unstable; urgency=medium
 
   * pkcs11: avoid stack overwrite when initializing a token
