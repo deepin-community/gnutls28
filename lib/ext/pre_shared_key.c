@@ -849,6 +849,8 @@ static int _gnutls_psk_recv_params(gnutls_session_t session,
 
 	if (session->security_parameters.entity == GNUTLS_CLIENT) {
 		if (session->internals.hsk_flags & HSK_PSK_KE_MODES_SENT) {
+			DECR_LEN(len, 2);
+			
 			uint16_t selected_identity = _gnutls_read_uint16(data);
 
 			for (i=0;i<sizeof(session->key.binders)/sizeof(session->key.binders[0]);i++) {
@@ -887,9 +889,8 @@ static int _gnutls_psk_recv_params(gnutls_session_t session,
 			pskcred = (gnutls_psk_server_credentials_t)
 					_gnutls_get_cred(session, GNUTLS_CRD_PSK);
 
-			/* If there are no PSK credentials, this extension is not applicable,
-			 * so we return zero. */
-			if (pskcred == NULL && (session->internals.flags & GNUTLS_NO_TICKETS))
+			/* If there are no PSK credentials or tickets, this extension is not applicable. */
+			if (pskcred == NULL || (session->internals.flags & GNUTLS_NO_TICKETS))
 				return 0;
 
 			return server_recv_params(session, data, len, pskcred);

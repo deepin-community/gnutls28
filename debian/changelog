@@ -1,3 +1,11 @@
+gnutls28 (3.7.9-2+deb12u5deepin3) unstable; urgency=medium
+
+  * lib/ext/pre_shared_key: add NULL check on pskcred to prevent
+    NULL pointer dereference when handling PSK extension without
+    server credentials configured. Fixes CVE-2026-1584.
+
+ -- Security Team <security@deepin.io>  Tue, 14 Apr 2026 17:00:00 +0800
+
 gnutls28 (3.7.9-2+deb12u5deepin2) unstable; urgency=medium
 
   * pkcs11: avoid stack overwrite when initializing a token
