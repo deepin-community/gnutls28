@@ -1,0 +1,26 @@
+From 9649e899b677fdd945bf8f4f67b3f9f25cea314a Mon Sep 17 00:00:00 2001
+From: Alexander Sosedkin <asosedkin@redhat.com>
+Date: Tue, 14 Apr 2026 18:25:13 +0200
+Subject: [PATCH 2/2] src/cfg: avoid a data leak in clear_options, on the error
+ path
+
+Signed-off-by: Alexander Sosedkin <asosedkin@redhat.com>
+---
+ src/cfg.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+--- a/src/cfg.c
++++ b/src/cfg.c
+@@ -383,10 +383,12 @@ static void
+ clear_options(struct options_st *options)
+ {
+ 	for (size_t i = 0; i < options->length; i++) {
+ 		clear_option(&options->data[i]);
+ 	}
++	free(options->data);
++	memset(options, 0, sizeof(struct options_st));
+ }
+ 
+ cfg_option_t
+ cfg_load(const char *filename)
+ {

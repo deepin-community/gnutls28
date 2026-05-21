@@ -1,0 +1,59 @@
+From 2a03da0d3d901dd4b5c87876f1903322114f8f74 Mon Sep 17 00:00:00 2001
+From: Alexander Sosedkin <asosedkin@redhat.com>
+Date: Mon, 13 Apr 2026 18:42:56 +0200
+Subject: [PATCH] lib/x509/x509_ext: avoid a heap overread in SCT extension
+ parser
+
+Parsing a specially crafted SCT extension could previously lead to
+a short heap overread.
+The list-length validation didn't account for the 2-byte length field.
+
+The fix now accounts for the header field length,
+ensuring the parsing stays within the buffer.
+
+Fixes: #1822
+Reported-by: Joshua Rogers of AISLE Research Team <joshua@joshua.hu>
+Signed-off-by: Alexander Sosedkin <asosedkin@redhat.com>
+---
+ lib/x509/x509_ext.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/lib/x509/x509_ext.c b/lib/x509/x509_ext.c
+index 33a4c913e..f5cabe3b6 100644
+--- a/lib/x509/x509_ext.c
++++ b/lib/x509/x509_ext.c
+@@ -3758,13 +3758,13 @@ int gnutls_x509_ext_ct_import_scts(const gnutls_datum_t *ext,
+ 	if (retval < 0)
+ 		return gnutls_assert_val(retval);
+ 
+-	if (scts_content.size < 2) {
++	if (scts_content.size < sizeof(uint16_t)) {
+ 		gnutls_free(scts_content.data);
+ 		return GNUTLS_E_REQUESTED_DATA_NOT_AVAILABLE;
+ 	}
+ 
+ 	length = _gnutls_read_uint16(scts_content.data);
+-	if (length < 4 || length > scts_content.size) {
++	if (length < 4 || length > scts_content.size - sizeof(uint16_t)) {
+ 		gnutls_free(scts_content.data);
+ 		return GNUTLS_E_REQUESTED_DATA_NOT_AVAILABLE;
+ 	}
+@@ -3775,12 +3775,12 @@ int gnutls_x509_ext_ct_import_scts(const gnutls_datum_t *ext,
+ 			break;
+ 
+ 		sct_length = _gnutls_read_uint16(ptr);
+-		if (sct_length == 0 || sct_length > length)
+-			break;
+-
+ 		ptr += sizeof(uint16_t);
+ 		length -= sizeof(uint16_t);
+ 
++		if (sct_length == 0 || sct_length > length)
++			break;
++
+ 		/*
+ 		 * _gnutls_parse_ct_sct() will try to read exactly sct_length bytes,
+ 		 * returning an error if it can't
+-- 
+2.53.0
+

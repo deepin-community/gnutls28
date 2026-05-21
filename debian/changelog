@@ -1,29 +1,32 @@
-gnutls28 (3.7.9-2+deb12u5deepin3) unstable; urgency=high
+gnutls28 (3.7.9-2+deb12u7) bookworm-security; urgency=high
 
-  * Fix CVE-2026-33845: DTLS handshake reassembly heap overrun (CVSS 7.5
-    High)
-  * Fix CVE-2026-33846: DTLS reassembly consistency checks (CVSS 7.5
-    High)
-  * Fix CVE-2026-42010: RSA-PSK binary PSK identity lookup (CVSS 7.1
-    High)
-  * Fix CVE-2026-42009: DTLS datagram sequence number matching
-  * Fix CVE-2026-42011: X.509 name constraints intersecting empty
-    constraints (CVSS 4.8)
+  * Cherry-pick fixes from 3.8.13 release for oldstable.
+    + This includes fixes for these issues: CVE-2026-3833 CVE-2026-5260
+      CVE-2026-5419 CVE-2026-33845 CVE-2026-33846 CVE-2026-42009
+      CVE-2026-42010 CVE-2026-42011 CVE-2026-42012 CVE-2026-42013
+      CVE-2026-42014 CVE-2026-42015.
+    + CVE-2026-3832 only applied to release 3.8.9 and later, no patch needed.
+    + Patchset pulled from CentOS c8s (3.6.16), split into patchlets, unfuzzed,
+      adapted for 3.7 (adds
+      72_0015_gnutls-3.6.16-1810-ocsp-truncated-eku.10.patch). Also added
+      those patches from CentOS c9s (3.8.10) that are relevant for 3.7.9 (but
+      where not for 3.6.16).
+    Closes: #1135319
 
- -- lichenggang <lichenggang@uniontech.com>  Wed, 13 May 2026 11:41:32 +0800
+ -- Andreas Metzler <ametzler@debian.org>  Fri, 15 May 2026 13:57:52 +0200
 
-gnutls28 (3.7.9-2+deb12u5deepin2) unstable; urgency=medium
+gnutls28 (3.7.9-2+deb12u6) bookworm-security; urgency=high
 
-  * pkcs11: avoid stack overwrite when initializing a token
-    [CVE-2025-9820]
+  * Add patch for CVE-2025-9820 / GNUTLS-SA-2025-11-18 from 3.8.11.
+    Closes: #1121146
+  * libgnutls: Fix name constraint processing performance issue
+    Verifying certificates with pathological amounts of name constraints
+    could lead to a denial of service attack via resource exhaustion.
+    Reworked processing algorithms exhibit better performance
+    characteristics. Reported by Tim Scheckenbach.
+    [Fixes: GNUTLS-SA-2026-02-09-2, CVSS: medium] [CVE-2025-14831]
 
- -- Tianyu Chen <sweetyfish@deepin.org>  Wed, 04 Feb 2026 15:13:40 +0800
-
-gnutls28 (3.7.9-2+deb12u5deepin1) unstable; urgency=medium
-
-  * add support for Hygon Genuine CPUs in x86 acceleration.
-
- -- xinpeng.wang <wangxinpeng@uniontech.com>  Wed, 14 Jan 2026 14:00:16 +0800
+ -- Andreas Metzler <ametzler@debian.org>  Sat, 14 Feb 2026 15:49:14 +0100
 
 gnutls28 (3.7.9-2+deb12u5) bookworm-security; urgency=medium
 

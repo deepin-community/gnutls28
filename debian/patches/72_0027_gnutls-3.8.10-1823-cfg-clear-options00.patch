@@ -1,0 +1,33 @@
+From 055b2c742d6faf44c2fdaaa7e37c744a01856abc Mon Sep 17 00:00:00 2001
+From: Alexander Sosedkin <asosedkin@redhat.com>
+Date: Tue, 14 Apr 2026 18:21:19 +0200
+Subject: [PATCH 1/2] src/cfg: fix iterating in clear_options, on the error
+ path
+
+Calling testing tools bundled with GnuTLS with malformed arguments
+could lead to crashing them.
+This change makes the error path of option parsing more robust.
+
+Fixes: #1823
+Reported-by: Joshua Rogers of AISLE Research Team <joshua@joshua.hu>
+Co-authored-by: Joshua Rogers of AISLE Research Team <joshua@joshua.hu>
+Signed-off-by: Alexander Sosedkin <asosedkin@redhat.com>
+---
+ src/cfg.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/src/cfg.c
++++ b/src/cfg.c
+@@ -380,11 +380,11 @@ take_option(struct options_st *options,
+ }
+ 
+ static void
+ clear_options(struct options_st *options)
+ {
+-	for (size_t i = 0; options->length; i++) {
++	for (size_t i = 0; i < options->length; i++) {
+ 		clear_option(&options->data[i]);
+ 	}
+ }
+ 
+ cfg_option_t

@@ -1,0 +1,40 @@
+From c28475413f82e1f34295d5c039f0c0a4ca2ee526 Mon Sep 17 00:00:00 2001
+From: Alexander Sosedkin <asosedkin@redhat.com>
+Date: Mon, 26 Jan 2026 20:14:33 +0100
+Subject: [PATCH 3/9] x509/name_constraints: reject some malformed domain names
+
+Signed-off-by: Alexander Sosedkin <asosedkin@redhat.com>
+---
+ lib/x509/name_constraints.c | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
+
+--- a/lib/x509/name_constraints.c
++++ b/lib/x509/name_constraints.c
+@@ -160,10 +160,27 @@ static int validate_name_constraints_nod
+ 		int prefix = _gnutls_mask_to_prefix(name->data + name->size/2, name->size/2);
+ 		if (prefix < 0)
+ 			return gnutls_assert_val(GNUTLS_E_MALFORMED_CIDR);
+ 	}
+ 
++	/* Validate DNS names and email addresses for malformed input */
++	if (type == GNUTLS_SAN_DNSNAME || type == GNUTLS_SAN_RFC822NAME) {
++		unsigned int i;
++		if (name->size == 0)
++			return GNUTLS_E_SUCCESS;
++
++		/* reject names with consecutive dots... */
++		for (i = 0; i + 1 < name->size; i++) {
++			if (name->data[i] == '.' && name->data[i + 1] == '.')
++				return gnutls_assert_val(
++					GNUTLS_E_ILLEGAL_PARAMETER);
++		}
++		/* ... or names consisting exclusively of dots */
++		if (name->size == 1 && name->data[0] == '.')
++			return gnutls_assert_val(GNUTLS_E_ILLEGAL_PARAMETER);
++	}
++
+ 	return GNUTLS_E_SUCCESS;
+ }
+ 
+ static int extract_name_constraints(gnutls_x509_name_constraints_t nc,
+ 				    asn1_node c2, const char *vstr,

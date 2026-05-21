@@ -1,0 +1,679 @@
+From aa5f15a872e62e54abe58624ee393e68d1faf689 Mon Sep 17 00:00:00 2001
+From: Daiki Ueno <ueno@gnu.org>
+Date: Tue, 2 Sep 2025 06:53:34 +0900
+Subject: [PATCH] pkcs11: try to initialize modules in thread-safe mode
+
+When modules are initialized without CKF_OS_LOCKING_OK nor custom
+locking functions, they may skip their internal locking assuming that
+the applications will take care of thread-safety, which is costly and
+GnuTLS currently doesn't do that.
+
+To mitigate this, this patch changes the module initialization code to
+tell the modules to guarantee thread-safety by themselves. If they are
+unable to do that, this falls back to the normal initialization
+without C_Initialize parameters. This also omits the custom_init flag,
+which indicated whether the module is initialized with
+p11_kit_module_initialize or a direct call to C_Initialize, now that
+modules are always initialized with C_Initialize.
+
+Signed-off-by: Daiki Ueno <ueno@gnu.org>
+---
+ .gitignore                   |   2 +
+ lib/pkcs11.c                 | 186 ++++++++++++++++++++++++-----------
+ tests/Makefile.am            |  10 +-
+ tests/pkcs11/os-locking-ok.c | 165 +++++++++++++++++++++++++++++++
+ tests/pkcs11/pkcs11-mock4.c  | 115 ++++++++++++++++++++++
+ 5 files changed, 419 insertions(+), 59 deletions(-)
+ create mode 100644 tests/pkcs11/os-locking-ok.c
+ create mode 100644 tests/pkcs11/pkcs11-mock4.c
+
+--- a/lib/pkcs11.c
++++ b/lib/pkcs11.c
+@@ -49,14 +49,14 @@
+ GNUTLS_STATIC_MUTEX(pkcs11_mutex);
+ 
+ struct gnutls_pkcs11_provider_st {
+ 	struct ck_function_list *module;
+ 	unsigned active;
+-	unsigned custom_init;
+ 	unsigned trusted; /* in the sense of p11-kit trusted:
+ 			   * it can be used for verification */
+ 	struct ck_info info;
++	struct ck_c_initialize_args init_args;
+ };
+ 
+ struct find_flags_data_st {
+ 	struct p11_kit_uri *info;
+ 	unsigned int slot_flags; /* Slot Information Flags */
+@@ -226,45 +226,126 @@ static int scan_slots(struct gnutls_pkcs
+ 		return pkcs11_rv_to_err(rv);
+ 	}
+ 	return 0;
+ }
+ 
+-static int
+-pkcs11_add_module(const char* name, struct ck_function_list *module, unsigned custom_init, const char *params)
++static const struct ck_c_initialize_args default_init_args = {
++	NULL,
++	NULL,
++	NULL,
++	NULL,
++	CKF_LIBRARY_CANT_CREATE_OS_THREADS | CKF_OS_LOCKING_OK,
++	NULL,
++};
++
++static const struct ck_c_initialize_args no_thread_init_args = {
++	NULL, NULL, NULL, NULL, CKF_LIBRARY_CANT_CREATE_OS_THREADS, NULL,
++};
++
++static void pkcs11_provider_deinit(struct gnutls_pkcs11_provider_st *provider)
++{
++	p11_kit_module_finalize(provider->module);
++	p11_kit_module_release(provider->module);
++	gnutls_free(provider->init_args.reserved);
++}
++
++static int pkcs11_provider_init(struct gnutls_pkcs11_provider_st *provider,
++				struct ck_function_list *module,
++				const void *params)
++{
++	struct ck_c_initialize_args args;
++	const void *reserved = NULL;
++	ck_rv_t rv;
++	char *name;
++	char *p;
++
++	name = p11_kit_module_get_name(module);
++
++	_gnutls_debug_log("p11: Initializing module: %s\n", name);
++
++	if (params && (p = strstr(params, "p11-kit:")) != 0) {
++		reserved = (char *)(p + sizeof("p11-kit:") - 1);
++	}
++
++	/* First try with CKF_OS_LOCKING_OK, then fall back without it */
++	args = default_init_args;
++	args.reserved = (void *)reserved;
++	rv = module->C_Initialize(&args);
++
++	if (rv == CKR_CANT_LOCK) {
++		args = no_thread_init_args;
++		args.reserved = (void *)reserved;
++		rv = module->C_Initialize(&args);
++	}
++
++	if (rv != CKR_OK) {
++		int ret;
++
++		gnutls_assert();
++		free(name);
++		ret = pkcs11_rv_to_err(rv);
++		assert(ret < 0);
++		return ret;
++	}
++
++	if (args.flags & CKF_OS_LOCKING_OK) {
++		_gnutls_debug_log(
++			"p11: Module %s is initialized in a thread-safe mode\n",
++			name);
++	} else {
++		_gnutls_debug_log(
++			"p11: Module %s is initialized NOT in a thread-safe mode\n",
++			name);
++	}
++	free(name);
++
++	if (args.reserved) {
++		args.reserved = gnutls_strdup((const char *)args.reserved);
++		if (!args.reserved)
++			return GNUTLS_E_MEMORY_ERROR;
++	}
++
++	memset(provider, 0, sizeof(*provider));
++	provider->module = module;
++	provider->init_args = args;
++	if (p11_kit_module_get_flags(module) & P11_KIT_MODULE_TRUSTED ||
++	    (params != NULL && strstr(params, "trusted") != 0))
++		provider->trusted = 1;
++
++	return 0;
++}
++
++static int pkcs11_provider_add(const struct gnutls_pkcs11_provider_st *provider)
+ {
+ 	unsigned int i;
+ 	struct ck_info info;
+ 
+ 	if (active_providers >= MAX_PROVIDERS) {
+ 		gnutls_assert();
+ 		return GNUTLS_E_CONSTRAINT_ERROR;
+ 	}
+ 
+ 	memset(&info, 0, sizeof(info));
+-	pkcs11_get_module_info(module, &info);
++	pkcs11_get_module_info(provider->module, &info);
+ 
+ 	/* initially check if this module is a duplicate */
+ 	for (i = 0; i < active_providers; i++) {
+ 		/* already loaded, skip the rest */
+-		if (module == providers[i].module ||
++		if (provider->module == providers[i].module ||
+ 		    memcmp(&info, &providers[i].info, sizeof(info)) == 0) {
++			char *name = p11_kit_module_get_name(provider->module);
+ 			_gnutls_debug_log("p11: module %s is already loaded.\n", name);
++			free(name);
+ 			return GNUTLS_E_INT_RET_0;
+ 		}
+ 	}
+ 
+-	active_providers++;
+-	providers[active_providers - 1].module = module;
+-	providers[active_providers - 1].active = 1;
+-	providers[active_providers - 1].trusted = 0;
+-	providers[active_providers - 1].custom_init = custom_init;
++	memcpy(&providers[active_providers], provider, sizeof(*provider));
++	memcpy(&providers[active_providers].info, &info, sizeof(info));
++	providers[active_providers].active = 1;
+ 
+-	if (p11_kit_module_get_flags(module) & P11_KIT_MODULE_TRUSTED ||
+-		(params != NULL && strstr(params, "trusted") != 0))
+-		providers[active_providers - 1].trusted = 1;
+-
+-	memcpy(&providers[active_providers - 1].info, &info, sizeof(info));
++	active_providers++;
+ 
+ 	return 0;
+ }
+ 
+ /* Returns:
+@@ -377,56 +458,37 @@ int _gnutls_pkcs11_check_init(init_level
+  * Since: 2.12.0
+  **/
+ int gnutls_pkcs11_add_provider(const char *name, const char *params)
+ {
+ 	struct ck_function_list *module;
+-	unsigned custom_init = 0, flags = 0;
+-	struct ck_c_initialize_args args;
+-	const char *p;
++	struct gnutls_pkcs11_provider_st provider;
++	int flags = 0;
+ 	int ret;
+ 
+-	if (params && (p = strstr(params, "p11-kit:")) != 0) {
+-		memset (&args, 0, sizeof (args));
+-		args.reserved = (char*)(p + sizeof("p11-kit:")-1);
+-		args.flags = CKF_OS_LOCKING_OK;
+-
+-		custom_init = 1;
++	if (params && strstr(params, "p11-kit:") != NULL) {
+ 		flags = P11_KIT_MODULE_UNMANAGED;
+ 	}
+ 
+ 	module = p11_kit_module_load(name, P11_KIT_MODULE_CRITICAL|flags);
+ 	if (module == NULL) {
+ 		gnutls_assert();
+ 		_gnutls_debug_log("p11: Cannot load provider %s\n", name);
+ 		return GNUTLS_E_PKCS11_LOAD_ERROR;
+ 	}
+ 
+-	_gnutls_debug_log
+-		    ("p11: Initializing module: %s\n", name);
+-
+-	/* check if we have special information for a p11-kit trust module */
+-	if (custom_init) {
+-		ret = module->C_Initialize(&args);
+-	} else {
+-		ret = p11_kit_module_initialize(module);
+-	}
+-
+-	if (ret != CKR_OK) {
++	ret = pkcs11_provider_init(&provider, module, params);
++	if (ret != 0) {
+ 		p11_kit_module_release(module);
+ 		gnutls_assert();
+-		return pkcs11_rv_to_err(ret);
++		return ret;
+ 	}
+ 
+-	ret = pkcs11_add_module(name, module, custom_init, params);
++	ret = pkcs11_provider_add(&provider);
+ 	if (ret != 0) {
+ 		if (ret == GNUTLS_E_INT_RET_0)
+ 			ret = 0;
+-		if (!custom_init)
+-			p11_kit_module_finalize(module);
+-		else
+-			module->C_Finalize(NULL);
+-		p11_kit_module_release(module);
++		pkcs11_provider_deinit(&provider);
+ 		gnutls_assert();
+ 	}
+ 
+ 	return ret;
+ }
+@@ -928,33 +990,43 @@ static void compat_load(const char *conf
+ 
+ static int auto_load(unsigned trusted)
+ {
+ 	struct ck_function_list **modules;
+ 	int i, ret;
+-	char* name;
+-
+-	modules = p11_kit_modules_load_and_initialize(trusted?P11_KIT_MODULE_TRUSTED:0);
++	modules = p11_kit_modules_load(NULL,
++				       trusted ? P11_KIT_MODULE_TRUSTED : 0);
+ 	if (modules == NULL) {
+ 		gnutls_assert();
+-		_gnutls_debug_log
+-		    ("Cannot initialize registered modules: %s\n",
++		_gnutls_debug_log("Cannot load registered modules: %s\n",
+ 		     p11_kit_message());
+ 		return GNUTLS_E_PKCS11_LOAD_ERROR;
+ 	}
+ 
+ 	for (i = 0; modules[i] != NULL; i++) {
+-		name = p11_kit_module_get_name(modules[i]);
+-		_gnutls_debug_log
+-			    ("p11: Initializing module: %s\n", name);
++		struct gnutls_pkcs11_provider_st provider;
+ 
+-		ret = pkcs11_add_module(name, modules[i], 0, NULL);
++		ret = pkcs11_provider_init(&provider, modules[i], NULL);
+ 		if (ret < 0) {
+ 			gnutls_assert();
+-			_gnutls_debug_log
+-			    ("Cannot load PKCS #11 module: %s\n", name);
++			char *name = p11_kit_module_get_name(modules[i]);
++			_gnutls_debug_log(
++				"Cannot initialize PKCS #11 module: %s\n",
++				name);
++			free(name);
++			continue;
++		}
++
++		ret = pkcs11_provider_add(&provider);
++		if (ret < 0) {
++			gnutls_assert();
++			char *name = p11_kit_module_get_name(provider.module);
++			_gnutls_debug_log("Cannot add PKCS #11 module: %s\n",
++					  name);
++			free(name);
++			pkcs11_provider_deinit(&provider);
++			continue;
+ 		}
+-		free(name);
+ 	}
+ 
+ 	/* Shallow free */
+ 	free(modules);
+ 	return 0;
+@@ -1028,12 +1100,12 @@ static int _gnutls_pkcs11_reinit(void)
+ 	unsigned i;
+ 	ck_rv_t rv;
+ 
+ 	for (i = 0; i < active_providers; i++) {
+ 		if (providers[i].module != NULL) {
+-			rv = p11_kit_module_initialize(providers
+-						       [i].module);
++			rv = providers[i].module->C_Initialize(
++				&providers[i].init_args);
+ 			if (rv == CKR_OK || rv == CKR_CRYPTOKI_ALREADY_INITIALIZED) {
+ 				providers[i].active = 1;
+ 			} else {
+ 				providers[i].active = 0;
+ 				_gnutls_debug_log
+@@ -1096,18 +1168,11 @@ void gnutls_pkcs11_deinit(void)
+ 	init--;
+ 	if (init > 0)
+ 		return;
+ 
+ 	for (i = 0; i < active_providers; i++) {
+-		if (providers[i].active) {
+-
+-			if (!providers[i].custom_init)
+-				p11_kit_module_finalize(providers[i].module);
+-			else
+-				providers[i].module->C_Finalize(NULL);
+-		}
+-		p11_kit_module_release(providers[i].module);
++		pkcs11_provider_deinit(&providers[i]);
+ 	}
+ 	active_providers = 0;
+ 	providers_initialized = PROV_UNINITIALIZED;
+ 
+ 	gnutls_pkcs11_set_pin_function(NULL, NULL);
+--- a/tests/Makefile.am
++++ b/tests/Makefile.am
+@@ -342,10 +342,15 @@ libpkcs11mock1_la_LIBADD =  ../gl/libgnu
+ noinst_LTLIBRARIES += libpkcs11mock2.la
+ libpkcs11mock2_la_SOURCES = pkcs11/pkcs11-mock2.c
+ libpkcs11mock2_la_LDFLAGS = -shared -rpath $(pkglibdir) -module -no-undefined -avoid-version
+ libpkcs11mock2_la_LIBADD =  ../gl/libgnu.la
+ 
++noinst_LTLIBRARIES += libpkcs11mock4.la
++libpkcs11mock4_la_SOURCES = pkcs11/pkcs11-mock4.c
++libpkcs11mock4_la_LDFLAGS = -shared -rpath $(pkglibdir) -module -no-undefined -avoid-version
++libpkcs11mock4_la_LIBADD =  ../gl/libgnu.la
++
+ pkcs11_cert_import_url_exts_SOURCES = pkcs11/pkcs11-cert-import-url-exts.c
+ pkcs11_cert_import_url_exts_DEPENDENCIES = libpkcs11mock1.la libutils.la
+ 
+ pkcs11_cert_import_url4_exts_SOURCES = pkcs11/pkcs11-cert-import-url4-exts.c
+ pkcs11_cert_import_url4_exts_DEPENDENCIES = libpkcs11mock1.la libutils.la
+@@ -483,15 +488,17 @@ buffer_CPPFLAGS = $(AM_CPPFLAGS) \
+ 	-I$(top_builddir)/gl
+ 
+ if ENABLE_PKCS11
+ if !WINDOWS
+ ctests += tls13/post-handshake-with-cert-pkcs11 pkcs11/tls-neg-pkcs11-no-key \
+-	global-init-override
++	global-init-override pkcs11/os-locking-ok
+ tls13_post_handshake_with_cert_pkcs11_DEPENDENCIES = libpkcs11mock2.la libutils.la
+ tls13_post_handshake_with_cert_pkcs11_LDADD = $(LDADD) $(LIBDL)
+ pkcs11_tls_neg_pkcs11_no_key_DEPENDENCIES = libpkcs11mock2.la libutils.la
+ pkcs11_tls_neg_pkcs11_no_key_LDADD = $(LDADD) $(LIBDL)
++pkcs11_os_locking_ok_DEPENDENCIES = libpkcs11mock4.la libutils.la
++pkcs11_os_locking_ok_LDADD = $(LDADD) $(LIBDL)
+ endif
+ endif
+ 
+ dist_check_SCRIPTS = rfc2253-escape-test.sh rsa-md5-collision/rsa-md5-collision.sh systemkey.sh
+ 
+@@ -606,10 +613,11 @@ TESTS_ENVIRONMENT +=						\
+ 	LC_ALL="C"						\
+ 	LSAN_OPTIONS=suppressions=$(srcdir)/gnutls-asan.supp	\
+ 	CAFILE=$(srcdir)/cert-tests/data/ca-certs.pem		\
+ 	P11MOCKLIB1=$(abs_builddir)/.libs/libpkcs11mock1.so	\
+ 	P11MOCKLIB2=$(abs_builddir)/.libs/libpkcs11mock2.so	\
++	P11MOCKLIB4=$(abs_builddir)/.libs/libpkcs11mock4.so	\
+ 	PKCS12_MANY_CERTS_FILE=$(srcdir)/cert-tests/data/pkcs12_5certs.p12	\
+ 	PKCS12FILE=$(srcdir)/cert-tests/data/client.p12		\
+ 	PKCS12PASSWORD=foobar					\
+ 	PKCS12FILE_2=$(srcdir)/cert-tests/data/pkcs12_2certs.p12	\
+ 	PKCS12PASSWORD_2=""					\
+--- /dev/null
++++ b/tests/pkcs11/os-locking-ok.c
+@@ -0,0 +1,165 @@
++/*
++ * Copyright (C) 2025 Red Hat, Inc.
++ *
++ * Author: Daiki Ueno
++ *
++ * This file is part of GnuTLS.
++ *
++ * GnuTLS is free software; you can redistribute it and/or modify it
++ * under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 3 of the License, or
++ * (at your option) any later version.
++ *
++ * GnuTLS is distributed in the hope that it will be useful, but
++ * WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * General Public License for more details.
++ *
++ * You should have received a copy of the GNU Lesser General Public License
++ * along with this program.  If not, see <https://www.gnu.org/licenses/>
++ */
++
++#ifdef HAVE_CONFIG_H
++#include "config.h"
++#endif
++
++#include <stdbool.h>
++#include <stdio.h>
++#include <stdlib.h>
++
++#if defined(_WIN32)
++
++int main(void)
++{
++	exit(77);
++}
++
++#else
++
++#include <string.h>
++#include <unistd.h>
++#include <gnutls/gnutls.h>
++
++#include "cert-common.h"
++#include "pkcs11/softhsm.h"
++#include "utils.h"
++
++/* This program tests that a module can be initialized with
++ * CKF_OS_LOCKING_OK, even if it's not supported by the module.
++ */
++
++static void tls_log_func(int level, const char *str)
++{
++	fprintf(stderr, "server|<%d>| %s", level, str);
++}
++
++#define PIN "1234"
++
++#define CONFIG_NAME "softhsm-os-locking-ok"
++#define CONFIG CONFIG_NAME ".config"
++
++static int pin_func(void *userdata, int attempt, const char *url,
++		    const char *label, unsigned flags, char *pin,
++		    size_t pin_max)
++{
++	if (attempt == 0) {
++		strcpy(pin, PIN);
++		return 0;
++	}
++	return -1;
++}
++
++static void test(const char *provider)
++{
++	int ret;
++	gnutls_x509_trust_list_t tl;
++
++	gnutls_pkcs11_init(GNUTLS_PKCS11_FLAG_MANUAL, NULL);
++
++	success("test with %s\n", provider);
++
++	if (debug) {
++		gnutls_global_set_log_function(tls_log_func);
++		gnutls_global_set_log_level(4711);
++	}
++
++	/* point to SoftHSM token that libpkcs11mock4.so internally uses */
++	setenv(SOFTHSM_ENV, CONFIG, 1);
++
++	gnutls_pkcs11_set_pin_function(pin_func, NULL);
++
++	ret = gnutls_pkcs11_add_provider(provider, "trusted");
++	if (ret != 0) {
++		fail("gnutls_pkcs11_add_provider: %s\n", gnutls_strerror(ret));
++	}
++
++	/* initialize softhsm token */
++	ret = gnutls_pkcs11_token_init(SOFTHSM_URL, PIN, "test");
++	if (ret < 0) {
++		fail("gnutls_pkcs11_token_init: %s\n", gnutls_strerror(ret));
++	}
++
++	ret = gnutls_pkcs11_token_set_pin(SOFTHSM_URL, NULL, PIN,
++					  GNUTLS_PIN_USER);
++	if (ret < 0) {
++		fail("gnutls_pkcs11_token_set_pin: %s\n", gnutls_strerror(ret));
++	}
++
++	gnutls_x509_trust_list_init(&tl, 0);
++
++	ret = gnutls_x509_trust_list_add_trust_file(tl, SOFTHSM_URL, NULL, 0, 0,
++						    0);
++	if (ret < 0) {
++		fail("gnutls_x509_trust_list_add_trust_file\n");
++	}
++
++	gnutls_x509_trust_list_deinit(tl, 0);
++
++	gnutls_pkcs11_deinit();
++}
++
++void doit(void)
++{
++	const char *bin;
++	const char *lib;
++	char buf[128];
++
++	if (gnutls_fips140_mode_enabled())
++		exit(77);
++
++	/* this must be called once in the program */
++	global_init();
++
++	/* we call gnutls_pkcs11_init manually */
++	gnutls_pkcs11_deinit();
++
++	/* check if softhsm module is loadable */
++	lib = softhsm_lib();
++
++	/* initialize SoftHSM token that libpkcs11mock4.so internally uses */
++	bin = softhsm_bin();
++
++	set_softhsm_conf(CONFIG);
++	snprintf(buf, sizeof(buf),
++		 "%s --init-token --slot 0 --label test --so-pin " PIN
++		 " --pin " PIN,
++		 bin);
++	system(buf);
++
++	test(lib);
++
++	lib = getenv("P11MOCKLIB4");
++	if (lib == NULL) {
++		fail("P11MOCKLIB4 is not set\n");
++	}
++
++	set_softhsm_conf(CONFIG);
++	snprintf(buf, sizeof(buf),
++		 "%s --init-token --slot 0 --label test --so-pin " PIN
++		 " --pin " PIN,
++		 bin);
++	system(buf);
++
++	test(lib);
++}
++#endif /* _WIN32 */
+--- /dev/null
++++ b/tests/pkcs11/pkcs11-mock4.c
+@@ -0,0 +1,115 @@
++/*
++ * Copyright (C) 2025 Red Hat, Inc.
++ *
++ * Author: Daiki Ueno
++ *
++ * This file is part of GnuTLS.
++ *
++ * GnuTLS is free software; you can redistribute it and/or modify it
++ * under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 3 of the License, or
++ * (at your option) any later version.
++ *
++ * GnuTLS is distributed in the hope that it will be useful, but
++ * WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * General Public License for more details.
++ *
++ * You should have received a copy of the GNU Lesser General Public License
++ * along with this program.  If not, see <https://www.gnu.org/licenses/>
++ */
++
++#ifdef HAVE_CONFIG_H
++#include "config.h"
++#endif
++
++#include <dlfcn.h>
++#include <p11-kit/pkcs11.h>
++#include <p11-kit/pkcs11x.h>
++#include <stdbool.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++#include <unistd.h>
++#include <assert.h>
++
++#include "softhsm.h"
++
++/* This provides a mock PKCS #11 module that delegates all the
++ * operations to SoftHSM except that it returns CKR_CANT_LOCK upon
++ * C_Initialize if CKF_OS_LOCKING_OK is set.
++ */
++
++static void *dl;
++static CK_C_Initialize base_C_Initialize;
++static CK_FUNCTION_LIST override_funcs;
++
++#ifdef __sun
++#pragma fini(mock_deinit)
++#pragma init(mock_init)
++#define _CONSTRUCTOR
++#define _DESTRUCTOR
++#else
++#define _CONSTRUCTOR __attribute__((constructor))
++#define _DESTRUCTOR __attribute__((destructor))
++#endif
++
++static CK_RV override_C_Initialize(void *args)
++{
++	CK_C_INITIALIZE_ARGS *init_args = args;
++	static bool first = true;
++
++	assert(init_args);
++
++	if (first) {
++		assert(init_args->flags & CKF_OS_LOCKING_OK);
++		first = false;
++		return CKR_CANT_LOCK;
++	} else {
++		assert(!(init_args->flags & CKF_OS_LOCKING_OK));
++	}
++
++	return base_C_Initialize(args);
++}
++
++CK_RV C_GetFunctionList(CK_FUNCTION_LIST **function_list)
++{
++	CK_C_GetFunctionList func;
++	CK_FUNCTION_LIST *funcs;
++
++	assert(dl);
++
++	func = dlsym(dl, "C_GetFunctionList");
++	if (func == NULL) {
++		return CKR_GENERAL_ERROR;
++	}
++
++	func(&funcs);
++
++	base_C_Initialize = funcs->C_Initialize;
++
++	memcpy(&override_funcs, funcs, sizeof(CK_FUNCTION_LIST));
++	override_funcs.C_Initialize = override_C_Initialize;
++	*function_list = &override_funcs;
++
++	return CKR_OK;
++}
++
++static _CONSTRUCTOR void mock_init(void)
++{
++	const char *lib;
++
++	/* suppress compiler warning */
++	(void)set_softhsm_conf;
++
++	lib = softhsm_lib();
++
++	dl = dlopen(lib, RTLD_NOW);
++	if (dl == NULL)
++		exit(77);
++}
++
++static _DESTRUCTOR void mock_deinit(void)
++{
++	dlclose(dl);
++}

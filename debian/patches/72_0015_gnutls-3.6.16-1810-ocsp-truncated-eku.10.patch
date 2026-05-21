@@ -1,0 +1,19 @@
+Description: Adapt backported (from 3.8 to 3.6) for 3.7
+Author: Andreas Metzler <ametzler@debian.org>
+Origin: backport
+Forwarded: not-needed
+Last-Update: 2026-05-10
+
+--- gnutls28-3.7.9.orig/lib/x509/ocsp.c
++++ gnutls28-3.7.9/lib/x509/ocsp.c
+@@ -2187,8 +2187,8 @@ static int check_ocsp_purpose(gnutls_x50
+ 		}
+ 
+ 		/* x509_read_value() includes NUL in size for OIDs on 3.6,
+-		unlike in 3.8 */
+-		if (oidsize != sizeof(GNUTLS_KP_OCSP_SIGNING) ||
++		unlike in 3.7. and 3.8 */
++		if (oidsize != sizeof(GNUTLS_KP_OCSP_SIGNING) - 1 ||
+ 		    memcmp(oidtmp, GNUTLS_KP_OCSP_SIGNING, oidsize) != 0) {
+ 			gnutls_assert();
+ 			continue;
