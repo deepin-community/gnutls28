@@ -1,0 +1,35 @@
+From 4e8d3ba9160dfd3155c2fab12e9d5ab973013c2d Mon Sep 17 00:00:00 2001
+From: Alexander Sosedkin <asosedkin@redhat.com>
+Date: Tue, 7 Apr 2026 10:16:03 +0200
+Subject: [PATCH] session_pack: validate session_id_size on unpacking
+
+A check for session_id_size not exceeding GNUTLS_MAX_SESSION_ID_SIZE
+on loading persisted TLS session data was overlooked,
+leading to a heap overflow
+were the data corrupted in a malicious manner.
+
+Reported-by: Haruto Kimura (Stella)
+Fixes: #1817
+Signed-off-by: Alexander Sosedkin <asosedkin@redhat.com>
+---
+ lib/session_pack.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
+
+diff --git a/lib/session_pack.c b/lib/session_pack.c
+index a6d11c4cf..823824e4c 100644
+--- a/lib/session_pack.c
++++ b/lib/session_pack.c
+@@ -1006,6 +1006,10 @@ unpack_security_parameters(gnutls_session_t session, gnutls_buffer_st * ps)
+ 		   &session->internals.resumed_security_parameters.
+ 		   session_id_size, 1);
+ 
++	if (session->internals.resumed_security_parameters.session_id_size >
++	    GNUTLS_MAX_SESSION_ID_SIZE)
++		return gnutls_assert_val(GNUTLS_E_INVALID_REQUEST);
++
+ 	BUFFER_POP(ps,
+ 		   session->internals.resumed_security_parameters.
+ 		   session_id,
+-- 
+2.53.0
+

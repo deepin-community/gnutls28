@@ -1,0 +1,41 @@
+From f66b9933252ef90f9765124361b47951a34d456d Mon Sep 17 00:00:00 2001
+From: Alexander Sosedkin <asosedkin@redhat.com>
+Date: Tue, 7 Apr 2026 20:18:40 +0200
+Subject: [PATCH] nettle/pk: check RSA key coprimality in verify_params
+
+Previously, gnutls_privkey_verify_params has overlooked
+the scenario of p and q not being co-prime,
+and proceeded with undefined behaviour that was extremely likely
+to error out in practice anyway.
+Now it returns GNUTLS_E_PK_INVALID_PRIVKEY in this case.
+
+Reported-by: Kamil Frankowicz <kamil.frankowicz@cert.pl>
+Related: #1818
+Signed-off-by: Alexander Sosedkin <asosedkin@redhat.com>
+---
+ lib/nettle/pk.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/lib/nettle/pk.c b/lib/nettle/pk.c
+index b19fe3804..9d1c97b86 100644
+--- a/lib/nettle/pk.c
++++ b/lib/nettle/pk.c
+@@ -2911,9 +2911,12 @@ wrap_nettle_pk_verify_priv_params(gnutls_pk_algorithm_t algo,
+ 				goto rsa_cleanup;
+ 			}
+ 
+-			mpz_invert(TOMPZ(t1),
+-				   TOMPZ(params->params[RSA_PRIME2]),
+-				   TOMPZ(params->params[RSA_PRIME1]));
++			if (!mpz_invert(TOMPZ(t1),
++					TOMPZ(params->params[RSA_PRIME2]),
++					TOMPZ(params->params[RSA_PRIME1]))) {
++				ret = gnutls_assert_val(GNUTLS_E_PK_INVALID_PRIVKEY);
++				goto rsa_cleanup;
++			}
+ 			if (_gnutls_mpi_cmp(t1, params->params[RSA_COEF])
+ 			    != 0) {
+ 				ret =
+-- 
+2.53.0
+
