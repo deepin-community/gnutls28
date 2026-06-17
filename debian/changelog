@@ -1,3 +1,10 @@
+gnutls28 (3.7.9-2+deb12u5deepin3) unstable; urgency=medium
+
+  * Fix CVEs already covered by existing patches:
+    CVE-2026-33845, CVE-2026-33846, CVE-2026-42010, CVE-2026-42011
+
+ -- deepin-ci-robot <packages@deepin.org>  Wed, 17 Jun 2026 23:04:15 +0800
+
 gnutls28 (3.7.9-2+deb12u7) bookworm-security; urgency=high
 
   * Cherry-pick fixes from 3.8.13 release for oldstable.
