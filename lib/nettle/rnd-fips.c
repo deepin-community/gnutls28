@@ -14,22 +14,23 @@
  * GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with this program; if not, see <https://www.gnu.org/licenses/>.
+ * License along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <config.h>
+#include "config.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
 #include <sys/types.h>
-#include <drbg-aes.h>
-#include <fips.h>
+#include "drbg-aes.h"
+#include "fips.h"
 
 #include "gnutls_int.h"
 #include "errors.h"
 #include <nettle/sha2.h>
-#include <atfork.h>
-#include <rnd-common.h>
+#include "atfork.h"
+#include "rnd-common.h"
+#include <nettle/version.h>
 
 /* The block size is chosen arbitrarily */
 #define ENTROPY_BLOCK_SIZE SHA256_DIGEST_SIZE
@@ -55,7 +56,7 @@ static int get_random(struct drbg_aes_ctx *ctx, struct fips_ctx *fctx,
 {
 	int ret;
 
-	if ( _gnutls_detect_fork(fctx->forkid) != 0) {
+	if (_gnutls_detect_fork(fctx->forkid) != 0) {
 		ret = _rngfips_ctx_reinit(fctx);
 		if (ret < 0) {
 			_gnutls_switch_fips_state(GNUTLS_FIPS140_OP_ERROR);
@@ -103,7 +104,11 @@ static int get_entropy(struct fips_ctx *fctx, uint8_t *buffer, size_t length)
 
 		sha256_init(&ctx);
 		sha256_update(&ctx, sizeof(block), block);
+#if NETTLE_VERSION_MAJOR >= 4
+		sha256_digest(&ctx, hash);
+#else
 		sha256_digest(&ctx, sizeof(hash), hash);
+#endif
 
 		if (memcmp(hash, fctx->entropy_hash, sizeof(hash)) == 0) {
 			_gnutls_switch_fips_state(GNUTLS_FIPS140_OP_ERROR);
@@ -123,7 +128,7 @@ static int get_entropy(struct fips_ctx *fctx, uint8_t *buffer, size_t length)
 }
 
 #define PSTRING "gnutls-rng"
-#define PSTRING_SIZE (sizeof(PSTRING)-1)
+#define PSTRING_SIZE (sizeof(PSTRING) - 1)
 static int drbg_init(struct fips_ctx *fctx, struct drbg_aes_ctx *ctx)
 {
 	uint8_t buffer[DRBG_AES_SEED_SIZE];
@@ -135,8 +140,8 @@ static int drbg_init(struct fips_ctx *fctx, struct drbg_aes_ctx *ctx)
 		return gnutls_assert_val(ret);
 	}
 
-	ret = drbg_aes_init(ctx, sizeof(buffer), buffer,
-			    PSTRING_SIZE, (void*)PSTRING);
+	ret = drbg_aes_init(ctx, sizeof(buffer), buffer, PSTRING_SIZE,
+			    (void *)PSTRING);
 	zeroize_key(buffer, sizeof(buffer));
 	if (ret == 0) {
 		_gnutls_switch_fips_state(GNUTLS_FIPS140_OP_ERROR);
@@ -189,7 +194,11 @@ static int _rngfips_ctx_init(struct fips_ctx *fctx)
 	sha256_init(&ctx);
 	sha256_update(&ctx, sizeof(block), block);
 	zeroize_key(block, sizeof(block));
+#if NETTLE_VERSION_MAJOR >= 4
+	sha256_digest(&ctx, fctx->entropy_hash);
+#else
 	sha256_digest(&ctx, sizeof(fctx->entropy_hash), fctx->entropy_hash);
+#endif
 
 	/* normal */
 	ret = drbg_init(fctx, &fctx->normal_context);
@@ -228,7 +237,7 @@ static int _rngfips_ctx_reinit(struct fips_ctx *fctx)
 /* Initialize this random subsystem. */
 static int _rngfips_init(void **_ctx)
 {
-/* Basic initialization is required to
+	/* Basic initialization is required to
    do a few checks on the implementation.  */
 	struct fips_ctx *ctx;
 	int ret;
@@ -305,4 +314,3 @@ gnutls_crypto_rnd_st _gnutls_fips_rnd_ops = {
 	.rnd_refresh = _rngfips_refresh,
 	.self_test = selftest_kat,
 };
-

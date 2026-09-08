@@ -14,8 +14,7 @@
 # General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this file; if not, write to the Free Software Foundation,
-# Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+# along with this file.  If not, see <https://www.gnu.org/licenses/>.
 
 OPTIONS_BUILT = \
 	srptool-options.c srptool-options.h \
@@ -153,6 +152,7 @@ COMMON_LIBS += ../lib/minitasn1/libminitasn1.la ../gl/libgnu.la
 AM_CPPFLAGS += -I$(top_srcdir)/lib/minitasn1
 else
 COMMON_LIBS += $(LIBTASN1_LIBS)
+AM_CPPFLAGS += $(LIBTASN1_CFLAGS)
 endif
 
 
@@ -240,7 +240,7 @@ OPTIONS_STAMP: $(top_srcdir)/cligen/cli-codegen.py
 
 CLIGEN_ARGS = \
 	--bug-email bugs@gnutls.org \
-	--copyright-year 2000-2021 \
+	--copyright-year 2000-2023 \
 	--copyright-holder 'Free Software Foundation, and others' \
 	--license gpl3+ \
 	--package '$(PACKAGE)' \

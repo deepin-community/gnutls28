@@ -17,8 +17,7 @@
 # General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with GnuTLS; if not, write to the Free Software Foundation,
-# Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+# along with GnuTLS.  If not, see <https://www.gnu.org/licenses/>.
 
 : ${srcdir=.}
 : ${CERTTOOL=../../src/certtool${EXEEXT}}
@@ -45,6 +44,21 @@ for p8 in "pkcs8-pbes1-des-md5.pem password" "encpkcs8.pem foobar" "unencpkcs8.p
 	passwd="$2"
 	${VALGRIND} "${CERTTOOL}" --key-info --pkcs8 --password "${passwd}" \
 		--infile "${srcdir}/data/${file}"
+	rc=$?
+	if test ${rc} != 0; then
+		echo "PKCS8 FATAL ${p8}"
+		ret=1
+	else
+		echo "PKCS8 OK ${p8}"
+	fi
+done
+
+for p8 in "der-key-PBE-SHA1-DES.p8 booo"; do
+	set -- ${p8}
+	file="$1"
+	passwd="$2"
+	${VALGRIND} "${CERTTOOL}" --key-info --pkcs8 --inder \
+		    --password "${passwd}" --infile "${srcdir}/data/${file}"
 	rc=$?
 	if test ${rc} != 0; then
 		echo "PKCS8 FATAL ${p8}"

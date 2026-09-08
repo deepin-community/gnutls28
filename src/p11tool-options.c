@@ -4,10 +4,10 @@
 
 #include "p11tool-options.h"
 #include <errno.h>
-#include <error.h>
 #include <getopt.h>
 #include <limits.h>
 #include <stdint.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #ifndef _WIN32
@@ -33,8 +33,14 @@ parse_number (const char *arg)
     result = strtol (arg, &endptr, 10);
 
   if (errno != 0 || (endptr && *endptr != '\0'))
-    error (EXIT_FAILURE, errno, "'%s' is not a recognizable number.",
-           arg);
+    {
+      char buf[80];
+      snprintf (buf, sizeof(buf),
+                "'%s' is not a recognizable number",
+                arg);
+      perror (buf);
+      exit (EXIT_FAILURE);
+    }
 
   return result;
 }
@@ -42,90 +48,90 @@ parse_number (const char *arg)
 /* Long options.  */
 static const struct option long_options[] =
 {
-  { "list-tokens", no_argument, 0, CHAR_MAX + 1 },
-  { "list-token-urls", no_argument, 0, CHAR_MAX + 2 },
-  { "list-mechanisms", no_argument, 0, CHAR_MAX + 3 },
-  { "initialize", no_argument, 0, CHAR_MAX + 4 },
-  { "initialize-pin", no_argument, 0, CHAR_MAX + 5 },
-  { "initialize-so-pin", no_argument, 0, CHAR_MAX + 6 },
-  { "set-pin", required_argument, 0, CHAR_MAX + 7 },
-  { "set-so-pin", required_argument, 0, CHAR_MAX + 8 },
-  { "list-all", no_argument, 0, CHAR_MAX + 9 },
-  { "list-all-certs", no_argument, 0, CHAR_MAX + 10 },
-  { "list-certs", no_argument, 0, CHAR_MAX + 11 },
-  { "list-all-privkeys", no_argument, 0, CHAR_MAX + 12 },
-  { "list-privkeys", no_argument, 0, CHAR_MAX + 13 },
-  { "list-keys", no_argument, 0, CHAR_MAX + 14 },
-  { "list-all-trusted", no_argument, 0, CHAR_MAX + 15 },
-  { "export", no_argument, 0, CHAR_MAX + 16 },
-  { "export-stapled", no_argument, 0, CHAR_MAX + 17 },
-  { "export-chain", no_argument, 0, CHAR_MAX + 18 },
-  { "export-pubkey", no_argument, 0, CHAR_MAX + 19 },
-  { "info", no_argument, 0, CHAR_MAX + 20 },
-  { "generate-privkey", required_argument, 0, CHAR_MAX + 23 },
-  { "generate-rsa", no_argument, 0, CHAR_MAX + 24 },
-  { "generate-dsa", no_argument, 0, CHAR_MAX + 25 },
-  { "generate-ecc", no_argument, 0, CHAR_MAX + 26 },
-  { "bits", required_argument, 0, CHAR_MAX + 27 },
-  { "curve", required_argument, 0, CHAR_MAX + 28 },
-  { "sec-param", required_argument, 0, CHAR_MAX + 29 },
-  { "set-id", required_argument, 0, CHAR_MAX + 30 },
-  { "set-label", required_argument, 0, CHAR_MAX + 31 },
-  { "write", no_argument, 0, CHAR_MAX + 32 },
-  { "delete", no_argument, 0, CHAR_MAX + 33 },
-  { "label", required_argument, 0, CHAR_MAX + 34 },
-  { "id", required_argument, 0, CHAR_MAX + 35 },
-  { "mark-wrap", no_argument, 0, CHAR_MAX + 36 },
-  { "no-mark-wrap", no_argument, 0, CHAR_MAX + 37 },
-  { "mark-trusted", no_argument, 0, CHAR_MAX + 38 },
-  { "trusted", no_argument, 0, CHAR_MAX + 21 },
-  { "no-mark-trusted", no_argument, 0, CHAR_MAX + 39 },
-  { "mark-distrusted", no_argument, 0, CHAR_MAX + 40 },
-  { "distrusted", no_argument, 0, CHAR_MAX + 22 },
-  { "mark-decrypt", no_argument, 0, CHAR_MAX + 41 },
-  { "no-mark-decrypt", no_argument, 0, CHAR_MAX + 42 },
-  { "mark-sign", no_argument, 0, CHAR_MAX + 43 },
-  { "no-mark-sign", no_argument, 0, CHAR_MAX + 44 },
-  { "mark-ca", no_argument, 0, CHAR_MAX + 45 },
-  { "ca", no_argument, 0, CHAR_MAX + 49 },
-  { "no-mark-ca", no_argument, 0, CHAR_MAX + 46 },
-  { "mark-private", no_argument, 0, CHAR_MAX + 47 },
-  { "private", no_argument, 0, CHAR_MAX + 50 },
-  { "no-mark-private", no_argument, 0, CHAR_MAX + 48 },
-  { "mark-always-authenticate", no_argument, 0, CHAR_MAX + 51 },
-  { "no-mark-always-authenticate", no_argument, 0, CHAR_MAX + 52 },
-  { "secret-key", required_argument, 0, CHAR_MAX + 53 },
-  { "load-privkey", required_argument, 0, CHAR_MAX + 54 },
-  { "load-pubkey", required_argument, 0, CHAR_MAX + 55 },
-  { "load-certificate", required_argument, 0, CHAR_MAX + 56 },
-  { "debug", required_argument, 0, 'd' },
-  { "outfile", required_argument, 0, CHAR_MAX + 57 },
-  { "login", no_argument, 0, CHAR_MAX + 58 },
-  { "no-login", no_argument, 0, CHAR_MAX + 59 },
-  { "so-login", no_argument, 0, CHAR_MAX + 60 },
-  { "admin-login", no_argument, 0, CHAR_MAX + 62 },
-  { "no-so-login", no_argument, 0, CHAR_MAX + 61 },
-  { "test-sign", no_argument, 0, CHAR_MAX + 63 },
-  { "sign-params", required_argument, 0, CHAR_MAX + 64 },
-  { "hash", required_argument, 0, CHAR_MAX + 65 },
-  { "generate-random", required_argument, 0, CHAR_MAX + 66 },
-  { "pkcs8", no_argument, 0, '8' },
-  { "inder", no_argument, 0, CHAR_MAX + 67 },
-  { "inraw", no_argument, 0, CHAR_MAX + 69 },
-  { "no-inder", no_argument, 0, CHAR_MAX + 68 },
-  { "outder", no_argument, 0, CHAR_MAX + 70 },
-  { "outraw", no_argument, 0, CHAR_MAX + 72 },
-  { "no-outder", no_argument, 0, CHAR_MAX + 71 },
-  { "provider", required_argument, 0, CHAR_MAX + 73 },
-  { "provider-opts", required_argument, 0, CHAR_MAX + 74 },
-  { "detailed-url", no_argument, 0, CHAR_MAX + 75 },
-  { "no-detailed-url", no_argument, 0, CHAR_MAX + 76 },
-  { "only-urls", no_argument, 0, CHAR_MAX + 77 },
-  { "batch", no_argument, 0, CHAR_MAX + 78 },
-  { "version", optional_argument, 0, 'v' },
-  { "help", no_argument, 0, 'h' },
-  { "more-help", no_argument, 0, '!' },
-  { 0, 0, 0, 0 }
+  { "list-tokens", no_argument, NULL, CHAR_MAX + 1 },
+  { "list-token-urls", no_argument, NULL, CHAR_MAX + 2 },
+  { "list-mechanisms", no_argument, NULL, CHAR_MAX + 3 },
+  { "initialize", no_argument, NULL, CHAR_MAX + 4 },
+  { "initialize-pin", no_argument, NULL, CHAR_MAX + 5 },
+  { "initialize-so-pin", no_argument, NULL, CHAR_MAX + 6 },
+  { "set-pin", required_argument, NULL, CHAR_MAX + 7 },
+  { "set-so-pin", required_argument, NULL, CHAR_MAX + 8 },
+  { "list-all", no_argument, NULL, CHAR_MAX + 9 },
+  { "list-all-certs", no_argument, NULL, CHAR_MAX + 10 },
+  { "list-certs", no_argument, NULL, CHAR_MAX + 11 },
+  { "list-all-privkeys", no_argument, NULL, CHAR_MAX + 12 },
+  { "list-privkeys", no_argument, NULL, CHAR_MAX + 13 },
+  { "list-keys", no_argument, NULL, CHAR_MAX + 14 },
+  { "list-all-trusted", no_argument, NULL, CHAR_MAX + 15 },
+  { "export", no_argument, NULL, CHAR_MAX + 16 },
+  { "export-stapled", no_argument, NULL, CHAR_MAX + 17 },
+  { "export-chain", no_argument, NULL, CHAR_MAX + 18 },
+  { "export-pubkey", no_argument, NULL, CHAR_MAX + 19 },
+  { "info", no_argument, NULL, CHAR_MAX + 20 },
+  { "generate-privkey", required_argument, NULL, CHAR_MAX + 23 },
+  { "generate-rsa", no_argument, NULL, CHAR_MAX + 24 },
+  { "generate-dsa", no_argument, NULL, CHAR_MAX + 25 },
+  { "generate-ecc", no_argument, NULL, CHAR_MAX + 26 },
+  { "bits", required_argument, NULL, CHAR_MAX + 27 },
+  { "curve", required_argument, NULL, CHAR_MAX + 28 },
+  { "sec-param", required_argument, NULL, CHAR_MAX + 29 },
+  { "set-id", required_argument, NULL, CHAR_MAX + 30 },
+  { "set-label", required_argument, NULL, CHAR_MAX + 31 },
+  { "write", no_argument, NULL, CHAR_MAX + 32 },
+  { "delete", no_argument, NULL, CHAR_MAX + 33 },
+  { "label", required_argument, NULL, CHAR_MAX + 34 },
+  { "id", required_argument, NULL, CHAR_MAX + 35 },
+  { "mark-wrap", no_argument, NULL, CHAR_MAX + 36 },
+  { "no-mark-wrap", no_argument, NULL, CHAR_MAX + 37 },
+  { "mark-trusted", no_argument, NULL, CHAR_MAX + 38 },
+  { "trusted", no_argument, NULL, CHAR_MAX + 21 },
+  { "no-mark-trusted", no_argument, NULL, CHAR_MAX + 39 },
+  { "mark-distrusted", no_argument, NULL, CHAR_MAX + 40 },
+  { "distrusted", no_argument, NULL, CHAR_MAX + 22 },
+  { "mark-decrypt", no_argument, NULL, CHAR_MAX + 41 },
+  { "no-mark-decrypt", no_argument, NULL, CHAR_MAX + 42 },
+  { "mark-sign", no_argument, NULL, CHAR_MAX + 43 },
+  { "no-mark-sign", no_argument, NULL, CHAR_MAX + 44 },
+  { "mark-ca", no_argument, NULL, CHAR_MAX + 45 },
+  { "ca", no_argument, NULL, CHAR_MAX + 49 },
+  { "no-mark-ca", no_argument, NULL, CHAR_MAX + 46 },
+  { "mark-private", no_argument, NULL, CHAR_MAX + 47 },
+  { "private", no_argument, NULL, CHAR_MAX + 50 },
+  { "no-mark-private", no_argument, NULL, CHAR_MAX + 48 },
+  { "mark-always-authenticate", no_argument, NULL, CHAR_MAX + 51 },
+  { "no-mark-always-authenticate", no_argument, NULL, CHAR_MAX + 52 },
+  { "secret-key", required_argument, NULL, CHAR_MAX + 53 },
+  { "load-privkey", required_argument, NULL, CHAR_MAX + 54 },
+  { "load-pubkey", required_argument, NULL, CHAR_MAX + 55 },
+  { "load-certificate", required_argument, NULL, CHAR_MAX + 56 },
+  { "debug", required_argument, NULL, 'd' },
+  { "outfile", required_argument, NULL, CHAR_MAX + 57 },
+  { "login", no_argument, NULL, CHAR_MAX + 58 },
+  { "no-login", no_argument, NULL, CHAR_MAX + 59 },
+  { "so-login", no_argument, NULL, CHAR_MAX + 60 },
+  { "admin-login", no_argument, NULL, CHAR_MAX + 62 },
+  { "no-so-login", no_argument, NULL, CHAR_MAX + 61 },
+  { "test-sign", no_argument, NULL, CHAR_MAX + 63 },
+  { "sign-params", required_argument, NULL, CHAR_MAX + 64 },
+  { "hash", required_argument, NULL, CHAR_MAX + 65 },
+  { "generate-random", required_argument, NULL, CHAR_MAX + 66 },
+  { "pkcs8", no_argument, NULL, '8' },
+  { "inder", no_argument, NULL, CHAR_MAX + 67 },
+  { "inraw", no_argument, NULL, CHAR_MAX + 69 },
+  { "no-inder", no_argument, NULL, CHAR_MAX + 68 },
+  { "outder", no_argument, NULL, CHAR_MAX + 70 },
+  { "outraw", no_argument, NULL, CHAR_MAX + 72 },
+  { "no-outder", no_argument, NULL, CHAR_MAX + 71 },
+  { "provider", required_argument, NULL, CHAR_MAX + 73 },
+  { "provider-opts", required_argument, NULL, CHAR_MAX + 74 },
+  { "detailed-url", no_argument, NULL, CHAR_MAX + 75 },
+  { "no-detailed-url", no_argument, NULL, CHAR_MAX + 76 },
+  { "only-urls", no_argument, NULL, CHAR_MAX + 77 },
+  { "batch", no_argument, NULL, CHAR_MAX + 78 },
+  { "version", optional_argument, NULL, 'v' },
+  { "help", no_argument, NULL, 'h' },
+  { "more-help", no_argument, NULL, '!' },
+  { NULL, 0, NULL, 0 }
 
 };
 
@@ -479,98 +485,117 @@ process_options (int argc, char **argv)
 
   if (HAVE_OPT(EXPORT) && HAVE_OPT(EXPORT_STAPLED))
     {
-      error (EXIT_FAILURE, 0, "the '%s' and '%s' options conflict",
-             "export", "export_stapled");
+      fprintf (stderr, "the '%s' and '%s' options conflict\n",
+               "export", "export_stapled");
+      exit (EXIT_FAILURE);
     }
   if (HAVE_OPT(EXPORT) && HAVE_OPT(EXPORT_CHAIN))
     {
-      error (EXIT_FAILURE, 0, "the '%s' and '%s' options conflict",
-             "export", "export_chain");
+      fprintf (stderr, "the '%s' and '%s' options conflict\n",
+               "export", "export_chain");
+      exit (EXIT_FAILURE);
     }
   if (HAVE_OPT(EXPORT) && HAVE_OPT(EXPORT_PUBKEY))
     {
-      error (EXIT_FAILURE, 0, "the '%s' and '%s' options conflict",
-             "export", "export_pubkey");
+      fprintf (stderr, "the '%s' and '%s' options conflict\n",
+               "export", "export_pubkey");
+      exit (EXIT_FAILURE);
     }
   if (HAVE_OPT(EXPORT_STAPLED) && HAVE_OPT(EXPORT))
     {
-      error (EXIT_FAILURE, 0, "the '%s' and '%s' options conflict",
-             "export-stapled", "export");
+      fprintf (stderr, "the '%s' and '%s' options conflict\n",
+               "export-stapled", "export");
+      exit (EXIT_FAILURE);
     }
   if (HAVE_OPT(EXPORT_STAPLED) && HAVE_OPT(EXPORT_CHAIN))
     {
-      error (EXIT_FAILURE, 0, "the '%s' and '%s' options conflict",
-             "export-stapled", "export_chain");
+      fprintf (stderr, "the '%s' and '%s' options conflict\n",
+               "export-stapled", "export_chain");
+      exit (EXIT_FAILURE);
     }
   if (HAVE_OPT(EXPORT_STAPLED) && HAVE_OPT(EXPORT_PUBKEY))
     {
-      error (EXIT_FAILURE, 0, "the '%s' and '%s' options conflict",
-             "export-stapled", "export_pubkey");
+      fprintf (stderr, "the '%s' and '%s' options conflict\n",
+               "export-stapled", "export_pubkey");
+      exit (EXIT_FAILURE);
     }
   if (HAVE_OPT(EXPORT_CHAIN) && HAVE_OPT(EXPORT_STAPLED))
     {
-      error (EXIT_FAILURE, 0, "the '%s' and '%s' options conflict",
-             "export-chain", "export_stapled");
+      fprintf (stderr, "the '%s' and '%s' options conflict\n",
+               "export-chain", "export_stapled");
+      exit (EXIT_FAILURE);
     }
   if (HAVE_OPT(EXPORT_CHAIN) && HAVE_OPT(EXPORT))
     {
-      error (EXIT_FAILURE, 0, "the '%s' and '%s' options conflict",
-             "export-chain", "export");
+      fprintf (stderr, "the '%s' and '%s' options conflict\n",
+               "export-chain", "export");
+      exit (EXIT_FAILURE);
     }
   if (HAVE_OPT(EXPORT_CHAIN) && HAVE_OPT(EXPORT_PUBKEY))
     {
-      error (EXIT_FAILURE, 0, "the '%s' and '%s' options conflict",
-             "export-chain", "export_pubkey");
+      fprintf (stderr, "the '%s' and '%s' options conflict\n",
+               "export-chain", "export_pubkey");
+      exit (EXIT_FAILURE);
     }
   if (HAVE_OPT(EXPORT_PUBKEY) && HAVE_OPT(EXPORT_STAPLED))
     {
-      error (EXIT_FAILURE, 0, "the '%s' and '%s' options conflict",
-             "export-pubkey", "export_stapled");
+      fprintf (stderr, "the '%s' and '%s' options conflict\n",
+               "export-pubkey", "export_stapled");
+      exit (EXIT_FAILURE);
     }
   if (HAVE_OPT(EXPORT_PUBKEY) && HAVE_OPT(EXPORT))
     {
-      error (EXIT_FAILURE, 0, "the '%s' and '%s' options conflict",
-             "export-pubkey", "export");
+      fprintf (stderr, "the '%s' and '%s' options conflict\n",
+               "export-pubkey", "export");
+      exit (EXIT_FAILURE);
     }
   if (HAVE_OPT(EXPORT_PUBKEY) && HAVE_OPT(EXPORT_CHAIN))
     {
-      error (EXIT_FAILURE, 0, "the '%s' and '%s' options conflict",
-             "export-pubkey", "export_chain");
+      fprintf (stderr, "the '%s' and '%s' options conflict\n",
+               "export-pubkey", "export_chain");
+      exit (EXIT_FAILURE);
     }
   if (HAVE_OPT(SET_ID) && HAVE_OPT(WRITE))
     {
-      error (EXIT_FAILURE, 0, "the '%s' and '%s' options conflict",
-             "set-id", "write");
+      fprintf (stderr, "the '%s' and '%s' options conflict\n",
+               "set-id", "write");
+      exit (EXIT_FAILURE);
     }
   if (HAVE_OPT(SET_LABEL) && HAVE_OPT(WRITE))
     {
-      error (EXIT_FAILURE, 0, "the '%s' and '%s' options conflict",
-             "set-label", "write");
+      fprintf (stderr, "the '%s' and '%s' options conflict\n",
+               "set-label", "write");
+      exit (EXIT_FAILURE);
     }
   if (HAVE_OPT(SET_LABEL) && HAVE_OPT(SET_ID))
     {
-      error (EXIT_FAILURE, 0, "the '%s' and '%s' options conflict",
-             "set-label", "set_id");
+      fprintf (stderr, "the '%s' and '%s' options conflict\n",
+               "set-label", "set_id");
+      exit (EXIT_FAILURE);
     }
   if (HAVE_OPT(MARK_TRUSTED) && HAVE_OPT(MARK_DISTRUSTED))
     {
-      error (EXIT_FAILURE, 0, "the '%s' and '%s' options conflict",
-             "mark-trusted", "mark_distrusted");
+      fprintf (stderr, "the '%s' and '%s' options conflict\n",
+               "mark-trusted", "mark_distrusted");
+      exit (EXIT_FAILURE);
     }
   if (HAVE_OPT(MARK_DISTRUSTED) && HAVE_OPT(MARK_TRUSTED))
     {
-      error (EXIT_FAILURE, 0, "the '%s' and '%s' options conflict",
-             "mark-distrusted", "mark_trusted");
+      fprintf (stderr, "the '%s' and '%s' options conflict\n",
+               "mark-distrusted", "mark_trusted");
+      exit (EXIT_FAILURE);
     }
   if (HAVE_OPT(DEBUG) && OPT_VALUE_DEBUG < 0)
     {
-      error (EXIT_FAILURE, 0, "%s option value %d is out of range.",
-             "debug", opts->value.debug);
+      fprintf (stderr, "%s option value %d is out of range\n",
+               "debug", opts->value.debug);
+      exit (EXIT_FAILURE);
     }
   if (HAVE_OPT(DEBUG) && OPT_VALUE_DEBUG > 9999)
     {
-      error (EXIT_FAILURE, 0, "%s option value %d is out of range",
-             "debug", opts->value.debug);
+      fprintf (stderr, "%s option value %d is out of range\n",
+               "debug", opts->value.debug);
+      exit (EXIT_FAILURE);
     }
 
 
@@ -590,11 +615,17 @@ process_options (int argc, char **argv)
       int pfds[2];
 
       if (pipe (pfds) < 0)
-        error (EXIT_FAILURE, errno, "pipe");
+        {
+          perror ("pipe");
+          exit (EXIT_FAILURE);
+        }
 
       pid = fork ();
       if (pid < 0)
-        error (EXIT_FAILURE, errno, "fork");
+        {
+          perror ("fork");
+          exit (EXIT_FAILURE);
+        }
 
       if (pid == 0)
         {
@@ -633,8 +664,8 @@ process_options (int argc, char **argv)
       if (!OPT_ARG_VERSION || !strcmp (OPT_ARG_VERSION, "c"))
         {
           const char str[] =
-            "p11tool 3.7.9\n"
-            "Copyright (C) 2000-2021 Free Software Foundation, and others\n"
+            "p11tool 3.8.13\n"
+            "Copyright (C) 2000-2023 Free Software Foundation, and others\n"
             "This is free software. It is licensed for use, modification and\n"
             "redistribution under the terms of the GNU General Public License,\n"
             "version 3 or later <http://gnu.org/licenses/gpl.html>\n"
@@ -646,15 +677,15 @@ process_options (int argc, char **argv)
       else if (!strcmp (OPT_ARG_VERSION, "v"))
         {
           const char str[] =
-            "p11tool 3.7.9\n";
+            "p11tool 3.8.13\n";
           fprintf (stdout, "%s", str);
           exit(0);
         }
       else if (!strcmp (OPT_ARG_VERSION, "n"))
         {
           const char str[] =
-            "p11tool 3.7.9\n"
-            "Copyright (C) 2000-2021 Free Software Foundation, and others\n"
+            "p11tool 3.8.13\n"
+            "Copyright (C) 2000-2023 Free Software Foundation, and others\n"
             "This is free software. It is licensed for use, modification and\n"
             "redistribution under the terms of the GNU General Public License,\n"
             "version 3 or later <http://gnu.org/licenses/gpl.html>\n"
@@ -678,11 +709,12 @@ process_options (int argc, char **argv)
         }
       else
         {
-          error (EXIT_FAILURE, 0,
-                 "version option argument 'a' invalid.  Use:\n"
-                 "	'v' - version only\n"
-                 "	'c' - version and copyright\n"
-                 "	'n' - version and full copyright notice");
+          fprintf (stderr,
+                   "version option argument 'a' invalid.  Use:\n"
+                   "	'v' - version only\n"
+                   "	'c' - version and copyright\n"
+                   "	'n' - version and full copyright notice\n");
+          exit (EXIT_FAILURE);
         }
     }
 
@@ -765,7 +797,7 @@ usage (FILE *out, int status)
     "       --mark-wrap            Marks the generated key to be a wrapping key\n"
     "       --mark-trusted         Marks the object to be written as trusted\n"
     "				- prohibits the option 'mark-distrusted'\n"
-    "       --mark-distrusted      When retrieving objects, it requires the objects to be distrusted (blacklisted)\n"
+    "       --mark-distrusted      When retrieving objects, it requires the objects to be distrusted\n"
     "				- prohibits the option 'mark-trusted'\n"
     "       --mark-decrypt         Marks the object to be written for decryption\n"
     "       --mark-sign            Marks the object to be written for signature generation\n"

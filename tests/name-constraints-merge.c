@@ -16,14 +16,13 @@
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GnuTLS; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
+ * along with GnuTLS.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 /* Parts copied from GnuTLS example programs. */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#include "config.h"
 #endif
 
 #include <stdio.h>
@@ -39,7 +38,8 @@
 /* Test for name constraints PKIX extension.
  */
 
-static void check_for_error(int ret) {
+static void check_for_error(int ret)
+{
 	if (ret != GNUTLS_E_SUCCESS)
 		fail("error in %d: %s\n", __LINE__, gnutls_strerror(ret));
 }
@@ -48,21 +48,23 @@ static void check_for_error(int ret) {
 #define NAME_REJECTED 0
 
 static void check_test_result(int suite, int ret, int expected_outcome,
-							  gnutls_datum_t *tested_data) {
+			      gnutls_datum_t *tested_data)
+{
 	if (expected_outcome == NAME_ACCEPTED ? ret == 0 : ret != 0) {
 		if (expected_outcome == NAME_ACCEPTED) {
 			fail("Checking \"%.*s\" should have succeeded (suite %d).\n",
-				 tested_data->size, tested_data->data, suite);
+			     tested_data->size, tested_data->data, suite);
 		} else {
 			fail("Checking \"%.*s\" should have failed (suite %d).\n",
-				 tested_data->size, tested_data->data, suite);
+			     tested_data->size, tested_data->data, suite);
 		}
 	}
 }
 
-static void set_name(const char *name, gnutls_datum_t *datum) {
-	datum->data = (unsigned char*) name;
-	datum->size = strlen((char*) name);
+static void set_name(const char *name, gnutls_datum_t *datum)
+{
+	datum->data = (unsigned char *)name;
+	datum->size = strlen((char *)name);
 }
 
 static void tls_log_func(int level, const char *str)
@@ -96,23 +98,28 @@ void doit(void)
 	check_for_error(ret);
 
 	set_name("org", &name);
-	ret = gnutls_x509_name_constraints_add_permitted(nc1, GNUTLS_SAN_DNSNAME, &name);
+	ret = gnutls_x509_name_constraints_add_permitted(
+		nc1, GNUTLS_SAN_DNSNAME, &name);
 	check_for_error(ret);
 
 	set_name("ccc.com", &name);
-	ret = gnutls_x509_name_constraints_add_permitted(nc1, GNUTLS_SAN_DNSNAME, &name);
+	ret = gnutls_x509_name_constraints_add_permitted(
+		nc1, GNUTLS_SAN_DNSNAME, &name);
 	check_for_error(ret);
 
 	set_name("ccc.com", &name);
-	ret = gnutls_x509_name_constraints_add_permitted(nc1, GNUTLS_SAN_RFC822NAME, &name);
+	ret = gnutls_x509_name_constraints_add_permitted(
+		nc1, GNUTLS_SAN_RFC822NAME, &name);
 	check_for_error(ret);
 
 	set_name("org", &name);
-	ret = gnutls_x509_name_constraints_add_permitted(nc2, GNUTLS_SAN_DNSNAME, &name);
+	ret = gnutls_x509_name_constraints_add_permitted(
+		nc2, GNUTLS_SAN_DNSNAME, &name);
 	check_for_error(ret);
 
 	set_name("aaa.bbb.ccc.com", &name);
-	ret = gnutls_x509_name_constraints_add_permitted(nc2, GNUTLS_SAN_DNSNAME, &name);
+	ret = gnutls_x509_name_constraints_add_permitted(
+		nc2, GNUTLS_SAN_DNSNAME, &name);
 	check_for_error(ret);
 
 	ret = _gnutls_x509_name_constraints_merge(nc1, nc2);
@@ -120,52 +127,64 @@ void doit(void)
 
 	/* unrelated */
 	set_name("xxx.example.com", &name);
-	ret = gnutls_x509_name_constraints_check(nc1, GNUTLS_SAN_DNSNAME, &name);
+	ret = gnutls_x509_name_constraints_check(nc1, GNUTLS_SAN_DNSNAME,
+						 &name);
 	check_test_result(suite, ret, NAME_REJECTED, &name);
 
 	set_name("example.org", &name);
-	ret = gnutls_x509_name_constraints_check(nc1, GNUTLS_SAN_DNSNAME, &name);
+	ret = gnutls_x509_name_constraints_check(nc1, GNUTLS_SAN_DNSNAME,
+						 &name);
 	check_test_result(suite, ret, NAME_ACCEPTED, &name);
 
 	set_name("com", &name);
-	ret = gnutls_x509_name_constraints_check(nc1, GNUTLS_SAN_DNSNAME, &name);
+	ret = gnutls_x509_name_constraints_check(nc1, GNUTLS_SAN_DNSNAME,
+						 &name);
 	check_test_result(suite, ret, NAME_REJECTED, &name);
 
 	set_name("xxx.com", &name);
-	ret = gnutls_x509_name_constraints_check(nc1, GNUTLS_SAN_DNSNAME, &name);
+	ret = gnutls_x509_name_constraints_check(nc1, GNUTLS_SAN_DNSNAME,
+						 &name);
 	check_test_result(suite, ret, NAME_REJECTED, &name);
 
 	set_name("ccc.com", &name);
-	ret = gnutls_x509_name_constraints_check(nc1, GNUTLS_SAN_DNSNAME, &name);
+	ret = gnutls_x509_name_constraints_check(nc1, GNUTLS_SAN_DNSNAME,
+						 &name);
 	check_test_result(suite, ret, NAME_REJECTED, &name);
 
 	/* check intersection of permitted */
 	set_name("xxx.aaa.bbb.ccc.com", &name);
-	ret = gnutls_x509_name_constraints_check(nc1, GNUTLS_SAN_DNSNAME, &name);
+	ret = gnutls_x509_name_constraints_check(nc1, GNUTLS_SAN_DNSNAME,
+						 &name);
 	check_test_result(suite, ret, NAME_ACCEPTED, &name);
 
 	set_name("aaa.bbb.ccc.com", &name);
-	ret = gnutls_x509_name_constraints_check(nc1, GNUTLS_SAN_DNSNAME, &name);
+	ret = gnutls_x509_name_constraints_check(nc1, GNUTLS_SAN_DNSNAME,
+						 &name);
 	check_test_result(suite, ret, NAME_ACCEPTED, &name);
 
 	set_name("xxx.bbb.ccc.com", &name);
-	ret = gnutls_x509_name_constraints_check(nc1, GNUTLS_SAN_DNSNAME, &name);
+	ret = gnutls_x509_name_constraints_check(nc1, GNUTLS_SAN_DNSNAME,
+						 &name);
 	check_test_result(suite, ret, NAME_REJECTED, &name);
 
 	set_name("xxx.ccc.com", &name);
-	ret = gnutls_x509_name_constraints_check(nc1, GNUTLS_SAN_DNSNAME, &name);
+	ret = gnutls_x509_name_constraints_check(nc1, GNUTLS_SAN_DNSNAME,
+						 &name);
 	check_test_result(suite, ret, NAME_REJECTED, &name);
 
 	set_name("ccc.com", &name);
-	ret = gnutls_x509_name_constraints_check(nc1, GNUTLS_SAN_DNSNAME, &name);
+	ret = gnutls_x509_name_constraints_check(nc1, GNUTLS_SAN_DNSNAME,
+						 &name);
 	check_test_result(suite, ret, NAME_REJECTED, &name);
 
 	set_name("ccc.com", &name);
-	ret = gnutls_x509_name_constraints_check(nc1, GNUTLS_SAN_RFC822NAME, &name);
+	ret = gnutls_x509_name_constraints_check(nc1, GNUTLS_SAN_RFC822NAME,
+						 &name);
 	check_test_result(suite, ret, NAME_ACCEPTED, &name);
 
 	set_name("xxx.ccc.com", &name);
-	ret = gnutls_x509_name_constraints_check(nc1, GNUTLS_SAN_RFC822NAME, &name);
+	ret = gnutls_x509_name_constraints_check(nc1, GNUTLS_SAN_RFC822NAME,
+						 &name);
 	check_test_result(suite, ret, NAME_REJECTED, &name);
 
 	gnutls_x509_name_constraints_deinit(nc1);
@@ -184,34 +203,41 @@ void doit(void)
 	check_for_error(ret);
 
 	set_name("example.com", &name);
-	ret = gnutls_x509_name_constraints_add_excluded(nc1, GNUTLS_SAN_DNSNAME, &name);
+	ret = gnutls_x509_name_constraints_add_excluded(nc1, GNUTLS_SAN_DNSNAME,
+							&name);
 	check_for_error(ret);
 
 	set_name("example.net", &name);
-	ret = gnutls_x509_name_constraints_add_excluded(nc2, GNUTLS_SAN_DNSNAME, &name);
+	ret = gnutls_x509_name_constraints_add_excluded(nc2, GNUTLS_SAN_DNSNAME,
+							&name);
 	check_for_error(ret);
 
 	ret = _gnutls_x509_name_constraints_merge(nc1, nc2);
 	check_for_error(ret);
 
 	set_name("xxx.example.com", &name);
-	ret = gnutls_x509_name_constraints_check(nc1, GNUTLS_SAN_DNSNAME, &name);
+	ret = gnutls_x509_name_constraints_check(nc1, GNUTLS_SAN_DNSNAME,
+						 &name);
 	check_test_result(suite, ret, NAME_REJECTED, &name);
 
 	set_name("xxx.example.net", &name);
-	ret = gnutls_x509_name_constraints_check(nc1, GNUTLS_SAN_DNSNAME, &name);
+	ret = gnutls_x509_name_constraints_check(nc1, GNUTLS_SAN_DNSNAME,
+						 &name);
 	check_test_result(suite, ret, NAME_REJECTED, &name);
 
 	set_name("example.com", &name);
-	ret = gnutls_x509_name_constraints_check(nc1, GNUTLS_SAN_DNSNAME, &name);
+	ret = gnutls_x509_name_constraints_check(nc1, GNUTLS_SAN_DNSNAME,
+						 &name);
 	check_test_result(suite, ret, NAME_REJECTED, &name);
 
 	set_name("example.net", &name);
-	ret = gnutls_x509_name_constraints_check(nc1, GNUTLS_SAN_DNSNAME, &name);
+	ret = gnutls_x509_name_constraints_check(nc1, GNUTLS_SAN_DNSNAME,
+						 &name);
 	check_test_result(suite, ret, NAME_REJECTED, &name);
 
 	set_name("example.org", &name);
-	ret = gnutls_x509_name_constraints_check(nc1, GNUTLS_SAN_DNSNAME, &name);
+	ret = gnutls_x509_name_constraints_check(nc1, GNUTLS_SAN_DNSNAME,
+						 &name);
 	check_test_result(suite, ret, NAME_ACCEPTED, &name);
 
 	gnutls_x509_name_constraints_deinit(nc1);
@@ -231,34 +257,41 @@ void doit(void)
 	check_for_error(ret);
 
 	set_name("one.example.com", &name);
-	ret = gnutls_x509_name_constraints_add_permitted(nc1, GNUTLS_SAN_DNSNAME, &name);
+	ret = gnutls_x509_name_constraints_add_permitted(
+		nc1, GNUTLS_SAN_DNSNAME, &name);
 	check_for_error(ret);
 
 	set_name("two.example.com", &name);
-	ret = gnutls_x509_name_constraints_add_permitted(nc2, GNUTLS_SAN_DNSNAME, &name);
+	ret = gnutls_x509_name_constraints_add_permitted(
+		nc2, GNUTLS_SAN_DNSNAME, &name);
 	check_for_error(ret);
 
 	ret = _gnutls_x509_name_constraints_merge(nc1, nc2);
 	check_for_error(ret);
 
 	set_name("one.example.com", &name);
-	ret = gnutls_x509_name_constraints_check(nc1, GNUTLS_SAN_DNSNAME, &name);
+	ret = gnutls_x509_name_constraints_check(nc1, GNUTLS_SAN_DNSNAME,
+						 &name);
 	check_test_result(suite, ret, NAME_REJECTED, &name);
 
 	set_name("two.example.com", &name);
-	ret = gnutls_x509_name_constraints_check(nc1, GNUTLS_SAN_DNSNAME, &name);
+	ret = gnutls_x509_name_constraints_check(nc1, GNUTLS_SAN_DNSNAME,
+						 &name);
 	check_test_result(suite, ret, NAME_REJECTED, &name);
 
 	set_name("three.example.com", &name);
-	ret = gnutls_x509_name_constraints_check(nc1, GNUTLS_SAN_DNSNAME, &name);
+	ret = gnutls_x509_name_constraints_check(nc1, GNUTLS_SAN_DNSNAME,
+						 &name);
 	check_test_result(suite, ret, NAME_REJECTED, &name);
 
 	set_name("example.com", &name);
-	ret = gnutls_x509_name_constraints_check(nc1, GNUTLS_SAN_DNSNAME, &name);
+	ret = gnutls_x509_name_constraints_check(nc1, GNUTLS_SAN_DNSNAME,
+						 &name);
 	check_test_result(suite, ret, NAME_REJECTED, &name);
 
 	set_name("org", &name);
-	ret = gnutls_x509_name_constraints_check(nc1, GNUTLS_SAN_DNSNAME, &name);
+	ret = gnutls_x509_name_constraints_check(nc1, GNUTLS_SAN_DNSNAME,
+						 &name);
 	check_test_result(suite, ret, NAME_REJECTED, &name);
 
 	gnutls_x509_name_constraints_deinit(nc1);
@@ -279,38 +312,46 @@ void doit(void)
 	check_for_error(ret);
 
 	set_name("foo.com", &name);
-	ret = gnutls_x509_name_constraints_add_permitted(nc1, GNUTLS_SAN_DNSNAME, &name);
+	ret = gnutls_x509_name_constraints_add_permitted(
+		nc1, GNUTLS_SAN_DNSNAME, &name);
 	check_for_error(ret);
 
 	set_name("bar.com", &name);
-	ret = gnutls_x509_name_constraints_add_permitted(nc1, GNUTLS_SAN_DNSNAME, &name);
+	ret = gnutls_x509_name_constraints_add_permitted(
+		nc1, GNUTLS_SAN_DNSNAME, &name);
 	check_for_error(ret);
 
 	set_name("sub.foo.com", &name);
-	ret = gnutls_x509_name_constraints_add_permitted(nc2, GNUTLS_SAN_DNSNAME, &name);
+	ret = gnutls_x509_name_constraints_add_permitted(
+		nc2, GNUTLS_SAN_DNSNAME, &name);
 	check_for_error(ret);
 
 	ret = _gnutls_x509_name_constraints_merge(nc1, nc2);
 	check_for_error(ret);
 
 	set_name("foo.com", &name);
-	ret = gnutls_x509_name_constraints_check(nc1, GNUTLS_SAN_DNSNAME, &name);
+	ret = gnutls_x509_name_constraints_check(nc1, GNUTLS_SAN_DNSNAME,
+						 &name);
 	check_test_result(suite, ret, NAME_REJECTED, &name);
 
 	set_name("bar.com", &name);
-	ret = gnutls_x509_name_constraints_check(nc1, GNUTLS_SAN_DNSNAME, &name);
+	ret = gnutls_x509_name_constraints_check(nc1, GNUTLS_SAN_DNSNAME,
+						 &name);
 	check_test_result(suite, ret, NAME_REJECTED, &name);
 
 	set_name("sub.foo.com", &name);
-	ret = gnutls_x509_name_constraints_check(nc1, GNUTLS_SAN_DNSNAME, &name);
+	ret = gnutls_x509_name_constraints_check(nc1, GNUTLS_SAN_DNSNAME,
+						 &name);
 	check_test_result(suite, ret, NAME_ACCEPTED, &name);
 
 	set_name("anothersub.foo.com", &name);
-	ret = gnutls_x509_name_constraints_check(nc1, GNUTLS_SAN_DNSNAME, &name);
+	ret = gnutls_x509_name_constraints_check(nc1, GNUTLS_SAN_DNSNAME,
+						 &name);
 	check_test_result(suite, ret, NAME_REJECTED, &name);
 
 	set_name("com", &name);
-	ret = gnutls_x509_name_constraints_check(nc1, GNUTLS_SAN_DNSNAME, &name);
+	ret = gnutls_x509_name_constraints_check(nc1, GNUTLS_SAN_DNSNAME,
+						 &name);
 	check_test_result(suite, ret, NAME_REJECTED, &name);
 
 	gnutls_x509_name_constraints_deinit(nc1);
@@ -332,39 +373,215 @@ void doit(void)
 	check_for_error(ret);
 
 	set_name("three.example.com", &name);
-	ret = gnutls_x509_name_constraints_add_permitted(nc1, GNUTLS_SAN_DNSNAME, &name);
+	ret = gnutls_x509_name_constraints_add_permitted(
+		nc1, GNUTLS_SAN_DNSNAME, &name);
 	check_for_error(ret);
 
 	set_name("redhat.com", &name);
-	ret = gnutls_x509_name_constraints_add_permitted(nc1, GNUTLS_SAN_RFC822NAME, &name);
+	ret = gnutls_x509_name_constraints_add_permitted(
+		nc1, GNUTLS_SAN_RFC822NAME, &name);
 	check_for_error(ret);
 
 	set_name("four.example.com", &name);
-	ret = gnutls_x509_name_constraints_add_permitted(nc2, GNUTLS_SAN_DNSNAME, &name);
+	ret = gnutls_x509_name_constraints_add_permitted(
+		nc2, GNUTLS_SAN_DNSNAME, &name);
 	check_for_error(ret);
 
 	ret = _gnutls_x509_name_constraints_merge(nc1, nc2);
 	check_for_error(ret);
 
 	set_name("three.example.com", &name);
-	ret = gnutls_x509_name_constraints_check(nc1, GNUTLS_SAN_DNSNAME, &name);
+	ret = gnutls_x509_name_constraints_check(nc1, GNUTLS_SAN_DNSNAME,
+						 &name);
 	check_test_result(suite, ret, NAME_REJECTED, &name);
 
 	set_name("four.example.com", &name);
-	ret = gnutls_x509_name_constraints_check(nc1, GNUTLS_SAN_DNSNAME, &name);
+	ret = gnutls_x509_name_constraints_check(nc1, GNUTLS_SAN_DNSNAME,
+						 &name);
 	check_test_result(suite, ret, NAME_REJECTED, &name);
 
 	set_name("five.example.com", &name);
-	ret = gnutls_x509_name_constraints_check(nc1, GNUTLS_SAN_DNSNAME, &name);
+	ret = gnutls_x509_name_constraints_check(nc1, GNUTLS_SAN_DNSNAME,
+						 &name);
 	check_test_result(suite, ret, NAME_REJECTED, &name);
 
 	set_name("example.com", &name);
-	ret = gnutls_x509_name_constraints_check(nc1, GNUTLS_SAN_DNSNAME, &name);
+	ret = gnutls_x509_name_constraints_check(nc1, GNUTLS_SAN_DNSNAME,
+						 &name);
 	check_test_result(suite, ret, NAME_REJECTED, &name);
 
 	set_name("org", &name);
-	ret = gnutls_x509_name_constraints_check(nc1, GNUTLS_SAN_DNSNAME, &name);
+	ret = gnutls_x509_name_constraints_check(nc1, GNUTLS_SAN_DNSNAME,
+						 &name);
 	check_test_result(suite, ret, NAME_REJECTED, &name);
+
+	gnutls_x509_name_constraints_deinit(nc1);
+	gnutls_x509_name_constraints_deinit(nc2);
+
+	/* 5: variant of suite 0: after moving rfc822Name (ccc.com)
+	 * from NC1 to NC2, dNSName (xxx.ccc.com) should still be
+	 * rejected.
+	 *
+	 * NC1: permitted DNS org
+	 *      permitted DNS ccc.com
+	 * NC2: permitted DNS org
+	 *      permitted email ccc.com
+	 *      permitted DNS aaa.bbb.ccc.com
+	 */
+	suite = 5;
+
+	ret = gnutls_x509_name_constraints_init(&nc1);
+	check_for_error(ret);
+
+	ret = gnutls_x509_name_constraints_init(&nc2);
+	check_for_error(ret);
+
+	set_name("org", &name);
+	ret = gnutls_x509_name_constraints_add_permitted(
+		nc1, GNUTLS_SAN_DNSNAME, &name);
+	check_for_error(ret);
+
+	set_name("ccc.com", &name);
+	ret = gnutls_x509_name_constraints_add_permitted(
+		nc1, GNUTLS_SAN_DNSNAME, &name);
+	check_for_error(ret);
+
+	set_name("org", &name);
+	ret = gnutls_x509_name_constraints_add_permitted(
+		nc2, GNUTLS_SAN_DNSNAME, &name);
+	check_for_error(ret);
+
+	set_name("ccc.com", &name);
+	ret = gnutls_x509_name_constraints_add_permitted(
+		nc2, GNUTLS_SAN_RFC822NAME, &name);
+	check_for_error(ret);
+
+	set_name("aaa.bbb.ccc.com", &name);
+	ret = gnutls_x509_name_constraints_add_permitted(
+		nc2, GNUTLS_SAN_DNSNAME, &name);
+	check_for_error(ret);
+
+	ret = _gnutls_x509_name_constraints_merge(nc1, nc2);
+	check_for_error(ret);
+
+	/* check intersection of permitted */
+	set_name("xxx.ccc.com", &name);
+	ret = gnutls_x509_name_constraints_check(nc1, GNUTLS_SAN_DNSNAME,
+						 &name);
+	check_test_result(suite, ret, NAME_REJECTED, &name);
+
+	gnutls_x509_name_constraints_deinit(nc1);
+	gnutls_x509_name_constraints_deinit(nc2);
+
+	/* 6: test intersecting empty permitted with non-empty permitted
+	 * NC1: excluded DNS excluded.example.org  (empty permitted)
+	 * NC2: permitted DNS permitted.example.org
+	 * Expected result:
+	 *   permitted=[permitted.example.org], excluded=[excluded.example.org]
+	 *   unrelated.example.com is rejected
+	 */
+	suite = 6;
+
+	ret = gnutls_x509_name_constraints_init(&nc1);
+	check_for_error(ret);
+
+	ret = gnutls_x509_name_constraints_init(&nc2);
+	check_for_error(ret);
+
+	set_name("excluded.example.org", &name);
+	ret = gnutls_x509_name_constraints_add_excluded(nc1, GNUTLS_SAN_DNSNAME,
+							&name);
+	check_for_error(ret);
+
+	set_name("permitted.example.org", &name);
+	ret = gnutls_x509_name_constraints_add_permitted(
+		nc2, GNUTLS_SAN_DNSNAME, &name);
+	check_for_error(ret);
+
+	ret = _gnutls_x509_name_constraints_merge(nc1, nc2);
+	check_for_error(ret);
+
+	set_name("unrelated.example.com", &name); /* entirely unrelated */
+	ret = gnutls_x509_name_constraints_check(nc1, GNUTLS_SAN_DNSNAME,
+						 &name);
+	check_test_result(suite, ret, NAME_REJECTED, &name); /* #1814 */
+
+	set_name("permitted.example.org", &name); /* permitted, direct */
+	ret = gnutls_x509_name_constraints_check(nc1, GNUTLS_SAN_DNSNAME,
+						 &name);
+	check_test_result(suite, ret, NAME_ACCEPTED, &name); /* sanity */
+
+	set_name("sub.permitted.example.org", &name); /* permitted, subdomain */
+	ret = gnutls_x509_name_constraints_check(nc1, GNUTLS_SAN_DNSNAME,
+						 &name);
+	check_test_result(suite, ret, NAME_ACCEPTED, &name); /* sanity */
+
+	set_name("excluded.example.org", &name); /* excluded, direct */
+	ret = gnutls_x509_name_constraints_check(nc1, GNUTLS_SAN_DNSNAME,
+						 &name);
+	check_test_result(suite, ret, NAME_REJECTED, &name); /* sanity */
+
+	set_name("sub.excluded.example.org", &name); /* excluded, subdomain */
+	ret = gnutls_x509_name_constraints_check(nc1, GNUTLS_SAN_DNSNAME,
+						 &name);
+	check_test_result(suite, ret, NAME_REJECTED, &name); /* sanity */
+
+	gnutls_x509_name_constraints_deinit(nc1);
+	gnutls_x509_name_constraints_deinit(nc2);
+
+	/* 7: test intersecting non-empty permitted with empty permitted
+	 * (same as 6, but swapped to ensure order doesn't matter)
+	 * NC1: permitted DNS permitted.example.org
+	 * NC2: excluded DNS excluded.example.org  (empty permitted)
+	 * Expected result:
+	 *   permitted=[permitted.example.org], excluded=[excluded.example.org]
+	 *   unrelated.example.com is rejected
+	 */
+	suite = 7;
+
+	ret = gnutls_x509_name_constraints_init(&nc1);
+	check_for_error(ret);
+
+	ret = gnutls_x509_name_constraints_init(&nc2);
+	check_for_error(ret);
+
+	set_name("permitted.example.org", &name);
+	ret = gnutls_x509_name_constraints_add_permitted(
+		nc1, GNUTLS_SAN_DNSNAME, &name);
+	check_for_error(ret);
+
+	set_name("excluded.example.org", &name);
+	ret = gnutls_x509_name_constraints_add_excluded(nc2, GNUTLS_SAN_DNSNAME,
+							&name);
+	check_for_error(ret);
+
+	ret = _gnutls_x509_name_constraints_merge(nc1, nc2);
+	check_for_error(ret);
+
+	set_name("unrelated.example.com", &name); /* entirely unrelated */
+	ret = gnutls_x509_name_constraints_check(nc1, GNUTLS_SAN_DNSNAME,
+						 &name);
+	check_test_result(suite, ret, NAME_REJECTED, &name); /* #1814 */
+
+	set_name("permitted.example.org", &name); /* permitted, direct */
+	ret = gnutls_x509_name_constraints_check(nc1, GNUTLS_SAN_DNSNAME,
+						 &name);
+	check_test_result(suite, ret, NAME_ACCEPTED, &name); /* sanity */
+
+	set_name("sub.permitted.example.org", &name); /* permitted, subdomain */
+	ret = gnutls_x509_name_constraints_check(nc1, GNUTLS_SAN_DNSNAME,
+						 &name);
+	check_test_result(suite, ret, NAME_ACCEPTED, &name); /* sanity */
+
+	set_name("excluded.example.org", &name); /* excluded, direct */
+	ret = gnutls_x509_name_constraints_check(nc1, GNUTLS_SAN_DNSNAME,
+						 &name);
+	check_test_result(suite, ret, NAME_REJECTED, &name); /* sanity */
+
+	set_name("sub.excluded.example.org", &name); /* excluded, subdomain */
+	ret = gnutls_x509_name_constraints_check(nc1, GNUTLS_SAN_DNSNAME,
+						 &name);
+	check_test_result(suite, ret, NAME_REJECTED, &name); /* sanity */
 
 	gnutls_x509_name_constraints_deinit(nc1);
 	gnutls_x509_name_constraints_deinit(nc2);

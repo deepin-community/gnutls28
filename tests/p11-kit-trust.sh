@@ -15,8 +15,7 @@
 # General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with GnuTLS; if not, write to the Free Software Foundation,
-# Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+# along with GnuTLS.  If not, see <https://www.gnu.org/licenses/>.
 
 #set -e
 
@@ -24,12 +23,15 @@
 : ${P11TOOL=../src/p11tool${EXEEXT}}
 : ${CERTTOOL=../src/certtool${EXEEXT}}
 : ${DIFF=diff}
+: ${PKG_CONFIG=pkg-config}
 
 EXPORTED_FILE=out.$$.tmp
 DER_FILE=out-der.$$.tmp
 TMPFILE=out-tmp.$$.tmp
 
-for lib in ${libdir} ${libdir}/pkcs11 /usr/lib64/pkcs11/ /usr/lib/pkcs11/ /usr/lib/x86_64-linux-gnu/pkcs11/;do
+P11_MODULE_PATH=$(${PKG_CONFIG} p11-kit-1 --variable=p11_module_path)
+
+for lib in "${P11_MODULE_PATH}" ${libdir} ${libdir}/pkcs11 /usr/lib64/pkcs11/ /usr/lib/pkcs11/ /usr/lib/x86_64-linux-gnu/pkcs11/;do
 	if test -f "${lib}/p11-kit-trust.so"; then
 		MODULE="${lib}/p11-kit-trust.so"
 		echo "located ${MODULE}"

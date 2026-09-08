@@ -2,9 +2,10 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 
 from typing import Mapping, Optional, TextIO, Sequence
-import datetime
 import io
+import os
 import re
+import time
 from cligen.types import ArgumentType, Desc, ToolDesc, OptionDesc
 from cligen.package import Info, license
 
@@ -180,7 +181,10 @@ def generate(desc: Desc, info: Info,
         else:
             section_docs.write(generate_options(desc.tool, section.options))
 
-    formatted_date = datetime.date.today().strftime('%d %b %Y')
+    formatted_date = time.strftime(
+        '%d %b %Y',
+        time.gmtime(int(os.environ.get('SOURCE_DATE_EPOCH', time.time())))
+    )
     detail_concatenated = '\n.sp\n'.join(detail.strip().split('\n\n'))
     outfile.write(f'''\
 .de1 NOP

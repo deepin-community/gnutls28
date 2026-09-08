@@ -7,7 +7,7 @@
 
 @var{so_pin}: Security Officer's PIN
 
-@var{label}: A name to be used for the token
+@var{label}: A name to be used for the token, at most 32 characters
 
 This function will initialize (format) a token. If the token is
 at a factory defaults state the security officer's PIN given will be

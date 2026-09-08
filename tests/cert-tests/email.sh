@@ -17,8 +17,7 @@
 # General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with GnuTLS; if not, write to the Free Software Foundation,
-# Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+# along with GnuTLS.  If not, see <https://www.gnu.org/licenses/>.
 
 : ${srcdir=.}
 : ${CERTTOOL=../../src/certtool${EXEEXT}}
@@ -96,5 +95,16 @@ if test "${rc}" != "1"; then
 	exit 1
 fi
 
+# #1825: oversized SAN does not preclude fallback to DN email
+${VALGRIND} "${CERTTOOL}" \
+	--infile "${srcdir}/email-certs/oversized-san.pem" \
+	--load-ca-certificate "${srcdir}/email-certs/oversized-san.pem" \
+	--verify --verify-email test@example.com
+rc=$?
+
+if test "${rc}" != "1"; then
+	echo "email test 9 failed"
+	exit 1
+fi
 
 exit 0

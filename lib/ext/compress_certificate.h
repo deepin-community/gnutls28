@@ -23,7 +23,7 @@
 #ifndef GNUTLS_LIB_EXT_COMPRESS_CERTIFICATE_H
 #define GNUTLS_LIB_EXT_COMPRESS_CERTIFICATE_H
 
-#include <hello_ext.h>
+#include "hello_ext.h"
 
 #define MIN_COMPRESS_CERTIFICATE_METHODS 1
 #define MAX_COMPRESS_CERTIFICATE_METHODS 127
@@ -35,15 +35,21 @@ typedef struct {
 
 extern const hello_ext_entry_st ext_mod_compress_certificate;
 
-gnutls_compression_method_t _gnutls_compress_certificate_num2method(uint16_t num);
+gnutls_compression_method_t
+_gnutls_compress_certificate_num2method(uint16_t num);
+
 int _gnutls_compress_certificate_method2num(gnutls_compression_method_t method);
 
-int
-_gnutls_compress_certificate_recv_params(gnutls_session_t session,
-					 const uint8_t * data,
-					 size_t data_size);
-int
-_gnutls_compress_certificate_send_params(gnutls_session_t session,
-					 gnutls_buffer_st * data);
+bool _gnutls_compress_certificate_is_method_enabled(
+	gnutls_session_t session, gnutls_compression_method_t method);
+
+bool _gnutls_compress_certificate_is_set(gnutls_session_t session);
+
+int _gnutls_compress_certificate_recv_params(gnutls_session_t session,
+					     const uint8_t *data,
+					     size_t data_size);
+
+int _gnutls_compress_certificate_send_params(gnutls_session_t session,
+					     gnutls_buffer_st *data);
 
 #endif /* GNUTLS_LIB_EXT_COMPRESS_CERTIFICATE_H */

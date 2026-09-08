@@ -16,13 +16,12 @@
 # General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this file; if not, write to the Free Software Foundation,
-# Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+# along with this file.  If not, see <https://www.gnu.org/licenses/>.
 
 EXTRA_DIST = TODO certtool.cfg gnutls.html	\
 	doxygen/Doxyfile.in doxygen/Doxyfile.orig texinfo.css \
-	gnutls-guile.html stamp_enums stamp_functions \
-	doc.mk COPYING COPYING.LESSER
+	stamp_enums stamp_functions stamp_error_codes \
+	doc.mk
 
 IMAGES = \
 	gnutls-handshake-state.png	\
@@ -42,7 +41,7 @@ endif
 
 CLIGEN_ARGS = \
 	--bug-email bugs@gnutls.org \
-	--copyright-year 2000-2021 \
+	--copyright-year 2000-2023 \
 	--copyright-holder 'Free Software Foundation, and others' \
 	--license gpl3+ \
 	--package '$(PACKAGE)' \
@@ -175,7 +174,7 @@ invoke-tpmtool.texi: $(top_srcdir)/src/tpmtool-options.json
 		$< $@
 
 
-info_TEXINFOS = gnutls.texi gnutls-guile.texi
+info_TEXINFOS = gnutls.texi
 gnutls_TEXINFOS = gnutls.texi fdl-1.3.texi				\
 	cha-bib.texi cha-cert-auth.texi	cha-cert-auth2.texi		\
 	cha-ciphersuites.texi cha-copying.texi cha-functions.texi	\
@@ -183,7 +182,8 @@ gnutls_TEXINFOS = gnutls.texi fdl-1.3.texi				\
 	cha-library.texi cha-preface.texi cha-programs.texi		\
 	sec-tls-app.texi cha-errors.texi cha-support.texi		\
 	cha-shared-key.texi cha-gtls-examples.texi cha-upgrade.texi	\
-	cha-tokens.texi cha-crypto.texi cha-auth.texi cha-config.texi
+	cha-tokens.texi cha-crypto.texi cha-auth.texi cha-config.texi	\
+	cha-features.texi
 
 AUTOGENED_DOC = invoke-gnutls-cli.texi invoke-gnutls-cli-debug.texi \
 	invoke-gnutls-serv.texi invoke-certtool.texi invoke-srptool.texi \
@@ -236,15 +236,16 @@ AM_MAKEINFOHTMLFLAGS = $(AM_MAKEINFOFLAGS) \
 	--no-split --css-include=$(srcdir)/texinfo.css
 
 MAINTAINERCLEANFILES =
+DISTCLEANFILES =
 
 # Generated texinfos.
 
 API_FILES=gnutls-api.texi socket-api.texi x509-api.texi pkcs12-api.texi \
 	tpm-api.texi pkcs11-api.texi abstract-api.texi compat-api.texi \
-	dtls-api.texi crypto-api.texi ocsp-api.texi tpm-api.texi dane-api.texi \
-	pkcs7-api.texi
+	dtls-api.texi crypto-api.texi ocsp-api.texi dane-api.texi \
+	pkcs7-api.texi hpke-api.texi
 
-MAINTAINERCLEANFILES += stamp_enums stamp_functions functions enums
+MAINTAINERCLEANFILES += stamp_enums stamp_functions stamp_error_codes
 
 gnutls_TEXINFOS += $(API_FILES)
 
@@ -252,9 +253,9 @@ MAINTAINERCLEANFILES += $(API_FILES)
 
 gnutls-api.texi: $(top_srcdir)/lib/includes/gnutls/gnutls.h.in
 	echo "" > $@-tmp
-	for i in `$(top_srcdir)/doc/scripts/getfuncs.pl < $< |sort|uniq`; do \
+	for i in `$(PERL) $(top_srcdir)/doc/scripts/getfuncs.pl < $< |sort|uniq`; do \
 		echo $(ECHO_N) "Creating documentation for $$i... " && \
-		$(srcdir)/scripts/gdoc -texinfo \
+		$(PERL) $(srcdir)/scripts/gdoc -texinfo \
 			-function $$i \
 			$(C_SOURCE_FILES) >> $@-tmp && \
 		echo "ok"; \
@@ -263,9 +264,9 @@ gnutls-api.texi: $(top_srcdir)/lib/includes/gnutls/gnutls.h.in
 
 socket-api.texi: $(top_srcdir)/lib/includes/gnutls/socket.h
 	echo "" > $@-tmp
-	for i in `$(top_srcdir)/doc/scripts/getfuncs.pl < $< |sort|uniq`; do \
+	for i in `$(PERL) $(top_srcdir)/doc/scripts/getfuncs.pl < $< |sort|uniq`; do \
 		echo $(ECHO_N) "Creating documentation for $$i... " && \
-		$(srcdir)/scripts/gdoc -texinfo \
+		$(PERL) $(srcdir)/scripts/gdoc -texinfo \
 			-function $$i \
 			$(C_SOURCE_FILES) >> $@-tmp && \
 		echo "ok"; \
@@ -274,9 +275,9 @@ socket-api.texi: $(top_srcdir)/lib/includes/gnutls/socket.h
 
 dane-api.texi: $(top_srcdir)/libdane/includes/gnutls/dane.h
 	echo "" > $@-tmp
-	for i in `$(top_srcdir)/doc/scripts/getfuncs.pl < $< |sort|uniq`; do \
+	for i in `$(PERL) $(top_srcdir)/doc/scripts/getfuncs.pl < $< |sort|uniq`; do \
 		echo $(ECHO_N) "Creating documentation for $$i... " && \
-		$(srcdir)/scripts/gdoc -texinfo \
+		$(PERL) $(srcdir)/scripts/gdoc -texinfo \
 			-function $$i \
 			$(C_SOURCE_FILES) >> $@-tmp && \
 		echo "ok"; \
@@ -286,9 +287,9 @@ dane-api.texi: $(top_srcdir)/libdane/includes/gnutls/dane.h
 x509-api.texi: $(top_srcdir)/lib/includes/gnutls/x509.h $(top_srcdir)/lib/includes/gnutls/x509-ext.h
 	echo "" > $@-tmp
 	cat $^ > $@-tmp2
-	for i in `$(top_srcdir)/doc/scripts/getfuncs.pl < $@-tmp2 |sort |uniq`; do \
+	for i in `$(PERL) $(top_srcdir)/doc/scripts/getfuncs.pl < $@-tmp2 |sort |uniq`; do \
 		echo $(ECHO_N) "Creating documentation for $$i... " && \
-		$(srcdir)/scripts/gdoc -texinfo \
+		$(PERL) $(srcdir)/scripts/gdoc -texinfo \
 			-function $$i \
 			$(C_SOURCE_FILES) >> $@-tmp && \
 		echo "ok"; \
@@ -298,9 +299,9 @@ x509-api.texi: $(top_srcdir)/lib/includes/gnutls/x509.h $(top_srcdir)/lib/includ
 
 pkcs12-api.texi: $(top_srcdir)/lib/includes/gnutls/pkcs12.h
 	echo "" > $@-tmp
-	for i in `$(top_srcdir)/doc/scripts/getfuncs.pl < $< |sort|uniq`; do \
+	for i in `$(PERL) $(top_srcdir)/doc/scripts/getfuncs.pl < $< |sort|uniq`; do \
 		echo $(ECHO_N) "Creating documentation for $$i... " && \
-		$(srcdir)/scripts/gdoc -texinfo \
+		$(PERL) $(srcdir)/scripts/gdoc -texinfo \
 			-function $$i \
 			$(C_X509_SOURCE_FILES) >> $@-tmp && \
 		echo "ok"; \
@@ -309,9 +310,9 @@ pkcs12-api.texi: $(top_srcdir)/lib/includes/gnutls/pkcs12.h
 
 pkcs11-api.texi: $(top_srcdir)/lib/includes/gnutls/pkcs11.h
 	echo "" > $@-tmp
-	for i in `$(top_srcdir)/doc/scripts/getfuncs.pl < $< |sort|uniq`; do \
+	for i in `$(PERL) $(top_srcdir)/doc/scripts/getfuncs.pl < $< |sort|uniq`; do \
 		echo $(ECHO_N) "Creating documentation for $$i... " && \
-		$(srcdir)/scripts/gdoc -texinfo \
+		$(PERL) $(srcdir)/scripts/gdoc -texinfo \
 			-function $$i \
 			$(C_SOURCE_FILES) >> $@-tmp && \
 		echo "ok"; \
@@ -320,9 +321,9 @@ pkcs11-api.texi: $(top_srcdir)/lib/includes/gnutls/pkcs11.h
 
 pkcs7-api.texi: $(top_srcdir)/lib/includes/gnutls/pkcs7.h
 	echo "" > $@-tmp
-	for i in `$(top_srcdir)/doc/scripts/getfuncs.pl < $< |sort|uniq`; do \
+	for i in `$(PERL) $(top_srcdir)/doc/scripts/getfuncs.pl < $< |sort|uniq`; do \
 		echo $(ECHO_N) "Creating documentation for $$i... " && \
-		$(srcdir)/scripts/gdoc -texinfo \
+		$(PERL) $(srcdir)/scripts/gdoc -texinfo \
 			-function $$i \
 			$(C_X509_SOURCE_FILES) >> $@-tmp && \
 		echo "ok"; \
@@ -331,9 +332,9 @@ pkcs7-api.texi: $(top_srcdir)/lib/includes/gnutls/pkcs7.h
 
 tpm-api.texi: $(top_srcdir)/lib/includes/gnutls/tpm.h
 	echo "" > $@-tmp
-	for i in `$(top_srcdir)/doc/scripts/getfuncs.pl < $< |sort|uniq`; do \
+	for i in `$(PERL) $(top_srcdir)/doc/scripts/getfuncs.pl < $< |sort|uniq`; do \
 		echo $(ECHO_N) "Creating documentation for $$i... " && \
-		$(srcdir)/scripts/gdoc -texinfo \
+		$(PERL) $(srcdir)/scripts/gdoc -texinfo \
 			-function $$i \
 			$(C_SOURCE_FILES) >> $@-tmp && \
 		echo "ok"; \
@@ -343,9 +344,9 @@ tpm-api.texi: $(top_srcdir)/lib/includes/gnutls/tpm.h
 abstract-api.texi: $(top_srcdir)/lib/includes/gnutls/abstract.h $(top_srcdir)/lib/includes/gnutls/urls.h $(top_srcdir)/lib/includes/gnutls/system-keys.h
 	echo "" > $@-tmp
 	cat $^ >$@-headers-tmp
-	for i in `$(top_srcdir)/doc/scripts/getfuncs.pl < $@-headers-tmp |sort|uniq`; do \
+	for i in `$(PERL) $(top_srcdir)/doc/scripts/getfuncs.pl < $@-headers-tmp |sort|uniq`; do \
 		echo $(ECHO_N) "Creating documentation for $$i... " && \
-		$(srcdir)/scripts/gdoc -texinfo \
+		$(PERL) $(srcdir)/scripts/gdoc -texinfo \
 			-function $$i \
 			$(C_SOURCE_FILES) >> $@-tmp && \
 		echo "ok"; \
@@ -355,9 +356,9 @@ abstract-api.texi: $(top_srcdir)/lib/includes/gnutls/abstract.h $(top_srcdir)/li
 
 compat-api.texi: $(top_srcdir)/lib/includes/gnutls/compat.h
 	echo "" > $@-tmp
-	for i in `$(top_srcdir)/doc/scripts/getfuncs.pl < $< |sort|uniq`; do \
+	for i in `$(PERL) $(top_srcdir)/doc/scripts/getfuncs.pl < $< |sort|uniq`; do \
 		echo $(ECHO_N) "Creating documentation for $$i... " && \
-		$(srcdir)/scripts/gdoc -texinfo \
+		$(PERL) $(srcdir)/scripts/gdoc -texinfo \
 			-function $$i \
 			$(C_SOURCE_FILES) >> $@-tmp && \
 		echo "ok"; \
@@ -366,9 +367,9 @@ compat-api.texi: $(top_srcdir)/lib/includes/gnutls/compat.h
 
 dtls-api.texi: $(top_srcdir)/lib/includes/gnutls/dtls.h
 	echo "" > $@-tmp
-	for i in `$(top_srcdir)/doc/scripts/getfuncs.pl < $< |sort|uniq`; do \
+	for i in `$(PERL) $(top_srcdir)/doc/scripts/getfuncs.pl < $< |sort|uniq`; do \
 		echo $(ECHO_N) "Creating documentation for $$i... " && \
-		$(srcdir)/scripts/gdoc -texinfo \
+		$(PERL) $(srcdir)/scripts/gdoc -texinfo \
 			-function $$i \
 			$(C_SOURCE_FILES) >> $@-tmp && \
 		echo "ok"; \
@@ -377,9 +378,9 @@ dtls-api.texi: $(top_srcdir)/lib/includes/gnutls/dtls.h
 
 crypto-api.texi: $(top_srcdir)/lib/includes/gnutls/crypto.h
 	echo "" > $@-tmp
-	for i in `$(top_srcdir)/doc/scripts/getfuncs.pl < $< |sort|uniq`; do \
+	for i in `$(PERL) $(top_srcdir)/doc/scripts/getfuncs.pl < $< |sort|uniq`; do \
 		echo $(ECHO_N) "Creating documentation for $$i... " && \
-		$(srcdir)/scripts/gdoc -texinfo \
+		$(PERL) $(srcdir)/scripts/gdoc -texinfo \
 			-function $$i \
 			$(C_SOURCE_FILES) >> $@-tmp && \
 		echo "ok"; \
@@ -388,13 +389,26 @@ crypto-api.texi: $(top_srcdir)/lib/includes/gnutls/crypto.h
 
 ocsp-api.texi: $(top_srcdir)/lib/includes/gnutls/ocsp.h
 	echo "" > $@-tmp
-	for i in `$(top_srcdir)/doc/scripts/getfuncs.pl < $< |sort|uniq`; do \
+	for i in `$(PERL) $(top_srcdir)/doc/scripts/getfuncs.pl < $< |sort|uniq`; do \
 		echo $(ECHO_N) "Creating documentation for $$i... " && \
-		$(srcdir)/scripts/gdoc -texinfo \
+		$(PERL) $(srcdir)/scripts/gdoc -texinfo \
 			-function $$i \
 			$(C_X509_SOURCE_FILES) >> $@-tmp && \
 		echo "ok"; \
 	done
+	mv -f $@-tmp $@
+
+hpke-api.texi: $(top_srcdir)/lib/includes/gnutls/hpke.h
+	echo "" > $@-tmp
+	cat $^ >$@-headers-tmp
+	for i in `$(PERL) $(top_srcdir)/doc/scripts/getfuncs.pl < $@-headers-tmp |sort|uniq`; do \
+		echo $(ECHO_N) "Creating documentation for $$i... " && \
+		$(PERL) $(srcdir)/scripts/gdoc -texinfo \
+			-function $$i \
+			$(C_SOURCE_FILES) >> $@-tmp && \
+		echo "ok"; \
+	done
+	rm -f $@-headers-tmp
 	mv -f $@-tmp $@
 
 # Generated texinfos.
@@ -403,13 +417,14 @@ if !WINDOWS
 gnutls_TEXINFOS += error_codes.texi algorithms.texi alerts.texi enums.texi
 endif
 
-DISTCLEANFILES = error_codes.texi algorithms.texi alerts.texi enums.texi
+MAINTAINERCLEANFILES += error_codes.texi algorithms.texi alerts.texi enums.texi
 
 AM_CPPFLAGS = \
 	-I$(top_builddir)/lib/includes -I$(top_srcdir)/lib/includes \
 	-I$(top_builddir)/
 
 EXTRA_PROGRAMS = errcodes printlist alert-printlist
+DISTCLEANFILES += $(EXTRA_PROGRAMS)
 
 errcodes_SOURCES = errcodes.c common.c common.h
 errcodes_LDADD = ../lib/libgnutls.la ../gl/libgnu.la
@@ -420,39 +435,49 @@ printlist_LDADD = ../lib/libgnutls.la ../gl/libgnu.la
 alert_printlist_SOURCES = alert-printlist.c common.c common.h
 alert_printlist_LDADD = ../lib/libgnutls.la ../gl/libgnu.la
 
-error_codes.texi: $(top_srcdir)/lib/errors.c $(srcdir)/errcodes.c
-	$(MAKE) $(builddir)/errcodes
-	$(builddir)/errcodes > $@-tmp
-	mv -f $@-tmp $@
+# XXX: We cannot specify errcodes, printlist and alert-printlist as
+# prerequisites, as these are binaries not part of 'dist', that would
+# trigger the build of the .texi generated sources during 'make
+# distcheck'.  Furthermore, since the helper binaries share some
+# source files, they must be built sequentially to avoid races during
+# a parallel build.  This workaround is based on guidance from info
+# '(automake) Errors with distclean'.  Grouped targets (info "(make)
+# Multiple Targets") are not used here since that's a non-POSIX GNU
+# Make extension.
+stamp_error_codes: \
+		$(top_srcdir)/lib/errors.c errcodes.c \
+		$(top_srcdir)/lib/algorithms/ciphers.c printlist.c \
+		$(top_srcdir)/lib/alert.c alert-printlist.c
+	$(MAKE) $(AM_MAKEFLAGS) errcodes printlist alert-printlist
+	./errcodes > error_codes.texi-tmp
+	mv -f error_codes.texi-tmp error_codes.texi
+	./printlist > algorithms.texi-tmp
+	mv -f algorithms.texi-tmp algorithms.texi
+	./alert-printlist > alerts.texi-tmp
+	mv -f alerts.texi-tmp alerts.texi
+	echo $@ > $@
 
-algorithms.texi: $(top_srcdir)/lib/algorithms/ciphers.c $(srcdir)/printlist.c
-	$(MAKE) $(builddir)/printlist
-	$(builddir)/printlist > $@-tmp
-	mv -f $@-tmp $@
-
-alerts.texi: $(top_srcdir)/lib/alert.c $(srcdir)/alert-printlist.c
-	$(MAKE) $(builddir)/alert-printlist
-	$(builddir)/alert-printlist > $@-tmp
-	mv -f $@-tmp $@
+error_codes.texi algorithms.texi alerts.texi: stamp_error_codes
+	@:
 
 enums.texi: $(HEADER_FILES)
 	echo "" > $@-tmp
 	for i in $^; do \
 		echo $(ECHO_N) "Creating documentation for $$i... " && \
-		$(srcdir)/scripts/gdoc -texinfo $$i >> $@-tmp && \
+		$(PERL) $(srcdir)/scripts/gdoc -texinfo $$i >> $@-tmp && \
 		echo "ok"; \
 	done
 	mv -f $@-tmp $@
 
 gnutls_TEXINFOS += $(ENUMS) $(FUNCS) $(AUTOGENED_DOC)
-DISTCLEANFILES += $(ENUMS) stamp_enums stamp_functions
+MAINTAINERCLEANFILES += $(ENUMS) $(FUNCS) $(AUTOGENED_DOC)
 
 
 stamp_functions: $(API_FILES)
-	-mkdir functions
+	$(MKDIR_P) functions
 	-rm -f functions/*.short
 	for i in $^; do \
-		$(srcdir)/scripts/split-texi.pl functions < $$i; \
+		$(PERL) $(srcdir)/scripts/split-texi.pl functions < $$i; \
 	done
 	$(SED) -i 's/\@anchor{.*//g' functions/*
 	$(SED) -i 's/\@subheading.*//g' functions/*
@@ -460,8 +485,8 @@ stamp_functions: $(API_FILES)
 	echo $@ > $@
 
 stamp_enums: enums.texi
-	-mkdir enums
-	$(srcdir)/scripts/split-texi.pl enums enum < $<
+	$(MKDIR_P) enums
+	$(PERL) $(srcdir)/scripts/split-texi.pl enums enum < $<
 	echo $@ > $@
 
 $(ENUMS): stamp_enums
@@ -470,11 +495,11 @@ $(FUNCS): stamp_functions
 
 compare-exported:
 	rm -f tmp-exp-$@ tmp-head-$@
-	for i in $(top_srcdir)/libdane/includes/gnutls/*.h $(top_srcdir)/lib/includes/gnutls/*.h $(top_builddir)/lib/includes/gnutls/*.h;do perl $(srcdir)/scripts/getfuncs.pl <$$i >>tmp-head-$@;done
+	for i in $(top_srcdir)/libdane/includes/gnutls/*.h $(top_srcdir)/lib/includes/gnutls/*.h $(top_builddir)/lib/includes/gnutls/*.h;do $(PERL) $(srcdir)/scripts/getfuncs.pl <$$i >>tmp-head-$@;done
 	sort -u tmp-head-$@ > tmp2-head-$@
 	mv tmp2-head-$@ tmp-head-$@
-	$(srcdir)/scripts/getfuncs-map.pl <$(top_srcdir)/lib/libgnutls.map >tmp-exp-$@
-	$(srcdir)/scripts/getfuncs-map.pl <$(top_srcdir)/libdane/libdane.map >>tmp-exp-$@
+	$(PERL) $(srcdir)/scripts/getfuncs-map.pl <$(top_srcdir)/lib/libgnutls.map >tmp-exp-$@
+	$(PERL) $(srcdir)/scripts/getfuncs-map.pl <$(top_srcdir)/libdane/libdane.map >>tmp-exp-$@
 	sort -u tmp-exp-$@ > tmp2-exp-$@
 	mv tmp2-exp-$@ tmp-exp-$@
 	@echo "******************************************************************************"
@@ -493,10 +518,10 @@ compare-makefile: enums.texi
 		STR="$$STR\nENUMS += enums/$$i"; \
 	done; \
 	grep -v -e '^ENUMS += ' $(srcdir)/Makefile.am | \
-		perl -p -e "s,^ENUMS =,ENUMS =$$STR," > tmp-$@; \
+		$(PERL) -p -e "s,^ENUMS =,ENUMS =$$STR," > tmp-$@; \
 	diff -u $(srcdir)/Makefile.am tmp-$@ >/dev/null
 	rm -f tmp-$@
-	FUNCS=`cat $(HEADER_FILES) | $(top_srcdir)/doc/scripts/getfuncs.pl|sort -d|uniq`; \
+	FUNCS=`cat $(HEADER_FILES) | $(PERL) $(top_srcdir)/doc/scripts/getfuncs.pl|sort -d|uniq`; \
 	MANS=""; \
 	for i in $$FUNCS; do \
 		MANS="$$MANS\nFUNCS += functions/$$i\nFUNCS += functions/$$i.short"; \
@@ -510,40 +535,6 @@ compare-makefile: enums.texi
 	rm -f tmp-$@
 
 .PHONY: compare-makefile compare-exported
-
-# Guile texinfos.
-
-guile_texi = core.c.texi
-BUILT_SOURCES        = $(guile_texi)
-MAINTAINERCLEANFILES += $(guile_texi)
-EXTRA_DIST           += $(guile_texi) extract-guile-c-doc.scm
-guile_TEXINFOS       = gnutls-guile.texi $(guile_texi)
-
-if HAVE_GUILE
-
-GUILE_FOR_BUILD =				\
-  GUILE_AUTO_COMPILE=0				\
-  $(GUILE) -q -L $(top_srcdir)/guile/modules
-
-SNARF_CPPFLAGS = -I$(top_srcdir) -I$(top_builddir)			\
-	 -I$(top_srcdir)/lib/includes -I$(top_builddir)/lib/includes	\
-	 -I$(top_srcdir)/extra/includes				\
-         -I$(top_srcdir)/guile/src -I$(top_builddir)/guile/src		\
-	 $(GUILE_CFLAGS)
-
-core.c.texi: $(top_srcdir)/guile/src/core.c
-	$(MAKE) -C ../guile/src built-sources &&			\
-	$(GUILE_FOR_BUILD) -l "$(srcdir)/extract-guile-c-doc.scm"	\
-	   -e '(apply main (cdr (command-line)))'			\
-	   -- "$^" "$(CPP)" "$(SNARF_CPPFLAGS) $(CPPFLAGS)"		\
-	   > "$@"
-
-else !HAVE_GUILE
-
-core.c.texi:
-	echo "(Guile not available, documentation not generated.)" > $@
-
-endif !HAVE_GUILE
 
 gnutls.xml: epub.texi
 	makeinfo --docbook $<
@@ -589,6 +580,12 @@ ENUMS += enums/gnutls_fips_mode_t
 ENUMS += enums/gnutls_gost_paramset_t
 ENUMS += enums/gnutls_group_t
 ENUMS += enums/gnutls_handshake_description_t
+ENUMS += enums/gnutls_hpke_aead_t
+ENUMS += enums/gnutls_hpke_kdf_t
+ENUMS += enums/gnutls_hpke_kem_t
+ENUMS += enums/gnutls_hpke_mode_t
+ENUMS += enums/gnutls_hpke_role_t
+ENUMS += enums/gnutls_info_access_what_t
 ENUMS += enums/gnutls_init_flags_t
 ENUMS += enums/gnutls_keygen_types_t
 ENUMS += enums/gnutls_keyid_flags_t
@@ -615,6 +612,7 @@ ENUMS += enums/gnutls_privkey_type_t
 ENUMS += enums/gnutls_protocol_t
 ENUMS += enums/gnutls_psk_key_flags
 ENUMS += enums/gnutls_pubkey_flags_t
+ENUMS += enums/gnutls_random_art_t
 ENUMS += enums/gnutls_record_encryption_level_t
 ENUMS += enums/gnutls_rnd_level_t
 ENUMS += enums/gnutls_sec_param_t
@@ -625,9 +623,11 @@ ENUMS += enums/gnutls_srtp_profile_t
 ENUMS += enums/gnutls_supplemental_data_format_type_t
 ENUMS += enums/gnutls_tpmkey_fmt_t
 ENUMS += enums/gnutls_vdata_types_t
+ENUMS += enums/gnutls_x509_crl_reason_flags_t
 ENUMS += enums/gnutls_x509_crl_reason_t
 ENUMS += enums/gnutls_x509_crt_flags
 ENUMS += enums/gnutls_x509_crt_fmt_t
+ENUMS += enums/gnutls_x509_qualifier_t
 ENUMS += enums/gnutls_x509_subject_alt_name_t
 
 FUNCS =
@@ -727,6 +727,12 @@ FUNCS += functions/gnutls_anti_replay_set_ptr
 FUNCS += functions/gnutls_anti_replay_set_ptr.short
 FUNCS += functions/gnutls_anti_replay_set_window
 FUNCS += functions/gnutls_anti_replay_set_window.short
+FUNCS += functions/gnutls_audit_current_context
+FUNCS += functions/gnutls_audit_current_context.short
+FUNCS += functions/gnutls_audit_pop_context
+FUNCS += functions/gnutls_audit_pop_context.short
+FUNCS += functions/gnutls_audit_push_context
+FUNCS += functions/gnutls_audit_push_context.short
 FUNCS += functions/gnutls_auth_client_get_type
 FUNCS += functions/gnutls_auth_client_get_type.short
 FUNCS += functions/gnutls_auth_get_type
@@ -1161,6 +1167,8 @@ FUNCS += functions/gnutls_handshake_set_secret_function
 FUNCS += functions/gnutls_handshake_set_secret_function.short
 FUNCS += functions/gnutls_handshake_set_timeout
 FUNCS += functions/gnutls_handshake_set_timeout.short
+FUNCS += functions/gnutls_handshake_update_receiving_key
+FUNCS += functions/gnutls_handshake_update_receiving_key.short
 FUNCS += functions/gnutls_handshake_write
 FUNCS += functions/gnutls_handshake_write.short
 FUNCS += functions/gnutls_hash
@@ -1177,6 +1185,8 @@ FUNCS += functions/gnutls_hash_init
 FUNCS += functions/gnutls_hash_init.short
 FUNCS += functions/gnutls_hash_output
 FUNCS += functions/gnutls_hash_output.short
+FUNCS += functions/gnutls_hash_squeeze
+FUNCS += functions/gnutls_hash_squeeze.short
 FUNCS += functions/gnutls_heartbeat_allowed
 FUNCS += functions/gnutls_heartbeat_allowed.short
 FUNCS += functions/gnutls_heartbeat_enable
@@ -1221,6 +1231,22 @@ FUNCS += functions/gnutls_hmac_output
 FUNCS += functions/gnutls_hmac_output.short
 FUNCS += functions/gnutls_hmac_set_nonce
 FUNCS += functions/gnutls_hmac_set_nonce.short
+FUNCS += functions/gnutls_hpke_decap
+FUNCS += functions/gnutls_hpke_decap.short
+FUNCS += functions/gnutls_hpke_deinit
+FUNCS += functions/gnutls_hpke_deinit.short
+FUNCS += functions/gnutls_hpke_derive_keypair
+FUNCS += functions/gnutls_hpke_derive_keypair.short
+FUNCS += functions/gnutls_hpke_encap
+FUNCS += functions/gnutls_hpke_encap.short
+FUNCS += functions/gnutls_hpke_export
+FUNCS += functions/gnutls_hpke_export.short
+FUNCS += functions/gnutls_hpke_init
+FUNCS += functions/gnutls_hpke_init.short
+FUNCS += functions/gnutls_hpke_open
+FUNCS += functions/gnutls_hpke_open.short
+FUNCS += functions/gnutls_hpke_seal
+FUNCS += functions/gnutls_hpke_seal.short
 FUNCS += functions/gnutls_idna_map
 FUNCS += functions/gnutls_idna_map.short
 FUNCS += functions/gnutls_idna_reverse_map
@@ -1449,6 +1475,8 @@ FUNCS += functions/gnutls_pkcs11_obj_get_flags
 FUNCS += functions/gnutls_pkcs11_obj_get_flags.short
 FUNCS += functions/gnutls_pkcs11_obj_get_info
 FUNCS += functions/gnutls_pkcs11_obj_get_info.short
+FUNCS += functions/gnutls_pkcs11_obj_get_pk_algorithm
+FUNCS += functions/gnutls_pkcs11_obj_get_pk_algorithm.short
 FUNCS += functions/gnutls_pkcs11_obj_get_ptr
 FUNCS += functions/gnutls_pkcs11_obj_get_ptr.short
 FUNCS += functions/gnutls_pkcs11_obj_get_type
@@ -1559,6 +1587,8 @@ FUNCS += functions/gnutls_pkcs12_generate_mac
 FUNCS += functions/gnutls_pkcs12_generate_mac.short
 FUNCS += functions/gnutls_pkcs12_generate_mac2
 FUNCS += functions/gnutls_pkcs12_generate_mac2.short
+FUNCS += functions/gnutls_pkcs12_generate_mac3
+FUNCS += functions/gnutls_pkcs12_generate_mac3.short
 FUNCS += functions/gnutls_pkcs12_get_bag
 FUNCS += functions/gnutls_pkcs12_get_bag.short
 FUNCS += functions/gnutls_pkcs12_import
@@ -1699,6 +1729,10 @@ FUNCS += functions/gnutls_privkey_decrypt_data2
 FUNCS += functions/gnutls_privkey_decrypt_data2.short
 FUNCS += functions/gnutls_privkey_deinit
 FUNCS += functions/gnutls_privkey_deinit.short
+FUNCS += functions/gnutls_privkey_derive_secret
+FUNCS += functions/gnutls_privkey_derive_secret.short
+FUNCS += functions/gnutls_privkey_export_dh_raw
+FUNCS += functions/gnutls_privkey_export_dh_raw.short
 FUNCS += functions/gnutls_privkey_export_dsa_raw
 FUNCS += functions/gnutls_privkey_export_dsa_raw.short
 FUNCS += functions/gnutls_privkey_export_dsa_raw2
@@ -1731,6 +1765,8 @@ FUNCS += functions/gnutls_privkey_get_spki
 FUNCS += functions/gnutls_privkey_get_spki.short
 FUNCS += functions/gnutls_privkey_get_type
 FUNCS += functions/gnutls_privkey_get_type.short
+FUNCS += functions/gnutls_privkey_import_dh_raw
+FUNCS += functions/gnutls_privkey_import_dh_raw.short
 FUNCS += functions/gnutls_privkey_import_dsa_raw
 FUNCS += functions/gnutls_privkey_import_dsa_raw.short
 FUNCS += functions/gnutls_privkey_import_ecc_raw
@@ -1799,10 +1835,16 @@ FUNCS += functions/gnutls_protocol_set_enabled
 FUNCS += functions/gnutls_protocol_set_enabled.short
 FUNCS += functions/gnutls_psk_allocate_client_credentials
 FUNCS += functions/gnutls_psk_allocate_client_credentials.short
+FUNCS += functions/gnutls_psk_allocate_client_credentials2
+FUNCS += functions/gnutls_psk_allocate_client_credentials2.short
 FUNCS += functions/gnutls_psk_allocate_server_credentials
 FUNCS += functions/gnutls_psk_allocate_server_credentials.short
+FUNCS += functions/gnutls_psk_allocate_server_credentials2
+FUNCS += functions/gnutls_psk_allocate_server_credentials2.short
 FUNCS += functions/gnutls_psk_client_get_hint
 FUNCS += functions/gnutls_psk_client_get_hint.short
+FUNCS += functions/gnutls_psk_format_imported_identity
+FUNCS += functions/gnutls_psk_format_imported_identity.short
 FUNCS += functions/gnutls_psk_free_client_credentials
 FUNCS += functions/gnutls_psk_free_client_credentials.short
 FUNCS += functions/gnutls_psk_free_server_credentials
@@ -1819,6 +1861,8 @@ FUNCS += functions/gnutls_psk_set_client_credentials_function
 FUNCS += functions/gnutls_psk_set_client_credentials_function.short
 FUNCS += functions/gnutls_psk_set_client_credentials_function2
 FUNCS += functions/gnutls_psk_set_client_credentials_function2.short
+FUNCS += functions/gnutls_psk_set_client_credentials_function3
+FUNCS += functions/gnutls_psk_set_client_credentials_function3.short
 FUNCS += functions/gnutls_psk_set_params_function
 FUNCS += functions/gnutls_psk_set_params_function.short
 FUNCS += functions/gnutls_psk_set_server_credentials_file
@@ -1827,6 +1871,8 @@ FUNCS += functions/gnutls_psk_set_server_credentials_function
 FUNCS += functions/gnutls_psk_set_server_credentials_function.short
 FUNCS += functions/gnutls_psk_set_server_credentials_function2
 FUNCS += functions/gnutls_psk_set_server_credentials_function2.short
+FUNCS += functions/gnutls_psk_set_server_credentials_function3
+FUNCS += functions/gnutls_psk_set_server_credentials_function3.short
 FUNCS += functions/gnutls_psk_set_server_credentials_hint
 FUNCS += functions/gnutls_psk_set_server_credentials_hint.short
 FUNCS += functions/gnutls_psk_set_server_dh_params
@@ -1843,6 +1889,8 @@ FUNCS += functions/gnutls_pubkey_export
 FUNCS += functions/gnutls_pubkey_export.short
 FUNCS += functions/gnutls_pubkey_export2
 FUNCS += functions/gnutls_pubkey_export2.short
+FUNCS += functions/gnutls_pubkey_export_dh_raw
+FUNCS += functions/gnutls_pubkey_export_dh_raw.short
 FUNCS += functions/gnutls_pubkey_export_dsa_raw
 FUNCS += functions/gnutls_pubkey_export_dsa_raw.short
 FUNCS += functions/gnutls_pubkey_export_dsa_raw2
@@ -1873,6 +1921,8 @@ FUNCS += functions/gnutls_pubkey_get_spki
 FUNCS += functions/gnutls_pubkey_get_spki.short
 FUNCS += functions/gnutls_pubkey_import
 FUNCS += functions/gnutls_pubkey_import.short
+FUNCS += functions/gnutls_pubkey_import_dh_raw
+FUNCS += functions/gnutls_pubkey_import_dh_raw.short
 FUNCS += functions/gnutls_pubkey_import_dsa_raw
 FUNCS += functions/gnutls_pubkey_import_dsa_raw.short
 FUNCS += functions/gnutls_pubkey_import_ecc_raw
@@ -1943,6 +1993,8 @@ FUNCS += functions/gnutls_record_get_discarded
 FUNCS += functions/gnutls_record_get_discarded.short
 FUNCS += functions/gnutls_record_get_max_early_data_size
 FUNCS += functions/gnutls_record_get_max_early_data_size.short
+FUNCS += functions/gnutls_record_get_max_send_size
+FUNCS += functions/gnutls_record_get_max_send_size.short
 FUNCS += functions/gnutls_record_get_max_size
 FUNCS += functions/gnutls_record_get_max_size.short
 FUNCS += functions/gnutls_record_get_state
@@ -2895,6 +2947,8 @@ FUNCS += functions/gnutls_x509_privkey_import
 FUNCS += functions/gnutls_x509_privkey_import.short
 FUNCS += functions/gnutls_x509_privkey_import2
 FUNCS += functions/gnutls_x509_privkey_import2.short
+FUNCS += functions/gnutls_x509_privkey_import_dh_raw
+FUNCS += functions/gnutls_x509_privkey_import_dh_raw.short
 FUNCS += functions/gnutls_x509_privkey_import_dsa_raw
 FUNCS += functions/gnutls_x509_privkey_import_dsa_raw.short
 FUNCS += functions/gnutls_x509_privkey_import_ecc_raw
@@ -2937,10 +2991,14 @@ FUNCS += functions/gnutls_x509_rdn_get_oid
 FUNCS += functions/gnutls_x509_rdn_get_oid.short
 FUNCS += functions/gnutls_x509_spki_deinit
 FUNCS += functions/gnutls_x509_spki_deinit.short
+FUNCS += functions/gnutls_x509_spki_get_rsa_oaep_params
+FUNCS += functions/gnutls_x509_spki_get_rsa_oaep_params.short
 FUNCS += functions/gnutls_x509_spki_get_rsa_pss_params
 FUNCS += functions/gnutls_x509_spki_get_rsa_pss_params.short
 FUNCS += functions/gnutls_x509_spki_init
 FUNCS += functions/gnutls_x509_spki_init.short
+FUNCS += functions/gnutls_x509_spki_set_rsa_oaep_params
+FUNCS += functions/gnutls_x509_spki_set_rsa_oaep_params.short
 FUNCS += functions/gnutls_x509_spki_set_rsa_pss_params
 FUNCS += functions/gnutls_x509_spki_set_rsa_pss_params.short
 FUNCS += functions/gnutls_x509_tlsfeatures_add

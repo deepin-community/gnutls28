@@ -24,4 +24,6 @@ Virtual SAN, used by certain functions for convenience.
 Virtual SAN, used by certain functions for convenience.
 @item GNUTLS_@-SAN_@-OTHERNAME_@-MSUSERPRINCIPAL
 Virtual SAN, used by certain functions for convenience.
+@item GNUTLS_@-SAN_@-OTHERNAME_@-SRV
+Virtual SAN, used by certain functions for convenience.
 @end table

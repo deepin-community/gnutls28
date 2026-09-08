@@ -10,7 +10,7 @@
 .ds B-Font B
 .ds I-Font I
 .ds R-Font R
-.TH gnutls-cli 1 "09 Feb 2023" "3.7.9" "User Commands"
+.TH gnutls-cli 1 "29 Apr 2026" "3.8.13" "User Commands"
 .SH NAME
 \f\*[B-Font]gnutls-cli\fP
 \- GnuTLS client
@@ -30,6 +30,7 @@ Operands and options may be intermixed.  They will be reordered.
 .SH "DESCRIPTION"
 Simple client program to set up a TLS connection to some other computer. 
 It sets up a TLS connection and forwards data from the standard input to the secured socket and vice versa.
+Note that this program is only meant for testing and diagnostic purposes. For more practical use-cases, consider using alternatives like GNU Wget.
 .sp
 .SH "OPTIONS"
 .TP
@@ -133,6 +134,15 @@ This option must not appear in combination with any of the following options:
 starttls.
 .sp
 Specify the application layer protocol for STARTTLS. If the protocol is supported, gnutls\-cli will proceed to the TLS negotiation.
+.TP
+.NOP \f\*[B-Font]\-\-starttls\-name\f[]=\f\*[I-Font]str\f[]
+The hostname presented to the application protocol for STARTTLS (for smtp, xmpp, lmtp).
+This option must not appear in combination with any of the following options:
+starttls.
+This option must appear in combination with the following options:
+starttls-proto.
+.sp
+Specify the hostname presented to the application protocol for STARTTLS.
 .TP
 .NOP \f\*[B-Font]\-u\f[], \f\*[B-Font]\-\-udp\f[]
 Use DTLS (datagram TLS) over UDP.
@@ -421,6 +431,15 @@ The \fIno\-ca\-auto\-retrieve\fP form will disable the option.
 .sp
 This option enables the client to automatically retrieve the missing intermediate CA certificates in the certificate chain, based on the Authority Information Access (AIA) extension.
 .TP
+.NOP \f\*[B-Font]\-\-attime\f[]=\f\*[I-Font]timestamp\f[]
+Perform validation at the timestamp instead of the system time.
+.sp
+timestamp is an instance in time encoded as Unix time or in a human
+ readable timestring such as "29 Feb 2004", "2004\-02\-29".
+Full documentation available at 
+<https://www.gnu.org/software/coreutils/manual/html_node/Date\-input\-formats.html>
+or locally via info '(coreutils) date invocation'.
+.TP
 .NOP \f\*[B-Font]\-v\f[] \f\*[I-Font]arg\f[], \f\*[B-Font]\-\-version\f[]=\f\*[I-Font]arg\f[]
 Output version of program and exit.  The default mode is `v', a simple
 version.  The `c' mode will print copyright information and `n' will
@@ -572,7 +591,7 @@ gnutls\-cli\-debug(1), gnutls\-serv(1)
 .SH "AUTHORS"
 
 .SH "COPYRIGHT"
-Copyright (C) 2020-2021 Free Software Foundation, and others all rights reserved.
+Copyright (C) 2020-2023 Free Software Foundation, and others all rights reserved.
 This program is released under the terms of
 the GNU General Public License, version 3 or later
 .

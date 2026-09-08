@@ -1,9 +1,9 @@
 /* Test of vasprintf() and asprintf() functions.
-   Copyright (C) 2007-2021 Free Software Foundation, Inc.
+   Copyright (C) 2007-2026 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 3 of the License, or
+   the Free Software Foundation, either version 3 of the License, or
    (at your option) any later version.
 
    This program is distributed in the hope that it will be useful,
@@ -45,25 +45,23 @@ my_asprintf (char **result, const char *format, ...)
 static void
 test_vasprintf ()
 {
-  int repeat;
-
-  for (repeat = 0; repeat <= 8; repeat++)
+  for (int repeat = 0; repeat <= 8; repeat++)
     {
       char *result;
       int retval = my_asprintf (&result, "%d", 12345);
       ASSERT (retval == 5);
       ASSERT (result != NULL);
-      ASSERT (strcmp (result, "12345") == 0);
+      ASSERT (streq (result, "12345"));
       free (result);
     }
 
-  for (repeat = 0; repeat <= 8; repeat++)
+  for (int repeat = 0; repeat <= 8; repeat++)
     {
       char *result;
       int retval = my_asprintf (&result, "%08lx", 12345UL);
       ASSERT (retval == 8);
       ASSERT (result != NULL);
-      ASSERT (strcmp (result, "00003039") == 0);
+      ASSERT (streq (result, "00003039"));
       free (result);
     }
 }
@@ -71,25 +69,23 @@ test_vasprintf ()
 static void
 test_asprintf ()
 {
-  int repeat;
-
-  for (repeat = 0; repeat <= 8; repeat++)
+  for (int repeat = 0; repeat <= 8; repeat++)
     {
       char *result;
       int retval = asprintf (&result, "%d", 12345);
       ASSERT (retval == 5);
       ASSERT (result != NULL);
-      ASSERT (strcmp (result, "12345") == 0);
+      ASSERT (streq (result, "12345"));
       free (result);
     }
 
-  for (repeat = 0; repeat <= 8; repeat++)
+  for (int repeat = 0; repeat <= 8; repeat++)
     {
       char *result;
       int retval = asprintf (&result, "%08lx", 12345UL);
       ASSERT (retval == 8);
       ASSERT (result != NULL);
-      ASSERT (strcmp (result, "00003039") == 0);
+      ASSERT (streq (result, "00003039"));
       free (result);
     }
 }
@@ -99,5 +95,5 @@ main (int argc, char *argv[])
 {
   test_vasprintf ();
   test_asprintf ();
-  return 0;
+  return test_exit_status;
 }

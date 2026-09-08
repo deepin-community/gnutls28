@@ -1,4 +1,4 @@
-/* ANSI-C code produced by gperf version 3.1 */
+/* ANSI-C code produced by gperf version 3.2.1 */
 /* Command-line: gperf --global-table -t supported_exts.gperf  */
 /* Computed positions: -k'8-9,17' */
 
@@ -86,6 +86,11 @@ x509_ext_hash (register const char *str, register size_t len)
     {
       default:
         hval += asso_values[(unsigned char)str[16]];
+#if (defined __cplusplus && (__cplusplus >= 201703L || (__cplusplus >= 201103L && defined __clang__ && __clang_major__ + (__clang_minor__ >= 9) > 3))) || (defined __STDC_VERSION__ && __STDC_VERSION__ >= 202000L && ((defined __GNUC__ && __GNUC__ >= 10) || (defined __clang__ && __clang_major__ >= 9)))
+      [[fallthrough]];
+#elif (defined __GNUC__ && __GNUC__ >= 7) || (defined __clang__ && __clang_major__ >= 10)
+      __attribute__ ((__fallthrough__));
+#endif
       /*FALLTHROUGH*/
       case 16:
       case 15:
@@ -96,6 +101,11 @@ x509_ext_hash (register const char *str, register size_t len)
       case 10:
       case 9:
         hval += asso_values[(unsigned char)str[8]];
+#if (defined __cplusplus && (__cplusplus >= 201703L || (__cplusplus >= 201103L && defined __clang__ && __clang_major__ + (__clang_minor__ >= 9) > 3))) || (defined __STDC_VERSION__ && __STDC_VERSION__ >= 202000L && ((defined __GNUC__ && __GNUC__ >= 10) || (defined __clang__ && __clang_major__ >= 9)))
+      [[fallthrough]];
+#elif (defined __GNUC__ && __GNUC__ >= 7) || (defined __clang__ && __clang_major__ >= 10)
+      __attribute__ ((__fallthrough__));
+#endif
       /*FALLTHROUGH*/
       case 8:
         hval += asso_values[(unsigned char)str[7]];
@@ -104,6 +114,10 @@ x509_ext_hash (register const char *str, register size_t len)
   return hval;
 }
 
+#if (defined __GNUC__ && __GNUC__ + (__GNUC_MINOR__ >= 6) > 4) || (defined __clang__ && __clang_major__ >= 3)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-field-initializers"
+#endif
 static const struct supported_exts_st wordlist[] =
   {
     {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""},
@@ -141,6 +155,9 @@ static const struct supported_exts_st wordlist[] =
 #line 16 "supported_exts.gperf"
     {"2.5.29.17"}
   };
+#if (defined __GNUC__ && __GNUC__ + (__GNUC_MINOR__ >= 6) > 4) || (defined __clang__ && __clang_major__ >= 3)
+#pragma GCC diagnostic pop
+#endif
 
 static const struct supported_exts_st *
 is_ext_oid_supported (register const char *str, register size_t len)
@@ -157,5 +174,5 @@ is_ext_oid_supported (register const char *str, register size_t len)
             return &wordlist[key];
         }
     }
-  return 0;
+  return (struct supported_exts_st *) 0;
 }

@@ -21,15 +21,15 @@
  */
 
 #include "gnutls_int.h"
-#include <auth/srp_kx.h>
-#include <auth/anon.h>
-#include <auth/cert.h>
-#include <auth/psk.h>
+#include "auth/srp_kx.h"
+#include "auth/anon.h"
+#include "auth/cert.h"
+#include "auth/psk.h"
 #include "errors.h"
-#include <auth.h>
-#include <state.h>
-#include <datum.h>
-#include <algorithms.h>
+#include "auth.h"
+#include "state.h"
+#include "datum.h"
+#include "algorithms.h"
 
 /**
  * gnutls_fingerprint:
@@ -51,30 +51,25 @@
  * Returns: On success, %GNUTLS_E_SUCCESS (0) is returned, otherwise
  *   an error code is returned.
  **/
-int
-gnutls_fingerprint(gnutls_digest_algorithm_t algo,
-		   const gnutls_datum_t * data, void *result,
-		   size_t * result_size)
+int gnutls_fingerprint(gnutls_digest_algorithm_t algo,
+		       const gnutls_datum_t *data, void *result,
+		       size_t *result_size)
 {
 	int ret;
 	int hash_len = _gnutls_hash_get_algo_len(hash_to_entry(algo));
 
-	if (hash_len < 0 || (unsigned) hash_len > *result_size
-	    || result == NULL) {
+	if (hash_len < 0 || (unsigned)hash_len > *result_size ||
+	    result == NULL) {
 		*result_size = hash_len;
 		return GNUTLS_E_SHORT_MEMORY_BUFFER;
 	}
 	*result_size = hash_len;
 
 	if (result) {
-		ret =
-		    _gnutls_hash_fast(algo, data->data, data->size,
-				      result);
+		ret = _gnutls_hash_fast(algo, data->data, data->size, result);
 		if (ret < 0)
 			return gnutls_assert_val(ret);
 	}
 
 	return 0;
 }
-
-

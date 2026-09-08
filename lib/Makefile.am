@@ -20,10 +20,14 @@
 
 ACLOCAL_AMFLAGS = -I ../m4 -I ../gl/m4
 
-EXTRA_DIST = priority_options.gperf common.mk inih/LICENSE.txt
+EXTRA_DIST = priority_options.gperf common.mk inih/LICENSE.txt dlwrap/README crau/LICENSE crau/UNLICENSE crau/README.md
 BUILT_SOURCES = pkix_asn1_tab.c gnutls_asn1_tab.c priority_options.h
 
-SUBDIRS = includes x509 auth ext algorithms extras accelerated
+SUBDIRS = includes x509 auth ext algorithms extras accelerated hpke
+
+if ENABLE_PKCS11
+SUBDIRS += pkcs11
+endif
 
 if ENABLE_MINITASN1
 SUBDIRS += minitasn1
@@ -33,8 +37,9 @@ localedir = $(datadir)/locale
 
 include $(top_srcdir)/lib/common.mk
 
-AM_CPPFLAGS = \
+AM_CPPFLAGS +=					\
 	-DLOCALEDIR=\"$(localedir)\"		\
+	-DSYSTEM_PRIORITY_FILE=\"$(system_config_file)\" \
 	-I$(srcdir)/../gl			\
 	-I$(builddir)/../gl			\
 	-I$(builddir)/includes			\
@@ -45,7 +50,8 @@ AM_CPPFLAGS = \
 	$(LIBTASN1_CFLAGS)			\
 	$(P11_KIT_CFLAGS)			\
 	$(TSS2_CFLAGS)
-	$(LIBZSTD_CFLAGS)
+
+thirdparty_libadd =
 
 if !HAVE_LIBUNISTRING
 SUBDIRS += unistring
@@ -83,14 +89,80 @@ COBJECTS = range.c record.c compress.c debug.c cipher.c gthreads.h handshake-tls
 	cert-session.c handshake-checks.c dtls-sw.c dh-primes.c openpgp_compat.c \
 	crypto-selftests.c crypto-selftests-pk.c secrets.c extv.c extv.h \
 	hello_ext_lib.c hello_ext_lib.h ocsp-api.c stek.c cert-cred-rawpk.c \
-	iov.c iov.h system/ktls.c system/ktls.h
+	iov.c iov.h system/ktls.c system/ktls.h pathbuf.c pathbuf.h \
+	audit.h audit.c crau/crau.h crau/macros.h
+
+if HAVE_ZLIB
+COBJECTS += dlwrap/zlib.c dlwrap/zlibfuncs.h dlwrap/zlib.h
+AM_CPPFLAGS += $(ZLIB_CFLAGS)
+
+if ZLIB_ENABLE_DLOPEN
+AM_CPPFLAGS += -DGNUTLS_ZLIB_ENABLE_DLOPEN=1
+else
+thirdparty_libadd += $(ZLIB_LIBS)
+endif
+endif
+
+if HAVE_LIBZSTD
+COBJECTS += dlwrap/zstd.c dlwrap/zstdfuncs.h dlwrap/zstd.h
+AM_CPPFLAGS += $(LIBZSTD_CFLAGS)
+
+if LIBZSTD_ENABLE_DLOPEN
+AM_CPPFLAGS += -DGNUTLS_ZSTD_ENABLE_DLOPEN=1
+else
+thirdparty_libadd += $(LIBZSTD_LIBS)
+endif
+endif
+
+if HAVE_LIBBROTLI
+COBJECTS += dlwrap/brotlienc.c dlwrap/brotliencfuncs.h dlwrap/brotlienc.h
+COBJECTS += dlwrap/brotlidec.c dlwrap/brotlidecfuncs.h dlwrap/brotlidec.h
+AM_CPPFLAGS += $(LIBBROTLIENC_CFLAGS)
+AM_CPPFLAGS += $(LIBBROTLIDEC_CFLAGS)
+
+if BROTLI_ENABLE_DLOPEN
+AM_CPPFLAGS += -DGNUTLS_BROTLIENC_ENABLE_DLOPEN=1
+AM_CPPFLAGS += -DGNUTLS_BROTLIDEC_ENABLE_DLOPEN=1
+else
+thirdparty_libadd += $(LIBBROTLIENC_LIBS)
+thirdparty_libadd += $(LIBBROTLIDEC_LIBS)
+endif
+endif
+
+if ENABLE_LEANCRYPTO
+AM_CPPFLAGS += $(LEANCRYPTO_CFLAGS)
+thirdparty_libadd += $(LEANCRYPTO_LIBS)
+endif
 
 if ENABLE_GOST
 COBJECTS += vko.c
 endif
 
 if ENABLE_TPM2
-COBJECTS += tpm2.c tpm2.h tpm2_esys.c
+COBJECTS += tpm2/tpm2.c tpm2/tpm2.h tpm2/tpm2_esys.c
+if NEED_ESYS_CRYPTO_CALLBACKS
+COBJECTS += tpm2/callbacks/esys_crypto_callbacks.h tpm2/callbacks/esys_crypto_callbacks.c \
+			tpm2/callbacks/aes/aes_callbacks.h tpm2/callbacks/aes/aes_callbacks.c tpm2/callbacks/ecdh/ecdh_callbacks.h \
+			tpm2/callbacks/ecdh/ecdh_callbacks.c tpm2/callbacks/random/random_callbacks.h tpm2/callbacks/random/random_callbacks.c \
+			tpm2/callbacks/hmac/hmac_callbacks.h tpm2/callbacks/hmac/hmac_callbacks.c tpm2/callbacks/hash/hash_callbacks.h \
+			tpm2/callbacks/hash/hash_callbacks.c tpm2/callbacks/rsa/rsa_callbacks.h tpm2/callbacks/rsa/rsa_callbacks.c
+endif
+COBJECTS += dlwrap/tss2_esys.c dlwrap/tss2_esysfuncs.h dlwrap/tss2_esys.h
+COBJECTS += dlwrap/tss2_mu.c dlwrap/tss2_mufuncs.h dlwrap/tss2_mu.h
+COBJECTS += dlwrap/tss2_tctildr.c dlwrap/tss2_tctildrfuncs.h dlwrap/tss2_tctildr.h
+AM_CPPFLAGS += $(TSS2_ESYS_CFLAGS)
+AM_CPPFLAGS += $(TSS2_MU_CFLAGS)
+AM_CPPFLAGS += $(TSS2_TCTILDR_CFLAGS)
+
+if TPM2_ENABLE_DLOPEN
+AM_CPPFLAGS += -DGNUTLS_TSS2_ESYS_ENABLE_DLOPEN=1
+AM_CPPFLAGS += -DGNUTLS_TSS2_MU_ENABLE_DLOPEN=1
+AM_CPPFLAGS += -DGNUTLS_TSS2_TCTILDR_ENABLE_DLOPEN=1
+else
+thirdparty_libadd += $(TSS2_ESYS_LIBS)
+thirdparty_libadd += $(TSS2_MU_LIBS)
+thirdparty_libadd += $(TSS2_TCTILDR_LIBS)
+endif
 endif
 
 if WINDOWS
@@ -135,7 +207,8 @@ HFILES = abstract_int.h debug.h compress.h cipher.h	 \
 	srp.h auth/srp_kx.h auth/srp_passwd.h	\
 	file.h supplemental.h crypto.h random.h system.h\
 	locks.h mbuffers.h ecc.h pin.h fips.h \
-	priority_options.h secrets.h stek.h cert-cred.h
+	priority_options.h secrets.h stek.h cert-cred.h \
+	audit.h
 
 if ENABLE_PKCS11
 HFILES += pkcs11_int.h pkcs11x.h
@@ -155,16 +228,12 @@ libgnutls_la_LDFLAGS = -no-undefined \
 libgnutls_la_LIBADD = ../gl/libgnu.la x509/libgnutls_x509.la \
 	ext/libgnutls_ext.la \
 	auth/libgnutls_auth.la algorithms/libgnutls_alg.la \
-	extras/libgnutls_extras.la
-thirdparty_libadd = $(LTLIBZ) $(LTLIBINTL) $(LIBSOCKET) $(LTLIBNSL) \
+	extras/libgnutls_extras.la hpke/libgnutls_hpke.la
+thirdparty_libadd += $(LTLIBINTL) $(LIBSOCKET) $(LTLIBNSL) \
 	$(P11_KIT_LIBS) $(LIB_SELECT) $(GNUTLS_LIBS_PRIVATE)
 
-if HAVE_LIBBROTLI
-thirdparty_libadd += $(LIBBROTLIENC_LIBS) $(LIBBROTLIDEC_LIBS)
-endif
-
-if HAVE_LIBZSTD
-thirdparty_libadd += $(LIBZSTD_LIBS)
+if ENABLE_PKCS11
+libgnutls_la_LIBADD += pkcs11/libgnutls_pkcs11.la
 endif
 
 if HAVE_LIBIDN2
@@ -202,14 +271,14 @@ noinst_PROGRAMS = fipshmac
 fipshmac_SOURCES = fipshmac.c
 fipshmac_LDADD = libgnutls.la ../gl/libgnu.la
 
-hmac_files = .libs/.gnutls.hmac
+hmac_file = .libs/.$(gnutls_so).hmac
 
-all-local: $(hmac_files)
+all-local: $(hmac_file)
 
-.libs/.gnutls.hmac: libgnutls.la fipshmac
+$(hmac_file): libgnutls.la fipshmac
 	$(AM_V_GEN) $(builddir)/fipshmac > $@-t && mv $@-t $@
 
-CLEANFILES = $(hmac_files)
+CLEANFILES = $(hmac_file)
 endif
 
 if NEED_LTLIBDL
@@ -229,7 +298,7 @@ thirdparty_libadd += $(LIBTASN1_LIBS)
 endif
 
 if ENABLE_NETTLE
-thirdparty_libadd += $(NETTLE_LIBS) $(HOGWEED_LIBS) $(GMP_LIBS)
+thirdparty_libadd += $(HOGWEED_LIBS) $(NETTLE_LIBS) $(GMP_LIBS)
 libgnutls_la_LIBADD += nettle/libcrypto.la
 endif
 

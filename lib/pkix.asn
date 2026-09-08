@@ -345,7 +345,9 @@ pkcs-8-PrivateKeyInfo ::= SEQUENCE {
   version INTEGER,
   privateKeyAlgorithm AlgorithmIdentifier,
   privateKey OCTET STRING,
-  attributes [0] Attributes OPTIONAL }
+  attributes [0] Attributes OPTIONAL,
+  publicKey  [1] BIT STRING OPTIONAL
+ }
 
 -- Encrypted private-key information syntax
 
@@ -377,6 +379,10 @@ pkcs-5-PBE-params ::= SEQUENCE {
 pkcs-5-PBES2-params ::= SEQUENCE {
   keyDerivationFunc AlgorithmIdentifier,
   encryptionScheme AlgorithmIdentifier }
+
+pkcs-5-PBMAC1-params ::= SEQUENCE {
+  keyDerivationFunc AlgorithmIdentifier,
+  messageAuthScheme AlgorithmIdentifier }
 
 -- PBKDF2
 

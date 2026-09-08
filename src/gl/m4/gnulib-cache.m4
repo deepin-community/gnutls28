@@ -1,8 +1,8 @@
-# Copyright (C) 2002-2021 Free Software Foundation, Inc.
+# Copyright (C) 2002-2026 Free Software Foundation, Inc.
 #
 # This file is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 3 of the License, or
+# the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
 # This file is distributed in the hope that it will be useful,
@@ -27,7 +27,8 @@
 
 
 # Specification in the form of a command-line invocation:
-# gnulib-tool --import --local-dir=src/gl/override \
+# gnulib-tool --import \
+#  --local-dir=src/gl/override \
 #  --lib=libgnu_gpl \
 #  --source-base=src/gl \
 #  --m4-base=src/gl/m4 \
@@ -42,11 +43,14 @@
 #  accept \
 #  alloca \
 #  arpa_inet \
+#  array-list \
+#  assert-h \
 #  attribute \
 #  bind \
 #  byteswap \
 #  c-ctype \
 #  c-strcase \
+#  canonicalize-lgpl \
 #  close \
 #  close-stream \
 #  connect \
@@ -58,13 +62,13 @@
 #  getpass \
 #  gettext-h \
 #  gettimeofday \
-#  hash \
 #  hash-pjw-bare \
 #  inet_ntop \
 #  inet_pton \
 #  intprops \
 #  inttypes \
 #  linked-list \
+#  linkedhash-list \
 #  listen \
 #  lock \
 #  memmem-simple \
@@ -72,7 +76,9 @@
 #  netdb \
 #  netinet_in \
 #  parse-datetime \
+#  pathmax \
 #  progname \
+#  rbtree-list \
 #  read-file \
 #  reallocarray \
 #  recv \
@@ -100,10 +106,10 @@
 #  sys_types \
 #  threadlib \
 #  time_r \
+#  tls \
 #  unistd \
 #  valgrind-tests \
 #  vasprintf \
-#  verify \
 #  vsnprintf \
 #  xalloc \
 #  xalloc-oversized \
@@ -116,11 +122,14 @@ gl_MODULES([
   accept
   alloca
   arpa_inet
+  array-list
+  assert-h
   attribute
   bind
   byteswap
   c-ctype
   c-strcase
+  canonicalize-lgpl
   close
   close-stream
   connect
@@ -132,13 +141,13 @@ gl_MODULES([
   getpass
   gettext-h
   gettimeofday
-  hash
   hash-pjw-bare
   inet_ntop
   inet_pton
   intprops
   inttypes
   linked-list
+  linkedhash-list
   listen
   lock
   memmem-simple
@@ -146,7 +155,9 @@ gl_MODULES([
   netdb
   netinet_in
   parse-datetime
+  pathmax
   progname
+  rbtree-list
   read-file
   reallocarray
   recv
@@ -174,10 +185,10 @@ gl_MODULES([
   sys_types
   threadlib
   time_r
+  tls
   unistd
   valgrind-tests
   vasprintf
-  verify
   vsnprintf
   xalloc
   xalloc-oversized

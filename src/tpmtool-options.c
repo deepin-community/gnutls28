@@ -4,10 +4,10 @@
 
 #include "tpmtool-options.h"
 #include <errno.h>
-#include <error.h>
 #include <getopt.h>
 #include <limits.h>
 #include <stdint.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #ifndef _WIN32
@@ -33,8 +33,14 @@ parse_number (const char *arg)
     result = strtol (arg, &endptr, 10);
 
   if (errno != 0 || (endptr && *endptr != '\0'))
-    error (EXIT_FAILURE, errno, "'%s' is not a recognizable number.",
-           arg);
+    {
+      char buf[80];
+      snprintf (buf, sizeof(buf),
+                "'%s' is not a recognizable number",
+                arg);
+      perror (buf);
+      exit (EXIT_FAILURE);
+    }
 
   return result;
 }
@@ -42,30 +48,30 @@ parse_number (const char *arg)
 /* Long options.  */
 static const struct option long_options[] =
 {
-  { "debug", required_argument, 0, 'd' },
-  { "infile", required_argument, 0, CHAR_MAX + 1 },
-  { "outfile", required_argument, 0, CHAR_MAX + 2 },
-  { "generate-rsa", no_argument, 0, CHAR_MAX + 3 },
-  { "register", no_argument, 0, CHAR_MAX + 4 },
-  { "signing", no_argument, 0, CHAR_MAX + 5 },
-  { "legacy", no_argument, 0, CHAR_MAX + 6 },
-  { "user", no_argument, 0, CHAR_MAX + 7 },
-  { "system", no_argument, 0, CHAR_MAX + 8 },
-  { "pubkey", required_argument, 0, CHAR_MAX + 9 },
-  { "list", no_argument, 0, CHAR_MAX + 10 },
-  { "delete", required_argument, 0, CHAR_MAX + 11 },
-  { "test-sign", required_argument, 0, CHAR_MAX + 12 },
-  { "sec-param", required_argument, 0, CHAR_MAX + 13 },
-  { "bits", required_argument, 0, CHAR_MAX + 14 },
-  { "inder", no_argument, 0, CHAR_MAX + 15 },
-  { "no-inder", no_argument, 0, CHAR_MAX + 16 },
-  { "outder", no_argument, 0, CHAR_MAX + 17 },
-  { "no-outder", no_argument, 0, CHAR_MAX + 18 },
-  { "srk-well-known", no_argument, 0, CHAR_MAX + 19 },
-  { "version", optional_argument, 0, 'v' },
-  { "help", no_argument, 0, 'h' },
-  { "more-help", no_argument, 0, '!' },
-  { 0, 0, 0, 0 }
+  { "debug", required_argument, NULL, 'd' },
+  { "infile", required_argument, NULL, CHAR_MAX + 1 },
+  { "outfile", required_argument, NULL, CHAR_MAX + 2 },
+  { "generate-rsa", no_argument, NULL, CHAR_MAX + 3 },
+  { "register", no_argument, NULL, CHAR_MAX + 4 },
+  { "signing", no_argument, NULL, CHAR_MAX + 5 },
+  { "legacy", no_argument, NULL, CHAR_MAX + 6 },
+  { "user", no_argument, NULL, CHAR_MAX + 7 },
+  { "system", no_argument, NULL, CHAR_MAX + 8 },
+  { "pubkey", required_argument, NULL, CHAR_MAX + 9 },
+  { "list", no_argument, NULL, CHAR_MAX + 10 },
+  { "delete", required_argument, NULL, CHAR_MAX + 11 },
+  { "test-sign", required_argument, NULL, CHAR_MAX + 12 },
+  { "sec-param", required_argument, NULL, CHAR_MAX + 13 },
+  { "bits", required_argument, NULL, CHAR_MAX + 14 },
+  { "inder", no_argument, NULL, CHAR_MAX + 15 },
+  { "no-inder", no_argument, NULL, CHAR_MAX + 16 },
+  { "outder", no_argument, NULL, CHAR_MAX + 17 },
+  { "no-outder", no_argument, NULL, CHAR_MAX + 18 },
+  { "srk-well-known", no_argument, NULL, CHAR_MAX + 19 },
+  { "version", optional_argument, NULL, 'v' },
+  { "help", no_argument, NULL, 'h' },
+  { "more-help", no_argument, NULL, '!' },
+  { NULL, 0, NULL, 0 }
 
 };
 
@@ -192,62 +198,74 @@ process_options (int argc, char **argv)
 
   if (HAVE_OPT(DEBUG) && OPT_VALUE_DEBUG < 0)
     {
-      error (EXIT_FAILURE, 0, "%s option value %d is out of range.",
-             "debug", opts->value.debug);
+      fprintf (stderr, "%s option value %d is out of range\n",
+               "debug", opts->value.debug);
+      exit (EXIT_FAILURE);
     }
   if (HAVE_OPT(DEBUG) && OPT_VALUE_DEBUG > 9999)
     {
-      error (EXIT_FAILURE, 0, "%s option value %d is out of range",
-             "debug", opts->value.debug);
+      fprintf (stderr, "%s option value %d is out of range\n",
+               "debug", opts->value.debug);
+      exit (EXIT_FAILURE);
     }
   if (HAVE_OPT(REGISTER) && !HAVE_OPT(GENERATE_RSA))
     {
-      error (EXIT_FAILURE, 0, "%s option requires the %s options",
-             "register", "generate_rsa");
+      fprintf (stderr, "%s option requires the %s options\n",
+               "register", "generate_rsa");
+      exit (EXIT_FAILURE);
     }
   if (HAVE_OPT(SIGNING) && HAVE_OPT(LEGACY))
     {
-      error (EXIT_FAILURE, 0, "the '%s' and '%s' options conflict",
-             "signing", "legacy");
+      fprintf (stderr, "the '%s' and '%s' options conflict\n",
+               "signing", "legacy");
+      exit (EXIT_FAILURE);
     }
   if (HAVE_OPT(SIGNING) && !HAVE_OPT(GENERATE_RSA))
     {
-      error (EXIT_FAILURE, 0, "%s option requires the %s options",
-             "signing", "generate_rsa");
+      fprintf (stderr, "%s option requires the %s options\n",
+               "signing", "generate_rsa");
+      exit (EXIT_FAILURE);
     }
   if (HAVE_OPT(LEGACY) && HAVE_OPT(SIGNING))
     {
-      error (EXIT_FAILURE, 0, "the '%s' and '%s' options conflict",
-             "legacy", "signing");
+      fprintf (stderr, "the '%s' and '%s' options conflict\n",
+               "legacy", "signing");
+      exit (EXIT_FAILURE);
     }
   if (HAVE_OPT(LEGACY) && !HAVE_OPT(GENERATE_RSA))
     {
-      error (EXIT_FAILURE, 0, "%s option requires the %s options",
-             "legacy", "generate_rsa");
+      fprintf (stderr, "%s option requires the %s options\n",
+               "legacy", "generate_rsa");
+      exit (EXIT_FAILURE);
     }
   if (HAVE_OPT(USER) && HAVE_OPT(SYSTEM))
     {
-      error (EXIT_FAILURE, 0, "the '%s' and '%s' options conflict",
-             "user", "system");
+      fprintf (stderr, "the '%s' and '%s' options conflict\n",
+               "user", "system");
+      exit (EXIT_FAILURE);
     }
   if (HAVE_OPT(USER) && !HAVE_OPT(REGISTER))
     {
-      error (EXIT_FAILURE, 0, "%s option requires the %s options",
-             "user", "register");
+      fprintf (stderr, "%s option requires the %s options\n",
+               "user", "register");
+      exit (EXIT_FAILURE);
     }
   if (HAVE_OPT(SYSTEM) && HAVE_OPT(USER))
     {
-      error (EXIT_FAILURE, 0, "the '%s' and '%s' options conflict",
-             "system", "user");
+      fprintf (stderr, "the '%s' and '%s' options conflict\n",
+               "system", "user");
+      exit (EXIT_FAILURE);
     }
   if (HAVE_OPT(SYSTEM) && !HAVE_OPT(REGISTER))
     {
-      error (EXIT_FAILURE, 0, "%s option requires the %s options",
-             "system", "register");
+      fprintf (stderr, "%s option requires the %s options\n",
+               "system", "register");
+      exit (EXIT_FAILURE);
     }
   if (optind < argc)
     {
-      error (EXIT_FAILURE, 0, "Command line arguments are not allowed.");
+      fprintf (stderr, "Command line arguments are not allowed\n");
+      exit (EXIT_FAILURE);
     }
 
 
@@ -267,11 +285,17 @@ process_options (int argc, char **argv)
       int pfds[2];
 
       if (pipe (pfds) < 0)
-        error (EXIT_FAILURE, errno, "pipe");
+        {
+          perror ("pipe");
+          exit (EXIT_FAILURE);
+        }
 
       pid = fork ();
       if (pid < 0)
-        error (EXIT_FAILURE, errno, "fork");
+        {
+          perror ("fork");
+          exit (EXIT_FAILURE);
+        }
 
       if (pid == 0)
         {
@@ -310,8 +334,8 @@ process_options (int argc, char **argv)
       if (!OPT_ARG_VERSION || !strcmp (OPT_ARG_VERSION, "c"))
         {
           const char str[] =
-            "tpmtool 3.7.9\n"
-            "Copyright (C) 2000-2021 Free Software Foundation, and others\n"
+            "tpmtool 3.8.13\n"
+            "Copyright (C) 2000-2023 Free Software Foundation, and others\n"
             "This is free software. It is licensed for use, modification and\n"
             "redistribution under the terms of the GNU General Public License,\n"
             "version 3 or later <http://gnu.org/licenses/gpl.html>\n"
@@ -323,15 +347,15 @@ process_options (int argc, char **argv)
       else if (!strcmp (OPT_ARG_VERSION, "v"))
         {
           const char str[] =
-            "tpmtool 3.7.9\n";
+            "tpmtool 3.8.13\n";
           fprintf (stdout, "%s", str);
           exit(0);
         }
       else if (!strcmp (OPT_ARG_VERSION, "n"))
         {
           const char str[] =
-            "tpmtool 3.7.9\n"
-            "Copyright (C) 2000-2021 Free Software Foundation, and others\n"
+            "tpmtool 3.8.13\n"
+            "Copyright (C) 2000-2023 Free Software Foundation, and others\n"
             "This is free software. It is licensed for use, modification and\n"
             "redistribution under the terms of the GNU General Public License,\n"
             "version 3 or later <http://gnu.org/licenses/gpl.html>\n"
@@ -355,11 +379,12 @@ process_options (int argc, char **argv)
         }
       else
         {
-          error (EXIT_FAILURE, 0,
-                 "version option argument 'a' invalid.  Use:\n"
-                 "	'v' - version only\n"
-                 "	'c' - version and copyright\n"
-                 "	'n' - version and full copyright notice");
+          fprintf (stderr,
+                   "version option argument 'a' invalid.  Use:\n"
+                   "	'v' - version only\n"
+                   "	'c' - version and copyright\n"
+                   "	'n' - version and full copyright notice\n");
+          exit (EXIT_FAILURE);
         }
     }
 

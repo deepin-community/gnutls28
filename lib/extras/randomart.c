@@ -26,7 +26,7 @@
 
 #include "gnutls_int.h"
 #include "errors.h"
-#include <randomart.h>
+#include "randomart.h"
 
 /*
  * Draw an ASCII-Art representing the fingerprint so human brain can
@@ -58,11 +58,11 @@
  * Else pictures would be too dense, and drawing the frame would
  * fail, too, because the key type would not fit in anymore.
  */
-#define	FLDBASE		8
-#define	FLDSIZE_Y	(FLDBASE + 1)
-#define	FLDSIZE_X	(FLDBASE * 2 + 1)
-char *_gnutls_key_fingerprint_randomart(uint8_t * dgst_raw,
-					u_int dgst_raw_len,
+#define FLDBASE 8
+#define FLDSIZE_Y (FLDBASE + 1)
+#define FLDSIZE_X (FLDBASE * 2 + 1)
+char *_gnutls_key_fingerprint_randomart(uint8_t *dgst_raw,
+					unsigned int dgst_raw_len,
 					const char *key_type,
 					unsigned int key_size,
 					const char *prefix)
@@ -83,9 +83,8 @@ char *_gnutls_key_fingerprint_randomart(uint8_t * dgst_raw,
 	if (prefix)
 		prefix_len = strlen(prefix);
 
-	retval =
-	    gnutls_calloc(1,
-			  (FLDSIZE_X + 3 + prefix_len) * (FLDSIZE_Y + 2));
+	retval = gnutls_calloc(1,
+			       (FLDSIZE_X + 3 + prefix_len) * (FLDSIZE_Y + 2));
 	if (retval == NULL) {
 		gnutls_assert();
 		return NULL;
@@ -130,11 +129,10 @@ char *_gnutls_key_fingerprint_randomart(uint8_t * dgst_raw,
 
 	/* fill in retval */
 	if (prefix_len)
-		snprintf(retval, FLDSIZE_X + prefix_len, "%s+--[%4s%s]",
-			 prefix, key_type, size_txt);
+		snprintf(retval, FLDSIZE_X + prefix_len, "%s+--[%4s%s]", prefix,
+			 key_type, size_txt);
 	else
-		snprintf(retval, FLDSIZE_X, "+--[%4s%s]", key_type,
-			 size_txt);
+		snprintf(retval, FLDSIZE_X, "+--[%4s%s]", key_type, size_txt);
 	p = strchr(retval, '\0');
 
 	/* output upper border */

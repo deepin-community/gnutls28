@@ -22,7 +22,7 @@ include $(top_srcdir)/lib/common.mk
 
 AM_CFLAGS += $(HOGWEED_CFLAGS) $(GMP_CFLAGS)
 
-AM_CPPFLAGS = \
+AM_CPPFLAGS += \
 	-I$(srcdir)/int		\
 	-I$(srcdir)/backport		\
 	-I$(srcdir)/../../gl		\
@@ -36,6 +36,10 @@ if ENABLE_MINITASN1
 AM_CPPFLAGS += -I$(srcdir)/../minitasn1
 endif
 
+if ENABLE_LEANCRYPTO
+AM_CPPFLAGS += $(LEANCRYPTO_CFLAGS)
+endif
+
 noinst_LTLIBRARIES = libcrypto.la
 
 libcrypto_la_SOURCES = pk.c mpi.c mac.c cipher.c init.c \
@@ -46,7 +50,6 @@ libcrypto_la_SOURCES = pk.c mpi.c mac.c cipher.c init.c \
 	int/dsa-compute-k.c int/dsa-compute-k.h \
 	int/ecdsa-compute-k.c int/ecdsa-compute-k.h \
 	int/mpn-base256.c int/mpn-base256.h \
-	int/block8.h backport/block-internal.h \
 	int/rsa-pad.c
 
 if WINDOWS
@@ -77,9 +80,7 @@ endif
 if ENABLE_GOST
 libcrypto_la_SOURCES += \
 	gost/nettle-write.h gost/write-le32.c \
-	gost/gost28147.c gost/gost28147.h gost/gost-wrap.c \
-	gost/streebog.c gost/streebog.h gost/streebog-meta.c \
-	gost/hmac-streebog.c gost/hmac-gost.h
+	gost/gost28147.c gost/gost28147.h gost/gost-wrap.c
 
 libcrypto_la_SOURCES += \
 	gost/bignum-le.c gost/bignum-le.h

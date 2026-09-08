@@ -4,10 +4,10 @@
 
 #include "danetool-options.h"
 #include <errno.h>
-#include <error.h>
 #include <getopt.h>
 #include <limits.h>
 #include <stdint.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #ifndef _WIN32
@@ -33,8 +33,14 @@ parse_number (const char *arg)
     result = strtol (arg, &endptr, 10);
 
   if (errno != 0 || (endptr && *endptr != '\0'))
-    error (EXIT_FAILURE, errno, "'%s' is not a recognizable number.",
-           arg);
+    {
+      char buf[80];
+      snprintf (buf, sizeof(buf),
+                "'%s' is not a recognizable number",
+                arg);
+      perror (buf);
+      exit (EXIT_FAILURE);
+    }
 
   return result;
 }
@@ -42,40 +48,40 @@ parse_number (const char *arg)
 /* Long options.  */
 static const struct option long_options[] =
 {
-  { "debug", required_argument, 0, 'd' },
-  { "verbose", no_argument, 0, 'V' },
-  { "outfile", required_argument, 0, CHAR_MAX + 1 },
-  { "load-pubkey", required_argument, 0, CHAR_MAX + 2 },
-  { "load-certificate", required_argument, 0, CHAR_MAX + 3 },
-  { "dlv", required_argument, 0, CHAR_MAX + 4 },
-  { "hash", required_argument, 0, CHAR_MAX + 5 },
-  { "check", required_argument, 0, CHAR_MAX + 6 },
-  { "check-ee", no_argument, 0, CHAR_MAX + 7 },
-  { "check-ca", no_argument, 0, CHAR_MAX + 8 },
-  { "tlsa-rr", no_argument, 0, CHAR_MAX + 9 },
-  { "host", required_argument, 0, CHAR_MAX + 10 },
-  { "proto", required_argument, 0, CHAR_MAX + 11 },
-  { "port", required_argument, 0, CHAR_MAX + 12 },
-  { "starttls-proto", required_argument, 0, CHAR_MAX + 14 },
-  { "app-proto", required_argument, 0, CHAR_MAX + 13 },
-  { "ca", no_argument, 0, CHAR_MAX + 15 },
-  { "x509", no_argument, 0, CHAR_MAX + 16 },
-  { "domain", no_argument, 0, CHAR_MAX + 18 },
-  { "local", no_argument, 0, CHAR_MAX + 17 },
-  { "no-domain", no_argument, 0, CHAR_MAX + 19 },
-  { "local-dns", no_argument, 0, CHAR_MAX + 20 },
-  { "no-local-dns", no_argument, 0, CHAR_MAX + 21 },
-  { "insecure", no_argument, 0, CHAR_MAX + 22 },
-  { "inder", no_argument, 0, CHAR_MAX + 23 },
-  { "inraw", no_argument, 0, CHAR_MAX + 25 },
-  { "no-inder", no_argument, 0, CHAR_MAX + 24 },
-  { "print-raw", no_argument, 0, CHAR_MAX + 26 },
-  { "no-print-raw", no_argument, 0, CHAR_MAX + 27 },
-  { "quiet", no_argument, 0, CHAR_MAX + 28 },
-  { "version", optional_argument, 0, 'v' },
-  { "help", no_argument, 0, 'h' },
-  { "more-help", no_argument, 0, '!' },
-  { 0, 0, 0, 0 }
+  { "debug", required_argument, NULL, 'd' },
+  { "verbose", no_argument, NULL, 'V' },
+  { "outfile", required_argument, NULL, CHAR_MAX + 1 },
+  { "load-pubkey", required_argument, NULL, CHAR_MAX + 2 },
+  { "load-certificate", required_argument, NULL, CHAR_MAX + 3 },
+  { "dlv", required_argument, NULL, CHAR_MAX + 4 },
+  { "hash", required_argument, NULL, CHAR_MAX + 5 },
+  { "check", required_argument, NULL, CHAR_MAX + 6 },
+  { "check-ee", no_argument, NULL, CHAR_MAX + 7 },
+  { "check-ca", no_argument, NULL, CHAR_MAX + 8 },
+  { "tlsa-rr", no_argument, NULL, CHAR_MAX + 9 },
+  { "host", required_argument, NULL, CHAR_MAX + 10 },
+  { "proto", required_argument, NULL, CHAR_MAX + 11 },
+  { "port", required_argument, NULL, CHAR_MAX + 12 },
+  { "starttls-proto", required_argument, NULL, CHAR_MAX + 14 },
+  { "app-proto", required_argument, NULL, CHAR_MAX + 13 },
+  { "ca", no_argument, NULL, CHAR_MAX + 15 },
+  { "x509", no_argument, NULL, CHAR_MAX + 16 },
+  { "domain", no_argument, NULL, CHAR_MAX + 18 },
+  { "local", no_argument, NULL, CHAR_MAX + 17 },
+  { "no-domain", no_argument, NULL, CHAR_MAX + 19 },
+  { "local-dns", no_argument, NULL, CHAR_MAX + 20 },
+  { "no-local-dns", no_argument, NULL, CHAR_MAX + 21 },
+  { "insecure", no_argument, NULL, CHAR_MAX + 22 },
+  { "inder", no_argument, NULL, CHAR_MAX + 23 },
+  { "inraw", no_argument, NULL, CHAR_MAX + 25 },
+  { "no-inder", no_argument, NULL, CHAR_MAX + 24 },
+  { "print-raw", no_argument, NULL, CHAR_MAX + 26 },
+  { "no-print-raw", no_argument, NULL, CHAR_MAX + 27 },
+  { "quiet", no_argument, NULL, CHAR_MAX + 28 },
+  { "version", optional_argument, NULL, 'v' },
+  { "help", no_argument, NULL, 'h' },
+  { "more-help", no_argument, NULL, '!' },
+  { NULL, 0, NULL, 0 }
 
 };
 
@@ -235,22 +241,26 @@ process_options (int argc, char **argv)
 
   if (HAVE_OPT(DEBUG) && OPT_VALUE_DEBUG < 0)
     {
-      error (EXIT_FAILURE, 0, "%s option value %d is out of range.",
-             "debug", opts->value.debug);
+      fprintf (stderr, "%s option value %d is out of range\n",
+               "debug", opts->value.debug);
+      exit (EXIT_FAILURE);
     }
   if (HAVE_OPT(DEBUG) && OPT_VALUE_DEBUG > 9999)
     {
-      error (EXIT_FAILURE, 0, "%s option value %d is out of range",
-             "debug", opts->value.debug);
+      fprintf (stderr, "%s option value %d is out of range\n",
+               "debug", opts->value.debug);
+      exit (EXIT_FAILURE);
     }
   if (HAVE_OPT(TLSA_RR) && !HAVE_OPT(HOST))
     {
-      error (EXIT_FAILURE, 0, "%s option requires the %s options",
-             "tlsa-rr", "host");
+      fprintf (stderr, "%s option requires the %s options\n",
+               "tlsa-rr", "host");
+      exit (EXIT_FAILURE);
     }
   if (optind < argc)
     {
-      error (EXIT_FAILURE, 0, "Command line arguments are not allowed.");
+      fprintf (stderr, "Command line arguments are not allowed\n");
+      exit (EXIT_FAILURE);
     }
 
 
@@ -270,11 +280,17 @@ process_options (int argc, char **argv)
       int pfds[2];
 
       if (pipe (pfds) < 0)
-        error (EXIT_FAILURE, errno, "pipe");
+        {
+          perror ("pipe");
+          exit (EXIT_FAILURE);
+        }
 
       pid = fork ();
       if (pid < 0)
-        error (EXIT_FAILURE, errno, "fork");
+        {
+          perror ("fork");
+          exit (EXIT_FAILURE);
+        }
 
       if (pid == 0)
         {
@@ -313,8 +329,8 @@ process_options (int argc, char **argv)
       if (!OPT_ARG_VERSION || !strcmp (OPT_ARG_VERSION, "c"))
         {
           const char str[] =
-            "danetool 3.7.9\n"
-            "Copyright (C) 2000-2021 Free Software Foundation, and others\n"
+            "danetool 3.8.13\n"
+            "Copyright (C) 2000-2023 Free Software Foundation, and others\n"
             "This is free software. It is licensed for use, modification and\n"
             "redistribution under the terms of the GNU General Public License,\n"
             "version 3 or later <http://gnu.org/licenses/gpl.html>\n"
@@ -326,15 +342,15 @@ process_options (int argc, char **argv)
       else if (!strcmp (OPT_ARG_VERSION, "v"))
         {
           const char str[] =
-            "danetool 3.7.9\n";
+            "danetool 3.8.13\n";
           fprintf (stdout, "%s", str);
           exit(0);
         }
       else if (!strcmp (OPT_ARG_VERSION, "n"))
         {
           const char str[] =
-            "danetool 3.7.9\n"
-            "Copyright (C) 2000-2021 Free Software Foundation, and others\n"
+            "danetool 3.8.13\n"
+            "Copyright (C) 2000-2023 Free Software Foundation, and others\n"
             "This is free software. It is licensed for use, modification and\n"
             "redistribution under the terms of the GNU General Public License,\n"
             "version 3 or later <http://gnu.org/licenses/gpl.html>\n"
@@ -358,11 +374,12 @@ process_options (int argc, char **argv)
         }
       else
         {
-          error (EXIT_FAILURE, 0,
-                 "version option argument 'a' invalid.  Use:\n"
-                 "	'v' - version only\n"
-                 "	'c' - version and copyright\n"
-                 "	'n' - version and full copyright notice");
+          fprintf (stderr,
+                   "version option argument 'a' invalid.  Use:\n"
+                   "	'v' - version only\n"
+                   "	'c' - version and copyright\n"
+                   "	'n' - version and full copyright notice\n");
+          exit (EXIT_FAILURE);
         }
     }
 

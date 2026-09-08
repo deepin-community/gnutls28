@@ -16,8 +16,7 @@
 # General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with GnuTLS; if not, write to the Free Software Foundation,
-# Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+# along with GnuTLS.  If not, see <https://www.gnu.org/licenses/>.
 
 : ${srcdir=.}
 : ${SERV=../src/gnutls-serv${EXEEXT}}
@@ -54,7 +53,7 @@ wait_server ${PID}
 
 export GNUTLS_SYSTEM_PRIORITY_FILE="${STOCK_PRIORITY}"
 "${CLI}" -p "${PORT}" 127.0.0.1 --insecure --logfile ${TMPFILE2} </dev/null >/dev/null &&
-	fail "expected connection to fail (1)"
+	fail "" "expected connection to fail (1)"
 kill ${PID}
 wait
 
@@ -67,11 +66,11 @@ wait_server ${PID}
 
 export GNUTLS_SYSTEM_PRIORITY_FILE="${STOCK_PRIORITY}"
 "${CLI}" -p "${PORT}" 127.0.0.1 --priority "NORMAL:-VERS-TLS1.3" --insecure --logfile ${TMPFILE2} </dev/null >/dev/null &&
-	fail "expected connection to fail (2)"
+	fail "" "expected connection to fail (2)"
 
 export GNUTLS_SYSTEM_PRIORITY_FILE="${STOCK_PRIORITY}"
 "${CLI}" -p "${PORT}" 127.0.0.1 --priority "NORMAL:-VERS-TLS-ALL:+VERS-TLS1.3" --insecure --logfile ${TMPFILE2} </dev/null >/dev/null ||
-	fail "expected connection to succeed (1)"
+	fail "" "expected connection to succeed (1)"
 
 kill ${PID}
 wait
@@ -85,7 +84,7 @@ PID=$!
 wait_server ${PID}
 
 "${CLI}" -p "${PORT}" 127.0.0.1 --insecure --logfile ${TMPFILE2} </dev/null >/dev/null ||
-	fail "expected connection to succeed (2)"
+	fail "" "expected connection to succeed (2)"
 
 kill ${PID}
 wait

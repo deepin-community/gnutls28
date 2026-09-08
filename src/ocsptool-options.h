@@ -37,6 +37,7 @@ struct ocsptool_options
     bool load_response;
     bool ignore_errors;
     bool verify_allow_broken;
+    bool attime;
     bool version;
     bool help;
     bool more_help;
@@ -56,6 +57,7 @@ struct ocsptool_options
     const char *load_signer;
     const char *load_request;
     const char *load_response;
+    const char *attime;
     const char *version;
   } arg;
 
@@ -90,6 +92,7 @@ struct ocsptool_options
     bool load_response;
     bool ignore_errors;
     bool verify_allow_broken;
+    bool attime;
     bool version;
     bool help;
     bool more_help;
@@ -125,6 +128,7 @@ struct ocsptool_options
 #define HAVE_OPT_LOAD_RESPONSE ocsptool_options.present.load_response
 #define HAVE_OPT_IGNORE_ERRORS ocsptool_options.present.ignore_errors
 #define HAVE_OPT_VERIFY_ALLOW_BROKEN ocsptool_options.present.verify_allow_broken
+#define HAVE_OPT_ATTIME ocsptool_options.present.attime
 #define HAVE_OPT_VERSION ocsptool_options.present.version
 #define HAVE_OPT_HELP ocsptool_options.present.help
 #define HAVE_OPT_MORE_HELP ocsptool_options.present.more_help
@@ -151,6 +155,7 @@ struct ocsptool_options
 #define OPT_ARG_LOAD_RESPONSE ocsptool_options.arg.load_response
 #define OPT_ARG_IGNORE_ERRORS ocsptool_options.arg.ignore_errors
 #define OPT_ARG_VERIFY_ALLOW_BROKEN ocsptool_options.arg.verify_allow_broken
+#define OPT_ARG_ATTIME ocsptool_options.arg.attime
 #define OPT_ARG_VERSION ocsptool_options.arg.version
 #define OPT_ARG_HELP ocsptool_options.arg.help
 #define OPT_ARG_MORE_HELP ocsptool_options.arg.more_help
@@ -179,6 +184,7 @@ struct ocsptool_options
 #define ENABLED_OPT_LOAD_RESPONSE ocsptool_options.enabled.load_response
 #define ENABLED_OPT_IGNORE_ERRORS ocsptool_options.enabled.ignore_errors
 #define ENABLED_OPT_VERIFY_ALLOW_BROKEN ocsptool_options.enabled.verify_allow_broken
+#define ENABLED_OPT_ATTIME ocsptool_options.enabled.attime
 #define ENABLED_OPT_VERSION ocsptool_options.enabled.version
 #define ENABLED_OPT_HELP ocsptool_options.enabled.help
 #define ENABLED_OPT_MORE_HELP ocsptool_options.enabled.more_help

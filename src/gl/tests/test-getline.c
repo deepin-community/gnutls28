@@ -1,9 +1,9 @@
 /* Test of getline() function.
-   Copyright (C) 2007-2021 Free Software Foundation, Inc.
+   Copyright (C) 2007-2026 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 3, or (at your option)
+   the Free Software Foundation, either version 3, or (at your option)
    any later version.
 
    This program is distributed in the hope that it will be useful,
@@ -57,7 +57,7 @@ main (void)
   len = 0;
   result = getline (&line, &len, f);
   ASSERT (result == 2);
-  ASSERT (strcmp (line, "a\n") == 0);
+  ASSERT (streq (line, "a\n"));
   ASSERT (2 < len);
   free (line);
 
@@ -66,7 +66,7 @@ main (void)
   len = (size_t)(~0) / 4;
   result = getline (&line, &len, f);
   ASSERT (result == 2);
-  ASSERT (strcmp (line, "A\n") == 0);
+  ASSERT (streq (line, "A\n"));
   ASSERT (2 < len);
   free (line);
 
@@ -75,13 +75,13 @@ main (void)
   line = malloc (len);
   result = getline (&line, &len, f);
   ASSERT (result == 3);
-  ASSERT (strcmp (line, "bc\n") == 0);
+  ASSERT (streq (line, "bc\n"));
   ASSERT (3 < len);
 
   /* Test embedded NULs and EOF behavior.  */
   result = getline (&line, &len, f);
   ASSERT (result == 3);
-  ASSERT (memcmp (line, "d\0f", 4) == 0);
+  ASSERT (memeq (line, "d\0f", 4));
   ASSERT (3 < len);
 
   result = getline (&line, &len, f);
@@ -90,5 +90,5 @@ main (void)
   free (line);
   fclose (f);
   remove ("test-getline.txt");
-  return 0;
+  return test_exit_status;
 }

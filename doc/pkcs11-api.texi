@@ -202,7 +202,7 @@ This function will check whether the provided certificate is stored
 in the specified token. This is useful in combination with 
 @code{GNUTLS_PKCS11_OBJ_FLAG_RETRIEVE_TRUSTED}  or
 @code{GNUTLS_PKCS11_OBJ_FLAG_RETRIEVE_DISTRUSTED} ,
-to check whether a CA is present or a certificate is blacklisted in
+to check whether a CA is present or a certificate is distrusted in
 a trust PKCS @code{11}  module.
 
 This function can be used with a  @code{url} of "pkcs11:", and in that case all modules
@@ -533,6 +533,26 @@ to  @code{output_size} . After 3.6.0 the output size doesn't include the termina
 @strong{Returns:} @code{GNUTLS_E_SUCCESS}  (0) on success or a negative error code on error.
 
 @strong{Since:} 2.12.0
+@end deftypefun
+
+@subheading gnutls_pkcs11_obj_get_pk_algorithm
+@anchor{gnutls_pkcs11_obj_get_pk_algorithm}
+@deftypefun {int} {gnutls_pkcs11_obj_get_pk_algorithm} (gnutls_pkcs11_obj_t @var{obj}, unsigned int * @var{bits})
+@var{obj}: The pkcs11 object
+
+@var{bits}: Will hold the rsa/dsa bit count or the ecc curve
+This function given a pkcs11 object with privkey_type initialized,
+will return the algorithm type on success , and will store the number
+of bits if the algo type is @code{GNUTLS_PK_RSA}  or @code{GNUTLS_PK_DSA} , or the curve
+if the algo type is @code{GNUTLS_PK_ECDSA} .
+
+The return value needs to be checked to determine if bits represents
+the ecc curve or the number of bits.
+
+@strong{Returns:} The private key algorithm associated with the object on success
+or a an error code otherwise.
+
+@strong{Since:} 3.8.13
 @end deftypefun
 
 @subheading gnutls_pkcs11_obj_get_ptr
@@ -1163,7 +1183,7 @@ exceeds the available tokens, otherwise a negative error value.
 
 @var{so_pin}: Security Officer's PIN
 
-@var{label}: A name to be used for the token
+@var{label}: A name to be used for the token, at most 32 characters
 
 This function will initialize (format) a token. If the token is
 at a factory defaults state the security officer's PIN given will be
@@ -1227,7 +1247,7 @@ negative error value.
 
 @subheading gnutls_x509_crt_list_import_pkcs11
 @anchor{gnutls_x509_crt_list_import_pkcs11}
-@deftypefun {int} {gnutls_x509_crt_list_import_pkcs11} (gnutls_x509_crt_t * @var{certs}, unsigned int @var{cert_max}, gnutls_pkcs11_obj_t * const @var{objs}, unsigned int @var{flags})
+@deftypefun {int} {gnutls_x509_crt_list_import_pkcs11} (gnutls_x509_crt_t * @var{certs}, unsigned int @var{cert_max}, gnutls_pkcs11_obj_t *const @var{objs}, unsigned int @var{flags})
 @var{certs}: A list of certificates of type @code{gnutls_x509_crt_t} 
 
 @var{cert_max}: The maximum size of the list

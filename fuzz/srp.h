@@ -22,7 +22,7 @@
  */
 
 #ifndef SRP_H
-# define SRP_H
+#define SRP_H
 
 #define USERNAME "test"
 #define PASSWORD "test"

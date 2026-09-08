@@ -1,9 +1,9 @@
 /* Test of getdelim() function.
-   Copyright (C) 2007-2021 Free Software Foundation, Inc.
+   Copyright (C) 2007-2026 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 3, or (at your option)
+   the Free Software Foundation, either version 3, or (at your option)
    any later version.
 
    This program is distributed in the hope that it will be useful,
@@ -57,7 +57,7 @@ main (void)
   len = 0;
   result = getdelim (&line, &len, 'n', f);
   ASSERT (result == 2);
-  ASSERT (strcmp (line, "an") == 0);
+  ASSERT (streq (line, "an"));
   ASSERT (2 < len);
   free (line);
 
@@ -66,7 +66,7 @@ main (void)
   len = (size_t)(~0) / 4;
   result = getdelim (&line, &len, 'n', f);
   ASSERT (result == 2);
-  ASSERT (strcmp (line, "An") == 0);
+  ASSERT (streq (line, "An"));
   ASSERT (2 < len);
   free (line);
 
@@ -75,13 +75,13 @@ main (void)
   len = 1;
   result = getdelim (&line, &len, 'n', f);
   ASSERT (result == 3);
-  ASSERT (strcmp (line, "bcn") == 0);
+  ASSERT (streq (line, "bcn"));
   ASSERT (3 < len);
 
   /* Test embedded NULs and EOF behavior.  */
   result = getdelim (&line, &len, 'n', f);
   ASSERT (result == 3);
-  ASSERT (memcmp (line, "d\0f", 4) == 0);
+  ASSERT (memeq (line, "d\0f", 4));
   ASSERT (3 < len);
 
   result = getdelim (&line, &len, 'n', f);
@@ -90,5 +90,5 @@ main (void)
   free (line);
   fclose (f);
   remove ("test-getdelim.txt");
-  return 0;
+  return test_exit_status;
 }

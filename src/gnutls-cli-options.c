@@ -4,10 +4,10 @@
 
 #include "gnutls-cli-options.h"
 #include <errno.h>
-#include <error.h>
 #include <getopt.h>
 #include <limits.h>
 #include <stdint.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #ifndef _WIN32
@@ -38,13 +38,19 @@ append_to_list (struct gnutls_cli_list *list,
   size_t new_count = xsum (list->count, 1);
 
   if (size_overflow_p (new_count))
-    error (EXIT_FAILURE, 0, "too many arguments for %s",
-           name);
+    {
+      fprintf (stderr, "too many arguments for %s\n",
+               name);
+      exit (EXIT_FAILURE);
+    }
 
   tmp = reallocarray (list->args, new_count, sizeof (char *));
   if (!tmp)
-    error (EXIT_FAILURE, 0, "unable to allocate memory for %s",
-           name);
+    {
+      fprintf (stderr, "unable to allocate memory for %s\n",
+               name);
+      exit (EXIT_FAILURE);
+    }
 
   list->args = tmp;
   list->args[list->count] = optarg;
@@ -67,8 +73,14 @@ parse_number (const char *arg)
     result = strtol (arg, &endptr, 10);
 
   if (errno != 0 || (endptr && *endptr != '\0'))
-    error (EXIT_FAILURE, errno, "'%s' is not a recognizable number.",
-           arg);
+    {
+      char buf[80];
+      snprintf (buf, sizeof(buf),
+                "'%s' is not a recognizable number",
+                arg);
+      perror (buf);
+      exit (EXIT_FAILURE);
+    }
 
   return result;
 }
@@ -76,85 +88,87 @@ parse_number (const char *arg)
 /* Long options.  */
 static const struct option long_options[] =
 {
-  { "debug", required_argument, 0, 'd' },
-  { "verbose", no_argument, 0, 'V' },
-  { "tofu", no_argument, 0, CHAR_MAX + 1 },
-  { "no-tofu", no_argument, 0, CHAR_MAX + 2 },
-  { "strict-tofu", no_argument, 0, CHAR_MAX + 3 },
-  { "no-strict-tofu", no_argument, 0, CHAR_MAX + 4 },
-  { "dane", no_argument, 0, CHAR_MAX + 5 },
-  { "no-dane", no_argument, 0, CHAR_MAX + 6 },
-  { "local-dns", no_argument, 0, CHAR_MAX + 7 },
-  { "no-local-dns", no_argument, 0, CHAR_MAX + 8 },
-  { "ca-verification", no_argument, 0, CHAR_MAX + 9 },
-  { "no-ca-verification", no_argument, 0, CHAR_MAX + 10 },
-  { "ocsp", no_argument, 0, CHAR_MAX + 11 },
-  { "no-ocsp", no_argument, 0, CHAR_MAX + 12 },
-  { "resume", no_argument, 0, 'r' },
-  { "earlydata", required_argument, 0, CHAR_MAX + 13 },
-  { "rehandshake", no_argument, 0, 'e' },
-  { "sni-hostname", required_argument, 0, CHAR_MAX + 14 },
-  { "verify-hostname", required_argument, 0, CHAR_MAX + 15 },
-  { "starttls", no_argument, 0, 's' },
-  { "starttls-proto", required_argument, 0, CHAR_MAX + 17 },
-  { "app-proto", required_argument, 0, CHAR_MAX + 16 },
-  { "udp", no_argument, 0, 'u' },
-  { "mtu", required_argument, 0, CHAR_MAX + 18 },
-  { "crlf", no_argument, 0, CHAR_MAX + 19 },
-  { "fastopen", no_argument, 0, CHAR_MAX + 20 },
-  { "x509fmtder", no_argument, 0, CHAR_MAX + 21 },
-  { "print-cert", no_argument, 0, CHAR_MAX + 22 },
-  { "save-cert", required_argument, 0, CHAR_MAX + 23 },
-  { "save-ocsp", required_argument, 0, CHAR_MAX + 24 },
-  { "save-ocsp-multi", required_argument, 0, CHAR_MAX + 25 },
-  { "save-server-trace", required_argument, 0, CHAR_MAX + 26 },
-  { "save-client-trace", required_argument, 0, CHAR_MAX + 27 },
-  { "dh-bits", required_argument, 0, CHAR_MAX + 28 },
-  { "priority", required_argument, 0, CHAR_MAX + 29 },
-  { "x509cafile", required_argument, 0, CHAR_MAX + 30 },
-  { "x509crlfile", required_argument, 0, CHAR_MAX + 31 },
-  { "x509keyfile", required_argument, 0, CHAR_MAX + 32 },
-  { "x509certfile", required_argument, 0, CHAR_MAX + 33 },
-  { "rawpkkeyfile", required_argument, 0, CHAR_MAX + 34 },
-  { "rawpkfile", required_argument, 0, CHAR_MAX + 35 },
-  { "srpusername", required_argument, 0, CHAR_MAX + 36 },
-  { "srppasswd", required_argument, 0, CHAR_MAX + 37 },
-  { "pskusername", required_argument, 0, CHAR_MAX + 38 },
-  { "pskkey", required_argument, 0, CHAR_MAX + 39 },
-  { "port", required_argument, 0, 'p' },
-  { "insecure", no_argument, 0, CHAR_MAX + 40 },
-  { "verify-allow-broken", no_argument, 0, CHAR_MAX + 41 },
-  { "ranges", no_argument, 0, CHAR_MAX + 42 },
-  { "benchmark-ciphers", no_argument, 0, CHAR_MAX + 43 },
-  { "benchmark-tls-kx", no_argument, 0, CHAR_MAX + 44 },
-  { "benchmark-tls-ciphers", no_argument, 0, CHAR_MAX + 45 },
-  { "list", no_argument, 0, 'l' },
-  { "priority-list", no_argument, 0, CHAR_MAX + 46 },
-  { "noticket", no_argument, 0, CHAR_MAX + 47 },
-  { "srtp-profiles", required_argument, 0, CHAR_MAX + 48 },
-  { "alpn", required_argument, 0, CHAR_MAX + 49 },
-  { "compress-cert", required_argument, 0, CHAR_MAX + 50 },
-  { "heartbeat", no_argument, 0, 'b' },
-  { "recordsize", required_argument, 0, CHAR_MAX + 51 },
-  { "disable-sni", no_argument, 0, CHAR_MAX + 52 },
-  { "disable-extensions", no_argument, 0, CHAR_MAX + 53 },
-  { "single-key-share", no_argument, 0, CHAR_MAX + 54 },
-  { "post-handshake-auth", no_argument, 0, CHAR_MAX + 55 },
-  { "inline-commands", no_argument, 0, CHAR_MAX + 56 },
-  { "inline-commands-prefix", required_argument, 0, CHAR_MAX + 57 },
-  { "provider", required_argument, 0, CHAR_MAX + 58 },
-  { "fips140-mode", no_argument, 0, CHAR_MAX + 59 },
-  { "list-config", no_argument, 0, CHAR_MAX + 60 },
-  { "logfile", required_argument, 0, CHAR_MAX + 61 },
-  { "keymatexport", required_argument, 0, CHAR_MAX + 62 },
-  { "keymatexportsize", required_argument, 0, CHAR_MAX + 63 },
-  { "waitresumption", no_argument, 0, CHAR_MAX + 64 },
-  { "ca-auto-retrieve", no_argument, 0, CHAR_MAX + 65 },
-  { "no-ca-auto-retrieve", no_argument, 0, CHAR_MAX + 66 },
-  { "version", optional_argument, 0, 'v' },
-  { "help", no_argument, 0, 'h' },
-  { "more-help", no_argument, 0, '!' },
-  { 0, 0, 0, 0 }
+  { "debug", required_argument, NULL, 'd' },
+  { "verbose", no_argument, NULL, 'V' },
+  { "tofu", no_argument, NULL, CHAR_MAX + 1 },
+  { "no-tofu", no_argument, NULL, CHAR_MAX + 2 },
+  { "strict-tofu", no_argument, NULL, CHAR_MAX + 3 },
+  { "no-strict-tofu", no_argument, NULL, CHAR_MAX + 4 },
+  { "dane", no_argument, NULL, CHAR_MAX + 5 },
+  { "no-dane", no_argument, NULL, CHAR_MAX + 6 },
+  { "local-dns", no_argument, NULL, CHAR_MAX + 7 },
+  { "no-local-dns", no_argument, NULL, CHAR_MAX + 8 },
+  { "ca-verification", no_argument, NULL, CHAR_MAX + 9 },
+  { "no-ca-verification", no_argument, NULL, CHAR_MAX + 10 },
+  { "ocsp", no_argument, NULL, CHAR_MAX + 11 },
+  { "no-ocsp", no_argument, NULL, CHAR_MAX + 12 },
+  { "resume", no_argument, NULL, 'r' },
+  { "earlydata", required_argument, NULL, CHAR_MAX + 13 },
+  { "rehandshake", no_argument, NULL, 'e' },
+  { "sni-hostname", required_argument, NULL, CHAR_MAX + 14 },
+  { "verify-hostname", required_argument, NULL, CHAR_MAX + 15 },
+  { "starttls", no_argument, NULL, 's' },
+  { "starttls-proto", required_argument, NULL, CHAR_MAX + 17 },
+  { "app-proto", required_argument, NULL, CHAR_MAX + 16 },
+  { "starttls-name", required_argument, NULL, CHAR_MAX + 18 },
+  { "udp", no_argument, NULL, 'u' },
+  { "mtu", required_argument, NULL, CHAR_MAX + 19 },
+  { "crlf", no_argument, NULL, CHAR_MAX + 20 },
+  { "fastopen", no_argument, NULL, CHAR_MAX + 21 },
+  { "x509fmtder", no_argument, NULL, CHAR_MAX + 22 },
+  { "print-cert", no_argument, NULL, CHAR_MAX + 23 },
+  { "save-cert", required_argument, NULL, CHAR_MAX + 24 },
+  { "save-ocsp", required_argument, NULL, CHAR_MAX + 25 },
+  { "save-ocsp-multi", required_argument, NULL, CHAR_MAX + 26 },
+  { "save-server-trace", required_argument, NULL, CHAR_MAX + 27 },
+  { "save-client-trace", required_argument, NULL, CHAR_MAX + 28 },
+  { "dh-bits", required_argument, NULL, CHAR_MAX + 29 },
+  { "priority", required_argument, NULL, CHAR_MAX + 30 },
+  { "x509cafile", required_argument, NULL, CHAR_MAX + 31 },
+  { "x509crlfile", required_argument, NULL, CHAR_MAX + 32 },
+  { "x509keyfile", required_argument, NULL, CHAR_MAX + 33 },
+  { "x509certfile", required_argument, NULL, CHAR_MAX + 34 },
+  { "rawpkkeyfile", required_argument, NULL, CHAR_MAX + 35 },
+  { "rawpkfile", required_argument, NULL, CHAR_MAX + 36 },
+  { "srpusername", required_argument, NULL, CHAR_MAX + 37 },
+  { "srppasswd", required_argument, NULL, CHAR_MAX + 38 },
+  { "pskusername", required_argument, NULL, CHAR_MAX + 39 },
+  { "pskkey", required_argument, NULL, CHAR_MAX + 40 },
+  { "port", required_argument, NULL, 'p' },
+  { "insecure", no_argument, NULL, CHAR_MAX + 41 },
+  { "verify-allow-broken", no_argument, NULL, CHAR_MAX + 42 },
+  { "ranges", no_argument, NULL, CHAR_MAX + 43 },
+  { "benchmark-ciphers", no_argument, NULL, CHAR_MAX + 44 },
+  { "benchmark-tls-kx", no_argument, NULL, CHAR_MAX + 45 },
+  { "benchmark-tls-ciphers", no_argument, NULL, CHAR_MAX + 46 },
+  { "list", no_argument, NULL, 'l' },
+  { "priority-list", no_argument, NULL, CHAR_MAX + 47 },
+  { "noticket", no_argument, NULL, CHAR_MAX + 48 },
+  { "srtp-profiles", required_argument, NULL, CHAR_MAX + 49 },
+  { "alpn", required_argument, NULL, CHAR_MAX + 50 },
+  { "compress-cert", required_argument, NULL, CHAR_MAX + 51 },
+  { "heartbeat", no_argument, NULL, 'b' },
+  { "recordsize", required_argument, NULL, CHAR_MAX + 52 },
+  { "disable-sni", no_argument, NULL, CHAR_MAX + 53 },
+  { "disable-extensions", no_argument, NULL, CHAR_MAX + 54 },
+  { "single-key-share", no_argument, NULL, CHAR_MAX + 55 },
+  { "post-handshake-auth", no_argument, NULL, CHAR_MAX + 56 },
+  { "inline-commands", no_argument, NULL, CHAR_MAX + 57 },
+  { "inline-commands-prefix", required_argument, NULL, CHAR_MAX + 58 },
+  { "provider", required_argument, NULL, CHAR_MAX + 59 },
+  { "fips140-mode", no_argument, NULL, CHAR_MAX + 60 },
+  { "list-config", no_argument, NULL, CHAR_MAX + 61 },
+  { "logfile", required_argument, NULL, CHAR_MAX + 62 },
+  { "keymatexport", required_argument, NULL, CHAR_MAX + 63 },
+  { "keymatexportsize", required_argument, NULL, CHAR_MAX + 64 },
+  { "waitresumption", no_argument, NULL, CHAR_MAX + 65 },
+  { "ca-auto-retrieve", no_argument, NULL, CHAR_MAX + 66 },
+  { "no-ca-auto-retrieve", no_argument, NULL, CHAR_MAX + 67 },
+  { "attime", required_argument, NULL, CHAR_MAX + 68 },
+  { "version", optional_argument, NULL, 'v' },
+  { "help", no_argument, NULL, 'h' },
+  { "more-help", no_argument, NULL, '!' },
+  { NULL, 0, NULL, 0 }
 
 };
 
@@ -262,114 +276,119 @@ process_options (int argc, char **argv)
         opts->arg.starttls_proto = optarg;
         opts->enabled.starttls_proto = true;
         break;
+      case CHAR_MAX + 18: /* --starttls-name */
+        opts->present.starttls_name = true;
+        opts->arg.starttls_name = optarg;
+        opts->enabled.starttls_name = true;
+        break;
       case 'u':
         opts->present.udp = true;
         opts->enabled.udp = true;
         break;
-      case CHAR_MAX + 18: /* --mtu */
+      case CHAR_MAX + 19: /* --mtu */
         opts->present.mtu = true;
         opts->arg.mtu = optarg;
         opts->value.mtu = parse_number(optarg);
         opts->enabled.mtu = true;
         break;
-      case CHAR_MAX + 19: /* --crlf */
+      case CHAR_MAX + 20: /* --crlf */
         opts->present.crlf = true;
         opts->enabled.crlf = true;
         break;
-      case CHAR_MAX + 20: /* --fastopen */
+      case CHAR_MAX + 21: /* --fastopen */
         opts->present.fastopen = true;
         opts->enabled.fastopen = true;
         break;
-      case CHAR_MAX + 21: /* --x509fmtder */
+      case CHAR_MAX + 22: /* --x509fmtder */
         opts->present.x509fmtder = true;
         opts->enabled.x509fmtder = true;
         break;
-      case CHAR_MAX + 22: /* --print-cert */
+      case CHAR_MAX + 23: /* --print-cert */
         opts->present.print_cert = true;
         opts->enabled.print_cert = true;
         break;
-      case CHAR_MAX + 23: /* --save-cert */
+      case CHAR_MAX + 24: /* --save-cert */
         opts->present.save_cert = true;
         opts->arg.save_cert = optarg;
         opts->enabled.save_cert = true;
         break;
-      case CHAR_MAX + 24: /* --save-ocsp */
+      case CHAR_MAX + 25: /* --save-ocsp */
         opts->present.save_ocsp = true;
         opts->arg.save_ocsp = optarg;
         opts->enabled.save_ocsp = true;
         break;
-      case CHAR_MAX + 25: /* --save-ocsp-multi */
+      case CHAR_MAX + 26: /* --save-ocsp-multi */
         opts->present.save_ocsp_multi = true;
         opts->arg.save_ocsp_multi = optarg;
         opts->enabled.save_ocsp_multi = true;
         break;
-      case CHAR_MAX + 26: /* --save-server-trace */
+      case CHAR_MAX + 27: /* --save-server-trace */
         opts->present.save_server_trace = true;
         opts->arg.save_server_trace = optarg;
         opts->enabled.save_server_trace = true;
         break;
-      case CHAR_MAX + 27: /* --save-client-trace */
+      case CHAR_MAX + 28: /* --save-client-trace */
         opts->present.save_client_trace = true;
         opts->arg.save_client_trace = optarg;
         opts->enabled.save_client_trace = true;
         break;
-      case CHAR_MAX + 28: /* --dh-bits */
+      case CHAR_MAX + 29: /* --dh-bits */
         opts->present.dh_bits = true;
         opts->arg.dh_bits = optarg;
         opts->value.dh_bits = parse_number(optarg);
         opts->enabled.dh_bits = true;
         break;
-      case CHAR_MAX + 29: /* --priority */
+      case CHAR_MAX + 30: /* --priority */
         opts->present.priority = true;
         opts->arg.priority = optarg;
         opts->enabled.priority = true;
         break;
-      case CHAR_MAX + 30: /* --x509cafile */
+      case CHAR_MAX + 31: /* --x509cafile */
         opts->present.x509cafile = true;
         opts->arg.x509cafile = optarg;
         opts->enabled.x509cafile = true;
         break;
-      case CHAR_MAX + 31: /* --x509crlfile */
+      case CHAR_MAX + 32: /* --x509crlfile */
         opts->present.x509crlfile = true;
         opts->arg.x509crlfile = optarg;
         opts->enabled.x509crlfile = true;
         break;
-      case CHAR_MAX + 32: /* --x509keyfile */
+      case CHAR_MAX + 33: /* --x509keyfile */
         opts->present.x509keyfile = true;
         opts->arg.x509keyfile = optarg;
         opts->enabled.x509keyfile = true;
         break;
-      case CHAR_MAX + 33: /* --x509certfile */
+      case CHAR_MAX + 34: /* --x509certfile */
         opts->present.x509certfile = true;
         opts->arg.x509certfile = optarg;
         opts->enabled.x509certfile = true;
         break;
-      case CHAR_MAX + 34: /* --rawpkkeyfile */
+      case CHAR_MAX + 35: /* --rawpkkeyfile */
         opts->present.rawpkkeyfile = true;
         opts->arg.rawpkkeyfile = optarg;
         opts->enabled.rawpkkeyfile = true;
         break;
-      case CHAR_MAX + 35: /* --rawpkfile */
+      case CHAR_MAX + 36: /* --rawpkfile */
         opts->present.rawpkfile = true;
         opts->arg.rawpkfile = optarg;
         opts->enabled.rawpkfile = true;
         break;
-      case CHAR_MAX + 36: /* --srpusername */
+      case CHAR_MAX + 37: /* --srpusername */
         opts->present.srpusername = true;
         opts->arg.srpusername = optarg;
         opts->enabled.srpusername = true;
         break;
-      case CHAR_MAX + 37: /* --srppasswd */
+      case CHAR_MAX + 38: /* --srppasswd */
         opts->present.srppasswd = true;
         opts->arg.srppasswd = optarg;
         opts->enabled.srppasswd = true;
         break;
-      case CHAR_MAX + 38: /* --pskusername */
+      case CHAR_MAX + 39: /* --pskusername */
         opts->present.pskusername = true;
         opts->arg.pskusername = optarg;
         opts->enabled.pskusername = true;
         break;
-      case CHAR_MAX + 39: /* --pskkey */
+      case CHAR_MAX + 40: /* --pskkey */
         opts->present.pskkey = true;
         opts->arg.pskkey = optarg;
         opts->enabled.pskkey = true;
@@ -379,27 +398,27 @@ process_options (int argc, char **argv)
         opts->arg.port = optarg;
         opts->enabled.port = true;
         break;
-      case CHAR_MAX + 40: /* --insecure */
+      case CHAR_MAX + 41: /* --insecure */
         opts->present.insecure = true;
         opts->enabled.insecure = true;
         break;
-      case CHAR_MAX + 41: /* --verify-allow-broken */
+      case CHAR_MAX + 42: /* --verify-allow-broken */
         opts->present.verify_allow_broken = true;
         opts->enabled.verify_allow_broken = true;
         break;
-      case CHAR_MAX + 42: /* --ranges */
+      case CHAR_MAX + 43: /* --ranges */
         opts->present.ranges = true;
         opts->enabled.ranges = true;
         break;
-      case CHAR_MAX + 43: /* --benchmark-ciphers */
+      case CHAR_MAX + 44: /* --benchmark-ciphers */
         opts->present.benchmark_ciphers = true;
         opts->enabled.benchmark_ciphers = true;
         break;
-      case CHAR_MAX + 44: /* --benchmark-tls-kx */
+      case CHAR_MAX + 45: /* --benchmark-tls-kx */
         opts->present.benchmark_tls_kx = true;
         opts->enabled.benchmark_tls_kx = true;
         break;
-      case CHAR_MAX + 45: /* --benchmark-tls-ciphers */
+      case CHAR_MAX + 46: /* --benchmark-tls-ciphers */
         opts->present.benchmark_tls_ciphers = true;
         opts->enabled.benchmark_tls_ciphers = true;
         break;
@@ -407,25 +426,25 @@ process_options (int argc, char **argv)
         opts->present.list = true;
         opts->enabled.list = true;
         break;
-      case CHAR_MAX + 46: /* --priority-list */
+      case CHAR_MAX + 47: /* --priority-list */
         opts->present.priority_list = true;
         opts->enabled.priority_list = true;
         break;
-      case CHAR_MAX + 47: /* --noticket */
+      case CHAR_MAX + 48: /* --noticket */
         opts->present.noticket = true;
         opts->enabled.noticket = true;
         break;
-      case CHAR_MAX + 48: /* --srtp-profiles */
+      case CHAR_MAX + 49: /* --srtp-profiles */
         opts->present.srtp_profiles = true;
         opts->arg.srtp_profiles = optarg;
         opts->enabled.srtp_profiles = true;
         break;
-      case CHAR_MAX + 49: /* --alpn */
+      case CHAR_MAX + 50: /* --alpn */
         opts->present.alpn = true;
         append_to_list (&opts->list.alpn, "alpn", optarg);
         opts->enabled.alpn = true;
         break;
-      case CHAR_MAX + 50: /* --compress-cert */
+      case CHAR_MAX + 51: /* --compress-cert */
         opts->present.compress_cert = true;
         append_to_list (&opts->list.compress_cert, "compress-cert", optarg);
         opts->enabled.compress_cert = true;
@@ -434,77 +453,82 @@ process_options (int argc, char **argv)
         opts->present.heartbeat = true;
         opts->enabled.heartbeat = true;
         break;
-      case CHAR_MAX + 51: /* --recordsize */
+      case CHAR_MAX + 52: /* --recordsize */
         opts->present.recordsize = true;
         opts->arg.recordsize = optarg;
         opts->value.recordsize = parse_number(optarg);
         opts->enabled.recordsize = true;
         break;
-      case CHAR_MAX + 52: /* --disable-sni */
+      case CHAR_MAX + 53: /* --disable-sni */
         opts->present.disable_sni = true;
         opts->enabled.disable_sni = true;
         break;
-      case CHAR_MAX + 53: /* --disable-extensions */
+      case CHAR_MAX + 54: /* --disable-extensions */
         opts->present.disable_extensions = true;
         opts->enabled.disable_extensions = true;
         break;
-      case CHAR_MAX + 54: /* --single-key-share */
+      case CHAR_MAX + 55: /* --single-key-share */
         opts->present.single_key_share = true;
         opts->enabled.single_key_share = true;
         break;
-      case CHAR_MAX + 55: /* --post-handshake-auth */
+      case CHAR_MAX + 56: /* --post-handshake-auth */
         opts->present.post_handshake_auth = true;
         opts->enabled.post_handshake_auth = true;
         break;
-      case CHAR_MAX + 56: /* --inline-commands */
+      case CHAR_MAX + 57: /* --inline-commands */
         opts->present.inline_commands = true;
         opts->enabled.inline_commands = true;
         break;
-      case CHAR_MAX + 57: /* --inline-commands-prefix */
+      case CHAR_MAX + 58: /* --inline-commands-prefix */
         opts->present.inline_commands_prefix = true;
         opts->arg.inline_commands_prefix = optarg;
         opts->enabled.inline_commands_prefix = true;
         break;
-      case CHAR_MAX + 58: /* --provider */
+      case CHAR_MAX + 59: /* --provider */
         opts->present.provider = true;
         opts->arg.provider = optarg;
         opts->enabled.provider = true;
         break;
-      case CHAR_MAX + 59: /* --fips140-mode */
+      case CHAR_MAX + 60: /* --fips140-mode */
         opts->present.fips140_mode = true;
         opts->enabled.fips140_mode = true;
         break;
-      case CHAR_MAX + 60: /* --list-config */
+      case CHAR_MAX + 61: /* --list-config */
         opts->present.list_config = true;
         opts->enabled.list_config = true;
         break;
-      case CHAR_MAX + 61: /* --logfile */
+      case CHAR_MAX + 62: /* --logfile */
         opts->present.logfile = true;
         opts->arg.logfile = optarg;
         opts->enabled.logfile = true;
         break;
-      case CHAR_MAX + 62: /* --keymatexport */
+      case CHAR_MAX + 63: /* --keymatexport */
         opts->present.keymatexport = true;
         opts->arg.keymatexport = optarg;
         opts->enabled.keymatexport = true;
         break;
-      case CHAR_MAX + 63: /* --keymatexportsize */
+      case CHAR_MAX + 64: /* --keymatexportsize */
         opts->present.keymatexportsize = true;
         opts->arg.keymatexportsize = optarg;
         opts->value.keymatexportsize = parse_number(optarg);
         opts->enabled.keymatexportsize = true;
         break;
-      case CHAR_MAX + 64: /* --waitresumption */
+      case CHAR_MAX + 65: /* --waitresumption */
         opts->present.waitresumption = true;
         opts->enabled.waitresumption = true;
         break;
-      case CHAR_MAX + 65: /* --ca-auto-retrieve */
+      case CHAR_MAX + 66: /* --ca-auto-retrieve */
         opts->present.ca_auto_retrieve = true;
         opts->enabled.ca_auto_retrieve = true;
         break;
-      case CHAR_MAX + 66: /* --no-ca-auto-retrieve */
+      case CHAR_MAX + 67: /* --no-ca-auto-retrieve */
         opts->present.ca_auto_retrieve = true;
         opts->enabled.ca_auto_retrieve = false;
+        break;
+      case CHAR_MAX + 68: /* --attime */
+        opts->present.attime = true;
+        opts->arg.attime = optarg;
+        opts->enabled.attime = true;
         break;
       case 'v':
         opts->present.version = true;
@@ -526,63 +550,87 @@ process_options (int argc, char **argv)
 
   if (HAVE_OPT(DEBUG) && OPT_VALUE_DEBUG < 0)
     {
-      error (EXIT_FAILURE, 0, "%s option value %d is out of range.",
-             "debug", opts->value.debug);
+      fprintf (stderr, "%s option value %d is out of range\n",
+               "debug", opts->value.debug);
+      exit (EXIT_FAILURE);
     }
   if (HAVE_OPT(DEBUG) && OPT_VALUE_DEBUG > 9999)
     {
-      error (EXIT_FAILURE, 0, "%s option value %d is out of range",
-             "debug", opts->value.debug);
+      fprintf (stderr, "%s option value %d is out of range\n",
+               "debug", opts->value.debug);
+      exit (EXIT_FAILURE);
     }
   if (HAVE_OPT(STARTTLS_PROTO) && HAVE_OPT(STARTTLS))
     {
-      error (EXIT_FAILURE, 0, "the '%s' and '%s' options conflict",
-             "starttls-proto", "starttls");
+      fprintf (stderr, "the '%s' and '%s' options conflict\n",
+               "starttls-proto", "starttls");
+      exit (EXIT_FAILURE);
+    }
+  if (HAVE_OPT(STARTTLS_NAME) && HAVE_OPT(STARTTLS))
+    {
+      fprintf (stderr, "the '%s' and '%s' options conflict\n",
+               "starttls-name", "starttls");
+      exit (EXIT_FAILURE);
+    }
+  if (HAVE_OPT(STARTTLS_NAME) && !HAVE_OPT(STARTTLS_PROTO))
+    {
+      fprintf (stderr, "%s option requires the %s options\n",
+               "starttls-name", "starttls_proto");
+      exit (EXIT_FAILURE);
     }
   if (HAVE_OPT(MTU) && OPT_VALUE_MTU < 0)
     {
-      error (EXIT_FAILURE, 0, "%s option value %d is out of range.",
-             "mtu", opts->value.mtu);
+      fprintf (stderr, "%s option value %d is out of range\n",
+               "mtu", opts->value.mtu);
+      exit (EXIT_FAILURE);
     }
   if (HAVE_OPT(MTU) && OPT_VALUE_MTU > 17000)
     {
-      error (EXIT_FAILURE, 0, "%s option value %d is out of range",
-             "mtu", opts->value.mtu);
+      fprintf (stderr, "%s option value %d is out of range\n",
+               "mtu", opts->value.mtu);
+      exit (EXIT_FAILURE);
     }
   if (HAVE_OPT(SAVE_OCSP) && HAVE_OPT(SAVE_OCSP_MULTI))
     {
-      error (EXIT_FAILURE, 0, "the '%s' and '%s' options conflict",
-             "save-ocsp", "save_ocsp_multi");
+      fprintf (stderr, "the '%s' and '%s' options conflict\n",
+               "save-ocsp", "save_ocsp_multi");
+      exit (EXIT_FAILURE);
     }
   if (HAVE_OPT(SAVE_OCSP_MULTI) && HAVE_OPT(SAVE_OCSP))
     {
-      error (EXIT_FAILURE, 0, "the '%s' and '%s' options conflict",
-             "save-ocsp-multi", "save_ocsp");
+      fprintf (stderr, "the '%s' and '%s' options conflict\n",
+               "save-ocsp-multi", "save_ocsp");
+      exit (EXIT_FAILURE);
     }
   if (HAVE_OPT(X509CERTFILE) && !HAVE_OPT(X509KEYFILE))
     {
-      error (EXIT_FAILURE, 0, "%s option requires the %s options",
-             "x509certfile", "x509keyfile");
+      fprintf (stderr, "%s option requires the %s options\n",
+               "x509certfile", "x509keyfile");
+      exit (EXIT_FAILURE);
     }
   if (HAVE_OPT(RAWPKFILE) && !HAVE_OPT(RAWPKKEYFILE))
     {
-      error (EXIT_FAILURE, 0, "%s option requires the %s options",
-             "rawpkfile", "rawpkkeyfile");
+      fprintf (stderr, "%s option requires the %s options\n",
+               "rawpkfile", "rawpkkeyfile");
+      exit (EXIT_FAILURE);
     }
   if (HAVE_OPT(LIST) && HAVE_OPT(PORT))
     {
-      error (EXIT_FAILURE, 0, "the '%s' and '%s' options conflict",
-             "list", "port");
+      fprintf (stderr, "the '%s' and '%s' options conflict\n",
+               "list", "port");
+      exit (EXIT_FAILURE);
     }
   if (HAVE_OPT(RECORDSIZE) && OPT_VALUE_RECORDSIZE < 0)
     {
-      error (EXIT_FAILURE, 0, "%s option value %d is out of range.",
-             "recordsize", opts->value.recordsize);
+      fprintf (stderr, "%s option value %d is out of range\n",
+               "recordsize", opts->value.recordsize);
+      exit (EXIT_FAILURE);
     }
   if (HAVE_OPT(RECORDSIZE) && OPT_VALUE_RECORDSIZE > 4096)
     {
-      error (EXIT_FAILURE, 0, "%s option value %d is out of range",
-             "recordsize", opts->value.recordsize);
+      fprintf (stderr, "%s option value %d is out of range\n",
+               "recordsize", opts->value.recordsize);
+      exit (EXIT_FAILURE);
     }
 
 
@@ -602,11 +650,17 @@ process_options (int argc, char **argv)
       int pfds[2];
 
       if (pipe (pfds) < 0)
-        error (EXIT_FAILURE, errno, "pipe");
+        {
+          perror ("pipe");
+          exit (EXIT_FAILURE);
+        }
 
       pid = fork ();
       if (pid < 0)
-        error (EXIT_FAILURE, errno, "fork");
+        {
+          perror ("fork");
+          exit (EXIT_FAILURE);
+        }
 
       if (pid == 0)
         {
@@ -645,8 +699,8 @@ process_options (int argc, char **argv)
       if (!OPT_ARG_VERSION || !strcmp (OPT_ARG_VERSION, "c"))
         {
           const char str[] =
-            "gnutls-cli 3.7.9\n"
-            "Copyright (C) 2000-2021 Free Software Foundation, and others\n"
+            "gnutls-cli 3.8.13\n"
+            "Copyright (C) 2000-2023 Free Software Foundation, and others\n"
             "This is free software. It is licensed for use, modification and\n"
             "redistribution under the terms of the GNU General Public License,\n"
             "version 3 or later <http://gnu.org/licenses/gpl.html>\n"
@@ -658,15 +712,15 @@ process_options (int argc, char **argv)
       else if (!strcmp (OPT_ARG_VERSION, "v"))
         {
           const char str[] =
-            "gnutls-cli 3.7.9\n";
+            "gnutls-cli 3.8.13\n";
           fprintf (stdout, "%s", str);
           exit(0);
         }
       else if (!strcmp (OPT_ARG_VERSION, "n"))
         {
           const char str[] =
-            "gnutls-cli 3.7.9\n"
-            "Copyright (C) 2000-2021 Free Software Foundation, and others\n"
+            "gnutls-cli 3.8.13\n"
+            "Copyright (C) 2000-2023 Free Software Foundation, and others\n"
             "This is free software. It is licensed for use, modification and\n"
             "redistribution under the terms of the GNU General Public License,\n"
             "version 3 or later <http://gnu.org/licenses/gpl.html>\n"
@@ -690,11 +744,12 @@ process_options (int argc, char **argv)
         }
       else
         {
-          error (EXIT_FAILURE, 0,
-                 "version option argument 'a' invalid.  Use:\n"
-                 "	'v' - version only\n"
-                 "	'c' - version and copyright\n"
-                 "	'n' - version and full copyright notice");
+          fprintf (stderr,
+                   "version option argument 'a' invalid.  Use:\n"
+                   "	'v' - version only\n"
+                   "	'c' - version and copyright\n"
+                   "	'n' - version and full copyright notice\n");
+          exit (EXIT_FAILURE);
         }
     }
 
@@ -731,6 +786,9 @@ usage (FILE *out, int status)
     "       --app-proto            an alias for the 'starttls-proto' option\n"
     "       --starttls-proto=str   The application protocol to be used to obtain the server's certificate (https, ftp, smtp, imap, ldap, xmpp, lmtp, pop3, nntp, sieve, postgres)\n"
     "				- prohibits the option 'starttls'\n"
+    "       --starttls-name=str    The hostname presented to the application protocol for STARTTLS (for smtp, xmpp, lmtp)\n"
+    "				- prohibits the option 'starttls'\n"
+    "				- requires the option 'starttls-proto'\n"
     "   -u, --udp                  Use DTLS (datagram TLS) over UDP\n"
     "       --mtu=num              Set MTU for datagram TLS\n"
     "				- it must be in the range:\n"
@@ -792,6 +850,7 @@ usage (FILE *out, int status)
     "       --keymatexportsize=num Size of the exported keying material\n"
     "       --waitresumption       Block waiting for the resumption data under TLS1.3\n"
     "       --ca-auto-retrieve     Enable automatic retrieval of missing CA certificates\n"
+    "       --attime=str           Perform validation at the timestamp instead of the system time\n"
     "\n"
     "Version, usage and configuration options:\n"
     "\n"
@@ -805,6 +864,7 @@ usage (FILE *out, int status)
     "\n"
     "Simple client program to set up a TLS connection to some other computer. \n"
     "It sets up a TLS connection and forwards data from the standard input to the secured socket and vice versa.\n"
+    "Note that this program is only meant for testing and diagnostic purposes. For more practical use-cases, consider using alternatives like GNU Wget.\n"
     "\n"
     "Please send bug reports to:  <bugs@gnutls.org>\n"
     "\n";

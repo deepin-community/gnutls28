@@ -33,23 +33,28 @@
 #include "magma.h"
 #include "cmac.h"
 
-void
-cmac_magma_set_key(struct cmac_magma_ctx *ctx, const uint8_t *key)
+void cmac_magma_set_key(struct cmac_magma_ctx *ctx, const uint8_t *key)
 {
-  CMAC64_SET_KEY(ctx, magma_set_key, magma_encrypt, key);
+	CMAC64_SET_KEY(ctx, magma_set_key, magma_encrypt, key);
 }
 
-void
-cmac_magma_update (struct cmac_magma_ctx *ctx,
-		   size_t length, const uint8_t *data)
+void cmac_magma_update(struct cmac_magma_ctx *ctx, size_t length,
+		       const uint8_t *data)
 {
-  CMAC64_UPDATE (ctx, magma_encrypt, length, data);
+	CMAC64_UPDATE(ctx, magma_encrypt, length, data);
 }
 
-void
-cmac_magma_digest(struct cmac_magma_ctx *ctx,
-		  size_t length, uint8_t *digest)
+#if NETTLE_VERSION_MAJOR >= 4
+void cmac_magma_digest(struct cmac_magma_ctx *ctx, uint8_t *digest)
 {
-  CMAC64_DIGEST(ctx, magma_encrypt, length, digest);
+	CMAC64_DIGEST(ctx, magma_encrypt, digest);
 }
+#else
+void cmac_magma_digest(struct cmac_magma_ctx *ctx, size_t length,
+		       uint8_t *digest)
+{
+	CMAC64_DIGEST(ctx, magma_encrypt, length, digest);
+}
+#endif
+
 #endif

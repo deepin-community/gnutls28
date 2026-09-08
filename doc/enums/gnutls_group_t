@@ -44,4 +44,22 @@ the FFDHE8192 group
 the FFDHE6144 group
 @item GNUTLS_@-GROUP_@-MAX
 -- undescribed --
+@item GNUTLS_@-GROUP_@-EXP_@-X25519_@-KYBER768
+-- undescribed --
+@item GNUTLS_@-GROUP_@-EXP_@-SECP256R1_@-MLKEM768
+-- undescribed --
+@item GNUTLS_@-GROUP_@-EXP_@-SECP384R1_@-MLKEM1024
+-- undescribed --
+@item GNUTLS_@-GROUP_@-EXP_@-X25519_@-MLKEM768
+-- undescribed --
+@item GNUTLS_@-GROUP_@-EXP_@-KYBER768
+-- undescribed --
+@item GNUTLS_@-GROUP_@-EXP_@-MLKEM768
+-- undescribed --
+@item GNUTLS_@-GROUP_@-EXP_@-MLKEM1024
+-- undescribed --
+@item GNUTLS_@-GROUP_@-EXP_@-MIN
+-- undescribed --
+@item GNUTLS_@-GROUP_@-EXP_@-MAX
+-- undescribed --
 @end table
