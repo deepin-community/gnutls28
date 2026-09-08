@@ -43,9 +43,8 @@ struct psk_st {
 int _gnutls13_psk_ext_parser_init(psk_ext_parser_st *p,
 				  const unsigned char *data, size_t len);
 
-inline static
-void _gnutls13_psk_ext_iter_init(psk_ext_iter_st *iter,
-				 const psk_ext_parser_st *p)
+inline static void _gnutls13_psk_ext_iter_init(psk_ext_iter_st *iter,
+					       const psk_ext_parser_st *p)
 {
 	memcpy(iter, p, sizeof(*p));
 }

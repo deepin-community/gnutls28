@@ -1,9 +1,9 @@
 # DO NOT EDIT! GENERATED AUTOMATICALLY!
-# Copyright (C) 2002-2021 Free Software Foundation, Inc.
+# Copyright (C) 2002-2026 Free Software Foundation, Inc.
 #
 # This file is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 3 of the License, or
+# the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
 # This file is distributed in the hope that it will be useful,
@@ -41,20 +41,22 @@ AC_DEFUN([unistring_EARLY],
   # Pre-early section.
   AC_REQUIRE([gl_PROG_AR_RANLIB])
 
-  AC_REQUIRE([AM_PROG_CC_C_O])
   # Code from module absolute-header:
   # Code from module array-mergesort:
   # Code from module attribute:
+  # Code from module bool:
+  # Code from module c99:
+  # Code from module gen-header:
   # Code from module gperf:
   # Code from module include_next:
   # Code from module inline:
   # Code from module limits-h:
   # Code from module multiarch:
-  # Code from module snippet/unused-parameter:
   # Code from module ssize_t:
-  # Code from module stdbool:
-  # Code from module stdint:
-  # Code from module sys_types:
+  # Code from module std-gnu11:
+  # Code from module stdint-h:
+  # Code from module sys_types-h:
+  AC_REQUIRE([AC_USE_SYSTEM_EXTENSIONS])
   # Code from module unictype/base:
   # Code from module unictype/category-C:
   # Code from module unictype/category-Cc:
@@ -140,7 +142,7 @@ AC_DEFUN([unistring_EARLY],
   # Code from module unistr/u8-to-u16:
   # Code from module unistr/u8-to-u32:
   # Code from module unistr/u8-uctomb:
-  # Code from module unitypes:
+  # Code from module unitypes-h:
 ])
 
 # This macro should be invoked from ./configure.ac, in the section
@@ -159,88 +161,148 @@ AC_DEFUN([unistring_INIT],
   m4_pushdef([GL_MODULE_INDICATOR_PREFIX], [GL_UNISTRING])
   gl_COMMON
   gl_source_base='lib/unistring'
+  gl_source_base_prefix=
+  gl_C_BOOL
   gl_INLINE
   gl_LIMITS_H
+  gl_CONDITIONAL_HEADER([limits.h])
+  AC_PROG_MKDIR_P
   gl_MULTIARCH
   gt_TYPE_SSIZE_T
-  AM_STDBOOL_H
   gl_STDINT_H
+  gl_CONDITIONAL_HEADER([stdint.h])
+  dnl Because of gl_REPLACE_LIMITS_H:
+  gl_CONDITIONAL_HEADER([limits.h])
+  AC_PROG_MKDIR_P
   gl_SYS_TYPES_H
   gl_SYS_TYPES_H_REQUIRE_DEFAULTS
   AC_PROG_MKDIR_P
-  gl_LIBUNISTRING_LIBHEADER([0.9.8], [unictype.h])
-  gl_LIBUNISTRING_MODULE([0.9.8], [unictype/category-C])
-  gl_LIBUNISTRING_MODULE([0.9.8], [unictype/category-Cc])
-  gl_LIBUNISTRING_MODULE([0.9.8], [unictype/category-Cf])
-  gl_LIBUNISTRING_MODULE([0.9.8], [unictype/category-Cn])
-  gl_LIBUNISTRING_MODULE([0.9.8], [unictype/category-Co])
-  gl_LIBUNISTRING_MODULE([0.9.8], [unictype/category-Cs])
-  gl_LIBUNISTRING_MODULE([0.9.8], [unictype/category-L])
-  gl_LIBUNISTRING_MODULE([0.9.8], [unictype/category-LC])
-  gl_LIBUNISTRING_MODULE([0.9.8], [unictype/category-Ll])
-  gl_LIBUNISTRING_MODULE([0.9.8], [unictype/category-Lm])
-  gl_LIBUNISTRING_MODULE([0.9.8], [unictype/category-Lo])
-  gl_LIBUNISTRING_MODULE([0.9.8], [unictype/category-Lt])
-  gl_LIBUNISTRING_MODULE([0.9.8], [unictype/category-Lu])
-  gl_LIBUNISTRING_MODULE([0.9.8], [unictype/category-M])
-  gl_LIBUNISTRING_MODULE([0.9.8], [unictype/category-Mc])
-  gl_LIBUNISTRING_MODULE([0.9.8], [unictype/category-Me])
-  gl_LIBUNISTRING_MODULE([0.9.8], [unictype/category-Mn])
-  gl_LIBUNISTRING_MODULE([0.9.8], [unictype/category-N])
-  gl_LIBUNISTRING_MODULE([0.9.8], [unictype/category-Nd])
-  gl_LIBUNISTRING_MODULE([0.9.8], [unictype/category-Nl])
-  gl_LIBUNISTRING_MODULE([0.9.8], [unictype/category-No])
-  gl_LIBUNISTRING_MODULE([0.9.8], [unictype/category-P])
-  gl_LIBUNISTRING_MODULE([0.9.8], [unictype/category-Pc])
-  gl_LIBUNISTRING_MODULE([0.9.8], [unictype/category-Pd])
-  gl_LIBUNISTRING_MODULE([0.9.8], [unictype/category-Pe])
-  gl_LIBUNISTRING_MODULE([0.9.8], [unictype/category-Pf])
-  gl_LIBUNISTRING_MODULE([0.9.8], [unictype/category-Pi])
-  gl_LIBUNISTRING_MODULE([0.9.8], [unictype/category-Po])
-  gl_LIBUNISTRING_MODULE([0.9.8], [unictype/category-Ps])
-  gl_LIBUNISTRING_MODULE([0.9.8], [unictype/category-S])
-  gl_LIBUNISTRING_MODULE([0.9.8], [unictype/category-Sc])
-  gl_LIBUNISTRING_MODULE([0.9.8], [unictype/category-Sk])
-  gl_LIBUNISTRING_MODULE([0.9.8], [unictype/category-Sm])
-  gl_LIBUNISTRING_MODULE([0.9.8], [unictype/category-So])
-  gl_LIBUNISTRING_MODULE([0.9.8], [unictype/category-Z])
-  gl_LIBUNISTRING_MODULE([0.9.8], [unictype/category-Zl])
-  gl_LIBUNISTRING_MODULE([0.9.8], [unictype/category-Zp])
-  gl_LIBUNISTRING_MODULE([0.9.8], [unictype/category-Zs])
-  gl_LIBUNISTRING_MODULE([0.9.8], [unictype/category-and])
-  gl_LIBUNISTRING_MODULE([0.9.8], [unictype/category-and-not])
-  gl_LIBUNISTRING_MODULE([0.9.8], [unictype/category-byname])
-  gl_LIBUNISTRING_MODULE([0.9.8], [unictype/category-longname])
-  gl_LIBUNISTRING_MODULE([0.9.8], [unictype/category-name])
-  gl_LIBUNISTRING_MODULE([0.9.8], [unictype/category-none])
+  gl_LIBUNISTRING_LIBHEADER([1.3], [unictype.h])
+  gl_UNICTYPE_H
+  gl_UNICTYPE_H_REQUIRE_DEFAULTS
+  AC_PROG_MKDIR_P
+  gl_UNICTYPE_H_REQUIRE_DEFAULTS
+  gl_LIBUNISTRING_MODULE_WITH_VARIABLE([1.4], [unictype/category-C])
+  gl_UNICTYPE_H_REQUIRE_DEFAULTS
+  gl_LIBUNISTRING_MODULE_WITH_VARIABLE([1.4], [unictype/category-Cc])
+  gl_UNICTYPE_H_REQUIRE_DEFAULTS
+  gl_LIBUNISTRING_MODULE_WITH_VARIABLE([1.4], [unictype/category-Cf])
+  gl_UNICTYPE_H_REQUIRE_DEFAULTS
+  gl_LIBUNISTRING_MODULE_WITH_VARIABLE([1.4], [unictype/category-Cn])
+  gl_UNICTYPE_H_REQUIRE_DEFAULTS
+  gl_LIBUNISTRING_MODULE_WITH_VARIABLE([1.4], [unictype/category-Co])
+  gl_UNICTYPE_H_REQUIRE_DEFAULTS
+  gl_LIBUNISTRING_MODULE_WITH_VARIABLE([1.4], [unictype/category-Cs])
+  gl_UNICTYPE_H_REQUIRE_DEFAULTS
+  gl_LIBUNISTRING_MODULE_WITH_VARIABLE([1.4], [unictype/category-L])
+  gl_UNICTYPE_H_REQUIRE_DEFAULTS
+  gl_LIBUNISTRING_MODULE_WITH_VARIABLE([1.4], [unictype/category-LC])
+  gl_UNICTYPE_H_REQUIRE_DEFAULTS
+  gl_LIBUNISTRING_MODULE_WITH_VARIABLE([1.4], [unictype/category-Ll])
+  gl_UNICTYPE_H_REQUIRE_DEFAULTS
+  gl_LIBUNISTRING_MODULE_WITH_VARIABLE([1.4], [unictype/category-Lm])
+  gl_UNICTYPE_H_REQUIRE_DEFAULTS
+  gl_LIBUNISTRING_MODULE_WITH_VARIABLE([1.4], [unictype/category-Lo])
+  gl_UNICTYPE_H_REQUIRE_DEFAULTS
+  gl_LIBUNISTRING_MODULE_WITH_VARIABLE([1.4], [unictype/category-Lt])
+  gl_UNICTYPE_H_REQUIRE_DEFAULTS
+  gl_LIBUNISTRING_MODULE_WITH_VARIABLE([1.4], [unictype/category-Lu])
+  gl_UNICTYPE_H_REQUIRE_DEFAULTS
+  gl_LIBUNISTRING_MODULE_WITH_VARIABLE([1.4], [unictype/category-M])
+  gl_UNICTYPE_H_REQUIRE_DEFAULTS
+  gl_LIBUNISTRING_MODULE_WITH_VARIABLE([1.4], [unictype/category-Mc])
+  gl_UNICTYPE_H_REQUIRE_DEFAULTS
+  gl_LIBUNISTRING_MODULE_WITH_VARIABLE([1.4], [unictype/category-Me])
+  gl_UNICTYPE_H_REQUIRE_DEFAULTS
+  gl_LIBUNISTRING_MODULE_WITH_VARIABLE([1.4], [unictype/category-Mn])
+  gl_UNICTYPE_H_REQUIRE_DEFAULTS
+  gl_LIBUNISTRING_MODULE_WITH_VARIABLE([1.4], [unictype/category-N])
+  gl_UNICTYPE_H_REQUIRE_DEFAULTS
+  gl_LIBUNISTRING_MODULE_WITH_VARIABLE([1.4], [unictype/category-Nd])
+  gl_UNICTYPE_H_REQUIRE_DEFAULTS
+  gl_LIBUNISTRING_MODULE_WITH_VARIABLE([1.4], [unictype/category-Nl])
+  gl_UNICTYPE_H_REQUIRE_DEFAULTS
+  gl_LIBUNISTRING_MODULE_WITH_VARIABLE([1.4], [unictype/category-No])
+  gl_UNICTYPE_H_REQUIRE_DEFAULTS
+  gl_LIBUNISTRING_MODULE_WITH_VARIABLE([1.4], [unictype/category-P])
+  gl_UNICTYPE_H_REQUIRE_DEFAULTS
+  gl_LIBUNISTRING_MODULE_WITH_VARIABLE([1.4], [unictype/category-Pc])
+  gl_UNICTYPE_H_REQUIRE_DEFAULTS
+  gl_LIBUNISTRING_MODULE_WITH_VARIABLE([1.4], [unictype/category-Pd])
+  gl_UNICTYPE_H_REQUIRE_DEFAULTS
+  gl_LIBUNISTRING_MODULE_WITH_VARIABLE([1.4], [unictype/category-Pe])
+  gl_UNICTYPE_H_REQUIRE_DEFAULTS
+  gl_LIBUNISTRING_MODULE_WITH_VARIABLE([1.4], [unictype/category-Pf])
+  gl_UNICTYPE_H_REQUIRE_DEFAULTS
+  gl_LIBUNISTRING_MODULE_WITH_VARIABLE([1.4], [unictype/category-Pi])
+  gl_UNICTYPE_H_REQUIRE_DEFAULTS
+  gl_LIBUNISTRING_MODULE_WITH_VARIABLE([1.4], [unictype/category-Po])
+  gl_UNICTYPE_H_REQUIRE_DEFAULTS
+  gl_LIBUNISTRING_MODULE_WITH_VARIABLE([1.4], [unictype/category-Ps])
+  gl_UNICTYPE_H_REQUIRE_DEFAULTS
+  gl_LIBUNISTRING_MODULE_WITH_VARIABLE([1.4], [unictype/category-S])
+  gl_UNICTYPE_H_REQUIRE_DEFAULTS
+  gl_LIBUNISTRING_MODULE_WITH_VARIABLE([1.4], [unictype/category-Sc])
+  gl_UNICTYPE_H_REQUIRE_DEFAULTS
+  gl_LIBUNISTRING_MODULE_WITH_VARIABLE([1.4], [unictype/category-Sk])
+  gl_UNICTYPE_H_REQUIRE_DEFAULTS
+  gl_LIBUNISTRING_MODULE_WITH_VARIABLE([1.4], [unictype/category-Sm])
+  gl_UNICTYPE_H_REQUIRE_DEFAULTS
+  gl_LIBUNISTRING_MODULE_WITH_VARIABLE([1.4], [unictype/category-So])
+  gl_UNICTYPE_H_REQUIRE_DEFAULTS
+  gl_LIBUNISTRING_MODULE_WITH_VARIABLE([1.4], [unictype/category-Z])
+  gl_UNICTYPE_H_REQUIRE_DEFAULTS
+  gl_LIBUNISTRING_MODULE_WITH_VARIABLE([1.4], [unictype/category-Zl])
+  gl_UNICTYPE_H_REQUIRE_DEFAULTS
+  gl_LIBUNISTRING_MODULE_WITH_VARIABLE([1.4], [unictype/category-Zp])
+  gl_UNICTYPE_H_REQUIRE_DEFAULTS
+  gl_LIBUNISTRING_MODULE_WITH_VARIABLE([1.4], [unictype/category-Zs])
+  gl_LIBUNISTRING_MODULE([1.4], [unictype/category-and])
+  gl_LIBUNISTRING_MODULE([1.4], [unictype/category-and-not])
+  gl_LIBUNISTRING_MODULE([1.4], [unictype/category-byname])
+  gl_LIBUNISTRING_MODULE([1.4], [unictype/category-longname])
+  gl_LIBUNISTRING_MODULE([1.4], [unictype/category-name])
+  dnl Since _UC_CATEGORY_NONE is not exported from an installed libunistring,
+  dnl don't use gl_LIBUNISTRING_MODULE here.
   AC_REQUIRE([AC_C_INLINE])
-  gl_LIBUNISTRING_MODULE([0.9.8], [unictype/category-of])
-  gl_LIBUNISTRING_MODULE([0.9.8], [unictype/category-or])
+  gl_LIBUNISTRING_MODULE([1.4], [unictype/category-of])
+  gl_LIBUNISTRING_MODULE([1.4], [unictype/category-or])
   AC_REQUIRE([AC_C_INLINE])
-  gl_LIBUNISTRING_MODULE([0.9.8], [unictype/category-test])
-  gl_LIBUNISTRING_MODULE([0.9.8], [unictype/combining-class])
+  gl_LIBUNISTRING_MODULE([1.4], [unictype/category-test])
+  gl_LIBUNISTRING_MODULE([1.4], [unictype/combining-class])
   AC_REQUIRE([AC_C_INLINE])
-  gl_LIBUNISTRING_MODULE([0.9.8], [unictype/property-default-ignorable-code-point])
+  gl_UNICTYPE_H_REQUIRE_DEFAULTS
+  gl_LIBUNISTRING_MODULE_WITH_VARIABLE([1.4], [unictype/property-default-ignorable-code-point])
   AC_REQUIRE([AC_C_INLINE])
-  gl_LIBUNISTRING_MODULE([0.9.8], [unictype/property-join-control])
+  gl_UNICTYPE_H_REQUIRE_DEFAULTS
+  gl_LIBUNISTRING_MODULE_WITH_VARIABLE([1.4], [unictype/property-join-control])
   AC_REQUIRE([AC_C_INLINE])
-  gl_LIBUNISTRING_MODULE([0.9.8], [unictype/property-not-a-character])
-  gl_LIBUNISTRING_LIBHEADER([0.9.11], [uninorm.h])
-  gl_LIBUNISTRING_MODULE([0.9.8], [uninorm/canonical-decomposition])
-  gl_LIBUNISTRING_MODULE([0.9.8], [uninorm/composition])
-  gl_LIBUNISTRING_MODULE([0.9.8], [uninorm/decomposition])
+  gl_UNICTYPE_H_REQUIRE_DEFAULTS
+  gl_LIBUNISTRING_MODULE_WITH_VARIABLE([1.4], [unictype/property-not-a-character])
+  gl_LIBUNISTRING_LIBHEADER([1.2], [uninorm.h])
+  gl_UNINORM_H
+  gl_UNINORM_H_REQUIRE_DEFAULTS
+  AC_PROG_MKDIR_P
+  gl_LIBUNISTRING_MODULE([1.4], [uninorm/canonical-decomposition])
+  gl_LIBUNISTRING_MODULE([1.3], [uninorm/composition])
+  gl_LIBUNISTRING_MODULE([1.4], [uninorm/decomposition])
   AC_REQUIRE([AC_C_INLINE])
-  gl_LIBUNISTRING_MODULE([0.9.8], [uninorm/nfc])
-  gl_LIBUNISTRING_MODULE([0.9.8], [uninorm/nfd])
-  gl_LIBUNISTRING_MODULE([0.9.8], [uninorm/nfkc])
-  gl_LIBUNISTRING_MODULE([0.9.8], [uninorm/nfkd])
+  gl_UNINORM_H_REQUIRE_DEFAULTS
+  gl_LIBUNISTRING_MODULE_WITH_VARIABLE([1.4], [uninorm/nfc])
+  gl_UNINORM_H_REQUIRE_DEFAULTS
+  gl_LIBUNISTRING_MODULE_WITH_VARIABLE([1.4], [uninorm/nfd])
+  gl_UNINORM_H_REQUIRE_DEFAULTS
+  gl_LIBUNISTRING_MODULE_WITH_VARIABLE([1.4], [uninorm/nfkc])
+  gl_UNINORM_H_REQUIRE_DEFAULTS
+  gl_LIBUNISTRING_MODULE_WITH_VARIABLE([1.4], [uninorm/nfkd])
   gl_MODULE_INDICATOR_FOR_TESTS([uninorm/u16-normalize])
-  gl_LIBUNISTRING_MODULE([0.9.8], [uninorm/u16-normalize])
+  gl_LIBUNISTRING_MODULE([1.4], [uninorm/u16-normalize])
   gl_MODULE_INDICATOR_FOR_TESTS([uninorm/u32-normalize])
-  gl_LIBUNISTRING_MODULE([0.9.8], [uninorm/u32-normalize])
+  gl_LIBUNISTRING_MODULE([1.4], [uninorm/u32-normalize])
   gl_MODULE_INDICATOR_FOR_TESTS([uninorm/u8-normalize])
-  gl_LIBUNISTRING_MODULE([0.9.8], [uninorm/u8-normalize])
-  gl_LIBUNISTRING_LIBHEADER([0.9.11], [unistr.h])
+  gl_LIBUNISTRING_MODULE([1.4], [uninorm/u8-normalize])
+  gl_LIBUNISTRING_LIBHEADER([1.2], [unistr.h])
+  AC_PROG_MKDIR_P
   gl_LIBUNISTRING_MODULE([0.9], [unistr/u16-cpy])
   gl_MODULE_INDICATOR([unistr/u16-mbtouc-unsafe])
   gl_LIBUNISTRING_MODULE([0.9], [unistr/u16-mbtouc-unsafe])
@@ -266,6 +328,8 @@ AC_DEFUN([unistring_INIT],
   gl_MODULE_INDICATOR([unistr/u8-uctomb])
   gl_LIBUNISTRING_MODULE([0.9], [unistr/u8-uctomb])
   gl_LIBUNISTRING_LIBHEADER([0.9.11], [unitypes.h])
+  AC_PROG_MKDIR_P
+  gl_UNITYPES_H
   # End of code from modules
   m4_ifval(unistring_LIBSOURCES_LIST, [
     m4_syscmd([test ! -d ]m4_defn([unistring_LIBSOURCES_DIR])[ ||
@@ -288,16 +352,36 @@ AC_DEFUN([unistring_INIT],
   AC_CONFIG_COMMANDS_PRE([
     unistring_libobjs=
     unistring_ltlibobjs=
+    unistring_libobjdeps=
+    unistring_libunistring_libobjs=
+    unistring_libunistring_ltlibobjs=
+    unistring_libunistring_libobjdeps=
     if test -n "$unistring_LIBOBJS"; then
       # Remove the extension.
+changequote(,)dnl
       sed_drop_objext='s/\.o$//;s/\.obj$//'
+      sed_dirname1='s,//*,/,g'
+      sed_dirname2='s,\(.\)/$,\1,'
+      sed_dirname3='s,[^/]*$,,'
+      sed_basename1='s,.*/,,'
+changequote([, ])dnl
       for i in `for i in $unistring_LIBOBJS; do echo "$i"; done | sed -e "$sed_drop_objext" | sort | uniq`; do
         unistring_libobjs="$unistring_libobjs $i.$ac_objext"
         unistring_ltlibobjs="$unistring_ltlibobjs $i.lo"
+        i_dir=`echo "$i" | sed -e "$sed_dirname1" -e "$sed_dirname2" -e "$sed_dirname3"`
+        i_base=`echo "$i" | sed -e "$sed_basename1"`
+        unistring_libunistring_libobjs="$unistring_libunistring_libobjs $i_dir""libunistring_a-$i_base.$ac_objext"
+        unistring_libunistring_ltlibobjs="$unistring_libunistring_ltlibobjs $i_dir""libunistring_la-$i_base.lo"
+        unistring_libobjdeps="$unistring_libobjdeps $i_dir\$(DEPDIR)/$i_base.Plo"
+        unistring_libunistring_libobjdeps="$unistring_libunistring_libobjdeps $i_dir\$(DEPDIR)/libunistring_la-$i_base.Plo"
       done
     fi
     AC_SUBST([unistring_LIBOBJS], [$unistring_libobjs])
     AC_SUBST([unistring_LTLIBOBJS], [$unistring_ltlibobjs])
+    AC_SUBST([unistring_LIBOBJDEPS], [$unistring_libobjdeps])
+    AC_SUBST([unistring_libunistring_LIBOBJS], [$unistring_libunistring_libobjs])
+    AC_SUBST([unistring_libunistring_LTLIBOBJS], [$unistring_libunistring_ltlibobjs])
+    AC_SUBST([unistring_libunistring_LIBOBJDEPS], [$unistring_libunistring_libobjdeps])
   ])
   gltests_libdeps=
   gltests_ltlibdeps=
@@ -310,6 +394,7 @@ AC_DEFUN([unistring_INIT],
   m4_pushdef([GL_MODULE_INDICATOR_PREFIX], [GL_UNISTRING])
   gl_COMMON
   gl_source_base='tests'
+  gl_source_base_prefix=
 changequote(,)dnl
   unistringtests_WITNESS=IN_`echo "${PACKAGE-$PACKAGE_TARNAME}" | LC_ALL=C tr abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ | LC_ALL=C sed -e 's/[^A-Z0-9_]/_/g'`_GNULIB_TESTS
 changequote([, ])dnl
@@ -338,17 +423,38 @@ changequote([, ])dnl
   AC_CONFIG_COMMANDS_PRE([
     unistringtests_libobjs=
     unistringtests_ltlibobjs=
+    unistringtests_libobjdeps=
+    unistringtests_libunistring_libobjs=
+    unistringtests_libunistring_ltlibobjs=
+    unistringtests_libunistring_libobjdeps=
     if test -n "$unistringtests_LIBOBJS"; then
       # Remove the extension.
+changequote(,)dnl
       sed_drop_objext='s/\.o$//;s/\.obj$//'
+      sed_dirname1='s,//*,/,g'
+      sed_dirname2='s,\(.\)/$,\1,'
+      sed_dirname3='s,[^/]*$,,'
+      sed_basename1='s,.*/,,'
+changequote([, ])dnl
       for i in `for i in $unistringtests_LIBOBJS; do echo "$i"; done | sed -e "$sed_drop_objext" | sort | uniq`; do
         unistringtests_libobjs="$unistringtests_libobjs $i.$ac_objext"
         unistringtests_ltlibobjs="$unistringtests_ltlibobjs $i.lo"
+        i_dir=`echo "$i" | sed -e "$sed_dirname1" -e "$sed_dirname2" -e "$sed_dirname3"`
+        i_base=`echo "$i" | sed -e "$sed_basename1"`
+        unistringtests_libunistring_libobjs="$unistringtests_libunistring_libobjs $i_dir""libunistring_a-$i_base.$ac_objext"
+        unistringtests_libunistring_ltlibobjs="$unistringtests_libunistring_ltlibobjs $i_dir""libunistring_la-$i_base.lo"
+        unistringtests_libobjdeps="$unistringtests_libobjdeps $i_dir\$(DEPDIR)/$i_base.Plo"
+        unistringtests_libunistring_libobjdeps="$unistringtests_libunistring_libobjdeps $i_dir\$(DEPDIR)/libunistring_la-$i_base.Plo"
       done
     fi
     AC_SUBST([unistringtests_LIBOBJS], [$unistringtests_libobjs])
     AC_SUBST([unistringtests_LTLIBOBJS], [$unistringtests_ltlibobjs])
+    AC_SUBST([unistringtests_LIBOBJDEPS], [$unistringtests_libobjdeps])
+    AC_SUBST([unistringtests_libunistring_LIBOBJS], [$unistringtests_libunistring_libobjs])
+    AC_SUBST([unistringtests_libunistring_LTLIBOBJS], [$unistringtests_libunistring_ltlibobjs])
+    AC_SUBST([unistringtests_libunistring_LIBOBJDEPS], [$unistringtests_libunistring_libobjdeps])
   ])
+  AC_REQUIRE([gl_CC_GNULIB_WARNINGS])
 ])
 
 # Like AC_LIBOBJ, except that the module name goes
@@ -411,7 +517,6 @@ AC_DEFUN([unistring_FILE_LIST], [
   lib/array-mergesort.h
   lib/attribute.h
   lib/limits.in.h
-  lib/stdbool.in.h
   lib/stdint.in.h
   lib/sys_types.in.h
   lib/unictype.in.h
@@ -514,6 +619,7 @@ AC_DEFUN([unistring_FILE_LIST], [
   lib/uninorm.in.h
   lib/uninorm/canonical-decomposition.c
   lib/uninorm/compat-decomposition.c
+  lib/uninorm/composition-table-bounds.h
   lib/uninorm/composition-table.gperf
   lib/uninorm/composition.c
   lib/uninorm/decompose-internal.c
@@ -555,21 +661,25 @@ AC_DEFUN([unistring_FILE_LIST], [
   lib/unistr/u8-uctomb-aux.c
   lib/unistr/u8-uctomb.c
   lib/unitypes.in.h
-  lib/unused-parameter.h
   m4/00gnulib.m4
   m4/absolute-header.m4
+  m4/c-bool.m4
   m4/gnulib-common.m4
   m4/include_next.m4
   m4/inline.m4
   m4/libunistring-base.m4
   m4/limits-h.m4
   m4/multiarch.m4
+  m4/off64_t.m4
   m4/off_t.m4
   m4/pid_t.m4
   m4/ssize_t.m4
-  m4/stdbool.m4
+  m4/std-gnu11.m4
   m4/stdint.m4
   m4/sys_types_h.m4
+  m4/unictype_h.m4
+  m4/uninorm_h.m4
+  m4/unitypes_h.m4
   m4/wint_t.m4
   m4/zzgnulib.m4
 ])

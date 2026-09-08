@@ -23,25 +23,21 @@
 #include "gnutls_int.h"
 #include "errors.h"
 #include "fips.h"
-#include <cipher_int.h>
-#include <datum.h>
+#include "cipher_int.h"
+#include "datum.h"
 #include <gnutls/crypto.h>
 #include <gnutls/self-test.h>
 #include "errors.h"
 #include <gnutls/abstract.h>
-#include <pk.h>
-#include <debug.h>
+#include "pk.h"
+#include "debug.h"
 
 #define DATASTR "Hello there!"
-static const gnutls_datum_t signed_data = {
-	.data = (void *) DATASTR,
-	.size = sizeof(DATASTR) - 1
-};
+static const gnutls_datum_t signed_data = { .data = (void *)DATASTR,
+					    .size = sizeof(DATASTR) - 1 };
 
-static const gnutls_datum_t bad_data = {
-	.data = (void *) DATASTR,
-	.size = sizeof(DATASTR) - 2
-};
+static const gnutls_datum_t bad_data = { .data = (void *)DATASTR,
+					 .size = sizeof(DATASTR) - 2 };
 
 /* RSA 2048 private key and signature */
 static const char rsa_2048_privkey[] =
@@ -91,6 +87,25 @@ static const char rsa_2048_sig[] =
 	"\xef\x62\x18\x39\x7a\x50\x01\x46\x1b\xde\x8d\x37\xbc\x90\x6c\x07"
 	"\xc0\x07\xed\x60\xce\x2e\x31\xd6\x8f\xe8\x75\xdb\x45\x21\xc6\xcb";
 
+static const char rsa_pss_2048_sig[] =
+	"\x28\x77\x99\x8b\xc6\xe2\x59\x5c\xa5\x5c\x30\x78\x13\xe2\xca\xe1"
+	"\x13\xf5\x5d\xd5\x9a\xd7\x71\xff\x41\x82\xf4\x61\xda\x3a\xb6\x10"
+	"\x20\x87\x63\x5a\x7e\x4e\xc2\x5e\xb1\x85\x0f\x84\x58\xa3\x27\x2d"
+	"\xe5\x03\xcf\x65\x1a\xb2\xe6\x8b\xcc\x28\xd8\xcc\x1a\x64\x2a\x2d"
+	"\x9a\x0b\xb7\x32\xfe\x03\x57\x8c\xa0\x9b\xf5\xd0\x51\xb5\x6c\x65"
+	"\xfe\xf9\xf3\xa4\xba\x09\x43\x80\x31\xc1\x02\x88\x78\xaa\x65\x87"
+	"\x8d\xb8\x51\xba\x76\x57\xa6\x55\x18\x45\x95\x4e\x22\x82\xb6\xfd"
+	"\xc9\x04\xf9\xb0\x56\x24\x31\x84\x2b\x70\x91\x55\x7d\x05\x1a\xd0"
+	"\x30\xae\x5c\xfd\x11\x0a\x2e\x86\x09\x05\x44\x9a\xb5\xaf\x30\x8a"
+	"\xb6\xa8\x65\x54\xaf\xdf\xf8\x9a\xca\xa0\x96\x26\x45\x09\x41\x33"
+	"\xf3\x44\x71\xe1\x31\x31\x4c\x53\x60\xcb\x7f\x0b\x02\x08\x39\xf9"
+	"\xe4\xb2\x43\xa6\x07\x1b\x7e\x15\x32\x36\x3d\xc6\x78\x0b\xf1\x9a"
+	"\x33\xe3\xee\x8c\x48\xd4\x7e\xcb\xd1\xe6\x93\x29\x13\x04\x40\x8c"
+	"\x72\xc6\x39\xab\xa1\x76\x4e\x87\x3b\x91\x06\xdf\x1d\x1e\x07\x5e"
+	"\xc2\x26\x7c\xd6\x38\x5d\xba\x9b\x50\x38\x44\x63\x91\x2a\x98\xd2"
+	"\x30\x3f\xfb\x79\x15\x5f\x2e\xd2\x3f\xb7\xc4\x69\xc2\x2d\x79\x8d";
+
+#ifdef ENABLE_DSA
 /* DSA 2048 private key and signature */
 static const char dsa_2048_privkey[] =
 	"-----BEGIN DSA PRIVATE KEY-----\n"
@@ -119,6 +134,7 @@ static const char dsa_2048_sig[] =
 	"\x7b\x8f\x32\x7f\xa5\x1b\xdc\x5c\xae\xda\x98\xea\x15\x32\xed\x0c"
 	"\x4e\x02\x1c\x4c\x76\x01\x2b\xcd\xb9\x33\x95\xf2\xfa\xde\x56\x01"
 	"\xb7\xaa\xe4\x5a\x4a\x2e\xf1\x24\x5a\xd1\xb5\x83\x9a\x93\x61";
+#endif
 
 /* secp256r1 private key and signature */
 static const char ecdsa_secp256r1_privkey[] =
@@ -141,7 +157,8 @@ static const char ecdsa_secp192r1_privkey[] =
 	"-----BEGIN EC PRIVATE KEY-----"
 	"MF8CAQEEGLjezFcbgDMeApVrdtZHvu/k1a8/tVZ41KAKBggqhkjOPQMBAaE0AzIA"
 	"BO1lciKdgxeRH8k64vxcaV1OYIK9akVrW02Dw21MXhRLP0l0wzCw6LGSr5rS6AaL"
-	"Fg==" "-----END EC PRIVATE KEY-----";
+	"Fg=="
+	"-----END EC PRIVATE KEY-----";
 
 static const char ecdsa_secp192r1_sig[] =
 	"\x30\x34\x02\x18\x7c\x43\xe3\xb7\x26\x90\x43\xb5\xf5\x63\x8f\xee"
@@ -154,7 +171,8 @@ static const char ecdsa_secp224r1_privkey[] =
 	"-----BEGIN EC PRIVATE KEY-----"
 	"MGgCAQEEHOKWJFdWdrR/CgVrUeTeawOrJ9GozE9KKx2a8PmgBwYFK4EEACGhPAM6"
 	"AAQKQj3YpenWT7lFR41SnBvmj/+Bj+kgzQnaF65qWAtPRJsZXFlLTu3/IUNqSRu9"
-	"DqPsk8xBHAB7pA==" "-----END EC PRIVATE KEY-----";
+	"DqPsk8xBHAB7pA=="
+	"-----END EC PRIVATE KEY-----";
 
 static const char ecdsa_secp224r1_sig[] =
 	"\x30\x3d\x02\x1c\x14\x22\x09\xa1\x51\x33\x37\xfd\x78\x73\xbd\x84"
@@ -169,7 +187,8 @@ static const char ecdsa_secp384r1_privkey[] =
 	"MIGkAgEBBDDevshD6gb+4rZpC9vwFcIwNs4KmGzdqCxyyN40a8uOWRbyf7aHdiSS"
 	"03oAyKtc4JCgBwYFK4EEACKhZANiAARO1KkPMno2tnNXx1S9EZkp8SOpDCZ4aobH"
 	"IYv8RHnSmKf8I3OKD6TaoeR+1MwJmNJUH90Bj45WXla68/vsPiFcfVKboxsZYe/n"
-	"pv8e4ugXagVQVBXNZJ859iYPdJR24vo=" "-----END EC PRIVATE KEY-----";
+	"pv8e4ugXagVQVBXNZJ859iYPdJR24vo="
+	"-----END EC PRIVATE KEY-----";
 
 static const char ecdsa_secp384r1_sig[] =
 	"\x30\x65\x02\x31\x00\xa7\x73\x60\x16\xdb\xf9\x1f\xfc\x9e\xd2\x12"
@@ -223,16 +242,48 @@ static const char gost12_512_privkey[] =
 	"hsQ3JCCy4xnd5jWT\n"
 	"-----END PRIVATE KEY-----\n";
 
-static int test_rsa_enc(gnutls_pk_algorithm_t pk,
-			unsigned bits, gnutls_digest_algorithm_t ign)
+/* ed25519 private key and signature */
+static const char eddsa_ed25519_privkey[] =
+	"-----BEGIN PRIVATE KEY-----\n"
+	"MC4CAQAwBQYDK2VwBCIEIH4WeqmZGZQlSY/8H85ZZimVd26h6I68gFNyBvyh3Vcy\n"
+	"-----END PRIVATE KEY-----\n";
+
+static const char eddsa_ed25519_sig[] =
+	"\xd1\xcb\x06\x1e\x22\xf2\xec\x56\xa6\xe6\xb3\x89\xb6\x1c\xcf\x13"
+	"\x95\x53\x3d\x12\x27\xea\x32\xfd\x5b\xe6\x5f\x24\xc9\xd0\xa9\x21"
+	"\x36\x63\x06\x20\xe4\xaf\xb1\x36\xc5\x21\x5c\xaa\xdc\x89\x62\xfa"
+	"\xc6\x4c\xea\x42\xd7\xd8\x39\x81\x46\x9f\x41\x09\x10\x94\x9f\x07";
+
+/* ed448 private key and signature */
+static const char eddsa_ed448_privkey[] =
+	"-----BEGIN PRIVATE KEY-----\n"
+	"MEcCAQAwBQYDK2VxBDsEOcUwM3PlIVddDpjHbTANVDGN82jtXJNMbq1oy5u5iJTe\n"
+	"dXGSbQ0e1N/7o1wIO+fKUR1G/CbcXu+XFQ==\n"
+	"-----END PRIVATE KEY-----\n";
+
+static const char eddsa_ed448_sig[] =
+	"\xe3\x13\x89\xef\x7d\x63\x93\xcf\x15\xfb\xe4\x98\x9d\x24\xec\x56"
+	"\xbe\xfc\xcd\xfd\xad\x54\xb3\x8b\xfb\x96\x1b\x08\xbe\xbe\xf0\xc4"
+	"\xff\x67\xf9\x3d\x57\x4a\x2e\x8c\x9c\x39\x83\x5b\x22\xab\x91\x1e"
+	"\x71\x23\x79\xba\x30\xaa\x6d\xbe\x80\xf7\xef\x59\xa5\x3b\xe3\xdf"
+	"\xba\x59\x29\xfe\xe2\xc5\xd2\xb4\xe4\xb5\x94\x2f\x2b\xad\xd9\x20"
+	"\xdc\x25\x75\xbb\xed\xc4\xdb\x72\x22\x6d\x79\x42\x27\xb3\xd9\x8c"
+	"\x80\x68\xd8\x75\x0c\x1c\x6a\xd7\x28\x01\x03\x29\xd0\x7e\x04\x65"
+	"\x2a\x00";
+
+static int test_rsa_enc(gnutls_pk_algorithm_t pk, unsigned bits,
+			gnutls_digest_algorithm_t dig)
 {
 	int ret;
 	gnutls_datum_t enc = { NULL, 0 };
 	gnutls_datum_t dec = { NULL, 0 };
-	gnutls_datum_t raw_rsa_key = { (void*)rsa_2048_privkey, sizeof(rsa_2048_privkey)-1 };
+	gnutls_datum_t raw_rsa_key = { (void *)rsa_2048_privkey,
+				       sizeof(rsa_2048_privkey) - 1 };
 	gnutls_privkey_t key;
 	gnutls_pubkey_t pub = NULL;
 	unsigned char plaintext2[sizeof(DATASTR) - 1];
+	gnutls_x509_spki_t spki = NULL;
+	gnutls_datum_t oaep_label = { NULL, 0 };
 
 	ret = gnutls_privkey_init(&key);
 	if (ret < 0)
@@ -244,10 +295,32 @@ static int test_rsa_enc(gnutls_pk_algorithm_t pk,
 		goto cleanup;
 	}
 
-	ret = gnutls_privkey_import_x509_raw(key, &raw_rsa_key, GNUTLS_X509_FMT_PEM, NULL, 0);
+	ret = gnutls_privkey_import_x509_raw(key, &raw_rsa_key,
+					     GNUTLS_X509_FMT_PEM, NULL, 0);
 	if (ret < 0) {
 		gnutls_assert();
 		goto cleanup;
+	}
+
+	if (pk == GNUTLS_PK_RSA_OAEP) {
+		ret = gnutls_x509_spki_init(&spki);
+		if (ret < 0) {
+			gnutls_assert();
+			goto cleanup;
+		}
+
+		ret = gnutls_x509_spki_set_rsa_oaep_params(spki, dig,
+							   &oaep_label);
+		if (ret < 0) {
+			gnutls_assert();
+			goto cleanup;
+		}
+
+		ret = gnutls_privkey_set_spki(key, spki, 0);
+		if (ret < 0) {
+			gnutls_assert();
+			goto cleanup;
+		}
 	}
 
 	ret = gnutls_pubkey_import_privkey(pub, key, 0, 0);
@@ -262,8 +335,8 @@ static int test_rsa_enc(gnutls_pk_algorithm_t pk,
 		goto cleanup;
 	}
 
-	if (enc.size == signed_data.size && memcmp(signed_data.data, enc.data,
-		enc.size) == 0) {
+	if (enc.size == signed_data.size &&
+	    memcmp(signed_data.data, enc.data, enc.size) == 0) {
 		gnutls_assert();
 		ret = GNUTLS_E_SELF_TEST_ERROR;
 		goto cleanup;
@@ -275,8 +348,8 @@ static int test_rsa_enc(gnutls_pk_algorithm_t pk,
 		goto cleanup;
 	}
 
-	if (dec.size != signed_data.size
-	    || memcmp(dec.data, signed_data.data, dec.size) != 0) {
+	if (dec.size != signed_data.size ||
+	    memcmp(dec.data, signed_data.data, dec.size) != 0) {
 		ret = GNUTLS_E_SELF_TEST_ERROR;
 		gnutls_assert();
 		goto cleanup;
@@ -295,7 +368,9 @@ static int test_rsa_enc(gnutls_pk_algorithm_t pk,
 	}
 
 	ret = 0;
-      cleanup:
+cleanup:
+	if (spki != NULL)
+		gnutls_x509_spki_deinit(spki);
 	if (pub != NULL)
 		gnutls_pubkey_deinit(pub);
 	gnutls_privkey_deinit(key);
@@ -312,8 +387,8 @@ static int test_rsa_enc(gnutls_pk_algorithm_t pk,
 	return ret;
 }
 
-static int test_sig(gnutls_pk_algorithm_t pk,
-		    unsigned bits, gnutls_sign_algorithm_t sigalgo)
+static int test_sig(gnutls_pk_algorithm_t pk, unsigned bits,
+		    gnutls_sign_algorithm_t sigalgo)
 {
 	int ret;
 	gnutls_privkey_t key;
@@ -336,83 +411,82 @@ static int test_sig(gnutls_pk_algorithm_t pk,
 		goto cleanup;
 	}
 
-	switch(pk) {
-		case GNUTLS_PK_RSA:
-				raw_key.data = (void*)rsa_2048_privkey;
-				raw_key.size = sizeof(rsa_2048_privkey) - 1;
-				snprintf(param_name, sizeof(param_name), "%u", bits);
-			break;
-		case GNUTLS_PK_RSA_PSS:
-				raw_key.data = (void*)rsa_2048_privkey;
-				raw_key.size = sizeof(rsa_2048_privkey) - 1;
-				snprintf(param_name, sizeof(param_name), "%u", bits);
-			break;
-		case GNUTLS_PK_DSA:
-				raw_key.data = (void*)dsa_2048_privkey;
-				raw_key.size = sizeof(dsa_2048_privkey) - 1;
-				snprintf(param_name, sizeof(param_name), "%u", bits);
-			break;
-		case GNUTLS_PK_ECC:
-			switch(bits) {
-#ifdef ENABLE_NON_SUITEB_CURVES
-				case GNUTLS_CURVE_TO_BITS(GNUTLS_ECC_CURVE_SECP192R1):
-					raw_key.data = (void*)ecdsa_secp192r1_privkey;
-					raw_key.size = sizeof(ecdsa_secp192r1_privkey) - 1;
-					break;
-				case GNUTLS_CURVE_TO_BITS(GNUTLS_ECC_CURVE_SECP224R1):
-					raw_key.data = (void*)ecdsa_secp224r1_privkey;
-					raw_key.size = sizeof(ecdsa_secp224r1_privkey) - 1;
-					break;
+	switch (pk) {
+	case GNUTLS_PK_RSA:
+		raw_key.data = (void *)rsa_2048_privkey;
+		raw_key.size = sizeof(rsa_2048_privkey) - 1;
+		snprintf(param_name, sizeof(param_name), "%u", bits);
+		break;
+	case GNUTLS_PK_RSA_PSS:
+		raw_key.data = (void *)rsa_2048_privkey;
+		raw_key.size = sizeof(rsa_2048_privkey) - 1;
+		snprintf(param_name, sizeof(param_name), "%u", bits);
+		break;
+#ifdef ENABLE_DSA
+	case GNUTLS_PK_DSA:
+		raw_key.data = (void *)dsa_2048_privkey;
+		raw_key.size = sizeof(dsa_2048_privkey) - 1;
+		snprintf(param_name, sizeof(param_name), "%u", bits);
+		break;
 #endif
-				case GNUTLS_CURVE_TO_BITS(GNUTLS_ECC_CURVE_SECP256R1):
-					raw_key.data = (void*)ecdsa_secp256r1_privkey;
-					raw_key.size = sizeof(ecdsa_secp256r1_privkey) - 1;
-					break;
-				case GNUTLS_CURVE_TO_BITS(GNUTLS_ECC_CURVE_SECP384R1):
-					raw_key.data = (void*)ecdsa_secp384r1_privkey;
-					raw_key.size = sizeof(ecdsa_secp384r1_privkey) - 1;
-					break;
-				case GNUTLS_CURVE_TO_BITS(GNUTLS_ECC_CURVE_SECP521R1):
-					raw_key.data = (void*)ecdsa_secp521r1_privkey;
-					raw_key.size = sizeof(ecdsa_secp521r1_privkey) - 1;
-					break;
-				default:
-					gnutls_assert();
-					ret = GNUTLS_E_INTERNAL_ERROR;
-					goto cleanup;
-			}
-			snprintf(param_name, sizeof(param_name), "%s",
-					 gnutls_ecc_curve_get_name(GNUTLS_BITS_TO_CURVE
-					 (bits)));
+	case GNUTLS_PK_ECC:
+		switch (bits) {
+#ifdef ENABLE_NON_SUITEB_CURVES
+		case GNUTLS_CURVE_TO_BITS(GNUTLS_ECC_CURVE_SECP192R1):
+			raw_key.data = (void *)ecdsa_secp192r1_privkey;
+			raw_key.size = sizeof(ecdsa_secp192r1_privkey) - 1;
 			break;
-		case GNUTLS_PK_GOST_01:
-			raw_key.data = (void*)gost01_privkey;
-			raw_key.size = sizeof(gost01_privkey) - 1;
-			snprintf(param_name, sizeof(param_name), "%s",
-					 gnutls_ecc_curve_get_name(GNUTLS_BITS_TO_CURVE
-					 (bits)));
+		case GNUTLS_CURVE_TO_BITS(GNUTLS_ECC_CURVE_SECP224R1):
+			raw_key.data = (void *)ecdsa_secp224r1_privkey;
+			raw_key.size = sizeof(ecdsa_secp224r1_privkey) - 1;
 			break;
-		case GNUTLS_PK_GOST_12_256:
-			raw_key.data = (void*)gost12_256_privkey;
-			raw_key.size = sizeof(gost12_256_privkey) - 1;
-			snprintf(param_name, sizeof(param_name), "%s",
-					 gnutls_ecc_curve_get_name(GNUTLS_BITS_TO_CURVE
-					 (bits)));
+#endif
+		case GNUTLS_CURVE_TO_BITS(GNUTLS_ECC_CURVE_SECP256R1):
+			raw_key.data = (void *)ecdsa_secp256r1_privkey;
+			raw_key.size = sizeof(ecdsa_secp256r1_privkey) - 1;
 			break;
-		case GNUTLS_PK_GOST_12_512:
-			raw_key.data = (void*)gost12_512_privkey;
-			raw_key.size = sizeof(gost12_512_privkey) - 1;
-			snprintf(param_name, sizeof(param_name), "%s",
-					 gnutls_ecc_curve_get_name(GNUTLS_BITS_TO_CURVE
-					 (bits)));
+		case GNUTLS_CURVE_TO_BITS(GNUTLS_ECC_CURVE_SECP384R1):
+			raw_key.data = (void *)ecdsa_secp384r1_privkey;
+			raw_key.size = sizeof(ecdsa_secp384r1_privkey) - 1;
+			break;
+		case GNUTLS_CURVE_TO_BITS(GNUTLS_ECC_CURVE_SECP521R1):
+			raw_key.data = (void *)ecdsa_secp521r1_privkey;
+			raw_key.size = sizeof(ecdsa_secp521r1_privkey) - 1;
 			break;
 		default:
 			gnutls_assert();
 			ret = GNUTLS_E_INTERNAL_ERROR;
 			goto cleanup;
+		}
+		snprintf(param_name, sizeof(param_name), "%s",
+			 gnutls_ecc_curve_get_name(GNUTLS_BITS_TO_CURVE(bits)));
+		break;
+	case GNUTLS_PK_GOST_01:
+		raw_key.data = (void *)gost01_privkey;
+		raw_key.size = sizeof(gost01_privkey) - 1;
+		snprintf(param_name, sizeof(param_name), "%s",
+			 gnutls_ecc_curve_get_name(GNUTLS_BITS_TO_CURVE(bits)));
+		break;
+	case GNUTLS_PK_GOST_12_256:
+		raw_key.data = (void *)gost12_256_privkey;
+		raw_key.size = sizeof(gost12_256_privkey) - 1;
+		snprintf(param_name, sizeof(param_name), "%s",
+			 gnutls_ecc_curve_get_name(GNUTLS_BITS_TO_CURVE(bits)));
+		break;
+	case GNUTLS_PK_GOST_12_512:
+		raw_key.data = (void *)gost12_512_privkey;
+		raw_key.size = sizeof(gost12_512_privkey) - 1;
+		snprintf(param_name, sizeof(param_name), "%s",
+			 gnutls_ecc_curve_get_name(GNUTLS_BITS_TO_CURVE(bits)));
+		break;
+	default:
+		gnutls_assert();
+		ret = GNUTLS_E_INTERNAL_ERROR;
+		goto cleanup;
 	}
 
-	ret = gnutls_privkey_import_x509_raw(key, &raw_key, GNUTLS_X509_FMT_PEM, NULL, 0);
+	ret = gnutls_privkey_import_x509_raw(key, &raw_key, GNUTLS_X509_FMT_PEM,
+					     NULL, 0);
 	if (ret < 0) {
 		gnutls_assert();
 		goto cleanup;
@@ -430,18 +504,15 @@ static int test_sig(gnutls_pk_algorithm_t pk,
 		goto cleanup;
 	}
 
-	ret =
-	    gnutls_pubkey_verify_data2(pub, sigalgo, vflags,
-				       &signed_data, &sig);
+	ret = gnutls_pubkey_verify_data2(pub, sigalgo, vflags, &signed_data,
+					 &sig);
 	if (ret < 0) {
 		ret = GNUTLS_E_SELF_TEST_ERROR;
 		gnutls_assert();
 		goto cleanup;
 	}
 
-	ret =
-	    gnutls_pubkey_verify_data2(pub, sigalgo, vflags,
-				       &bad_data, &sig);
+	ret = gnutls_pubkey_verify_data2(pub, sigalgo, vflags, &bad_data, &sig);
 
 	if (ret != GNUTLS_E_PK_SIG_VERIFY_FAILED) {
 		ret = GNUTLS_E_SELF_TEST_ERROR;
@@ -468,10 +539,9 @@ cleanup:
 }
 
 static int test_known_sig(gnutls_pk_algorithm_t pk, unsigned bits,
-			  gnutls_digest_algorithm_t dig,
-			  const void *privkey, size_t privkey_size,
-			  const void *stored_sig, size_t stored_sig_size,
-			  gnutls_privkey_flags_t flags)
+			  gnutls_digest_algorithm_t dig, const void *privkey,
+			  size_t privkey_size, const void *stored_sig,
+			  size_t stored_sig_size, gnutls_privkey_flags_t flags)
 {
 	int ret;
 	gnutls_datum_t sig = { NULL, 0 };
@@ -480,15 +550,13 @@ static int test_known_sig(gnutls_pk_algorithm_t pk, unsigned bits,
 	gnutls_privkey_t key;
 	char param_name[32];
 	unsigned vflags = 0;
+	gnutls_x509_spki_t spki = NULL;
 
-	if (pk == GNUTLS_PK_EC ||
-	    pk == GNUTLS_PK_GOST_01 ||
-	    pk == GNUTLS_PK_GOST_12_256 ||
-	    pk == GNUTLS_PK_GOST_12_512)
-	{
+	if (pk == GNUTLS_PK_EC || pk == GNUTLS_PK_GOST_01 ||
+	    pk == GNUTLS_PK_GOST_12_256 || pk == GNUTLS_PK_GOST_12_512 ||
+	    pk == GNUTLS_PK_EDDSA_ED25519 || pk == GNUTLS_PK_EDDSA_ED448) {
 		snprintf(param_name, sizeof(param_name), "%s",
-			 gnutls_ecc_curve_get_name(GNUTLS_BITS_TO_CURVE
-						   (bits)));
+			 gnutls_ecc_curve_get_name(GNUTLS_BITS_TO_CURVE(bits)));
 		if (dig == GNUTLS_DIG_GOSTR_94)
 			vflags |= GNUTLS_VERIFY_ALLOW_BROKEN;
 	} else {
@@ -505,18 +573,33 @@ static int test_known_sig(gnutls_pk_algorithm_t pk, unsigned bits,
 		return ret;
 	}
 
-	t.data = (void *) privkey;
+	t.data = (void *)privkey;
 	t.size = privkey_size;
 
-	ret =
-	    gnutls_privkey_import_x509_raw(key, &t, GNUTLS_X509_FMT_PEM,
-					   NULL, 0);
+	ret = gnutls_privkey_import_x509_raw(key, &t, GNUTLS_X509_FMT_PEM, NULL,
+					     0);
 	if (ret < 0) {
 		gnutls_assert();
 		goto cleanup;
 	}
 
-	if (pk != (unsigned) gnutls_privkey_get_pk_algorithm(key, NULL)) {
+	if (pk == GNUTLS_PK_RSA_PSS) {
+		ret = gnutls_x509_spki_init(&spki);
+		if (ret < 0) {
+			gnutls_assert();
+			goto cleanup;
+		}
+
+		gnutls_x509_spki_set_rsa_pss_params(spki, dig, 32);
+
+		ret = gnutls_privkey_set_spki(key, spki, 0);
+		if (ret < 0) {
+			gnutls_assert();
+			goto cleanup;
+		}
+	}
+
+	if (pk != (unsigned)gnutls_privkey_get_pk_algorithm(key, NULL)) {
 		ret = GNUTLS_E_SELF_TEST_ERROR;
 		goto cleanup;
 	}
@@ -528,16 +611,16 @@ static int test_known_sig(gnutls_pk_algorithm_t pk, unsigned bits,
 	}
 
 	/* Test if the generated signature matches the stored */
-	ssig.data = (void *) stored_sig;
+	ssig.data = (void *)stored_sig;
 	ssig.size = stored_sig_size;
 
-	if (sig.size != ssig.size
-		|| memcmp(sig.data, ssig.data, sig.size) != 0) {
+	if (sig.size != ssig.size ||
+	    memcmp(sig.data, ssig.data, sig.size) != 0) {
 		ret = GNUTLS_E_SELF_TEST_ERROR;
 #if 0
 		unsigned i;
 		fprintf(stderr, "Algorithm: %s-%s\n",
-				  gnutls_pk_get_name(pk), param_name);
+			gnutls_pk_get_name(pk), param_name);
 		fprintf(stderr, "\nstored[%d]: ", ssig.size);
 		for (i = 0; i < ssig.size; i++)
 			fprintf(stderr, "\\x%.2x", ssig.data[i]);
@@ -559,34 +642,38 @@ static int test_known_sig(gnutls_pk_algorithm_t pk, unsigned bits,
 		goto cleanup;
 	}
 
-	ret =
-	    gnutls_pubkey_verify_data2(pub, gnutls_pk_to_sign(pk, dig), vflags,
-				       &signed_data, &sig);
+	ret = gnutls_pubkey_verify_data2(pub, gnutls_pk_to_sign(pk, dig),
+					 vflags, &signed_data, &sig);
 	if (ret < 0) {
 		ret = GNUTLS_E_SELF_TEST_ERROR;
 		gnutls_assert();
 		goto cleanup;
 	}
 
-	/* Test if a broken signature will cause verification error */
+	/* Test if a broken signature will cause verification
+	 * error. As this is not part of known-answer test, only
+	 * exercised when GNUTLS_SELF_TEST_FLAG_ALL is set. */
+	if (flags & GNUTLS_SELF_TEST_FLAG_ALL) {
+		ret = gnutls_pubkey_verify_data2(pub,
+						 gnutls_pk_to_sign(pk, dig),
+						 vflags, &bad_data, &sig);
 
-	ret =
-	    gnutls_pubkey_verify_data2(pub, gnutls_pk_to_sign(pk, dig), 0,
-				       &bad_data, &sig);
-
-	if (ret != GNUTLS_E_PK_SIG_VERIFY_FAILED) {
-		ret = GNUTLS_E_SELF_TEST_ERROR;
-		gnutls_assert();
-		goto cleanup;
+		if (ret != GNUTLS_E_PK_SIG_VERIFY_FAILED) {
+			ret = GNUTLS_E_SELF_TEST_ERROR;
+			gnutls_assert();
+			goto cleanup;
+		}
 	}
 
 	ret = 0;
 
-      cleanup:
-	gnutls_free(sig.data);
-	if (pub != 0)
+cleanup:
+	if (spki != NULL)
+		gnutls_x509_spki_deinit(spki);
+	if (pub != NULL)
 		gnutls_pubkey_deinit(pub);
 	gnutls_privkey_deinit(key);
+	gnutls_free(sig.data);
 
 	if (ret == 0)
 		_gnutls_debug_log("%s-%s-known-sig self test succeeded\n",
@@ -599,19 +686,19 @@ static int test_known_sig(gnutls_pk_algorithm_t pk, unsigned bits,
 }
 
 #define PK_TEST(pk, func, bits, sigalgo) \
-			ret = func(pk, bits, sigalgo); \
-			if (ret < 0) { \
-				gnutls_assert(); \
-				goto cleanup; \
-			}
+	ret = func(pk, bits, sigalgo);   \
+	if (ret < 0) {                   \
+		gnutls_assert();         \
+		goto cleanup;            \
+	}
 
-#define PK_KNOWN_TEST(pk, bits, dig, pkey, sig, flags) \
-			ret = test_known_sig(pk, bits, dig, pkey, sizeof(pkey)-1, sig, sizeof(sig)-1, flags); \
-			if (ret < 0) { \
-				gnutls_assert(); \
-				goto cleanup; \
-			}
-
+#define PK_KNOWN_TEST(pk, bits, dig, pkey, sig, flags)                   \
+	ret = test_known_sig(pk, bits, dig, pkey, sizeof(pkey) - 1, sig, \
+			     sizeof(sig) - 1, flags);                    \
+	if (ret < 0) {                                                   \
+		gnutls_assert();                                         \
+		goto cleanup;                                            \
+	}
 
 /* Known answer tests for DH */
 static int test_dh(void)
@@ -619,7 +706,7 @@ static int test_dh(void)
 	int ret;
 	gnutls_pk_params_st priv;
 	gnutls_pk_params_st pub;
-	gnutls_datum_t out = {NULL, 0};
+	gnutls_datum_t out = { NULL, 0 };
 
 	/* FFDHE 3072 test vector provided by Stephan Mueller in:
 	 * https://gitlab.com/gnutls/gnutls/-/merge_requests/1342#note_424430996
@@ -706,7 +793,8 @@ static int test_dh(void)
 		0x1d, 0x98, 0x17, 0x45, 0xa3, 0xee, 0x21, 0xa0, 0x97, 0x38,
 		0x80, 0xc5, 0x28, 0x1f,
 	};
-	static const uint8_t test_y[] = { /* y=g^x mod p */
+	static const uint8_t test_y[] = {
+		/* y=g^x mod p */
 		0x93, 0xeb, 0x5c, 0x37, 0x1d, 0x3c, 0x06, 0x6f, 0xbf, 0xbe,
 		0x96, 0x51, 0x26, 0x58, 0x81, 0x36, 0xc6, 0x4f, 0x9a, 0x34,
 		0xc4, 0xc5, 0xa8, 0xa3, 0x2c, 0x41, 0x76, 0xa8, 0xc6, 0xc0,
@@ -750,9 +838,9 @@ static int test_dh(void)
 
 	gnutls_pk_params_init(&priv);
 	gnutls_pk_params_init(&pub);
-	
+
 	priv.algo = pub.algo = GNUTLS_PK_DH;
-	
+
 	ret = _gnutls_mpi_init_scan(&priv.params[DH_P],
 				    gnutls_ffdhe_3072_group_prime.data,
 				    gnutls_ffdhe_3072_group_prime.size);
@@ -799,8 +887,7 @@ static int test_dh(void)
 		gnutls_assert();
 		goto cleanup;
 	}
-	
-	
+
 	ret = 0;
 cleanup:
 	_gnutls_mpi_release(&pub.params[DH_Y]);
@@ -824,48 +911,57 @@ static int test_ecdh(void)
 	int ret;
 	gnutls_pk_params_st priv;
 	gnutls_pk_params_st pub;
-	gnutls_datum_t out = {NULL, 0};
-	static const uint8_t known_key[] = { 
-		0x22, 0x7a, 0x95, 0x98, 0x5f, 0xb1, 0x25, 0x79, 
-		0xee, 0x07, 0xe3, 0x8b, 0x1a, 0x97, 0x1d, 0x63, 
-		0x53, 0xa8, 0xbd, 0xde, 0x67, 0x4b, 0xcf, 0xa4, 
-		0x5f, 0x5e, 0x67, 0x27, 0x6d, 0x86, 0x27, 0x26 };
-	static const uint8_t test_k[] = { /* priv */
-		0x52, 0x9c, 0x30, 0xac, 0x6b, 0xce, 0x71, 0x9a, 
-		0x37, 0xcd, 0x40, 0x93, 0xbf, 0xf0, 0x36, 0x89, 
-		0x53, 0xcc, 0x0e, 0x17, 0xc6, 0xb6, 0xe2, 0x6a, 
-		0x3c, 0x2c, 0x51, 0xdb, 0xa6, 0x69, 0x8c, 0xb1 };
-	static const uint8_t test_x[] = {
-		0x51, 0x35, 0xd1, 0xd2, 0xb6, 0xad, 0x13, 0xf4, 
-		0xa2, 0x25, 0xd3, 0x85, 0x83, 0xbe, 0x42, 0x1e, 
-		0x19, 0x09, 0x54, 0x39, 0x00, 0x46, 0x91, 0x49, 
-		0x0f, 0x3f, 0xaf, 0x3f, 0x67, 0xda, 0x10, 0x6f };
-	static const uint8_t test_y[] = { /* y=g^x mod p */
-		0x07, 0x3a, 0xa1, 0xa2, 0x47, 0x3d, 0xa2, 0x74, 
-		0x74, 0xc2, 0xde, 0x62, 0xb6, 0xb9, 0x59, 0xc9, 
-		0x56, 0xf6, 0x9e, 0x17, 0xea, 0xbf, 0x7d, 0xa1, 
-		0xd7, 0x65, 0xd6, 0x7b, 0xac, 0xca, 0xd5, 0xe3 };
+	gnutls_datum_t out = { NULL, 0 };
+	static const uint8_t known_key[] = { 0x22, 0x7a, 0x95, 0x98, 0x5f, 0xb1,
+					     0x25, 0x79, 0xee, 0x07, 0xe3, 0x8b,
+					     0x1a, 0x97, 0x1d, 0x63, 0x53, 0xa8,
+					     0xbd, 0xde, 0x67, 0x4b, 0xcf, 0xa4,
+					     0x5f, 0x5e, 0x67, 0x27, 0x6d, 0x86,
+					     0x27, 0x26 };
+	static const uint8_t test_k[] = {
+		/* priv */
+		0x52, 0x9c, 0x30, 0xac, 0x6b, 0xce, 0x71, 0x9a,
+		0x37, 0xcd, 0x40, 0x93, 0xbf, 0xf0, 0x36, 0x89,
+		0x53, 0xcc, 0x0e, 0x17, 0xc6, 0xb6, 0xe2, 0x6a,
+		0x3c, 0x2c, 0x51, 0xdb, 0xa6, 0x69, 0x8c, 0xb1
+	};
+	static const uint8_t test_x[] = { 0x51, 0x35, 0xd1, 0xd2, 0xb6, 0xad,
+					  0x13, 0xf4, 0xa2, 0x25, 0xd3, 0x85,
+					  0x83, 0xbe, 0x42, 0x1e, 0x19, 0x09,
+					  0x54, 0x39, 0x00, 0x46, 0x91, 0x49,
+					  0x0f, 0x3f, 0xaf, 0x3f, 0x67, 0xda,
+					  0x10, 0x6f };
+	static const uint8_t test_y[] = {
+		/* y=g^x mod p */
+		0x07, 0x3a, 0xa1, 0xa2, 0x47, 0x3d, 0xa2, 0x74,
+		0x74, 0xc2, 0xde, 0x62, 0xb6, 0xb9, 0x59, 0xc9,
+		0x56, 0xf6, 0x9e, 0x17, 0xea, 0xbf, 0x7d, 0xa1,
+		0xd7, 0x65, 0xd6, 0x7b, 0xac, 0xca, 0xd5, 0xe3
+	};
 	gnutls_pk_params_init(&priv);
 	gnutls_pk_params_init(&pub);
-	
+
 	priv.curve = GNUTLS_ECC_CURVE_SECP256R1;
 	pub.curve = GNUTLS_ECC_CURVE_SECP256R1;
-	
+
 	priv.algo = pub.algo = GNUTLS_PK_EC;
-	
-	ret = _gnutls_mpi_init_scan(&priv.params[ECC_K], test_k, sizeof(test_k));
+
+	ret = _gnutls_mpi_init_scan(&priv.params[ECC_K], test_k,
+				    sizeof(test_k));
 	if (ret < 0) {
 		gnutls_assert();
 		goto cleanup;
 	}
 
-	ret = _gnutls_mpi_init_scan(&priv.params[ECC_X], test_x, sizeof(test_x));
+	ret = _gnutls_mpi_init_scan(&priv.params[ECC_X], test_x,
+				    sizeof(test_x));
 	if (ret < 0) {
 		gnutls_assert();
 		goto cleanup;
 	}
 
-	ret = _gnutls_mpi_init_scan(&priv.params[ECC_Y], test_y, sizeof(test_y));
+	ret = _gnutls_mpi_init_scan(&priv.params[ECC_Y], test_y,
+				    sizeof(test_y));
 	if (ret < 0) {
 		gnutls_assert();
 		goto cleanup;
@@ -901,7 +997,7 @@ static int test_ecdh(void)
 		gnutls_assert();
 		goto cleanup;
 	}
-	
+
 	ret = 0;
 cleanup:
 	_gnutls_mpi_release(&pub.params[ECC_Y]);
@@ -971,13 +1067,31 @@ int gnutls_pk_self_test(unsigned flags, gnutls_pk_algorithm_t pk)
 
 		FALLTHROUGH;
 	case GNUTLS_PK_RSA_PSS:
-		PK_TEST(GNUTLS_PK_RSA_PSS, test_sig, 2048,
-			GNUTLS_SIGN_RSA_PSS_RSAE_SHA256);
+		/* In POST, we switch the RNG to deterministic one so
+		 * the KAT for RSA-PSS work. */
+		if (is_post) {
+			PK_KNOWN_TEST(GNUTLS_PK_RSA_PSS, 2048,
+				      GNUTLS_DIG_SHA256, rsa_2048_privkey,
+				      rsa_pss_2048_sig,
+				      GNUTLS_PRIVKEY_SIGN_FLAG_RSA_PSS);
+		} else {
+			PK_TEST(GNUTLS_PK_RSA_PSS, test_sig, 2048,
+				GNUTLS_SIGN_RSA_PSS_RSAE_SHA256);
+		}
 
 		if (!(flags & GNUTLS_SELF_TEST_FLAG_ALL))
 			return 0;
 
 		FALLTHROUGH;
+	case GNUTLS_PK_RSA_OAEP:
+		PK_TEST(GNUTLS_PK_RSA_OAEP, test_rsa_enc, 2048,
+			GNUTLS_DIG_SHA256);
+
+		if (!(flags & GNUTLS_SELF_TEST_FLAG_ALL))
+			return 0;
+
+		FALLTHROUGH;
+#ifdef ENABLE_DSA
 	case GNUTLS_PK_DSA:
 		if (is_post || !is_fips140_mode_enabled) {
 			PK_KNOWN_TEST(GNUTLS_PK_DSA, 2048, GNUTLS_DIG_SHA256,
@@ -992,6 +1106,7 @@ int gnutls_pk_self_test(unsigned flags, gnutls_pk_algorithm_t pk)
 			return 0;
 
 		FALLTHROUGH;
+#endif
 	case GNUTLS_PK_EC:
 		/* Test ECDH and ECDSA */
 		ret = test_ecdh();
@@ -1003,12 +1118,16 @@ int gnutls_pk_self_test(unsigned flags, gnutls_pk_algorithm_t pk)
 		/* Test ECDSA */
 		if (is_post || !is_fips140_mode_enabled) {
 			PK_KNOWN_TEST(GNUTLS_PK_EC,
-					  GNUTLS_CURVE_TO_BITS(GNUTLS_ECC_CURVE_SECP256R1),
-					  GNUTLS_DIG_SHA256, ecdsa_secp256r1_privkey,
-					  ecdsa_secp256r1_sig, GNUTLS_PRIVKEY_FLAG_REPRODUCIBLE);
+				      GNUTLS_CURVE_TO_BITS(
+					      GNUTLS_ECC_CURVE_SECP256R1),
+				      GNUTLS_DIG_SHA256,
+				      ecdsa_secp256r1_privkey,
+				      ecdsa_secp256r1_sig,
+				      GNUTLS_PRIVKEY_FLAG_REPRODUCIBLE);
 		} else {
 			PK_TEST(GNUTLS_PK_EC, test_sig,
-				GNUTLS_CURVE_TO_BITS(GNUTLS_ECC_CURVE_SECP256R1),
+				GNUTLS_CURVE_TO_BITS(
+					GNUTLS_ECC_CURVE_SECP256R1),
 				GNUTLS_SIGN_ECDSA_SHA256);
 		}
 
@@ -1017,50 +1136,65 @@ int gnutls_pk_self_test(unsigned flags, gnutls_pk_algorithm_t pk)
 
 		if (is_post || !is_fips140_mode_enabled) {
 			PK_KNOWN_TEST(GNUTLS_PK_EC,
-					  GNUTLS_CURVE_TO_BITS(GNUTLS_ECC_CURVE_SECP384R1),
-					  GNUTLS_DIG_SHA384, ecdsa_secp384r1_privkey,
-					  ecdsa_secp384r1_sig, GNUTLS_PRIVKEY_FLAG_REPRODUCIBLE);
+				      GNUTLS_CURVE_TO_BITS(
+					      GNUTLS_ECC_CURVE_SECP384R1),
+				      GNUTLS_DIG_SHA384,
+				      ecdsa_secp384r1_privkey,
+				      ecdsa_secp384r1_sig,
+				      GNUTLS_PRIVKEY_FLAG_REPRODUCIBLE);
 		} else {
 			PK_TEST(GNUTLS_PK_EC, test_sig,
-				GNUTLS_CURVE_TO_BITS(GNUTLS_ECC_CURVE_SECP384R1),
+				GNUTLS_CURVE_TO_BITS(
+					GNUTLS_ECC_CURVE_SECP384R1),
 				GNUTLS_SIGN_ECDSA_SHA384);
 		}
 
 		if (is_post || !is_fips140_mode_enabled) {
 			PK_KNOWN_TEST(GNUTLS_PK_EC,
-					  GNUTLS_CURVE_TO_BITS(GNUTLS_ECC_CURVE_SECP521R1),
-					  GNUTLS_DIG_SHA512, ecdsa_secp521r1_privkey,
-					  ecdsa_secp521r1_sig, GNUTLS_PRIVKEY_FLAG_REPRODUCIBLE);
+				      GNUTLS_CURVE_TO_BITS(
+					      GNUTLS_ECC_CURVE_SECP521R1),
+				      GNUTLS_DIG_SHA512,
+				      ecdsa_secp521r1_privkey,
+				      ecdsa_secp521r1_sig,
+				      GNUTLS_PRIVKEY_FLAG_REPRODUCIBLE);
 		} else {
 			PK_TEST(GNUTLS_PK_EC, test_sig,
-				GNUTLS_CURVE_TO_BITS(GNUTLS_ECC_CURVE_SECP521R1),
+				GNUTLS_CURVE_TO_BITS(
+					GNUTLS_ECC_CURVE_SECP521R1),
 				GNUTLS_SIGN_ECDSA_SHA512);
 		}
 
 #ifdef ENABLE_NON_SUITEB_CURVES
 		if (is_post || !is_fips140_mode_enabled) {
 			PK_KNOWN_TEST(GNUTLS_PK_EC,
-					  GNUTLS_CURVE_TO_BITS(GNUTLS_ECC_CURVE_SECP192R1),
-					  GNUTLS_DIG_SHA256, ecdsa_secp192r1_privkey,
-					  ecdsa_secp192r1_sig, GNUTLS_PRIVKEY_FLAG_REPRODUCIBLE);
+				      GNUTLS_CURVE_TO_BITS(
+					      GNUTLS_ECC_CURVE_SECP192R1),
+				      GNUTLS_DIG_SHA256,
+				      ecdsa_secp192r1_privkey,
+				      ecdsa_secp192r1_sig,
+				      GNUTLS_PRIVKEY_FLAG_REPRODUCIBLE);
 		} else {
 			PK_TEST(GNUTLS_PK_EC, test_sig,
-				GNUTLS_CURVE_TO_BITS(GNUTLS_ECC_CURVE_SECP192R1),
+				GNUTLS_CURVE_TO_BITS(
+					GNUTLS_ECC_CURVE_SECP192R1),
 				GNUTLS_SIGN_ECDSA_SHA256);
 		}
 
 		if (is_post || !is_fips140_mode_enabled) {
 			PK_KNOWN_TEST(GNUTLS_PK_EC,
-					  GNUTLS_CURVE_TO_BITS(GNUTLS_ECC_CURVE_SECP224R1),
-					  GNUTLS_DIG_SHA256, ecdsa_secp224r1_privkey,
-					  ecdsa_secp224r1_sig, GNUTLS_PRIVKEY_FLAG_REPRODUCIBLE);
+				      GNUTLS_CURVE_TO_BITS(
+					      GNUTLS_ECC_CURVE_SECP224R1),
+				      GNUTLS_DIG_SHA256,
+				      ecdsa_secp224r1_privkey,
+				      ecdsa_secp224r1_sig,
+				      GNUTLS_PRIVKEY_FLAG_REPRODUCIBLE);
 		} else {
 			PK_TEST(GNUTLS_PK_EC, test_sig,
-				GNUTLS_CURVE_TO_BITS(GNUTLS_ECC_CURVE_SECP224R1),
+				GNUTLS_CURVE_TO_BITS(
+					GNUTLS_ECC_CURVE_SECP224R1),
 				GNUTLS_SIGN_ECDSA_SHA256);
 		}
 #endif
-
 
 #if ENABLE_GOST
 		FALLTHROUGH;
@@ -1090,6 +1224,26 @@ int gnutls_pk_self_test(unsigned flags, gnutls_pk_algorithm_t pk)
 		if (!(flags & GNUTLS_SELF_TEST_FLAG_ALL))
 			return 0;
 #endif
+		FALLTHROUGH;
+	case GNUTLS_PK_EDDSA_ED25519:
+		PK_KNOWN_TEST(GNUTLS_PK_EDDSA_ED25519,
+			      GNUTLS_CURVE_TO_BITS(GNUTLS_ECC_CURVE_ED25519),
+			      GNUTLS_DIG_SHA512, eddsa_ed25519_privkey,
+			      eddsa_ed25519_sig, 0);
+
+		if (!(flags & GNUTLS_SELF_TEST_FLAG_ALL))
+			return 0;
+
+		FALLTHROUGH;
+	case GNUTLS_PK_EDDSA_ED448:
+		PK_KNOWN_TEST(GNUTLS_PK_EDDSA_ED448,
+			      GNUTLS_CURVE_TO_BITS(GNUTLS_ECC_CURVE_ED448),
+			      GNUTLS_DIG_SHAKE_256, eddsa_ed448_privkey,
+			      eddsa_ed448_sig, 0);
+
+		if (!(flags & GNUTLS_SELF_TEST_FLAG_ALL))
+			return 0;
+
 		break;
 	default:
 		return gnutls_assert_val(GNUTLS_E_NO_SELF_TEST);
@@ -1097,6 +1251,6 @@ int gnutls_pk_self_test(unsigned flags, gnutls_pk_algorithm_t pk)
 
 	ret = 0;
 
-      cleanup:
+cleanup:
 	return ret;
 }

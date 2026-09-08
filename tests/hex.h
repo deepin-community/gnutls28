@@ -31,7 +31,7 @@ inline static gnutls_datum_t SHEX(const char *hex)
 	gnutls_datum_t input, output;
 	int ret;
 
-	input.data = (void*)hex;
+	input.data = (void *)hex;
 	input.size = strlen(hex);
 
 	ret = gnutls_hex_decode2(&input, &output);
@@ -42,7 +42,7 @@ inline static gnutls_datum_t SHEX(const char *hex)
 inline static gnutls_datum_t SDATA(const char *txt)
 {
 	gnutls_datum_t output;
-	output.data = (void*)gnutls_strdup(txt);
+	output.data = (void *)gnutls_strdup(txt);
 	output.size = strlen(txt);
 	return output;
 }

@@ -30,4 +30,4 @@ cfg_option_t cfg_load(const char *filename);
 void cfg_free(cfg_option_t options);
 cfg_option_t cfg_next(const cfg_option_t options, const char *name);
 
-#endif	/* CFG_H_ */
+#endif /* CFG_H_ */

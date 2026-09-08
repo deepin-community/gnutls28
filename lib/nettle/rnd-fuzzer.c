@@ -17,38 +17,38 @@
  * GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with this program; if not, see <https://www.gnu.org/licenses/>.
+ * License along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <config.h>
+#include "config.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
 #include <sys/types.h>
-#include <drbg-aes.h>
-#include <fips.h>
+#include "drbg-aes.h"
+#include "fips.h"
 
 #include "gnutls_int.h"
 #include "errors.h"
 #include <stdlib.h>
-#include <rnd-common.h>
+#include "rnd-common.h"
 
 #ifdef FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION
 
 struct r48_rand_data {
-	unsigned short int __x[3];	/* Current state.  */
-	unsigned short int __old_x[3];	/* Old state.  */
-	unsigned short int __c;	/* Additive const. in congruential formula.  */
-	unsigned short int __init;	/* Flag for initializing.  */
-	__extension__ unsigned long long int __a;	/* Factor in congruential
+	unsigned short int __x[3]; /* Current state.  */
+	unsigned short int __old_x[3]; /* Old state.  */
+	unsigned short int __c; /* Additive const. in congruential formula.  */
+	unsigned short int __init; /* Flag for initializing.  */
+	__extension__ unsigned long long int __a; /* Factor in congruential
 							   formula.  */
 };
 
 #ifdef __clang__
 __attribute__((no_sanitize("integer")))
 #endif
-static int
-__r48_rand_iterate(unsigned short int xsubi[3], struct r48_rand_data *buffer)
+static int __r48_rand_iterate(unsigned short int xsubi[3],
+			      struct r48_rand_data *buffer)
 {
 	uint64_t X;
 	uint64_t result;
@@ -64,7 +64,7 @@ __r48_rand_iterate(unsigned short int xsubi[3], struct r48_rand_data *buffer)
 	   48 bits.  Because we compute the modulus it does not care how
 	   many bits really are computed.  */
 
-	X = (uint64_t) xsubi[2] << 32 | (uint32_t) xsubi[1] << 16 | xsubi[0];
+	X = (uint64_t)xsubi[2] << 32 | (uint32_t)xsubi[1] << 16 | xsubi[0];
 
 	result = X * buffer->__a + buffer->__c;
 
@@ -80,16 +80,15 @@ __attribute__((no_sanitize("integer")))
 #elif defined __GNUC__
 __attribute__((no_sanitize("shift-base")))
 #endif
-static int
-r48_r(unsigned short int xsubi[3], struct r48_rand_data *buffer,
-      long int *result)
+static int r48_r(unsigned short int xsubi[3], struct r48_rand_data *buffer,
+		 long int *result)
 {
 	/* Compute next state.  */
 	if (__r48_rand_iterate(xsubi, buffer) < 0)
 		return -1;
 
 	/* Store the result.  */
-	*result = (int32_t) ((xsubi[2] << 16) | xsubi[1]);
+	*result = (int32_t)((xsubi[2] << 16) | xsubi[1]);
 
 	return 0;
 }

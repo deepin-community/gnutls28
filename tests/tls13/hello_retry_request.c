@@ -20,66 +20,71 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#include "config.h"
 #endif
 
 #include <stdio.h>
 #include <stdlib.h>
-
-#if defined(_WIN32)
-
-int main()
-{
-	exit(77);
-}
-
-#else
+#include <stdint.h>
 
 #include <string.h>
-#include <sys/types.h>
-#include <netinet/in.h>
-#include <sys/socket.h>
-#include <sys/wait.h>
-#include <arpa/inet.h>
-#include <unistd.h>
 #include <gnutls/gnutls.h>
-#include <gnutls/dtls.h>
 #include <assert.h>
-#include <signal.h>
 
 #include "cert-common.h"
 #include "utils.h"
 #include "tls13/ext-parse.h"
+#include "eagain-common.h"
 
 /* This program tests whether the version in Hello Retry Request message
  * is the expected */
 
-const char *testname = "";
+const char *testname = "hello entry request";
 
-#define myfail(fmt, ...) \
-	fail("%s: "fmt, testname, ##__VA_ARGS__)
+const char *side = "";
 
-static void server_log_func(int level, const char *str)
+#define myfail(fmt, ...) fail("%s: " fmt, testname, ##__VA_ARGS__)
+
+static void tls_log_func(int level, const char *str)
 {
-	fprintf(stderr, "server|<%d>| %s", level, str);
-}
-
-static void client_log_func(int level, const char *str)
-{
-	fprintf(stderr, "client|<%d>| %s", level, str);
+	fprintf(stderr, "%s|<%d>| %s", side, level, str);
 }
 
 #define HANDSHAKE_SESSION_ID_POS 34
+#define MAX_EXT_TYPES 64
 
 struct ctx_st {
 	unsigned hrr_seen;
 	unsigned hello_counter;
 	uint8_t session_id[32];
 	size_t session_id_len;
+	unsigned extensions[MAX_EXT_TYPES];
+	size_t extensions_size1;
+	size_t extensions_size2;
 };
 
+static int ext_callback(void *_ctx, unsigned tls_id, const unsigned char *data,
+			unsigned size)
+{
+	struct ctx_st *ctx = _ctx;
+	if (ctx->hello_counter == 0) {
+		assert(ctx->extensions_size1 < MAX_EXT_TYPES);
+		ctx->extensions[ctx->extensions_size1++] = tls_id;
+	} else {
+		assert(ctx->extensions_size2 < MAX_EXT_TYPES);
+		if (tls_id != ctx->extensions[ctx->extensions_size2]) {
+			fail("extension doesn't match at position %zu, %u != %u\n",
+			     ctx->extensions_size2, tls_id,
+			     ctx->extensions[ctx->extensions_size2]);
+		}
+		ctx->extensions_size2++;
+	}
+	return 0;
+}
+
 static int hello_callback(gnutls_session_t session, unsigned int htype,
-			  unsigned post, unsigned int incoming, const gnutls_datum_t *msg)
+			  unsigned post, unsigned int incoming,
+			  const gnutls_datum_t *msg)
 {
 	struct ctx_st *ctx = gnutls_session_get_ptr(session);
 	assert(ctx != NULL);
@@ -87,22 +92,35 @@ static int hello_callback(gnutls_session_t session, unsigned int htype,
 	if (htype == GNUTLS_HANDSHAKE_HELLO_RETRY_REQUEST)
 		ctx->hrr_seen = 1;
 
-	if (htype == GNUTLS_HANDSHAKE_CLIENT_HELLO && post == GNUTLS_HOOK_POST) {
+	if (htype == GNUTLS_HANDSHAKE_CLIENT_HELLO &&
+	    post == GNUTLS_HOOK_POST) {
 		size_t session_id_len;
 		uint8_t *session_id;
+		unsigned pos = HANDSHAKE_SESSION_ID_POS;
+		gnutls_datum_t mmsg;
+		int ret;
 
-		assert(msg->size > HANDSHAKE_SESSION_ID_POS + 1);
-		session_id_len = msg->data[HANDSHAKE_SESSION_ID_POS];
-		session_id = &msg->data[HANDSHAKE_SESSION_ID_POS + 1];
+		assert(msg->size > pos + 1);
+		session_id_len = msg->data[pos];
+		session_id = &msg->data[pos + 1];
+
+		SKIP8(pos, msg->size);
+		SKIP16(pos, msg->size);
+		SKIP8(pos, msg->size);
+
+		mmsg.data = &msg->data[pos];
+		mmsg.size = msg->size - pos;
 
 		if (ctx->hello_counter > 0) {
 			assert(msg->size > 4);
 			if (msg->data[0] != 0x03 || msg->data[1] != 0x03) {
-				fail("version is %d.%d expected 3,3\n", (int)msg->data[0], (int)msg->data[1]);
+				fail("version is %d.%d expected 3.3\n",
+				     (int)msg->data[0], (int)msg->data[1]);
 			}
 
 			if (session_id_len != ctx->session_id_len ||
-			    memcmp(session_id, ctx->session_id, session_id_len) != 0) {
+			    memcmp(session_id, ctx->session_id,
+				   session_id_len) != 0) {
 				fail("different legacy_session_id is sent after HRR\n");
 			}
 		}
@@ -110,146 +128,94 @@ static int hello_callback(gnutls_session_t session, unsigned int htype,
 		ctx->session_id_len = session_id_len;
 		memcpy(ctx->session_id, session_id, session_id_len);
 
+		ret = gnutls_ext_raw_parse(ctx, ext_callback, &mmsg, 0);
+		if (ret < 0) {
+			fail("unable to parse extensions: %s\n",
+			     gnutls_strerror(ret));
+		}
+
 		ctx->hello_counter++;
 	}
 
 	return 0;
 }
 
-
-static void client(int fd)
+void doit(void)
 {
-	int ret;
-	gnutls_certificate_credentials_t x509_cred;
-	gnutls_session_t session;
-	struct ctx_st ctx;
+	int sret, cret;
+	gnutls_certificate_credentials_t scred, ccred;
+	gnutls_session_t server, client;
 
+	struct ctx_st ctx;
 	memset(&ctx, 0, sizeof(ctx));
 
-	if (debug) {
-		gnutls_global_set_log_function(client_log_func);
-		gnutls_global_set_log_level(7);
-	}
+	global_init();
 
-	assert(gnutls_certificate_allocate_credentials(&x509_cred)>=0);
+	gnutls_global_set_log_function(tls_log_func);
+	if (debug)
+		gnutls_global_set_log_level(9);
 
-	assert(gnutls_init(&session, GNUTLS_CLIENT|GNUTLS_KEY_SHARE_TOP)>=0);
+	/* Init server */
+	assert(gnutls_certificate_allocate_credentials(&scred) >= 0);
+	assert(gnutls_certificate_set_x509_key_mem(scred, &server_cert,
+						   &server_key,
+						   GNUTLS_X509_FMT_PEM) >= 0);
 
-	gnutls_handshake_set_timeout(session, get_timeout());
-	gnutls_session_set_ptr(session, &ctx);
+	gnutls_init(&server, GNUTLS_SERVER);
 
-	ret = gnutls_priority_set_direct(session, "NORMAL:-VERS-ALL:+VERS-TLS1.3:-GROUP-ALL:+GROUP-SECP256R1:+GROUP-X25519", NULL);
-	if (ret < 0)
+	assert(gnutls_priority_set_direct(
+		       server,
+		       "NORMAL:-VERS-ALL:+VERS-TLS1.3:-GROUP-ALL:+GROUP-X25519",
+		       NULL) >= 0);
+
+	gnutls_credentials_set(server, GNUTLS_CRD_CERTIFICATE, scred);
+	gnutls_transport_set_push_function(server, server_push);
+	gnutls_transport_set_pull_function(server, server_pull);
+	gnutls_transport_set_ptr(server, server);
+
+	/* Init client */
+	assert(gnutls_certificate_allocate_credentials(&ccred) >= 0);
+
+	assert(gnutls_init(&client, GNUTLS_CLIENT | GNUTLS_KEY_SHARE_TOP) >= 0);
+
+	gnutls_session_set_ptr(client, &ctx);
+
+	cret = gnutls_priority_set_direct(
+		client,
+		"NORMAL:-VERS-ALL:+VERS-TLS1.3:-GROUP-ALL:+GROUP-SECP256R1:+GROUP-X25519",
+		NULL);
+	if (cret < 0)
 		myfail("cannot set TLS 1.3 priorities\n");
 
-	gnutls_credentials_set(session, GNUTLS_CRD_CERTIFICATE, x509_cred);
+	gnutls_credentials_set(client, GNUTLS_CRD_CERTIFICATE, ccred);
+	gnutls_transport_set_push_function(client, client_push);
+	gnutls_transport_set_pull_function(client, client_pull);
+	gnutls_transport_set_ptr(client, client);
 
-	gnutls_handshake_set_hook_function(session, GNUTLS_HANDSHAKE_ANY,
-					   GNUTLS_HOOK_BOTH,
-					   hello_callback);
+	gnutls_handshake_set_hook_function(client, GNUTLS_HANDSHAKE_ANY,
+					   GNUTLS_HOOK_BOTH, hello_callback);
 
-	gnutls_transport_set_int(session, fd);
-
-	do {
-		ret = gnutls_handshake(session);
-	}
-	while (ret < 0 && gnutls_error_is_fatal(ret) == 0);
+	HANDSHAKE(client, server);
 
 	assert(ctx.hrr_seen != 0);
 
-	close(fd);
+	if (gnutls_group_get(server) != GNUTLS_GROUP_X25519)
+		myfail("group doesn't match the expected: %s\n",
+		       gnutls_group_get_name(gnutls_group_get(server)));
 
-	gnutls_deinit(session);
+	if (ctx.extensions_size1 != ctx.extensions_size2)
+		myfail("the number of extensions don't match in second Client Hello: %zu != %zu\n",
+		       ctx.extensions_size1, ctx.extensions_size2);
 
-	gnutls_certificate_free_credentials(x509_cred);
+	gnutls_bye(client, GNUTLS_SHUT_WR);
+	gnutls_bye(server, GNUTLS_SHUT_WR);
+
+	gnutls_deinit(client);
+	gnutls_deinit(server);
+
+	gnutls_certificate_free_credentials(scred);
+	gnutls_certificate_free_credentials(ccred);
+
+	gnutls_global_deinit();
+	reset_buffers();
 }
-
-static void server(int fd)
-{
-	int ret;
-	gnutls_session_t session;
-	gnutls_certificate_credentials_t x509_cred;
-
-	if (debug) {
-		gnutls_global_set_log_function(server_log_func);
-		gnutls_global_set_log_level(4711);
-	}
-
-	assert(gnutls_certificate_allocate_credentials(&x509_cred)>=0);
-	assert(gnutls_certificate_set_x509_key_mem(x509_cred, &server_cert,
-						   &server_key,
-						   GNUTLS_X509_FMT_PEM)>=0);
-
-	gnutls_init(&session, GNUTLS_SERVER);
-
-	gnutls_handshake_set_timeout(session, get_timeout());
-
-	/* server only supports x25519, client advertises secp256r1 */
-	assert(gnutls_priority_set_direct(session, "NORMAL:-VERS-ALL:+VERS-TLS1.3:-GROUP-ALL:+GROUP-X25519", NULL)>=0);
-
-	gnutls_credentials_set(session, GNUTLS_CRD_CERTIFICATE, x509_cred);
-
-	gnutls_transport_set_int(session, fd);
-
-	do {
-		ret = gnutls_handshake(session);
-		if (ret == GNUTLS_E_INTERRUPTED) { /* expected */
-			break;
-		}
-	} while (ret < 0 && gnutls_error_is_fatal(ret) == 0);
-
-	if (ret < 0)
-		myfail("handshake error: %s\n", gnutls_strerror(ret));
-
-	if (gnutls_group_get(session) != GNUTLS_GROUP_X25519)
-		myfail("group doesn't match the expected: %s\n", gnutls_group_get_name(gnutls_group_get(session)));
-
-	close(fd);
-	gnutls_deinit(session);
-
-	gnutls_certificate_free_credentials(x509_cred);
-}
-
-static void ch_handler(int sig)
-{
-	int status = 0;
-	wait(&status);
-	check_wait_status(status);
-	return;
-}
-
-void doit(void)
-{
-	int fd[2];
-	int ret;
-	pid_t child;
-
-	signal(SIGCHLD, ch_handler);
-	signal(SIGPIPE, SIG_IGN);
-
-	ret = socketpair(AF_UNIX, SOCK_STREAM, 0, fd);
-	if (ret < 0) {
-		perror("socketpair");
-		exit(1);
-	}
-
-	child = fork();
-	if (child < 0) {
-		perror("fork");
-		fail("fork");
-		exit(1);
-	}
-
-	if (child) {
-		/* parent */
-		close(fd[1]);
-		client(fd[0]);
-		kill(child, SIGTERM);
-	} else {
-		close(fd[0]);
-		server(fd[1]);
-		exit(0);
-	}
-}
-
-#endif				/* _WIN32 */

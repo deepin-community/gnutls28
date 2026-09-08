@@ -9,19 +9,13 @@ PKGTDIR=`pwd`/b4deb/pkgtest
 rm -rf "$PKGTDIR"
 mkdir -p "$PKGTDIR" "$PKGTDIR/top_builddir/tests"
 export top_builddir="$PKGTDIR/top_builddir"
+export abs_top_builddir="$PKGTDIR/top_builddir"
 
-printandrun()
-{
-	echo "$@"
-	"$@"
-}
-
-printandrun \
-	gcc \
-       `env DEB_BUILD_MAINT_OPTIONS="hardening=+bindnow" dpkg-buildflags --get CPPFLAGS` \
-       `env DEB_BUILD_MAINT_OPTIONS="hardening=+bindnow" dpkg-buildflags --get CFLAGS` \
-       `env DEB_BUILD_MAINT_OPTIONS="hardening=+bindnow" dpkg-buildflags --get LDFLAGS` \
-       -o ${top_builddir}/tests/datefudge-check tests/datefudge-check.c
+if [ `dpkg-architecture -qDEB_HOST_ARCH_BITS` = 64 ] ; then
+	export ac_cv_sizeof_time_t=8
+else
+	export ac_cv_sizeof_time_t=4
+fi
 
 cd "$PKGTDIR"
 
@@ -32,6 +26,7 @@ export  CLI=/usr/bin/gnutls-cli \
 	DCLI=/usr/bin/gnutls-cli-debug \
 	OCSPTOOL=/usr/bin/ocsptool \
 	ENABLE_GOST=1 \
+	ENABLE_DSA=1 \
 	PKCS12_ITER_COUNT=600000
 
 # Set the sizeof(time_t) to the correct value for the platform, to ensure we
@@ -45,8 +40,8 @@ if test -z "${ac_cv_sizeof_time_t}"; then
 fi
 
 count=1
-for i in $(find ../../tests/ -type f -perm -u+rx | \
-	grep -Ev 'tests/gnutls-cli-debug.sh|tests/system-override-hash.sh|tests/pkgconfig.sh|tests/system-override-sig.sh|tests/system-override-sig-allowlist.sh|tests/system-override-sig-tls.sh|tests/tls13/prf-early.sh|tests/dtls/dtls.sh|tests/dtls/dtls-resume.sh|tests/cert-tests/tolerate-invalid-time.sh|tests/slow/|tests/protocol-set-allowlist.sh|tests/system-override-hash-allowlist.sh|tests/system-override-curves-allowlist.sh|tests/ktls.sh' \
+for i in $(find ../../tests/ -type f -name '*.sh' | \
+	grep -Ev 'tests/gnutls-cli-debug.sh|tests/system-override-hash.sh|tests/pkgconfig.sh|tests/system-override-sig.sh|tests/system-override-sig-allowlist.sh|tests/system-override-sig-tls.sh|tests/tls13/prf-early.sh|tests/dtls/dtls.sh|tests/dtls/dtls-resume.sh|tests/cert-tests/tolerate-invalid-time.sh|tests/slow/|tests/protocol-set-allowlist.sh|tests/system-override-hash-allowlist.sh|tests/system-override-curves-allowlist.sh|tests/ktls.sh|tests/ktls_keyupdate.sh|tests/system-override-allow-rsa-pkcs1-encrypt.sh' \
 	| env LC_COLLATE=C.UTF-8 sort) ; do
 	echo "running [$count]$i ..."
 	case $(dirname $i) in
@@ -59,7 +54,7 @@ for i in $(find ../../tests/ -type f -perm -u+rx | \
 		*)
 			d="";;
 	esac
-	if env srcdir=../../tests/$d $i ; then
+	if env GNUTLS_SYSTEM_PRIORITY_FILE= srcdir=../../tests/$d sh $i ; then
 		echo SUCCESS [$count]$i
 	else
 		if [ $? = 77 ] ; then

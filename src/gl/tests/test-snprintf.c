@@ -1,9 +1,9 @@
 /* Test of snprintf() function.
-   Copyright (C) 2007-2021 Free Software Foundation, Inc.
+   Copyright (C) 2007-2026 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 3 of the License, or
+   the Free Software Foundation, either version 3 of the License, or
    (at your option) any later version.
 
    This program is distributed in the hope that it will be useful,
@@ -28,16 +28,15 @@ SIGNATURE_CHECK (snprintf, int, (char *, size_t, char const *, ...));
 #include "macros.h"
 
 int
-main (int argc, char *argv[])
+main ()
 {
   char buf[8];
-  int size;
   int retval;
 
   retval = snprintf (NULL, 0, "%d", 12345);
   ASSERT (retval == 5);
 
-  for (size = 0; size <= 8; size++)
+  for (int size = 0; size <= 8; size++)
     {
       memcpy (buf, "DEADBEEF", 8);
       retval = snprintf (buf, size, "%d", 12345);
@@ -46,17 +45,17 @@ main (int argc, char *argv[])
         {
           if (size > 0)
             {
-              ASSERT (memcmp (buf, "12345", size - 1) == 0);
+              ASSERT (memeq (buf, "12345", size - 1));
               ASSERT (buf[size - 1] == '\0' || buf[size - 1] == '0' + size);
             }
 #if !CHECK_SNPRINTF_POSIX
           if (size > 0)
 #endif
-            ASSERT (memcmp (buf + size, &"DEADBEEF"[size], 8 - size) == 0);
+            ASSERT (memeq (buf + size, &"DEADBEEF"[size], 8 - size));
         }
       else
         {
-          ASSERT (memcmp (buf, "12345\0EF", 8) == 0);
+          ASSERT (memeq (buf, "12345\0EF", 8));
         }
     }
 
@@ -64,9 +63,9 @@ main (int argc, char *argv[])
   {
     char result[100];
     retval = snprintf (result, sizeof (result), "%2$d %1$d", 33, 55);
-    ASSERT (strcmp (result, "55 33") == 0);
+    ASSERT (streq (result, "55 33"));
     ASSERT (retval == strlen (result));
   }
 
-  return 0;
+  return test_exit_status;
 }

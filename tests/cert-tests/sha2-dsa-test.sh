@@ -17,8 +17,7 @@
 # General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with GnuTLS; if not, write to the Free Software Foundation,
-# Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+# along with GnuTLS.  If not, see <https://www.gnu.org/licenses/>.
 
 #set -e
 
@@ -30,6 +29,10 @@ SUBCAFILE=subca-dsa.$$.tmp
 TMPFILE=sha2-dsa.$$.tmp
 USERFILE=user-dsa.$$.tmp
 VERIFYFILE=verify-dsa.$$.tmp
+
+if test "x$ENABLE_DSA" != "x1"; then
+	exit 77
+fi
 
 if ! test -x "${CERTTOOL}"; then
 	exit 77

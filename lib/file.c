@@ -22,7 +22,7 @@
  */
 
 #include "gnutls_int.h"
-#include <file.h>
+#include "file.h"
 #include <read-file.h>
 
 int _gnutls_file_exists(const char *file)
@@ -55,16 +55,22 @@ int _gnutls_file_exists(const char *file)
  *
  * Since 3.1.0
  **/
-int gnutls_load_file(const char *filename, gnutls_datum_t * data)
+int gnutls_load_file(const char *filename, gnutls_datum_t *data)
 {
 	size_t len;
 
-	data->data = (void *) read_file(filename, RF_BINARY, &len);
+	data->data = (void *)read_file(filename, RF_BINARY, &len);
 	if (data->data == NULL)
 		return GNUTLS_E_FILE_ERROR;
 
 	if (malloc != gnutls_malloc) {
 		void *tmp = gnutls_malloc(len);
+
+		if (tmp == NULL) {
+			gnutls_free(data->data);
+			data->data = NULL;
+			return GNUTLS_E_MEMORY_ERROR;
+		}
 
 		memcpy(tmp, data->data, len);
 		free(data->data);
@@ -75,4 +81,3 @@ int gnutls_load_file(const char *filename, gnutls_datum_t * data)
 
 	return 0;
 }
-

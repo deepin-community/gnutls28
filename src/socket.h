@@ -5,13 +5,12 @@
 #include <gnutls/socket.h>
 
 #define SOCKET_FLAG_UDP 1
-#define SOCKET_FLAG_FASTOPEN (1<<1)
-#define SOCKET_FLAG_STARTTLS (1<<2)
-#define SOCKET_FLAG_RAW (1<<3) /* unencrypted */
-#define SOCKET_FLAG_VERBOSE (1<<4)
-#define SOCKET_FLAG_SKIP_INIT (1<<5)
-#define SOCKET_FLAG_DONT_PRINT_ERRORS (1<<6)
-
+#define SOCKET_FLAG_FASTOPEN (1 << 1)
+#define SOCKET_FLAG_STARTTLS (1 << 2)
+#define SOCKET_FLAG_RAW (1 << 3) /* unencrypted */
+#define SOCKET_FLAG_VERBOSE (1 << 4)
+#define SOCKET_FLAG_SKIP_INIT (1 << 5)
+#define SOCKET_FLAG_DONT_PRINT_ERRORS (1 << 6)
 
 typedef struct {
 	int fd;
@@ -19,6 +18,7 @@ typedef struct {
 	int secure;
 	char *hostname;
 	const char *app_proto;
+	const char *app_hostname;
 	char *ip;
 	char *service;
 	struct addrinfo *ptr;
@@ -40,28 +40,31 @@ typedef struct {
 
 /* calling program must provide that */
 extern gnutls_session_t init_tls_session(const char *host);
-int do_handshake(socket_st * socket);
+int do_handshake(socket_st *socket);
 
-ssize_t socket_recv(const socket_st * socket, void *buffer,
+ssize_t socket_recv(const socket_st *socket, void *buffer, int buffer_size);
+ssize_t socket_recv_timeout(const socket_st *socket, void *buffer,
+			    int buffer_size, unsigned ms);
+ssize_t socket_send(const socket_st *socket, const void *buffer,
 		    int buffer_size);
-ssize_t socket_recv_timeout(const socket_st * socket, void *buffer,
-		    int buffer_size, unsigned ms);
-ssize_t socket_send(const socket_st * socket, const void *buffer,
-		    int buffer_size);
-ssize_t socket_send_range(const socket_st * socket, const void *buffer,
-			  int buffer_size, gnutls_range_st * range);
-void
-socket_open2(socket_st * hd, const char *hostname, const char *service,
-	    const char *app_proto, int flags, const char *msg, gnutls_datum_t *rdata, gnutls_datum_t *edata,
-	    FILE *server_trace, FILE *client_trace);
+ssize_t socket_send_range(const socket_st *socket, const void *buffer,
+			  int buffer_size, gnutls_range_st *range);
+void socket_open_int(socket_st *hd, const char *hostname, const char *service,
+		     const char *app_proto, const char *app_hostname, int flags,
+		     const char *msg, gnutls_datum_t *rdata,
+		     gnutls_datum_t *edata, FILE *server_trace,
+		     FILE *client_trace);
 
-#define socket_open(hd, host, service, app_proto, flags, msg, rdata) \
-	socket_open2(hd, host, service, app_proto, flags, msg, rdata, NULL, NULL, NULL)
+#define socket_open(hd, host, service, app_proto, flags, msg, rdata)           \
+	socket_open_int(hd, host, service, app_proto, NULL, flags, msg, rdata, \
+			NULL, NULL, NULL)
 
-#define socket_open3(hd, host, service, app_proto, flags, msg, rdata, edata)	\
-	socket_open2(hd, host, service, app_proto, flags, msg, rdata, edata, NULL, NULL)
+#define socket_open2(hd, host, service, app_proto, flags, msg, rdata, edata,   \
+		     server_trace, client_trace)                               \
+	socket_open_int(hd, host, service, app_proto, NULL, flags, msg, rdata, \
+			edata, server_trace, client_trace)
 
-void socket_bye(socket_st * socket, unsigned polite);
+void socket_bye(socket_st *socket, unsigned polite);
 
 int service_to_port(const char *service, const char *proto);
 const char *port_to_service(const char *sport, const char *proto);

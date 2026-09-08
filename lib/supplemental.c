@@ -70,9 +70,8 @@ static gnutls_supplemental_entry_st *suppfunc = NULL;
  * Returns: a string that contains the name of the specified
  *   supplemental data format type, or %NULL for unknown types.
  **/
-const char
-    *gnutls_supplemental_get_name(gnutls_supplemental_data_format_type_t
-				  type)
+const char *
+gnutls_supplemental_get_name(gnutls_supplemental_data_format_type_t type)
 {
 	size_t i;
 
@@ -98,7 +97,8 @@ void _gnutls_supplemental_deinit(void)
 }
 
 static gnutls_supp_recv_func
-get_supp_func_recv(gnutls_session_t session, gnutls_supplemental_data_format_type_t type)
+get_supp_func_recv(gnutls_session_t session,
+		   gnutls_supplemental_data_format_type_t type)
 {
 	size_t i;
 
@@ -115,8 +115,9 @@ get_supp_func_recv(gnutls_session_t session, gnutls_supplemental_data_format_typ
 	return NULL;
 }
 
-static int gen_supplemental(gnutls_session_t session, const gnutls_supplemental_entry_st *supp,
-			    gnutls_buffer_st * buf)
+static int gen_supplemental(gnutls_session_t session,
+			    const gnutls_supplemental_entry_st *supp,
+			    gnutls_buffer_st *buf)
 {
 	int ret;
 	gnutls_supp_send_func supp_send = supp->supp_send_func;
@@ -139,18 +140,16 @@ static int gen_supplemental(gnutls_session_t session, const gnutls_supplemental_
 	if (buf->length > sizepos + 4) {
 		buf->data[sizepos] = (supp->type >> 8) & 0xFF;
 		buf->data[sizepos + 1] = supp->type & 0xFF;
-		buf->data[sizepos + 2] =
-		    ((buf->length - sizepos - 4) >> 8) & 0xFF;
-		buf->data[sizepos + 3] =
-		    (buf->length - sizepos - 4) & 0xFF;
+		buf->data[sizepos + 2] = ((buf->length - sizepos - 4) >> 8) &
+					 0xFF;
+		buf->data[sizepos + 3] = (buf->length - sizepos - 4) & 0xFF;
 	} else
 		buf->length -= 4;
 
 	return 0;
 }
 
-int
-_gnutls_gen_supplemental(gnutls_session_t session, gnutls_buffer_st * buf)
+int _gnutls_gen_supplemental(gnutls_session_t session, gnutls_buffer_st *buf)
 {
 	size_t i;
 	int ret;
@@ -164,7 +163,8 @@ _gnutls_gen_supplemental(gnutls_session_t session, gnutls_buffer_st * buf)
 	}
 
 	for (i = 0; i < session->internals.rsup_size; i++) {
-		ret = gen_supplemental(session, &session->internals.rsup[i], buf);
+		ret = gen_supplemental(session, &session->internals.rsup[i],
+				       buf);
 		if (ret < 0)
 			return gnutls_assert_val(ret);
 	}
@@ -178,19 +178,17 @@ _gnutls_gen_supplemental(gnutls_session_t session, gnutls_buffer_st * buf)
 	i = buf->length - init_pos - 3;
 
 	buf->data[init_pos] = (i >> 16) & 0xFF;
-	buf->data[init_pos+1] = (i >> 8) & 0xFF;
-	buf->data[init_pos+2] = i & 0xFF;
+	buf->data[init_pos + 1] = (i >> 8) & 0xFF;
+	buf->data[init_pos + 2] = i & 0xFF;
 
-	_gnutls_debug_log
-	    ("EXT[%p]: Sending %d bytes of supplemental data\n", session,
-	     (int) buf->length);
+	_gnutls_debug_log("EXT[%p]: Sending %d bytes of supplemental data\n",
+			  session, (int)buf->length);
 
 	return buf->length - init_pos;
 }
 
-int
-_gnutls_parse_supplemental(gnutls_session_t session,
-			   const uint8_t * data, int datalen)
+int _gnutls_parse_supplemental(gnutls_session_t session, const uint8_t *data,
+			       int datalen)
 {
 	const uint8_t *p = data;
 	size_t dsize = datalen;
@@ -218,9 +216,9 @@ _gnutls_parse_supplemental(gnutls_session_t session,
 		supp_data_length = _gnutls_read_uint16(p);
 		p += 2;
 
-		_gnutls_debug_log
-		    ("EXT[%p]: Got supplemental type=%02x length=%d\n",
-		     session, supp_data_type, supp_data_length);
+		_gnutls_debug_log(
+			"EXT[%p]: Got supplemental type=%02x length=%d\n",
+			session, supp_data_type, supp_data_length);
 
 		recv_func = get_supp_func_recv(session, supp_data_type);
 		if (recv_func) {
@@ -236,14 +234,12 @@ _gnutls_parse_supplemental(gnutls_session_t session,
 
 		DECR_LEN(dsize, supp_data_length);
 		p += supp_data_length;
-	}
-	while (dsize > 0);
+	} while (dsize > 0);
 
 	return 0;
 }
 
-static int
-_gnutls_supplemental_register(gnutls_supplemental_entry_st *entry)
+static int _gnutls_supplemental_register(gnutls_supplemental_entry_st *entry)
 {
 	gnutls_supplemental_entry_st *p;
 	unsigned i;
@@ -294,9 +290,10 @@ _gnutls_supplemental_register(gnutls_supplemental_entry_st *entry)
  *
  * Since: 3.4.0
  **/
-int
-gnutls_supplemental_register(const char *name, gnutls_supplemental_data_format_type_t type,
-			     gnutls_supp_recv_func recv_func, gnutls_supp_send_func send_func)
+int gnutls_supplemental_register(const char *name,
+				 gnutls_supplemental_data_format_type_t type,
+				 gnutls_supp_recv_func recv_func,
+				 gnutls_supp_send_func send_func)
 {
 	gnutls_supplemental_entry_st tmp_entry;
 	int ret;
@@ -305,7 +302,7 @@ gnutls_supplemental_register(const char *name, gnutls_supplemental_data_format_t
 	tmp_entry.type = type;
 	tmp_entry.supp_recv_func = recv_func;
 	tmp_entry.supp_send_func = send_func;
-	
+
 	ret = _gnutls_supplemental_register(&tmp_entry);
 	if (ret < 0) {
 		gnutls_free(tmp_entry.name);
@@ -340,12 +337,11 @@ gnutls_supplemental_register(const char *name, gnutls_supplemental_data_format_t
  *
  * Since: 3.5.5
  **/
-int
-gnutls_session_supplemental_register(gnutls_session_t session, const char *name,
-				     gnutls_supplemental_data_format_type_t type,
-				     gnutls_supp_recv_func recv_func,
-				     gnutls_supp_send_func send_func,
-				     unsigned flags)
+int gnutls_session_supplemental_register(
+	gnutls_session_t session, const char *name,
+	gnutls_supplemental_data_format_type_t type,
+	gnutls_supp_recv_func recv_func, gnutls_supp_send_func send_func,
+	unsigned flags)
 {
 	gnutls_supplemental_entry_st tmp_entry;
 	gnutls_supplemental_entry_st *p;
@@ -362,13 +358,15 @@ gnutls_session_supplemental_register(gnutls_session_t session, const char *name,
 	}
 
 	p = gnutls_realloc(session->internals.rsup,
-			   sizeof(gnutls_supplemental_entry_st)*(session->internals.rsup_size + 1));
+			   sizeof(gnutls_supplemental_entry_st) *
+				   (session->internals.rsup_size + 1));
 	if (!p)
 		return gnutls_assert_val(GNUTLS_E_MEMORY_ERROR);
 
 	session->internals.rsup = p;
 
-	memcpy(&session->internals.rsup[session->internals.rsup_size], &tmp_entry, sizeof(tmp_entry));
+	memcpy(&session->internals.rsup[session->internals.rsup_size],
+	       &tmp_entry, sizeof(tmp_entry));
 	session->internals.rsup_size++;
 
 	session->internals.flags |= INT_FLAG_NO_TLS13;
@@ -387,10 +385,11 @@ gnutls_session_supplemental_register(gnutls_session_t session, const char *name,
  *
  * Since: 3.4.0
  **/
-void
-gnutls_supplemental_recv(gnutls_session_t session, unsigned do_recv_supplemental)
+void gnutls_supplemental_recv(gnutls_session_t session,
+			      unsigned do_recv_supplemental)
 {
-	session->security_parameters.do_recv_supplemental = do_recv_supplemental;
+	session->security_parameters.do_recv_supplemental =
+		do_recv_supplemental;
 }
 
 /**
@@ -403,8 +402,9 @@ gnutls_supplemental_recv(gnutls_session_t session, unsigned do_recv_supplemental
  *
  * Since: 3.4.0
  **/
-void
-gnutls_supplemental_send(gnutls_session_t session, unsigned do_send_supplemental)
+void gnutls_supplemental_send(gnutls_session_t session,
+			      unsigned do_send_supplemental)
 {
-	session->security_parameters.do_send_supplemental = do_send_supplemental;
+	session->security_parameters.do_send_supplemental =
+		do_send_supplemental;
 }

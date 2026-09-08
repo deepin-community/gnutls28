@@ -1,9 +1,9 @@
 /* Test of setting the current locale.
-   Copyright (C) 2011-2021 Free Software Foundation, Inc.
+   Copyright (C) 2011-2026 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 3 of the License, or
+   the Free Software Foundation, either version 3 of the License, or
    (at your option) any later version.
 
    This program is distributed in the hope that it will be useful,
@@ -29,7 +29,7 @@ main ()
      variable.  */
   if (setlocale (LC_ALL, "") != NULL)
     /* It was successful.  Check whether LC_CTYPE is non-trivial.  */
-    if (strcmp (setlocale (LC_CTYPE, NULL), "C") == 0)
+    if (streq (setlocale (LC_CTYPE, NULL), "C"))
       {
         fprintf (stderr, "setlocale did not fail for implicit %s\n",
                  getenv ("LC_ALL"));
@@ -44,7 +44,7 @@ main ()
      variable.  */
   if (setlocale (LC_ALL, getenv ("LC_ALL")) != NULL)
     /* It was successful.  Check whether LC_CTYPE is non-trivial.  */
-    if (strcmp (setlocale (LC_CTYPE, NULL), "C") == 0)
+    if (streq (setlocale (LC_CTYPE, NULL), "C"))
       {
         fprintf (stderr, "setlocale did not fail for explicit %s\n",
                  getenv ("LC_ALL"));

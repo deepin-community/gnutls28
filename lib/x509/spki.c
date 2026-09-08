@@ -22,9 +22,9 @@
 
 #include "gnutls_int.h"
 #include "errors.h"
-#include <common.h>
-#include <x509.h>
-#include <x509_int.h>
+#include "common.h"
+#include "x509.h"
+#include "x509_int.h"
 
 /**
  * gnutls_x509_spki_init:
@@ -40,22 +40,21 @@
  * Since: 3.6.0
  *
  **/
-int
-gnutls_x509_spki_init(gnutls_x509_spki_t *spki)
+int gnutls_x509_spki_init(gnutls_x509_spki_t *spki)
 {
 	gnutls_x509_spki_t tmp;
 
+	*spki = NULL;
 	FAIL_IF_LIB_ERROR;
 
-	tmp =
-	    gnutls_calloc(1, sizeof(gnutls_x509_spki_st));
+	tmp = gnutls_calloc(1, sizeof(gnutls_x509_spki_st));
 
 	if (!tmp)
 		return GNUTLS_E_MEMORY_ERROR;
 
 	*spki = tmp;
 
-	return 0;		/* success */
+	return 0; /* success */
 }
 
 /**
@@ -67,10 +66,24 @@ gnutls_x509_spki_init(gnutls_x509_spki_t *spki)
  * Since: 3.6.0
  *
  **/
-void
-gnutls_x509_spki_deinit(gnutls_x509_spki_t spki)
+void gnutls_x509_spki_deinit(gnutls_x509_spki_t spki)
 {
+	_gnutls_x509_spki_clear(spki);
 	gnutls_free(spki);
+}
+
+int _gnutls_x509_spki_copy(gnutls_x509_spki_st *dst,
+			   const gnutls_x509_spki_st *src)
+{
+	memcpy(dst, src, sizeof(*src));
+	return _gnutls_set_datum(&dst->rsa_oaep_label, src->rsa_oaep_label.data,
+				 src->rsa_oaep_label.size);
+}
+
+void _gnutls_x509_spki_clear(gnutls_x509_spki_st *spki)
+{
+	gnutls_free(spki->rsa_oaep_label.data);
+	memset(spki, 0, sizeof(*spki));
 }
 
 /**
@@ -85,10 +98,9 @@ gnutls_x509_spki_deinit(gnutls_x509_spki_t spki)
  * Since: 3.6.0
  *
  **/
-void
-gnutls_x509_spki_set_rsa_pss_params(gnutls_x509_spki_t spki,
-				    gnutls_digest_algorithm_t dig,
-				    unsigned int salt_size)
+void gnutls_x509_spki_set_rsa_pss_params(gnutls_x509_spki_t spki,
+					 gnutls_digest_algorithm_t dig,
+					 unsigned int salt_size)
 {
 	spki->pk = GNUTLS_PK_RSA_PSS;
 	spki->rsa_pss_dig = dig;
@@ -110,10 +122,9 @@ gnutls_x509_spki_set_rsa_pss_params(gnutls_x509_spki_t spki,
  * Since: 3.6.0
  *
  **/
-int
-gnutls_x509_spki_get_rsa_pss_params(gnutls_x509_spki_t spki,
-				    gnutls_digest_algorithm_t *dig,
-				    unsigned int *salt_size)
+int gnutls_x509_spki_get_rsa_pss_params(gnutls_x509_spki_t spki,
+					gnutls_digest_algorithm_t *dig,
+					unsigned int *salt_size)
 {
 	if (spki->pk == 0)
 		return gnutls_assert_val(GNUTLS_E_REQUESTED_DATA_NOT_AVAILABLE);
@@ -125,6 +136,77 @@ gnutls_x509_spki_get_rsa_pss_params(gnutls_x509_spki_t spki,
 		*dig = spki->rsa_pss_dig;
 	if (salt_size)
 		*salt_size = spki->salt_size;
+
+	return 0;
+}
+
+/**
+ * gnutls_x509_spki_set_rsa_oaep_params:
+ * @spki: the SubjectPublicKeyInfo structure
+ * @dig: a digest algorithm of type #gnutls_digest_algorithm_t
+ * @label: optional label
+ *
+ * This function will set the public key parameters for
+ * an RSA-OAEP algorithm, in the SubjectPublicKeyInfo structure.
+ *
+ * Returns: zero if the parameters are present or a negative
+ *     value on error.
+ *
+ * Since: 3.8.4
+ *
+ **/
+int gnutls_x509_spki_set_rsa_oaep_params(gnutls_x509_spki_t spki,
+					 gnutls_digest_algorithm_t dig,
+					 const gnutls_datum_t *label)
+{
+	spki->pk = GNUTLS_PK_RSA_OAEP;
+	spki->rsa_oaep_dig = dig;
+	if (label) {
+		int ret;
+
+		ret = _gnutls_set_datum(&spki->rsa_oaep_label, label->data,
+					label->size);
+		if (ret < 0)
+			return gnutls_assert_val(ret);
+	}
+	return 0;
+}
+
+/**
+ * gnutls_x509_spki_get_rsa_oaep_params:
+ * @spki: the SubjectPublicKeyInfo structure
+ * @dig: if non-NULL, it will hold the digest algorithm
+ * @label: if non-NULL, it will hold the pointer to label
+ *
+ * This function will get the public key algorithm parameters
+ * of RSA-OAEP type.
+ *
+ * Returns: zero if the parameters are present or a negative
+ *     value on error.
+ *
+ * Since: 3.8.4
+ *
+ **/
+int gnutls_x509_spki_get_rsa_oaep_params(gnutls_x509_spki_t spki,
+					 gnutls_digest_algorithm_t *dig,
+					 gnutls_datum_t *label)
+{
+	if (spki->pk == 0)
+		return gnutls_assert_val(GNUTLS_E_REQUESTED_DATA_NOT_AVAILABLE);
+
+	if (spki->pk != GNUTLS_PK_RSA_OAEP)
+		return gnutls_assert_val(GNUTLS_E_INVALID_REQUEST);
+
+	if (dig)
+		*dig = spki->rsa_oaep_dig;
+	if (label) {
+		int ret;
+
+		ret = _gnutls_set_datum(label, spki->rsa_oaep_label.data,
+					spki->rsa_oaep_label.size);
+		if (ret < 0)
+			return gnutls_assert_val(ret);
+	}
 
 	return 0;
 }

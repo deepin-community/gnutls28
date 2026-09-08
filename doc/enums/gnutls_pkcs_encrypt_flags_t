@@ -34,4 +34,10 @@ PBES2 GOST 28147-89 CFB with CryptoPro-B S-box.
 PBES2 GOST 28147-89 CFB with CryptoPro-C S-box.
 @item GNUTLS_@-PKCS_@-PBES2_@-GOST_@-CPD
 PBES2 GOST 28147-89 CFB with CryptoPro-D S-box.
+@item GNUTLS_@-PKCS_@-PBES1_@-DES_@-SHA1
+PBES1 with single DES; for compatibility purposes only.
+@item GNUTLS_@-PKCS_@-MLDSA_@-SEED
+Emit seed as an ML-DSA private key.
+@item GNUTLS_@-PKCS_@-MLDSA_@-EXPANDED
+Emit an expanded ML-DSA private key.
 @end table

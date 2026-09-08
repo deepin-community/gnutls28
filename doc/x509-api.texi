@@ -1046,13 +1046,13 @@ This function will deinitialize an iterator type.
 
 @var{crl_max}: Initially must hold the maximum number of crls. It will be updated with the number of crls available.
 
-@var{data}: The PEM encoded CRLs
+@var{data}: The CRL data
 
 @var{format}: One of DER or PEM.
 
 @var{flags}: must be (0) or an OR'd sequence of gnutls_certificate_import_flags.
 
-This function will convert the given PEM encoded CRL list
+This function will convert the given CRL list
 to the native gnutls_x509_crl_t format. The output will be stored
 in  @code{crls} .  They will be automatically initialized.
 
@@ -1070,13 +1070,13 @@ If the Certificate is PEM encoded it should have a header of "X509 CRL".
 
 @var{size}: It will contain the size of the list.
 
-@var{data}: The PEM encoded CRL.
+@var{data}: The CRL data.
 
 @var{format}: One of DER or PEM.
 
 @var{flags}: must be (0) or an OR'd sequence of gnutls_certificate_import_flags.
 
-This function will convert the given PEM encoded CRL list
+This function will convert the given CRL list
 to the native gnutls_x509_crl_t format. The output will be stored
 in  @code{crls} .  They will be automatically initialized.
 
@@ -5028,7 +5028,7 @@ negative error value.
 
 @subheading gnutls_x509_crt_set_subject_alternative_name
 @anchor{gnutls_x509_crt_set_subject_alternative_name}
-@deftypefun {int} {gnutls_x509_crt_set_subject_alternative_name} (gnutls_x509_crt_t @var{crt}, gnutls_x509_subject_alt_name_t           @var{type}, const char * @var{data_string})
+@deftypefun {int} {gnutls_x509_crt_set_subject_alternative_name} (gnutls_x509_crt_t @var{crt}, gnutls_x509_subject_alt_name_t @var{type}, const char * @var{data_string})
 @var{crt}: a certificate of type @code{gnutls_x509_crt_t} 
 
 @var{type}: is one of the gnutls_x509_subject_alt_name_t enumerations
@@ -6894,6 +6894,25 @@ function will utilize the PIN callbacks if any.
 negative error value.
 @end deftypefun
 
+@subheading gnutls_x509_privkey_import_dh_raw
+@anchor{gnutls_x509_privkey_import_dh_raw}
+@deftypefun {int} {gnutls_x509_privkey_import_dh_raw} (gnutls_x509_privkey_t @var{key}, const gnutls_dh_params_t @var{params}, const gnutls_datum_t * @var{y}, const gnutls_datum_t * @var{x})
+@var{key}: The data to store the parsed key
+
+@var{params}: holds the @code{gnutls_dh_params_t} 
+
+@var{y}: holds the y (optional)
+
+@var{x}: holds the x
+
+This function will convert the given Diffie-Hellman raw parameters
+to the native @code{gnutls_x509_privkey_t}  format.  The output will be
+stored in  @code{key} .
+
+@strong{Returns:} On success, @code{GNUTLS_E_SUCCESS}  (0) is returned, otherwise a
+negative error value.
+@end deftypefun
+
 @subheading gnutls_x509_privkey_import_dsa_raw
 @anchor{gnutls_x509_privkey_import_dsa_raw}
 @deftypefun {int} {gnutls_x509_privkey_import_dsa_raw} (gnutls_x509_privkey_t @var{key}, const gnutls_datum_t * @var{p}, const gnutls_datum_t * @var{q}, const gnutls_datum_t * @var{g}, const gnutls_datum_t * @var{y}, const gnutls_datum_t * @var{x})
@@ -7324,6 +7343,24 @@ This function will deinitialize a SubjectPublicKeyInfo structure.
 @strong{Since:} 3.6.0
 @end deftypefun
 
+@subheading gnutls_x509_spki_get_rsa_oaep_params
+@anchor{gnutls_x509_spki_get_rsa_oaep_params}
+@deftypefun {int} {gnutls_x509_spki_get_rsa_oaep_params} (gnutls_x509_spki_t @var{spki}, gnutls_digest_algorithm_t * @var{dig}, gnutls_datum_t * @var{label})
+@var{spki}: the SubjectPublicKeyInfo structure
+
+@var{dig}: if non-NULL, it will hold the digest algorithm
+
+@var{label}: if non-NULL, it will hold the pointer to label
+
+This function will get the public key algorithm parameters
+of RSA-OAEP type.
+
+@strong{Returns:} zero if the parameters are present or a negative
+value on error.
+
+@strong{Since:} 3.8.4
+@end deftypefun
+
 @subheading gnutls_x509_spki_get_rsa_pss_params
 @anchor{gnutls_x509_spki_get_rsa_pss_params}
 @deftypefun {int} {gnutls_x509_spki_get_rsa_pss_params} (gnutls_x509_spki_t @var{spki}, gnutls_digest_algorithm_t * @var{dig}, unsigned int * @var{salt_size})
@@ -7355,6 +7392,24 @@ in the public key information field of a certificate.
 negative error value.
 
 @strong{Since:} 3.6.0
+@end deftypefun
+
+@subheading gnutls_x509_spki_set_rsa_oaep_params
+@anchor{gnutls_x509_spki_set_rsa_oaep_params}
+@deftypefun {int} {gnutls_x509_spki_set_rsa_oaep_params} (gnutls_x509_spki_t @var{spki}, gnutls_digest_algorithm_t @var{dig}, const gnutls_datum_t * @var{label})
+@var{spki}: the SubjectPublicKeyInfo structure
+
+@var{dig}: a digest algorithm of type @code{gnutls_digest_algorithm_t} 
+
+@var{label}: optional label
+
+This function will set the public key parameters for
+an RSA-OAEP algorithm, in the SubjectPublicKeyInfo structure.
+
+@strong{Returns:} zero if the parameters are present or a negative
+value on error.
+
+@strong{Since:} 3.8.4
 @end deftypefun
 
 @subheading gnutls_x509_spki_set_rsa_pss_params
@@ -7806,7 +7861,7 @@ from the trusted list.
 
 Note that this function can accept certificates and authorities
 not yet known. In that case they will be kept in a separate
-black list that will be used during certificate verification.
+block list that will be used during certificate verification.
 Unlike @code{gnutls_x509_trust_list_add_cas()}  there is no deinitialization
 restriction for  certificate list provided in this function.
 
@@ -7825,7 +7880,7 @@ restriction for  certificate list provided in this function.
 @var{type}: The format of the certificates
 
 This function will remove the given certificate authorities
-from the trusted list, and add them into a black list when needed. 
+from the trusted list, and add them into a block list when needed. 
 PKCS 11 URLs are also accepted, instead
 of files, by this function.
 
@@ -7846,7 +7901,7 @@ See also @code{gnutls_x509_trust_list_remove_cas()} .
 @var{type}: The format of the certificates
 
 This function will remove the provided certificate authorities
-from the trusted list, and add them into a black list when needed. 
+from the trusted list, and add them into a block list when needed. 
 
 See also @code{gnutls_x509_trust_list_remove_cas()} .
 
@@ -7878,14 +7933,17 @@ certificate verification procedure. The callback may wish to use
 @code{gnutls_x509_crt_get_authority_info_access()}  to get a URI from which
 to attempt to download the missing issuer certificate, if available.
 
-On a successful call, the callback shall allocate the 'issuers' array with
-@code{gnutls_x509_crt_list_import2()} . The ownership of both the array and the
-elements is transferred to the caller and thus the application does not need
-to maintain the memory after the call.
+On a successful call, the callback shall set '*issuers' and '*issuers_size'
+even if the result is empty; in that case '*issuers' will point to @code{NULL}  and
+'*issuers_size' will be 0.  Otherwise, the '*issuers' array shall be
+allocated using @code{gnutls_x509_crt_list_import2()} . The ownership of both the
+array and the elements is transferred to the caller and thus the application
+does not need to maintain the memory after the call.
 
-The callback function should return 0 if the missing issuer certificate
-for 'crt' was properly populated and added to the 'issuers', or non-zero
-to continue the certificate list verification but with issuer as @code{NULL} .
+The callback function should return 0 if the attempt to retrieve the issuer
+certificates for 'crt' succeeded, or non-zero to indicate any error occurred
+during the attempt. In the latter case, '*issuers' and '*issuers_size' are
+not set.
 
 @strong{Since:} 3.7.0
 @end deftypefun

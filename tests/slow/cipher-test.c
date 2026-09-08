@@ -1,8 +1,8 @@
-#include <config.h>
+#include "config.h"
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
-#include <utils.h>
+#include "utils.h"
 #include <stdlib.h>
 #include <gnutls/gnutls.h>
 #include <gnutls/crypto.h>
@@ -20,7 +20,7 @@ int main(int argc, char **argv)
 	exit(77);
 }
 #else
-# include <unistd.h>
+#include <unistd.h>
 
 static void handle_sigill(int sig)
 {
@@ -42,19 +42,19 @@ int main(int argc, char **argv)
 	signal(SIGILL, handle_sigill);
 
 	/* ciphers */
-	if (gnutls_cipher_self_test(1, 0) < 0)
+	if (gnutls_cipher_self_test(GNUTLS_SELF_TEST_FLAG_ALL, 0) < 0)
 		return 1;
 
 	/* message digests */
-	if (gnutls_digest_self_test(1, 0) < 0)
+	if (gnutls_digest_self_test(GNUTLS_SELF_TEST_FLAG_ALL, 0) < 0)
 		return 1;
 
 	/* MAC */
-	if (gnutls_mac_self_test(1, 0) < 0)
+	if (gnutls_mac_self_test(GNUTLS_SELF_TEST_FLAG_ALL, 0) < 0)
 		return 1;
 
 	/* PK */
-	if (gnutls_pk_self_test(1, 0) < 0)
+	if (gnutls_pk_self_test(GNUTLS_SELF_TEST_FLAG_ALL, 0) < 0)
 		return 1;
 
 	gnutls_global_deinit();

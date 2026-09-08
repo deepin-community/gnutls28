@@ -1,25 +1,16 @@
 /* Canonical decomposition of Unicode characters.
-   Copyright (C) 2009-2021 Free Software Foundation, Inc.
+   Copyright (C) 2009-2026 Free Software Foundation, Inc.
    Written by Bruno Haible <bruno@clisp.org>, 2009.
 
-   This program is free software: you can redistribute it and/or
-   modify it under the terms of either:
+   This file is free software: you can redistribute it and/or modify
+   it under the terms of the GNU Lesser General Public License as
+   published by the Free Software Foundation; either version 2.1 of the
+   License, or (at your option) any later version.
 
-     * the GNU Lesser General Public License as published by the Free
-       Software Foundation; either version 3 of the License, or (at your
-       option) any later version.
-
-   or
-
-     * the GNU General Public License as published by the Free
-       Software Foundation; either version 2 of the License, or (at your
-       option) any later version.
-
-   or both in parallel, as here.
-   This program is distributed in the hope that it will be useful,
+   This file is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-   Lesser General Public License for more details.
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU Lesser General Public License for more details.
 
    You should have received a copy of the GNU Lesser General Public License
    along with this program.  If not, see <https://www.gnu.org/licenses/>.  */
@@ -42,18 +33,14 @@ uc_canonical_decomposition (ucs4_t uc, ucs4_t *decomposition)
          "Hangul Syllable Decomposition",  See also the clarification at
          <https://www.unicode.org/versions/Unicode5.1.0/>, section
          "Clarification of Hangul Jamo Handling".  */
-      unsigned int t;
-
       uc -= 0xAC00;
-      t = uc % 28;
+      unsigned int t = uc % 28;
 
       if (t == 0)
         {
-          unsigned int v, l;
-
           uc = uc / 28;
-          v = uc % 21;
-          l = uc / 21;
+          unsigned int v = uc % 21;
+          unsigned int l = uc / 21;
 
           decomposition[0] = 0x1100 + l;
           decomposition[1] = 0x1161 + v;
@@ -66,11 +53,9 @@ uc_canonical_decomposition (ucs4_t uc, ucs4_t *decomposition)
           decomposition[1] = 0x11A7 + t;
           return 2;
 #else
-          unsigned int v, l;
-
           uc = uc / 28;
-          v = uc % 21;
-          l = uc / 21;
+          unsigned int v = uc % 21;
+          unsigned int l = uc / 21;
 
           decomposition[0] = 0x1100 + l;
           decomposition[1] = 0x1161 + v;
@@ -87,16 +72,12 @@ uc_canonical_decomposition (ucs4_t uc, ucs4_t *decomposition)
          is a canonical one.  */
       if (entry < 0x8000)
         {
-          const unsigned char *p;
-          unsigned int element;
-          unsigned int length;
-
-          p = &gl_uninorm_decomp_chars_table[3 * entry];
-          element = (p[0] << 16) | (p[1] << 8) | p[2];
+          const unsigned char *p = &gl_uninorm_decomp_chars_table[3 * entry];
+          unsigned int element = (p[0] << 16) | (p[1] << 8) | p[2];
           /* The first element has 5 bits for the decomposition type.  */
           if (((element >> 18) & 0x1f) != UC_DECOMP_CANONICAL)
             abort ();
-          length = 1;
+          unsigned int length = 1;
           for (;;)
             {
               /* Every element has an 18 bits wide Unicode code point.  */

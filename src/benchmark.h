@@ -28,22 +28,15 @@
 #endif
 
 /* for uint64_t */
-# include <stdint.h>
+#include <stdint.h>
+#include "timespec.h"
 
 #if defined(HAVE_CLOCK_GETTIME) && defined(CLOCK_PROCESS_CPUTIME_ID)
 #undef gettime
 #define gettime(x) clock_gettime(CLOCK_PROCESS_CPUTIME_ID, x)
-#else
-inline static void gettime(struct timespec *ts)
-{
-	struct timeval tv;
-	gettimeofday(&tv, NULL);
-	ts->tv_sec = tv.tv_sec;
-	ts->tv_nsec = tv.tv_usec * 1000;
-}
 #endif
 
-typedef void (*sighandler_t) (int);
+typedef void (*sighandler_t)(int);
 
 void benchmark_cipher(int debug_level);
 void benchmark_tls(int debug_level, int ciphers);
@@ -62,17 +55,17 @@ struct benchmark_st {
 extern volatile int benchmark_must_finish;
 
 void start_benchmark(struct benchmark_st *st);
-double stop_benchmark(struct benchmark_st *st, const char *metric,
-		      int quiet);
+double stop_benchmark(struct benchmark_st *st, const char *metric, int quiet);
 
-inline static unsigned int
-timespec_sub_ms(struct timespec *a, struct timespec *b)
+inline static unsigned int timespec_sub_ms(struct timespec *a,
+					   struct timespec *b)
 {
-	return (a->tv_sec - b->tv_sec) * 1000 + (a->tv_nsec - b->tv_nsec) / (1000 * 1000);
+	return (a->tv_sec - b->tv_sec) * 1000 +
+	       (a->tv_nsec - b->tv_nsec) / (1000 * 1000);
 }
 
-inline static unsigned long
-timespec_sub_ns(struct timespec *a, struct timespec *b)
+inline static unsigned long timespec_sub_ns(struct timespec *a,
+					    struct timespec *b)
 {
 	return (a->tv_sec - b->tv_sec) * 1000000000 + (a->tv_nsec - b->tv_nsec);
 }

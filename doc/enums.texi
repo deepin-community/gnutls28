@@ -94,6 +94,16 @@ AES in GCM mode with 192-bit keys (AEAD).
 GOST R 34.12-2015 (Magma) cipher in CTR-ACPKM mode.
 @item GNUTLS_@-CIPHER_@-KUZNYECHIK_@-CTR_@-ACPKM
 GOST R 34.12-2015 (Kuznyechik) cipher in CTR-ACPKM mode.
+@item GNUTLS_@-CIPHER_@-AES_@-128_@-SIV_@-GCM
+AES in SIV-GCM mode with 128-bit key.
+@item GNUTLS_@-CIPHER_@-AES_@-256_@-SIV_@-GCM
+AES in SIV-GCM mode with 256-bit key.
+@item GNUTLS_@-CIPHER_@-AES_@-128_@-CFB
+AES in CFB mode with 128-bit keys.
+@item GNUTLS_@-CIPHER_@-AES_@-192_@-CFB
+AES in CFB mode with 192-bit keys.
+@item GNUTLS_@-CIPHER_@-AES_@-256_@-CFB
+AES in CFB mode with 256-bit keys.
 @item GNUTLS_@-CIPHER_@-IDEA_@-PGP_@-CFB
 IDEA in CFB mode (placeholder - unsupported).
 @item GNUTLS_@-CIPHER_@-3DES_@-PGP_@-CFB
@@ -233,13 +243,15 @@ The AES-GMAC-256 MAC algorithm (requires nonce).
 @item GNUTLS_@-MAC_@-GOST28147_@-TC26Z_@-IMIT
 The GOST 28147-89 working in IMIT mode with TC26 Z S-box.
 @item GNUTLS_@-MAC_@-SHAKE_@-128
-Reserved; unimplemented.
+The SHAKE128 extendable output function.
 @item GNUTLS_@-MAC_@-SHAKE_@-256
-Reserved; unimplemented.
+The SHAKE256 extendable output function.
 @item GNUTLS_@-MAC_@-MAGMA_@-OMAC
 GOST R 34.12-2015 (Magma) in OMAC (CMAC) mode.
 @item GNUTLS_@-MAC_@-KUZNYECHIK_@-OMAC
 GOST R 34.12-2015 (Kuznyechik) in OMAC (CMAC) mode.
+@item GNUTLS_@-MAC_@-PBMAC1
+-- undescribed --
 @end table
 
 @c gnutls_digest_algorithm_t
@@ -281,9 +293,9 @@ GOST R 34.11-2001 (Streebog) algorithm, 256 bit.
 @item GNUTLS_@-DIG_@-STREEBOG_@-512
 GOST R 34.11-2001 (Streebog) algorithm, 512 bit.
 @item GNUTLS_@-DIG_@-SHAKE_@-128
-Reserved; unimplemented.
+The SHAKE128 extendable output function.
 @item GNUTLS_@-DIG_@-SHAKE_@-256
-Reserved; unimplemented.
+The SHAKE256 extendable output function.
 @end table
 
 @c gnutls_compression_method_t
@@ -312,8 +324,8 @@ Connection end is a client.
 Connection is datagram oriented (DTLS). Since 3.0.0.
 @item GNUTLS_@-NONBLOCK
 Connection should not block. Since 3.0.0.
-@item GNUTLS_@-NO_@-EXTENSIONS
-Do not enable any TLS extensions by default (since 3.1.2). As TLS 1.2 and later require extensions this option is considered obsolete and should not be used.
+@item GNUTLS_@-NO_@-DEFAULT_@-EXTENSIONS
+Do not enable any TLS extensions by default such as session tickets and OCSP certificate status request (since 3.1.2). As TLS 1.2 and later require extensions this option is considered obsolete and should not be used.
 @item GNUTLS_@-NO_@-REPLAY_@-PROTECTION
 Disable any replay protection in DTLS. This must only be used if  replay protection is achieved using other means. Since 3.2.2.
 @item GNUTLS_@-NO_@-SIGNAL
@@ -329,7 +341,7 @@ Flag to indicate that the session should not use resumption with session tickets
 @item GNUTLS_@-KEY_@-SHARE_@-TOP
 Generate key share for the first group which is enabled.
 For example x25519. This option is the most performant for client (less CPU spent
-generating keys), but if the server doesn't support the advertized option it may
+generating keys), but if the server doesn't support the advertised option it may
 result to more roundtrips needed to discover the server's choice.
 @item GNUTLS_@-KEY_@-SHARE_@-TOP2
 Generate key shares for the top-2 different groups which are enabled.
@@ -378,6 +390,9 @@ session tickets during the handshake.
 Under TLS1.3 suppress sending EndOfEarlyData message. Since 3.7.2.
 @item GNUTLS_@-NO_@-TICKETS_@-TLS12
 Flag to indicate that the session should not use resumption with session tickets. This flag only has effect if TLS 1.2 is used.
+@item GNUTLS_@-NO_@-STATUS_@-REQUEST
+Prevents client from including the "status_request" TLS extension
+in the client hello, thus disabling the receival of certificate status information. Since 3.8.0.
 @end table
 
 @c gnutls_alert_level_t
@@ -676,7 +691,23 @@ GOST R 34.10-2012 algorithm, 512-bit key per rfc7091.
 Elliptic curve algorithm, restricted to ECDH as per rfc7748.
 @item GNUTLS_@-PK_@-EDDSA_@-ED448
 Edwards curve Digital signature algorithm. Used with SHAKE256 on signatures.
+@item GNUTLS_@-PK_@-RSA_@-OAEP
+RSA public-key algorithm, with OAEP padding.
+@item GNUTLS_@-PK_@-MLKEM768
+ML-KEM-768 key encapsulation algorithm as per FIPS 203.
+@item GNUTLS_@-PK_@-MLDSA44
+ML-DSA-44 digital signature algorithm as per FIPS 204.
+@item GNUTLS_@-PK_@-MLDSA65
+ML-DSA-65 digital signature algorithm as per FIPS 204.
+@item GNUTLS_@-PK_@-MLDSA87
+ML-DSA-87 digital signature algorithm as per FIPS 204.
+@item GNUTLS_@-PK_@-MLKEM1024
+ML-KEM-1024 key encapsulation algorithm as per FIPS 203.
 @item GNUTLS_@-PK_@-MAX
+-- undescribed --
+@item GNUTLS_@-PK_@-EXP_@-KYBER768
+-- undescribed --
+@item GNUTLS_@-PK_@-EXP_@-MAX
 -- undescribed --
 @end table
 
@@ -787,6 +818,12 @@ Digital signature algorithm GOST R 34.10-2012 with GOST R 34.11-2012 256 bit
 Digital signature algorithm GOST R 34.10-2012 with GOST R 34.11-2012 512 bit
 @item GNUTLS_@-SIGN_@-EDDSA_@-ED448
 Digital signature algorithm EdDSA with Ed448 curve.
+@item GNUTLS_@-SIGN_@-MLDSA44
+Digital signature algorithm ML-DSA-44.
+@item GNUTLS_@-SIGN_@-MLDSA65
+Digital signature algorithm ML-DSA-65.
+@item GNUTLS_@-SIGN_@-MLDSA87
+Digital signature algorithm ML-DSA-87.
 @item GNUTLS_@-SIGN_@-MAX
 -- undescribed --
 @end table
@@ -884,6 +921,24 @@ the FFDHE8192 group
 @item GNUTLS_@-GROUP_@-FFDHE6144
 the FFDHE6144 group
 @item GNUTLS_@-GROUP_@-MAX
+-- undescribed --
+@item GNUTLS_@-GROUP_@-EXP_@-X25519_@-KYBER768
+-- undescribed --
+@item GNUTLS_@-GROUP_@-EXP_@-SECP256R1_@-MLKEM768
+-- undescribed --
+@item GNUTLS_@-GROUP_@-EXP_@-SECP384R1_@-MLKEM1024
+-- undescribed --
+@item GNUTLS_@-GROUP_@-EXP_@-X25519_@-MLKEM768
+-- undescribed --
+@item GNUTLS_@-GROUP_@-EXP_@-KYBER768
+-- undescribed --
+@item GNUTLS_@-GROUP_@-EXP_@-MLKEM768
+-- undescribed --
+@item GNUTLS_@-GROUP_@-EXP_@-MLKEM1024
+-- undescribed --
+@item GNUTLS_@-GROUP_@-EXP_@-MIN
+-- undescribed --
+@item GNUTLS_@-GROUP_@-EXP_@-MAX
 -- undescribed --
 @end table
 
@@ -1005,6 +1060,10 @@ Unknown data format
 NULL cipher with a 80 bit HMAC-SHA1
 @item GNUTLS_@-SRTP_@-NULL_@-HMAC_@-SHA1_@-32
 NULL cipher with a 32 bit HMAC-SHA1
+@item GNUTLS_@-SRTP_@-AEAD_@-AES_@-128_@-GCM
+128 bit AES with GCM
+@item GNUTLS_@-SRTP_@-AEAD_@-AES_@-256_@-GCM
+256 bit AES with GCM
 @end table
 
 @c gnutls_alpn_flags_t
@@ -1053,12 +1112,20 @@ This will enable CRL verification when added in the certificate structure.
 When used, it requires CAs to be added before CRLs.
 @end table
 
+@c gnutls_random_art_t
+@table @code
+@item GNUTLS_@-RANDOM_@-ART_@-OPENSSH
+OpenSSH-style random art.
+@end table
+
 @c gnutls_psk_key_flags
 @table @code
 @item GNUTLS_@-PSK_@-KEY_@-RAW
 PSK-key in raw format.
 @item GNUTLS_@-PSK_@-KEY_@-HEX
 PSK-key in hex format.
+@item GNUTLS_@-PSK_@-KEY_@-EXT
+PSK-key is external and to be imported.
 @end table
 
 @c gnutls_x509_subject_alt_name_t
@@ -1084,6 +1151,8 @@ Virtual SAN, used by certain functions for convenience.
 @item GNUTLS_@-SAN_@-OTHERNAME_@-KRB5PRINCIPAL
 Virtual SAN, used by certain functions for convenience.
 @item GNUTLS_@-SAN_@-OTHERNAME_@-MSUSERPRINCIPAL
+Virtual SAN, used by certain functions for convenience.
+@item GNUTLS_@-SAN_@-OTHERNAME_@-SRV
 Virtual SAN, used by certain functions for convenience.
 @end table
 
@@ -1232,6 +1301,56 @@ Use SHA512 as the key ID algorithm.
 Use the best known algorithm to calculate key ID. Using that option will make your program behavior depend on the version of gnutls linked with. That option has a cap of 64-bytes key IDs.
 @end table
 
+@c gnutls_info_access_what_t
+@table @code
+@item GNUTLS_@-IA_@-ACCESSMETHOD_@-OID
+Get accessMethod OID.
+@item GNUTLS_@-IA_@-ACCESSLOCATION_@-GENERALNAME_@-TYPE
+Get accessLocation name type.
+@item GNUTLS_@-IA_@-URI
+Get accessLocation URI value.
+@item GNUTLS_@-IA_@-UNKNOWN
+-- undescribed --
+@item GNUTLS_@-IA_@-OCSP_@-URI
+get accessLocation URI value for OCSP.
+@item GNUTLS_@-IA_@-CAISSUERS_@-URI
+get accessLocation URI value for caIssuers.
+@end table
+
+@c gnutls_x509_crl_reason_flags_t
+@table @code
+@item GNUTLS_@-CRL_@-REASON_@-UNSPECIFIED
+-- undescribed --
+@item GNUTLS_@-CRL_@-REASON_@-PRIVILEGE_@-WITHDRAWN
+The privileges were withdrawn from the owner.
+@item GNUTLS_@-CRL_@-REASON_@-CERTIFICATE_@-HOLD
+The certificate is on hold.
+@item GNUTLS_@-CRL_@-REASON_@-CESSATION_@-OF_@-OPERATION
+The end-entity is no longer operating.
+@item GNUTLS_@-CRL_@-REASON_@-SUPERSEDED
+There is a newer certificate of the owner.
+@item GNUTLS_@-CRL_@-REASON_@-AFFILIATION_@-CHANGED
+The end-entity affiliation has changed.
+@item GNUTLS_@-CRL_@-REASON_@-CA_@-COMPROMISE
+The CA was compromised.
+@item GNUTLS_@-CRL_@-REASON_@-KEY_@-COMPROMISE
+The certificate's key was compromised.
+@item GNUTLS_@-CRL_@-REASON_@-UNUSED
+The key was never used.
+@item GNUTLS_@-CRL_@-REASON_@-AA_@-COMPROMISE
+AA compromised.
+@end table
+
+@c gnutls_x509_qualifier_t
+@table @code
+@item GNUTLS_@-X509_@-QUALIFIER_@-UNKNOWN
+Unknown qualifier.
+@item GNUTLS_@-X509_@-QUALIFIER_@-URI
+A URL
+@item GNUTLS_@-X509_@-QUALIFIER_@-NOTICE
+-- undescribed --
+@end table
+
 @c gnutls_certificate_verify_flags
 @table @code
 @item GNUTLS_@-VERIFY_@-DISABLE_@-CA_@-SIGN
@@ -1363,6 +1482,12 @@ PBES2 GOST 28147-89 CFB with CryptoPro-B S-box.
 PBES2 GOST 28147-89 CFB with CryptoPro-C S-box.
 @item GNUTLS_@-PKCS_@-PBES2_@-GOST_@-CPD
 PBES2 GOST 28147-89 CFB with CryptoPro-D S-box.
+@item GNUTLS_@-PKCS_@-PBES1_@-DES_@-SHA1
+PBES1 with single DES; for compatibility purposes only.
+@item GNUTLS_@-PKCS_@-MLDSA_@-SEED
+Emit seed as an ML-DSA private key.
+@item GNUTLS_@-PKCS_@-MLDSA_@-EXPANDED
+Emit an expanded ML-DSA private key.
 @end table
 
 @c gnutls_keygen_types_t
@@ -1373,6 +1498,8 @@ Specifies the seed to be used in key generation.
 The size field specifies the hash algorithm to be used in key generation.
 @item GNUTLS_@-KEYGEN_@-SPKI
 data points to a @code{gnutls_x509_spki_t}  structure; it is not used after the key generation call.
+@item GNUTLS_@-KEYGEN_@-DH
+data points to a @code{gnutls_dh_params_t}  structure; it is not used after the key generation call.
 @end table
 
 @c gnutls_pkcs12_bag_type_t
@@ -1760,4 +1887,65 @@ The signing time will be included in the structure.
 The signer's certificate will be included in the cert list.
 @item GNUTLS_@-PKCS7_@-WRITE_@-SPKI
 Use the signer's key identifier instead of name.
+@end table
+
+@c gnutls_hpke_kem_t
+@table @code
+@item GNUTLS_@-HPKE_@-KEM_@-DHKEM_@-P256
+DHKEM using P-256
+@item GNUTLS_@-HPKE_@-KEM_@-DHKEM_@-P384
+DHKEM using P-384
+@item GNUTLS_@-HPKE_@-KEM_@-DHKEM_@-P521
+DHKEM using P-521
+@item GNUTLS_@-HPKE_@-KEM_@-DHKEM_@-X25519
+DHKEM using X25519
+@item GNUTLS_@-HPKE_@-KEM_@-DHKEM_@-X448
+DHKEM using X448
+Enumeration of HPKE KEM algorithms.
+@end table
+
+@c gnutls_hpke_kdf_t
+@table @code
+@item GNUTLS_@-HPKE_@-KDF_@-HKDF_@-SHA256
+HKDF using SHA-256
+@item GNUTLS_@-HPKE_@-KDF_@-HKDF_@-SHA384
+HKDF using SHA-384
+@item GNUTLS_@-HPKE_@-KDF_@-HKDF_@-SHA512
+HKDF using SHA-512
+Enumeration of HPKE KDF algorithms.
+@end table
+
+@c gnutls_hpke_aead_t
+@table @code
+@item GNUTLS_@-HPKE_@-AEAD_@-AES_@-128_@-GCM
+AES-128-GCM
+@item GNUTLS_@-HPKE_@-AEAD_@-AES_@-256_@-GCM
+AES-256-GCM
+@item GNUTLS_@-HPKE_@-AEAD_@-CHACHA20_@-POLY1305
+ChaCha20-Poly1305
+@item GNUTLS_@-HPKE_@-AEAD_@-EXPORT_@-ONLY
+AEAD is unused, export operation only
+Enumeration of HPKE AEAD algorithms.
+@end table
+
+@c gnutls_hpke_mode_t
+@table @code
+@item GNUTLS_@-HPKE_@-MODE_@-BASE
+HPKE base mode
+@item GNUTLS_@-HPKE_@-MODE_@-PSK
+HPKE psk mode
+@item GNUTLS_@-HPKE_@-MODE_@-AUTH
+HPKE auth mode
+@item GNUTLS_@-HPKE_@-MODE_@-AUTH_@-PSK
+HPKE auth+psk mode
+Enumeration of HPKE modes.
+@end table
+
+@c gnutls_hpke_role_t
+@table @code
+@item GNUTLS_@-HPKE_@-ROLE_@-SENDER
+HPKE sender role
+@item GNUTLS_@-HPKE_@-ROLE_@-RECEIVER
+HPKE receiver role
+Enumeration of HPKE roles.
 @end table

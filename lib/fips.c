@@ -23,16 +23,22 @@
 #include <gnutls/gnutls.h>
 #include <gnutls/crypto.h>
 #include <unistd.h>
+#include "dirname.h"
 #include "errors.h"
 #include "file.h"
 #include "inih/ini.h"
-#include <fips.h>
+#include "str.h"
+#include "fips.h"
 #include <gnutls/self-test.h>
 #include <stdio.h>
-#include <extras/hex.h>
-#include <random.h>
+#include "extras/hex.h"
+#include "random.h"
 
 #include "gthreads.h"
+
+#ifdef HAVE_DL_ITERATE_PHDR
+#include <link.h>
+#endif
 
 unsigned int _gnutls_lib_state = LIB_STATE_POWERON;
 
@@ -64,7 +70,7 @@ static int _skip_integrity_checks = 0;
 unsigned _gnutls_fips_mode_enabled(void)
 {
 	unsigned f1p = 0, f2p;
-	FILE* fd;
+	FILE *fd;
 	const char *p;
 	unsigned ret;
 
@@ -108,8 +114,10 @@ unsigned _gnutls_fips_mode_enabled(void)
 		f1p = fgetc(fd);
 		fclose(fd);
 
-		if (f1p == '1') f1p = 1;
-		else f1p = 0;
+		if (f1p == '1')
+			f1p = 1;
+		else
+			f1p = 0;
 	}
 
 	if (f1p != 0) {
@@ -130,7 +138,7 @@ unsigned _gnutls_fips_mode_enabled(void)
 	ret = GNUTLS_FIPS140_DISABLED;
 	goto exit;
 
- exit:
+exit:
 	_global_fips_mode = ret;
 	return ret;
 }
@@ -144,69 +152,56 @@ void _gnutls_fips_mode_reset_zombie(void)
 	}
 }
 
-/* These only works with the platform where SONAME is part of the ABI.
- * For example, *_SONAME will be set to "none" on Windows platforms. */
-#define GNUTLS_LIBRARY_NAME GNUTLS_LIBRARY_SONAME
-#define NETTLE_LIBRARY_NAME NETTLE_LIBRARY_SONAME
-#define HOGWEED_LIBRARY_NAME HOGWEED_LIBRARY_SONAME
-#define GMP_LIBRARY_NAME GMP_LIBRARY_SONAME
+/* These only works with the platform where SONAME is part of the ABI. */
+#ifndef GNUTLS_LIBRARY_SONAME
+#define GNUTLS_LIBRARY_SONAME "none"
+#endif
 
 #define HMAC_SIZE 32
 #define HMAC_ALGO GNUTLS_MAC_SHA256
-#define HMAC_FILE_NAME ".gnutls.hmac"
 #define HMAC_FORMAT_VERSION 1
 
-struct hmac_entry
-{
+struct hmac_entry {
 	char path[GNUTLS_PATH_MAX];
 	uint8_t hmac[HMAC_SIZE];
 };
 
-typedef struct
-{
+struct hmac_file {
 	int version;
 	struct hmac_entry gnutls;
+#ifdef NETTLE_LIBRARY_SONAME
 	struct hmac_entry nettle;
+#endif
+#ifdef HOGWEED_LIBRARY_SONAME
 	struct hmac_entry hogweed;
+#endif
+#ifdef GMP_LIBRARY_SONAME
 	struct hmac_entry gmp;
-} hmac_file;
+#endif
+};
 
-static int get_library_path(const char* lib, const char* symbol, char* path, size_t path_size)
-{
-	int ret;
-	void *dl, *sym;
-	Dl_info info;
+struct lib_paths {
+	char gnutls[GNUTLS_PATH_MAX];
+#ifdef NETTLE_LIBRARY_SONAME
+	char nettle[GNUTLS_PATH_MAX];
+#endif
+#ifdef HOGWEED_LIBRARY_SONAME
+	char hogweed[GNUTLS_PATH_MAX];
+#endif
+#ifdef GMP_LIBRARY_SONAME
+	char gmp[GNUTLS_PATH_MAX];
+#endif
+};
 
-	dl = dlopen(lib, RTLD_LAZY);
-	if (dl == NULL)
-		return gnutls_assert_val(GNUTLS_E_FILE_ERROR);
-
-	sym = dlsym(dl, symbol);
-	if (sym == NULL) {
-		ret = gnutls_assert_val(GNUTLS_E_FILE_ERROR);
-		goto cleanup;
-	}
-
-	ret = dladdr(sym, &info);
-	if (ret == 0) {
-		ret = gnutls_assert_val(GNUTLS_E_FILE_ERROR);
-		goto cleanup;
-	}
-
-	ret = snprintf(path, path_size, "%s", info.dli_fname);
-	if ((size_t)ret >= path_size) {
-		ret = gnutls_assert_val(GNUTLS_E_SHORT_MEMORY_BUFFER);
-		goto cleanup;
-	}
-
-	ret = 0;
-cleanup:
-	dlclose(dl);
-	return ret;
-}
-
-/* Parses hmac data and copies hex value into dest.
+/*
+ * get_hmac:
+ * @dest: buffer for the hex value
+ * @value: hmac value
+ *
+ * Parses hmac data and copies hex value into dest.
  * dest must point to at least HMAC_SIZE amount of memory
+ *
+ * Returns: 0 on success, a negative error code otherwise
  */
 static int get_hmac(uint8_t *dest, const char *value)
 {
@@ -228,9 +223,8 @@ static int get_hmac(uint8_t *dest, const char *value)
 	return 0;
 }
 
-static int
-lib_handler(struct hmac_entry *entry,
-	    const char *section, const char *name, const char *value)
+static int lib_handler(struct hmac_entry *entry, const char *section,
+		       const char *name, const char *value)
 {
 	if (!strcmp(name, "path")) {
 		snprintf(entry->path, GNUTLS_PATH_MAX, "%s", value);
@@ -243,9 +237,10 @@ lib_handler(struct hmac_entry *entry,
 	return 1;
 }
 
-static int handler(void *user, const char *section, const char *name, const char *value)
+static int handler(void *user, const char *section, const char *name,
+		   const char *value)
 {
-	hmac_file *p = (hmac_file *)user;
+	struct hmac_file *p = (struct hmac_file *)user;
 
 	if (!strcmp(section, "global")) {
 		if (!strcmp(name, "format-version")) {
@@ -253,38 +248,51 @@ static int handler(void *user, const char *section, const char *name, const char
 		} else {
 			return 0;
 		}
-	} else if (!strcmp(section, GNUTLS_LIBRARY_NAME)) {
+	} else if (!strcmp(section, GNUTLS_LIBRARY_SONAME)) {
 		return lib_handler(&p->gnutls, section, name, value);
-	} else if (!strcmp(section, NETTLE_LIBRARY_NAME)) {
+#ifdef NETTLE_LIBRARY_SONAME
+	} else if (!strcmp(section, NETTLE_LIBRARY_SONAME)) {
 		return lib_handler(&p->nettle, section, name, value);
-	} else if (!strcmp(section, HOGWEED_LIBRARY_NAME)) {
+#endif
+#ifdef HOGWEED_LIBRARY_SONAME
+	} else if (!strcmp(section, HOGWEED_LIBRARY_SONAME)) {
 		return lib_handler(&p->hogweed, section, name, value);
-	} else if (!strcmp(section, GMP_LIBRARY_NAME)) {
+#endif
+#ifdef GMP_LIBRARY_SONAME
+	} else if (!strcmp(section, GMP_LIBRARY_SONAME)) {
 		return lib_handler(&p->gmp, section, name, value);
+#endif
 	} else {
 		return 0;
 	}
 	return 1;
 }
 
-static int get_hmac_path(char *mac_file, size_t mac_file_size)
+/*
+ * get_hmac_path:
+ * @mac_file: buffer where the hmac file path will be written to
+ * @mac_file_size: size of the mac_file buffer
+ * @gnutls_path: path to the gnutls library, used to deduce hmac file path
+ * 
+ * Deduces hmac file path from the gnutls library path.
+ *
+ * Returns: 0 on success, a negative error code otherwise
+ */
+static int get_hmac_path(char *mac_file, size_t mac_file_size,
+			 const char *gnutls_path)
 {
 	int ret;
 	char *p;
-	char file[GNUTLS_PATH_MAX];
 
-	ret = get_library_path(GNUTLS_LIBRARY_NAME, "gnutls_global_init",
-			       file, sizeof(file));
-	if (ret < 0)
-		return ret;
-
-	p = strrchr(file, '/');
+	p = strrchr(gnutls_path, '/');
 
 	if (p == NULL)
-		ret = snprintf(mac_file, mac_file_size, HMAC_FILE_NAME);
+		ret = snprintf(mac_file, mac_file_size, ".%s.hmac",
+			       gnutls_path);
 	else
-		ret = snprintf(mac_file, mac_file_size,
-			       "%.*s/"HMAC_FILE_NAME, (int)(p - file), file);
+		ret = snprintf(mac_file, mac_file_size, "%.*s/.%s.hmac",
+			       (int)(p - gnutls_path), gnutls_path, p + 1);
+
 	if ((size_t)ret >= mac_file_size)
 		return gnutls_assert_val(GNUTLS_E_SHORT_MEMORY_BUFFER);
 
@@ -293,10 +301,13 @@ static int get_hmac_path(char *mac_file, size_t mac_file_size)
 		return GNUTLS_E_SUCCESS;
 
 	if (p == NULL)
-		ret = snprintf(mac_file, mac_file_size, "fipscheck/"HMAC_FILE_NAME);
+		ret = snprintf(mac_file, mac_file_size, "fipscheck/.%s.hmac",
+			       gnutls_path);
 	else
 		ret = snprintf(mac_file, mac_file_size,
-			       "%.*s/fipscheck/"HMAC_FILE_NAME, (int)(p - file), file);
+			       "%.*s/fipscheck/.%s.hmac",
+			       (int)(p - gnutls_path), gnutls_path, p + 1);
+
 	if ((size_t)ret >= mac_file_size)
 		return gnutls_assert_val(GNUTLS_E_SHORT_MEMORY_BUFFER);
 
@@ -307,110 +318,198 @@ static int get_hmac_path(char *mac_file, size_t mac_file_size)
 	return GNUTLS_E_FILE_ERROR;
 }
 
-static int load_hmac_file(hmac_file *p)
+/*
+ * load_hmac_file:
+ * @hmac_file: hmac file structure
+ * @hmac_path: path to the hmac file
+ *
+ * Loads the hmac file into the hmac file structure.
+ *
+ * Returns: 0 on success, a negative error code otherwise
+ */
+static int load_hmac_file(struct hmac_file *hmac_file, const char *hmac_path)
 {
 	int ret;
 	FILE *stream;
-	char hmac_path[GNUTLS_PATH_MAX];
-
-	ret = get_hmac_path(hmac_path, sizeof(hmac_path));
-	if (ret < 0)
-		return gnutls_assert_val(ret);
 
 	stream = fopen(hmac_path, "r");
 	if (stream == NULL)
 		return gnutls_assert_val(GNUTLS_E_FILE_ERROR);
 
-	gnutls_memset(p, 0, sizeof(*p));
-	ret = ini_parse_file(stream, handler, p);
+	gnutls_memset(hmac_file, 0, sizeof(*hmac_file));
+	ret = ini_parse_file(stream, handler, hmac_file);
 	fclose(stream);
 	if (ret < 0)
 		return gnutls_assert_val(GNUTLS_E_PARSING_ERROR);
 
-	if (p->version != HMAC_FORMAT_VERSION)
+	if (hmac_file->version != HMAC_FORMAT_VERSION)
 		return gnutls_assert_val(GNUTLS_E_PARSING_ERROR);
 
 	return 0;
 }
 
-/* Run an HMAC using the key above on the library binary data.
- * Returns 0 on success and negative value on error.
+/*
+ * check_lib_hmac:
+ * @entry: hmac file entry
+ * @path: path to the library which hmac should be compared
+ *
+ * Verify that HMAC from hmac file entry matches HMAC of given library.
+ *
+ * Returns: 0 on successful HMAC verification, a negative error code otherwise
  */
-static int check_lib_hmac(struct hmac_entry *entry,
-			  const char *lib, const char *sym)
+static int check_lib_hmac(struct hmac_entry *entry, const char *path)
 {
 	int ret;
 	unsigned prev;
-	char path[GNUTLS_PATH_MAX];
 	uint8_t hmac[HMAC_SIZE];
 	gnutls_datum_t data;
-
-	ret = get_library_path(lib, sym, path, sizeof(path));
-	if (ret < 0) {
-		_gnutls_debug_log("Could not get lib path for %s: %s\n",
-				  lib, gnutls_strerror(ret));
-		return gnutls_assert_val(ret);
-	}
-
-	if (strncmp(entry->path, path, GNUTLS_PATH_MAX)) {
-		_gnutls_debug_log("Library path for %s does not match with HMAC file\n", lib);
-		return gnutls_assert_val(GNUTLS_E_PARSING_ERROR);
-	}
 
 	_gnutls_debug_log("Loading: %s\n", path);
 	ret = gnutls_load_file(path, &data);
 	if (ret < 0) {
-		_gnutls_debug_log("Could not load %s: %s\n",
-				  path, gnutls_strerror(ret));
+		_gnutls_debug_log("Could not load %s: %s\n", path,
+				  gnutls_strerror(ret));
 		return gnutls_assert_val(ret);
 	}
 
 	prev = _gnutls_get_lib_state();
 	_gnutls_switch_lib_state(LIB_STATE_OPERATIONAL);
-	ret = gnutls_hmac_fast(HMAC_ALGO, FIPS_KEY, sizeof(FIPS_KEY)-1,
+	ret = gnutls_hmac_fast(HMAC_ALGO, FIPS_KEY, sizeof(FIPS_KEY) - 1,
 			       data.data, data.size, hmac);
 	_gnutls_switch_lib_state(prev);
 
 	gnutls_free(data.data);
 	if (ret < 0) {
-		_gnutls_debug_log("Could not calculate HMAC for %s: %s\n",
-				  path, gnutls_strerror(ret));
+		_gnutls_debug_log("Could not calculate HMAC for %s: %s\n", path,
+				  gnutls_strerror(ret));
 		return gnutls_assert_val(ret);
 	}
 
 	if (gnutls_memcmp(entry->hmac, hmac, HMAC_SIZE)) {
-		_gnutls_debug_log("Calculated MAC for %s does not match\n", path);
+		_gnutls_debug_log("Calculated MAC for %s does not match\n",
+				  path);
+		gnutls_memset(hmac, 0, HMAC_SIZE);
 		return gnutls_assert_val(GNUTLS_E_PARSING_ERROR);
 	}
 	_gnutls_debug_log("Successfully verified MAC for %s\n", path);
 
+	gnutls_memset(hmac, 0, HMAC_SIZE);
 	return 0;
 }
+
+#ifdef HAVE_DL_ITERATE_PHDR
+
+static int callback(struct dl_phdr_info *info, size_t size, void *data)
+{
+	const char *path = info->dlpi_name;
+	const char *soname = last_component(path);
+	struct lib_paths *paths = (struct lib_paths *)data;
+
+	if (!strcmp(soname, GNUTLS_LIBRARY_SONAME))
+		_gnutls_str_cpy(paths->gnutls, GNUTLS_PATH_MAX, path);
+#ifdef NETTLE_LIBRARY_SONAME
+	else if (!strcmp(soname, NETTLE_LIBRARY_SONAME))
+		_gnutls_str_cpy(paths->nettle, GNUTLS_PATH_MAX, path);
+#endif
+#ifdef HOGWEED_LIBRARY_SONAME
+	else if (!strcmp(soname, HOGWEED_LIBRARY_SONAME))
+		_gnutls_str_cpy(paths->hogweed, GNUTLS_PATH_MAX, path);
+#endif
+#ifdef GMP_LIBRARY_SONAME
+	else if (!strcmp(soname, GMP_LIBRARY_SONAME))
+		_gnutls_str_cpy(paths->gmp, GNUTLS_PATH_MAX, path);
+#endif
+	return 0;
+}
+
+static int load_lib_paths(struct lib_paths *paths)
+{
+	memset(paths, 0, sizeof(*paths));
+	dl_iterate_phdr(callback, paths);
+
+	if (paths->gnutls[0] == '\0') {
+		_gnutls_debug_log("Gnutls library path was not found\n");
+		return gnutls_assert_val(GNUTLS_E_FILE_ERROR);
+	}
+#ifdef NETTLE_LIBRARY_SONAME
+	if (paths->nettle[0] == '\0') {
+		_gnutls_debug_log("Nettle library path was not found\n");
+		return gnutls_assert_val(GNUTLS_E_FILE_ERROR);
+	}
+#endif
+#ifdef HOGWEED_LIBRARY_SONAME
+	if (paths->hogweed[0] == '\0') {
+		_gnutls_debug_log("Hogweed library path was not found\n");
+		return gnutls_assert_val(GNUTLS_E_FILE_ERROR);
+	}
+#endif
+#ifdef GMP_LIBRARY_SONAME
+	if (paths->gmp[0] == '\0') {
+		_gnutls_debug_log("Gmp library path was not found\n");
+		return gnutls_assert_val(GNUTLS_E_FILE_ERROR);
+	}
+#endif
+
+	return GNUTLS_E_SUCCESS;
+}
+
+#else
+
+static int load_lib_paths(struct lib_paths *paths)
+{
+	(void)paths;
+	_gnutls_debug_log("Function dl_iterate_phdr is missing\n");
+	return gnutls_assert_val(GNUTLS_E_INTERNAL_ERROR);
+}
+
+#endif /* HAVE_DL_ITERATE_PHDR */
 
 static int check_binary_integrity(void)
 {
 	int ret;
-	hmac_file file;
+	struct lib_paths paths;
+	struct hmac_file hmac;
+	char hmac_path[GNUTLS_PATH_MAX];
 
-	ret = load_hmac_file(&file);
+	ret = load_lib_paths(&paths);
+	if (ret < 0) {
+		_gnutls_debug_log("Could not load library paths: %s\n",
+				  gnutls_strerror(ret));
+		return ret;
+	}
+
+	ret = get_hmac_path(hmac_path, sizeof(hmac_path), paths.gnutls);
+	if (ret < 0) {
+		_gnutls_debug_log("Could not get hmac file path: %s\n",
+				  gnutls_strerror(ret));
+		return ret;
+	}
+
+	ret = load_hmac_file(&hmac, hmac_path);
 	if (ret < 0) {
 		_gnutls_debug_log("Could not load hmac file: %s\n",
 				  gnutls_strerror(ret));
 		return ret;
 	}
 
-	ret = check_lib_hmac(&file.gnutls, GNUTLS_LIBRARY_NAME, "gnutls_global_init");
+	ret = check_lib_hmac(&hmac.gnutls, paths.gnutls);
 	if (ret < 0)
 		return ret;
-	ret = check_lib_hmac(&file.nettle, NETTLE_LIBRARY_NAME, "nettle_aes_set_encrypt_key");
+#ifdef NETTLE_LIBRARY_SONAME
+	ret = check_lib_hmac(&hmac.nettle, paths.nettle);
 	if (ret < 0)
 		return ret;
-	ret = check_lib_hmac(&file.hogweed, HOGWEED_LIBRARY_NAME, "nettle_mpz_sizeinbase_256_u");
+#endif
+#ifdef HOGWEED_LIBRARY_SONAME
+	ret = check_lib_hmac(&hmac.hogweed, paths.hogweed);
 	if (ret < 0)
 		return ret;
-	ret = check_lib_hmac(&file.gmp, GMP_LIBRARY_NAME, "__gmpz_init");
+#endif
+#ifdef GMP_LIBRARY_SONAME
+	ret = check_lib_hmac(&hmac.gmp, paths.gmp);
 	if (ret < 0)
 		return ret;
+#endif
 
 	return 0;
 }
@@ -425,7 +524,8 @@ int _gnutls_fips_perform_self_checks1(void)
 	 */
 
 	/* ciphers - one test per cipher */
-	ret = gnutls_cipher_self_test(0, GNUTLS_CIPHER_AES_128_CBC);
+	ret = gnutls_cipher_self_test(GNUTLS_SELF_TEST_FLAG_NO_COMPAT,
+				      GNUTLS_CIPHER_AES_128_CBC);
 	if (ret < 0) {
 		return gnutls_assert_val(GNUTLS_E_SELF_TEST_ERROR);
 	}
@@ -440,22 +540,8 @@ int _gnutls_fips_perform_self_checks2(void)
 	/* Tests the FIPS algorithms */
 
 	/* ciphers - one test per cipher */
-	ret = gnutls_cipher_self_test(0, GNUTLS_CIPHER_AES_256_CBC);
-	if (ret < 0) {
-		return gnutls_assert_val(GNUTLS_E_SELF_TEST_ERROR);
-	}
-
-	ret = gnutls_cipher_self_test(0, GNUTLS_CIPHER_AES_256_GCM);
-	if (ret < 0) {
-		return gnutls_assert_val(GNUTLS_E_SELF_TEST_ERROR);
-	}
-
-	ret = gnutls_cipher_self_test(0, GNUTLS_CIPHER_AES_256_XTS);
-	if (ret < 0) {
-		return gnutls_assert_val(GNUTLS_E_SELF_TEST_ERROR);
-	}
-
-	ret = gnutls_cipher_self_test(0, GNUTLS_CIPHER_AES_256_CFB8);
+	ret = gnutls_cipher_self_test(GNUTLS_SELF_TEST_FLAG_NO_COMPAT,
+				      GNUTLS_CIPHER_AES_256_GCM);
 	if (ret < 0) {
 		return gnutls_assert_val(GNUTLS_E_SELF_TEST_ERROR);
 	}
@@ -477,6 +563,16 @@ int _gnutls_fips_perform_self_checks2(void)
 	}
 
 	ret = gnutls_digest_self_test(0, GNUTLS_DIG_SHA3_512);
+	if (ret < 0) {
+		return gnutls_assert_val(GNUTLS_E_SELF_TEST_ERROR);
+	}
+
+	ret = gnutls_digest_self_test(0, GNUTLS_DIG_SHAKE_128);
+	if (ret < 0) {
+		return gnutls_assert_val(GNUTLS_E_SELF_TEST_ERROR);
+	}
+
+	ret = gnutls_digest_self_test(0, GNUTLS_DIG_SHAKE_256);
 	if (ret < 0) {
 		return gnutls_assert_val(GNUTLS_E_SELF_TEST_ERROR);
 	}
@@ -513,17 +609,22 @@ int _gnutls_fips_perform_self_checks2(void)
 	}
 
 	/* PK */
-	ret = gnutls_pk_self_test(0, GNUTLS_PK_RSA);
-	if (ret < 0) {
-		return gnutls_assert_val(GNUTLS_E_SELF_TEST_ERROR);
-	}
-
-	ret = gnutls_pk_self_test(0, GNUTLS_PK_DSA);
+	ret = gnutls_pk_self_test(0, GNUTLS_PK_RSA_PSS);
 	if (ret < 0) {
 		return gnutls_assert_val(GNUTLS_E_SELF_TEST_ERROR);
 	}
 
 	ret = gnutls_pk_self_test(0, GNUTLS_PK_EC);
+	if (ret < 0) {
+		return gnutls_assert_val(GNUTLS_E_SELF_TEST_ERROR);
+	}
+
+	ret = gnutls_pk_self_test(0, GNUTLS_PK_EDDSA_ED25519);
+	if (ret < 0) {
+		return gnutls_assert_val(GNUTLS_E_SELF_TEST_ERROR);
+	}
+
+	ret = gnutls_pk_self_test(0, GNUTLS_PK_EDDSA_ED448);
 	if (ret < 0) {
 		return gnutls_assert_val(GNUTLS_E_SELF_TEST_ERROR);
 	}
@@ -633,26 +734,34 @@ void gnutls_fips140_set_mode(gnutls_fips_mode_t mode, unsigned flags)
 {
 #ifdef ENABLE_FIPS140
 	gnutls_fips_mode_t prev = _gnutls_fips_mode_enabled();
-	if (prev == GNUTLS_FIPS140_DISABLED || prev == GNUTLS_FIPS140_SELFTESTS) {
+	if (prev == GNUTLS_FIPS140_DISABLED ||
+	    prev == GNUTLS_FIPS140_SELFTESTS) {
 		/* we need to run self-tests first to be in FIPS140-2 mode */
-		_gnutls_audit_log(NULL, "The library should be initialized in FIPS140-2 mode to do that operation\n");
+		_gnutls_audit_log(
+			NULL,
+			"The library should be initialized in FIPS140-2 mode to do that operation\n");
 		return;
 	}
 
 	switch (mode) {
-		case GNUTLS_FIPS140_STRICT:
-		case GNUTLS_FIPS140_LAX:
-		case GNUTLS_FIPS140_LOG:
-		case GNUTLS_FIPS140_DISABLED:
-			break;
-		case GNUTLS_FIPS140_SELFTESTS:
-			_gnutls_audit_log(NULL, "Cannot switch library to FIPS140-2 self-tests mode; defaulting to strict\n");
-			mode = GNUTLS_FIPS140_STRICT;
-			break;
-		default:
-			_gnutls_audit_log(NULL, "Cannot switch library to mode %u; defaulting to strict\n", (unsigned)mode);
-			mode = GNUTLS_FIPS140_STRICT;
-			break;
+	case GNUTLS_FIPS140_STRICT:
+	case GNUTLS_FIPS140_LAX:
+	case GNUTLS_FIPS140_LOG:
+	case GNUTLS_FIPS140_DISABLED:
+		break;
+	case GNUTLS_FIPS140_SELFTESTS:
+		_gnutls_audit_log(
+			NULL,
+			"Cannot switch library to FIPS140-2 self-tests mode; defaulting to strict\n");
+		mode = GNUTLS_FIPS140_STRICT;
+		break;
+	default:
+		_gnutls_audit_log(
+			NULL,
+			"Cannot switch library to mode %u; defaulting to strict\n",
+			(unsigned)mode);
+		mode = GNUTLS_FIPS140_STRICT;
+		break;
 	}
 
 	if (flags & GNUTLS_FIPS140_SET_MODE_THREAD)
@@ -684,8 +793,7 @@ void _gnutls_lib_force_operational(void)
  *
  * Since: 3.7.3
  */
-int
-gnutls_fips140_context_init(gnutls_fips140_context_t *context)
+int gnutls_fips140_context_init(gnutls_fips140_context_t *context)
 {
 	*context = gnutls_malloc(sizeof(struct gnutls_fips140_context_st));
 	if (!*context) {
@@ -703,8 +811,7 @@ gnutls_fips140_context_init(gnutls_fips140_context_t *context)
  *
  * Since: 3.7.3
  */
-void
-gnutls_fips140_context_deinit(gnutls_fips140_context_t context)
+void gnutls_fips140_context_deinit(gnutls_fips140_context_t context)
 {
 	gnutls_free(context);
 }
@@ -745,8 +852,7 @@ gnutls_fips140_get_operation_state(gnutls_fips140_context_t context)
  *
  * Since: 3.7.3
  */
-int
-gnutls_fips140_push_context(gnutls_fips140_context_t context)
+int gnutls_fips140_push_context(gnutls_fips140_context_t context)
 {
 #ifdef ENABLE_FIPS140
 	if (_gnutls_fips_mode_enabled() != GNUTLS_FIPS140_DISABLED) {
@@ -778,8 +884,7 @@ gnutls_fips140_push_context(gnutls_fips140_context_t context)
  *
  * Since: 3.7.3
  */
-int
-gnutls_fips140_pop_context(void)
+int gnutls_fips140_pop_context(void)
 {
 #ifdef ENABLE_FIPS140
 	if (_gnutls_fips_mode_enabled() != GNUTLS_FIPS140_DISABLED) {
@@ -810,14 +915,12 @@ operation_state_to_string(gnutls_fips140_operation_state_t state)
 	case GNUTLS_FIPS140_OP_ERROR:
 		return "error";
 	default:
-		/*NOTREACHED*/
-		assert(0);
+		/*NOTREACHED*/ assert(0);
 		return NULL;
 	}
 }
 
-void
-_gnutls_switch_fips_state(gnutls_fips140_operation_state_t state)
+void _gnutls_switch_fips_state(gnutls_fips140_operation_state_t state)
 {
 	gnutls_fips_mode_t mode = _gnutls_fips_mode_enabled();
 	if (mode == GNUTLS_FIPS140_DISABLED) {
@@ -837,8 +940,10 @@ _gnutls_switch_fips_state(gnutls_fips140_operation_state_t state)
 	case GNUTLS_FIPS140_OP_INITIAL:
 		/* initial can be transitioned to any state */
 		if (mode != GNUTLS_FIPS140_LAX) {
-			_gnutls_audit_log(NULL, "FIPS140-2 operation mode switched from initial to %s\n",
-					  operation_state_to_string(state));
+			_gnutls_audit_log(
+				NULL,
+				"FIPS140-2 operation mode switched from initial to %s\n",
+				operation_state_to_string(state));
 		}
 		_tfips_context->state = state;
 		break;
@@ -846,8 +951,10 @@ _gnutls_switch_fips_state(gnutls_fips140_operation_state_t state)
 		/* approved can only be transitioned to not-approved */
 		if (likely(state == GNUTLS_FIPS140_OP_NOT_APPROVED)) {
 			if (mode != GNUTLS_FIPS140_LAX) {
-				_gnutls_audit_log(NULL, "FIPS140-2 operation mode switched from approved to %s\n",
-						  operation_state_to_string(state));
+				_gnutls_audit_log(
+					NULL,
+					"FIPS140-2 operation mode switched from approved to %s\n",
+					operation_state_to_string(state));
 			}
 			_tfips_context->state = state;
 			return;
@@ -856,9 +963,12 @@ _gnutls_switch_fips_state(gnutls_fips140_operation_state_t state)
 	default:
 		/* other transitions are prohibited */
 		if (mode != GNUTLS_FIPS140_LAX) {
-			_gnutls_audit_log(NULL, "FIPS140-2 operation mode cannot be switched from %s to %s\n",
-					  operation_state_to_string(_tfips_context->state),
-					  operation_state_to_string(state));
+			_gnutls_audit_log(
+				NULL,
+				"FIPS140-2 operation mode cannot be switched from %s to %s\n",
+				operation_state_to_string(
+					_tfips_context->state),
+				operation_state_to_string(state));
 		}
 		break;
 	}
@@ -866,8 +976,7 @@ _gnutls_switch_fips_state(gnutls_fips140_operation_state_t state)
 
 #else
 
-void
-_gnutls_switch_fips_state(gnutls_fips140_operation_state_t state)
+void _gnutls_switch_fips_state(gnutls_fips140_operation_state_t state)
 {
 	(void)state;
 }
@@ -891,8 +1000,7 @@ _gnutls_switch_fips_state(gnutls_fips140_operation_state_t state)
  *
  * Since: 3.7.7
  */
-int
-gnutls_fips140_run_self_tests(void)
+int gnutls_fips140_run_self_tests(void)
 {
 #ifdef ENABLE_FIPS140
 	int ret;
@@ -918,17 +1026,20 @@ gnutls_fips140_run_self_tests(void)
 	if (gnutls_fips140_mode_enabled() != GNUTLS_FIPS140_DISABLED &&
 	    ret < 0) {
 		_gnutls_switch_lib_state(LIB_STATE_ERROR);
-		_gnutls_audit_log(NULL, "FIPS140-2 self testing part 2 failed\n");
+		_gnutls_audit_log(NULL,
+				  "FIPS140-2 self testing part 2 failed\n");
 	} else {
 		/* Restore the previous library state */
 		_gnutls_switch_lib_state(prev_lib_state);
 	}
 
 	/* Restore the previous FIPS context */
-	if (gnutls_fips140_mode_enabled() != GNUTLS_FIPS140_DISABLED && fips_context) {
+	if (gnutls_fips140_mode_enabled() != GNUTLS_FIPS140_DISABLED &&
+	    fips_context) {
 		if (gnutls_fips140_pop_context() < 0) {
 			_gnutls_switch_lib_state(LIB_STATE_ERROR);
-			_gnutls_audit_log(NULL, "FIPS140-2 context restoration failed\n");
+			_gnutls_audit_log(
+				NULL, "FIPS140-2 context restoration failed\n");
 		}
 		gnutls_fips140_context_deinit(fips_context);
 	}

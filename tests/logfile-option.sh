@@ -17,8 +17,7 @@
 # General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with GnuTLS; if not, write to the Free Software Foundation,
-# Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+# along with GnuTLS.  If not, see <https://www.gnu.org/licenses/>.
 
 : ${srcdir=.}
 : ${SERV=../src/gnutls-serv${EXEEXT}}
@@ -45,6 +44,13 @@ fi
 SERV="${SERV} -q"
 
 . "${srcdir}/scripts/common.sh"
+
+: ${ac_cv_sizeof_time_t=8}
+if test "${ac_cv_sizeof_time_t}" -ge 8; then
+	ATTIME_VALID="2038-10-12"  # almost the pregenerated cert expiration
+else
+	ATTIME_VALID="2037-12-31"  # before 2038
+fi
 
 echo "Checking whether logfile option works."
 
@@ -76,7 +82,7 @@ if ! test -s ${TMPFILE2};then
 	echo "Stdout should not be empty!"
 	exit 1
 fi
-if grep -q "Handshake was completed" ${TMPFILE2};then
+if grep "Handshake was completed" ${TMPFILE2} >/dev/null; then
 	echo "Find the expected output!"
 else
 	echo "Cannot find the expected output!"
@@ -104,7 +110,7 @@ if test -s ${TMPFILE2};then
 	exit 1
 fi
 
-if grep -q "Handshake was completed" ${TMPFILE1}; then
+if grep "Handshake was completed" ${TMPFILE1} >/dev/null; then
 	echo "Found the expected output!"
 else
 	echo "Cannot find the expected output!"
@@ -119,7 +125,7 @@ launch_server --echo --sni-hostname-fatal --sni-hostname example.com --x509keyfi
 PID=$!
 wait_server ${PID}
 
-${VALGRIND} "${CLI}" -p "${PORT}" 127.0.0.1 ${OPTS} --priority "NORMAL:-VERS-ALL:+VERS-TLS1.2" --x509cafile ${CA1}  </dev/null >${TMPFILE2}
+${VALGRIND} "${CLI}" --attime "${ATTIME_VALID}" -p "${PORT}" 127.0.0.1 ${OPTS} --priority "NORMAL:-VERS-ALL:+VERS-TLS1.2" --x509cafile ${CA1}  </dev/null >${TMPFILE2}
 kill ${PID}
 wait
 
@@ -131,7 +137,7 @@ if ! test -s ${TMPFILE2};then
         echo "Stdout should not be empty!"
         exit 1
 fi
-if grep -q "Handshake was completed" ${TMPFILE2};then
+if grep "Handshake was completed" ${TMPFILE2} >/dev/null; then
         echo "Find the expected output!"
 else
         echo "Cannot find the expected output!"
@@ -145,7 +151,7 @@ launch_server --echo --sni-hostname-fatal --sni-hostname example.com --x509keyfi
 PID=$!
 wait_server ${PID}
 
-${VALGRIND} "${CLI}" -p "${PORT}" 127.0.0.1 ${OPTS} --priority "NORMAL:-VERS-ALL:+VERS-TLS1.2" --x509cafile ${CA1} --logfile ${TMPFILE1} </dev/null >${TMPFILE2}
+${VALGRIND} "${CLI}" --attime "${ATTIME_VALID}" -p "${PORT}" 127.0.0.1 ${OPTS} --priority "NORMAL:-VERS-ALL:+VERS-TLS1.2" --x509cafile ${CA1} --logfile ${TMPFILE1} </dev/null >${TMPFILE2}
 kill ${PID}
 wait
 
@@ -158,7 +164,7 @@ if test -s ${TMPFILE2};then
        exit 1
 fi
 
-if grep -q "Handshake was completed" ${TMPFILE1}; then
+if grep "Handshake was completed" ${TMPFILE1} >/dev/null; then
        echo "Found the expected output!"
 else
        echo "Cannot find the expected output!"

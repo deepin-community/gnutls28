@@ -1,9 +1,9 @@
 /* Test of getcwd() function.
-   Copyright (C) 2009-2021 Free Software Foundation, Inc.
+   Copyright (C) 2009-2026 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 3 of the License, or
+   the Free Software Foundation, either version 3 of the License, or
    (at your option) any later version.
 
    This program is distributed in the hope that it will be useful,
@@ -52,7 +52,7 @@ main (int argc, char **argv)
   /* Make sure that result is normalized.  */
   pwd2 = getcwd (NULL, 0);
   ASSERT (pwd2);
-  ASSERT (strcmp (pwd1, pwd2) == 0);
+  ASSERT (streq (pwd1, pwd2));
   free (pwd2);
   {
     size_t len = strlen (pwd1);
@@ -74,7 +74,7 @@ main (int argc, char **argv)
         tmp = getcwd (NULL, i);
         if (tmp)
           {
-            ASSERT (strcmp (pwd1, tmp) == 0);
+            ASSERT (streq (pwd1, tmp));
             free (tmp);
           }
         else
@@ -92,11 +92,11 @@ main (int argc, char **argv)
 
   /* Validate a POSIX requirement on size.  */
   errno = 0;
-  ASSERT (getcwd(pwd2, 0) == NULL);
+  ASSERT (getcwd (pwd2, 0) == NULL);
   ASSERT (errno == EINVAL);
 
   free (pwd1);
   free (pwd2);
 
-  return 0;
+  return test_exit_status;
 }

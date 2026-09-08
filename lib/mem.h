@@ -23,7 +23,12 @@
 #ifndef GNUTLS_LIB_MEM_H
 #define GNUTLS_LIB_MEM_H
 
+#ifdef HAVE_CONFIG_H
 #include "config.h"
+#endif
+
+#include <stddef.h>
+#include <stdint.h>
 
 #ifdef HAVE_SANITIZER_ASAN_INTERFACE_H
 #include <sanitizer/asan_interface.h>
@@ -32,6 +37,8 @@
 #ifdef HAVE_VALGRIND_MEMCHECK_H
 #include <valgrind/memcheck.h>
 #endif
+
+#include "attribute.h"
 
 /* These realloc functions will return ptr if size==0, and will free
  * the ptr if the new allocation failed.
@@ -45,18 +52,15 @@ void *_gnutls_reallocarray(void *, size_t, size_t);
 
 unsigned _gnutls_mem_is_zero(const uint8_t *ptr, unsigned size);
 
-#define zrelease_mpi_key(mpi) if (*mpi!=NULL) { \
-		_gnutls_mpi_clear(*mpi); \
+#define zrelease_mpi_key(mpi)             \
+	if (*mpi != NULL) {               \
+		_gnutls_mpi_clear(*mpi);  \
 		_gnutls_mpi_release(mpi); \
 	}
 
 #define zeroize_key(x, size) gnutls_memset(x, 0, size)
 
-#define zeroize_temp_key zeroize_key
-#define zrelease_temp_mpi_key zrelease_mpi_key
-
-static inline void
-_gnutls_memory_mark_undefined(void *addr, size_t size)
+static inline void _gnutls_memory_mark_undefined(void *addr, size_t size)
 {
 #ifdef HAVE_SANITIZER_ASAN_INTERFACE_H
 	ASAN_POISON_MEMORY_REGION(addr, size);
@@ -67,8 +71,7 @@ _gnutls_memory_mark_undefined(void *addr, size_t size)
 #endif
 }
 
-static inline void
-_gnutls_memory_mark_defined(void *addr, size_t size)
+static inline void _gnutls_memory_mark_defined(void *addr, size_t size)
 {
 #ifdef HAVE_SANITIZER_ASAN_INTERFACE_H
 	ASAN_UNPOISON_MEMORY_REGION(addr, size);
@@ -78,5 +81,28 @@ _gnutls_memory_mark_defined(void *addr, size_t size)
 		VALGRIND_MAKE_MEM_DEFINED(addr, size);
 #endif
 }
+
+static inline ATTRIBUTE_NONNULL() void *_gnutls_take_pointer(void *src)
+{
+	void **ptr = (void **)src;
+	void *dst;
+
+	dst = *ptr;
+	*ptr = NULL;
+
+	return dst;
+}
+
+/* Type-safety */
+#if (((defined __GNUC__ &&                                                    \
+       __GNUC__ + (__GNUC_MINOR__ >= 1) > 3) /* both C and C++ mode */        \
+      || (defined __clang__ && __clang_major__ >= 3 /* both C and C++ mode */ \
+	  && !(defined __cplusplus &&                                         \
+	       !defined __GNUC__))) /* except for clang-cl in C++ mode */     \
+     && !defined __STRICT_ANSI__) /* but not with -std=c99 or -std=c11 */     \
+	|| (defined __SUNPRO_C && __SUNPRO_C >= 0x5110) /* C mode */          \
+	|| __STDC_VERSION__ >= 202311L /* C mode */
+#define _gnutls_take_pointer(pp) ((typeof(*pp))(_gnutls_take_pointer)(pp))
+#endif /* HAVE_TYPEOF */
 
 #endif /* GNUTLS_LIB_MEM_H */

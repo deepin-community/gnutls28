@@ -1,0 +1,18 @@
+Description: Check for python on Debian builds, un-disables running cligen
+Author: Andreas Metzler <ametzler@debian.org>
+Origin: vendor
+Forwarded: not-needed
+Last-Update: 2025-02-08
+
+--- gnutls28-3.8.9.orig/configure.ac
++++ gnutls28-3.8.9/configure.ac
+@@ -567,7 +567,8 @@ AM_CONDITIONAL(WANT_TEST_SUITE, test "$f
+ 
+ dnl Python is required when building from git (for the cligen tool) and
+ dnl when running the extended test suite.
+-if test "$full_test_suite" = yes || test -e "${srcdir}/.git"; then
++dnl Also run cligen for Debian package builds.
++if test "$full_test_suite" = yes || test -e "${srcdir}/.git" || test -e "${srcdir}/debian/control"; then
+ 	AM_PATH_PYTHON([3.6])
+ fi
+ 

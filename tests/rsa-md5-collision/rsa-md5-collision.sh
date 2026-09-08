@@ -18,8 +18,7 @@
 # General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with GnuTLS; if not, write to the Free Software Foundation,
-# Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+# along with GnuTLS.  If not, see <https://www.gnu.org/licenses/>.
 
 : ${srcdir=.}
 : ${CERTTOOL=../src/certtool${EXEEXT}}
@@ -31,14 +30,12 @@ if ! test -x "${CERTTOOL}"; then
 fi
 
 . ${srcdir}/scripts/common.sh
-skip_if_no_datefudge
 
 # Disable leak detection
 ASAN_OPTIONS="detect_leaks=0"
 export ASAN_OPTIONS
 
-datefudge -s "2006-10-1" \
-"${CERTTOOL}" --verify-chain --outfile "$TMPFILE1" --infile "${srcdir}/rsa-md5-collision/colliding-chain-md5-1.pem"
+"${CERTTOOL}" --attime "2006-10-01" --verify-chain --outfile "$TMPFILE1" --infile "${srcdir}/rsa-md5-collision/colliding-chain-md5-1.pem"
 if test $? = 0;then
 	echo "Verification on chain1 succeeded"
 	exit 1
@@ -51,8 +48,7 @@ if test $? != 0;then
 fi
 
 
-datefudge -s "2006-10-1" \
-"${CERTTOOL}" --verify-chain --outfile "$TMPFILE2" --infile "${srcdir}/rsa-md5-collision/colliding-chain-md5-2.pem"
+"${CERTTOOL}" --attime "2006-10-01" --verify-chain --outfile "$TMPFILE2" --infile "${srcdir}/rsa-md5-collision/colliding-chain-md5-2.pem"
 if test $? = 0;then
 	echo "Verification on chain2 succeeded"
 	exit 1

@@ -4,10 +4,10 @@
 
 #include "ocsptool-options.h"
 #include <errno.h>
-#include <error.h>
 #include <getopt.h>
 #include <limits.h>
 #include <stdint.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #ifndef _WIN32
@@ -33,8 +33,14 @@ parse_number (const char *arg)
     result = strtol (arg, &endptr, 10);
 
   if (errno != 0 || (endptr && *endptr != '\0'))
-    error (EXIT_FAILURE, errno, "'%s' is not a recognizable number.",
-           arg);
+    {
+      char buf[80];
+      snprintf (buf, sizeof(buf),
+                "'%s' is not a recognizable number",
+                arg);
+      perror (buf);
+      exit (EXIT_FAILURE);
+    }
 
   return result;
 }
@@ -42,34 +48,35 @@ parse_number (const char *arg)
 /* Long options.  */
 static const struct option long_options[] =
 {
-  { "debug", required_argument, 0, 'd' },
-  { "verbose", no_argument, 0, 'V' },
-  { "infile", required_argument, 0, CHAR_MAX + 1 },
-  { "outfile", required_argument, 0, CHAR_MAX + 2 },
-  { "ask", optional_argument, 0, CHAR_MAX + 3 },
-  { "verify-response", no_argument, 0, 'e' },
-  { "request-info", no_argument, 0, 'i' },
-  { "response-info", no_argument, 0, 'j' },
-  { "generate-request", no_argument, 0, 'q' },
-  { "nonce", no_argument, 0, CHAR_MAX + 4 },
-  { "no-nonce", no_argument, 0, CHAR_MAX + 5 },
-  { "load-chain", required_argument, 0, CHAR_MAX + 6 },
-  { "load-issuer", required_argument, 0, CHAR_MAX + 7 },
-  { "load-cert", required_argument, 0, CHAR_MAX + 8 },
-  { "load-trust", required_argument, 0, CHAR_MAX + 9 },
-  { "load-signer", required_argument, 0, CHAR_MAX + 10 },
-  { "inder", no_argument, 0, CHAR_MAX + 11 },
-  { "no-inder", no_argument, 0, CHAR_MAX + 12 },
-  { "outder", no_argument, 0, CHAR_MAX + 13 },
-  { "outpem", no_argument, 0, CHAR_MAX + 14 },
-  { "load-request", required_argument, 0, 'Q' },
-  { "load-response", required_argument, 0, 'S' },
-  { "ignore-errors", no_argument, 0, CHAR_MAX + 15 },
-  { "verify-allow-broken", no_argument, 0, CHAR_MAX + 16 },
-  { "version", optional_argument, 0, 'v' },
-  { "help", no_argument, 0, 'h' },
-  { "more-help", no_argument, 0, '!' },
-  { 0, 0, 0, 0 }
+  { "debug", required_argument, NULL, 'd' },
+  { "verbose", no_argument, NULL, 'V' },
+  { "infile", required_argument, NULL, CHAR_MAX + 1 },
+  { "outfile", required_argument, NULL, CHAR_MAX + 2 },
+  { "ask", optional_argument, NULL, CHAR_MAX + 3 },
+  { "verify-response", no_argument, NULL, 'e' },
+  { "request-info", no_argument, NULL, 'i' },
+  { "response-info", no_argument, NULL, 'j' },
+  { "generate-request", no_argument, NULL, 'q' },
+  { "nonce", no_argument, NULL, CHAR_MAX + 4 },
+  { "no-nonce", no_argument, NULL, CHAR_MAX + 5 },
+  { "load-chain", required_argument, NULL, CHAR_MAX + 6 },
+  { "load-issuer", required_argument, NULL, CHAR_MAX + 7 },
+  { "load-cert", required_argument, NULL, CHAR_MAX + 8 },
+  { "load-trust", required_argument, NULL, CHAR_MAX + 9 },
+  { "load-signer", required_argument, NULL, CHAR_MAX + 10 },
+  { "inder", no_argument, NULL, CHAR_MAX + 11 },
+  { "no-inder", no_argument, NULL, CHAR_MAX + 12 },
+  { "outder", no_argument, NULL, CHAR_MAX + 13 },
+  { "outpem", no_argument, NULL, CHAR_MAX + 14 },
+  { "load-request", required_argument, NULL, 'Q' },
+  { "load-response", required_argument, NULL, 'S' },
+  { "ignore-errors", no_argument, NULL, CHAR_MAX + 15 },
+  { "verify-allow-broken", no_argument, NULL, CHAR_MAX + 16 },
+  { "attime", required_argument, NULL, CHAR_MAX + 17 },
+  { "version", optional_argument, NULL, 'v' },
+  { "help", no_argument, NULL, 'h' },
+  { "more-help", no_argument, NULL, '!' },
+  { NULL, 0, NULL, 0 }
 
 };
 
@@ -194,6 +201,11 @@ process_options (int argc, char **argv)
         opts->present.verify_allow_broken = true;
         opts->enabled.verify_allow_broken = true;
         break;
+      case CHAR_MAX + 17: /* --attime */
+        opts->present.attime = true;
+        opts->arg.attime = optarg;
+        opts->enabled.attime = true;
+        break;
       case 'v':
         opts->present.version = true;
         opts->arg.version = optarg;
@@ -214,27 +226,32 @@ process_options (int argc, char **argv)
 
   if (HAVE_OPT(DEBUG) && OPT_VALUE_DEBUG < 0)
     {
-      error (EXIT_FAILURE, 0, "%s option value %d is out of range.",
-             "debug", opts->value.debug);
+      fprintf (stderr, "%s option value %d is out of range\n",
+               "debug", opts->value.debug);
+      exit (EXIT_FAILURE);
     }
   if (HAVE_OPT(DEBUG) && OPT_VALUE_DEBUG > 9999)
     {
-      error (EXIT_FAILURE, 0, "%s option value %d is out of range",
-             "debug", opts->value.debug);
+      fprintf (stderr, "%s option value %d is out of range\n",
+               "debug", opts->value.debug);
+      exit (EXIT_FAILURE);
     }
   if (HAVE_OPT(LOAD_TRUST) && HAVE_OPT(LOAD_SIGNER))
     {
-      error (EXIT_FAILURE, 0, "the '%s' and '%s' options conflict",
-             "load-trust", "load_signer");
+      fprintf (stderr, "the '%s' and '%s' options conflict\n",
+               "load-trust", "load_signer");
+      exit (EXIT_FAILURE);
     }
   if (HAVE_OPT(LOAD_SIGNER) && HAVE_OPT(LOAD_TRUST))
     {
-      error (EXIT_FAILURE, 0, "the '%s' and '%s' options conflict",
-             "load-signer", "load_trust");
+      fprintf (stderr, "the '%s' and '%s' options conflict\n",
+               "load-signer", "load_trust");
+      exit (EXIT_FAILURE);
     }
   if (optind < argc)
     {
-      error (EXIT_FAILURE, 0, "Command line arguments are not allowed.");
+      fprintf (stderr, "Command line arguments are not allowed\n");
+      exit (EXIT_FAILURE);
     }
 
 
@@ -254,11 +271,17 @@ process_options (int argc, char **argv)
       int pfds[2];
 
       if (pipe (pfds) < 0)
-        error (EXIT_FAILURE, errno, "pipe");
+        {
+          perror ("pipe");
+          exit (EXIT_FAILURE);
+        }
 
       pid = fork ();
       if (pid < 0)
-        error (EXIT_FAILURE, errno, "fork");
+        {
+          perror ("fork");
+          exit (EXIT_FAILURE);
+        }
 
       if (pid == 0)
         {
@@ -297,8 +320,8 @@ process_options (int argc, char **argv)
       if (!OPT_ARG_VERSION || !strcmp (OPT_ARG_VERSION, "c"))
         {
           const char str[] =
-            "ocsptool 3.7.9\n"
-            "Copyright (C) 2000-2021 Free Software Foundation, and others\n"
+            "ocsptool 3.8.13\n"
+            "Copyright (C) 2000-2023 Free Software Foundation, and others\n"
             "This is free software. It is licensed for use, modification and\n"
             "redistribution under the terms of the GNU General Public License,\n"
             "version 3 or later <http://gnu.org/licenses/gpl.html>\n"
@@ -310,15 +333,15 @@ process_options (int argc, char **argv)
       else if (!strcmp (OPT_ARG_VERSION, "v"))
         {
           const char str[] =
-            "ocsptool 3.7.9\n";
+            "ocsptool 3.8.13\n";
           fprintf (stdout, "%s", str);
           exit(0);
         }
       else if (!strcmp (OPT_ARG_VERSION, "n"))
         {
           const char str[] =
-            "ocsptool 3.7.9\n"
-            "Copyright (C) 2000-2021 Free Software Foundation, and others\n"
+            "ocsptool 3.8.13\n"
+            "Copyright (C) 2000-2023 Free Software Foundation, and others\n"
             "This is free software. It is licensed for use, modification and\n"
             "redistribution under the terms of the GNU General Public License,\n"
             "version 3 or later <http://gnu.org/licenses/gpl.html>\n"
@@ -342,11 +365,12 @@ process_options (int argc, char **argv)
         }
       else
         {
-          error (EXIT_FAILURE, 0,
-                 "version option argument 'a' invalid.  Use:\n"
-                 "	'v' - version only\n"
-                 "	'c' - version and copyright\n"
-                 "	'n' - version and full copyright notice");
+          fprintf (stderr,
+                   "version option argument 'a' invalid.  Use:\n"
+                   "	'v' - version only\n"
+                   "	'c' - version and copyright\n"
+                   "	'n' - version and full copyright notice\n");
+          exit (EXIT_FAILURE);
         }
     }
 
@@ -396,6 +420,7 @@ usage (FILE *out, int status)
     "				- file must pre-exist\n"
     "       --ignore-errors        Ignore any verification errors\n"
     "       --verify-allow-broken  Allow broken algorithms, such as MD5 for verification\n"
+    "       --attime=str           Perform validation at the timestamp instead of the system time\n"
     "\n"
     "Version, usage and configuration options:\n"
     "\n"

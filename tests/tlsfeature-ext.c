@@ -14,8 +14,7 @@
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GnuTLS; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
+ * along with GnuTLS.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 #ifdef HAVE_CONFIG_H
@@ -30,7 +29,7 @@
 #include <assert.h>
 #include "utils.h"
 
-unsigned char der_feat_long[] = 
+unsigned char der_feat_long[] =
 	"\x30\x82\x01\x80\x02\x01\x00\x02\x01\x01\x02\x01\x02\x02\x01\x03"
 	"\x02\x01\x04\x02\x01\x05\x02\x01\x06\x02\x01\x07\x02\x01\x08\x02"
 	"\x01\x09\x02\x01\x0A\x02\x01\x0B\x02\x01\x0C\x02\x01\x0D\x02\x01"
@@ -57,7 +56,7 @@ unsigned char der_feat_long[] =
 	"\x01\x79\x02\x01\x7A\x02\x01\x7B\x02\x01\x7C\x02\x01\x7D\x02\x01"
 	"\x7E\x02\x01\x7F";
 
-static gnutls_datum_t der_long = { der_feat_long, sizeof(der_feat_long)-1};
+static gnutls_datum_t der_long = { der_feat_long, sizeof(der_feat_long) - 1 };
 
 void doit(void)
 {
@@ -120,7 +119,8 @@ void doit(void)
 
 	assert(gnutls_x509_ext_import_tlsfeatures(&der, feat, 0) >= 0);
 
-	assert(gnutls_x509_tlsfeatures_get(feat, 0, &out) == GNUTLS_E_REQUESTED_DATA_NOT_AVAILABLE);
+	assert(gnutls_x509_tlsfeatures_get(feat, 0, &out) ==
+	       GNUTLS_E_REQUESTED_DATA_NOT_AVAILABLE);
 
 	gnutls_x509_tlsfeatures_deinit(feat);
 
@@ -129,10 +129,10 @@ void doit(void)
 	/* check whether we can add a reasonable number of features */
 	assert(gnutls_x509_tlsfeatures_init(&feat) >= 0);
 
-	for (i=0;i<128;i++) {
+	for (i = 0; i < 128; i++) {
 		ret = gnutls_x509_tlsfeatures_add(feat, i);
 		if (ret < 0) {
-			assert(i>=32);
+			assert(i >= 32);
 			assert(ret == GNUTLS_E_INTERNAL_ERROR);
 		}
 	}
@@ -142,10 +142,10 @@ void doit(void)
 	/* check whether we can import a very long list */
 	assert(gnutls_x509_tlsfeatures_init(&feat) >= 0);
 
-	assert(gnutls_x509_ext_import_tlsfeatures(&der_long, feat, 0) == GNUTLS_E_INTERNAL_ERROR);
+	assert(gnutls_x509_ext_import_tlsfeatures(&der_long, feat, 0) ==
+	       GNUTLS_E_INTERNAL_ERROR);
 
 	gnutls_x509_tlsfeatures_deinit(feat);
 
 	gnutls_global_deinit();
 }
-

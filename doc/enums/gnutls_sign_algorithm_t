@@ -107,6 +107,12 @@ Digital signature algorithm GOST R 34.10-2012 with GOST R 34.11-2012 256 bit
 Digital signature algorithm GOST R 34.10-2012 with GOST R 34.11-2012 512 bit
 @item GNUTLS_@-SIGN_@-EDDSA_@-ED448
 Digital signature algorithm EdDSA with Ed448 curve.
+@item GNUTLS_@-SIGN_@-MLDSA44
+Digital signature algorithm ML-DSA-44.
+@item GNUTLS_@-SIGN_@-MLDSA65
+Digital signature algorithm ML-DSA-65.
+@item GNUTLS_@-SIGN_@-MLDSA87
+Digital signature algorithm ML-DSA-87.
 @item GNUTLS_@-SIGN_@-MAX
 -- undescribed --
 @end table

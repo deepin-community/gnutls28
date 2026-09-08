@@ -61,6 +61,8 @@ struct gnutls_serv_options
     bool keymatexportsize;
     bool recordsize;
     bool httpdata;
+    bool timeout;
+    bool attime;
     bool version;
     bool help;
     bool more_help;
@@ -89,6 +91,8 @@ struct gnutls_serv_options
     const char *keymatexportsize;
     const char *recordsize;
     const char *httpdata;
+    const char *timeout;
+    const char *attime;
     const char *version;
   } arg;
 
@@ -101,6 +105,7 @@ struct gnutls_serv_options
     int port;
     int keymatexportsize;
     int recordsize;
+    int timeout;
   } value;
 
   /* Option arguments parsed as list */
@@ -164,6 +169,8 @@ struct gnutls_serv_options
     bool keymatexportsize;
     bool recordsize;
     bool httpdata;
+    bool timeout;
+    bool attime;
     bool version;
     bool help;
     bool more_help;
@@ -223,6 +230,8 @@ struct gnutls_serv_options
 #define HAVE_OPT_KEYMATEXPORTSIZE gnutls_serv_options.present.keymatexportsize
 #define HAVE_OPT_RECORDSIZE gnutls_serv_options.present.recordsize
 #define HAVE_OPT_HTTPDATA gnutls_serv_options.present.httpdata
+#define HAVE_OPT_TIMEOUT gnutls_serv_options.present.timeout
+#define HAVE_OPT_ATTIME gnutls_serv_options.present.attime
 #define HAVE_OPT_VERSION gnutls_serv_options.present.version
 #define HAVE_OPT_HELP gnutls_serv_options.present.help
 #define HAVE_OPT_MORE_HELP gnutls_serv_options.present.more_help
@@ -273,6 +282,8 @@ struct gnutls_serv_options
 #define OPT_ARG_KEYMATEXPORTSIZE gnutls_serv_options.arg.keymatexportsize
 #define OPT_ARG_RECORDSIZE gnutls_serv_options.arg.recordsize
 #define OPT_ARG_HTTPDATA gnutls_serv_options.arg.httpdata
+#define OPT_ARG_TIMEOUT gnutls_serv_options.arg.timeout
+#define OPT_ARG_ATTIME gnutls_serv_options.arg.attime
 #define OPT_ARG_VERSION gnutls_serv_options.arg.version
 #define OPT_ARG_HELP gnutls_serv_options.arg.help
 #define OPT_ARG_MORE_HELP gnutls_serv_options.arg.more_help
@@ -283,6 +294,7 @@ struct gnutls_serv_options
 #define OPT_VALUE_PORT gnutls_serv_options.value.port
 #define OPT_VALUE_KEYMATEXPORTSIZE gnutls_serv_options.value.keymatexportsize
 #define OPT_VALUE_RECORDSIZE gnutls_serv_options.value.recordsize
+#define OPT_VALUE_TIMEOUT gnutls_serv_options.value.timeout
 
 #define ENABLED_OPT_DEBUG gnutls_serv_options.enabled.debug
 #define ENABLED_OPT_SNI_HOSTNAME gnutls_serv_options.enabled.sni_hostname
@@ -330,6 +342,8 @@ struct gnutls_serv_options
 #define ENABLED_OPT_KEYMATEXPORTSIZE gnutls_serv_options.enabled.keymatexportsize
 #define ENABLED_OPT_RECORDSIZE gnutls_serv_options.enabled.recordsize
 #define ENABLED_OPT_HTTPDATA gnutls_serv_options.enabled.httpdata
+#define ENABLED_OPT_TIMEOUT gnutls_serv_options.enabled.timeout
+#define ENABLED_OPT_ATTIME gnutls_serv_options.enabled.attime
 #define ENABLED_OPT_VERSION gnutls_serv_options.enabled.version
 #define ENABLED_OPT_HELP gnutls_serv_options.enabled.help
 #define ENABLED_OPT_MORE_HELP gnutls_serv_options.enabled.more_help

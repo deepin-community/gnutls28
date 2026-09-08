@@ -2,7 +2,7 @@
 
 
 
-@deftypefun {int} {gnutls_x509_crt_set_subject_alternative_name} (gnutls_x509_crt_t @var{crt}, gnutls_x509_subject_alt_name_t           @var{type}, const char * @var{data_string})
+@deftypefun {int} {gnutls_x509_crt_set_subject_alternative_name} (gnutls_x509_crt_t @var{crt}, gnutls_x509_subject_alt_name_t @var{type}, const char * @var{data_string})
 @var{crt}: a certificate of type @code{gnutls_x509_crt_t} 
 
 @var{type}: is one of the gnutls_x509_subject_alt_name_t enumerations

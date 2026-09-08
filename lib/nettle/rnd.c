@@ -23,12 +23,12 @@
 
 #include "gnutls_int.h"
 #include "errors.h"
-#include <locks.h>
-#include <num.h>
+#include "locks.h"
+#include "num.h"
 #include <nettle/chacha.h>
-#include <rnd-common.h>
-#include <system.h>
-#include <atfork.h>
+#include "rnd-common.h"
+#include "system.h"
+#include "atfork.h"
 #include <errno.h>
 #include <minmax.h>
 
@@ -49,9 +49,14 @@
 
 /* after this number of bytes PRNG will rekey using the system RNG */
 static const unsigned prng_reseed_limits[] = {
-	[GNUTLS_RND_NONCE] = 16*1024*1024, /* 16 MB - we re-seed using the GNUTLS_RND_RANDOM output */
-	[GNUTLS_RND_RANDOM] = 2*1024*1024, /* 2MB - we re-seed by time as well */
-	[GNUTLS_RND_KEY] = 2*1024*1024 /* same as GNUTLS_RND_RANDOM - but we re-key on every operation */
+	[GNUTLS_RND_NONCE] =
+		16 * 1024 *
+		1024, /* 16 MB - we re-seed using the GNUTLS_RND_RANDOM output */
+	[GNUTLS_RND_RANDOM] =
+		2 * 1024 * 1024, /* 2MB - we re-seed by time as well */
+	[GNUTLS_RND_KEY] =
+		2 * 1024 *
+		1024 /* same as GNUTLS_RND_RANDOM - but we re-key on every operation */
 };
 
 static const time_t prng_reseed_time[] = {
@@ -68,13 +73,13 @@ struct prng_ctx_st {
 };
 
 struct generators_ctx_st {
-	struct prng_ctx_st nonce;  /* GNUTLS_RND_NONCE */
+	struct prng_ctx_st nonce; /* GNUTLS_RND_NONCE */
 	struct prng_ctx_st normal; /* GNUTLS_RND_RANDOM, GNUTLS_RND_KEY */
 };
 
-
 static void wrap_nettle_rnd_deinit(void *_ctx)
 {
+	zeroize_key(_ctx, sizeof(struct generators_ctx_st));
 	gnutls_free(_ctx);
 }
 
@@ -87,8 +92,7 @@ static void wrap_nettle_rnd_deinit(void *_ctx)
  */
 static int single_prng_init(struct prng_ctx_st *ctx,
 			    uint8_t new_key[PRNG_KEY_SIZE],
-			    unsigned new_key_size,
-			    unsigned init)
+			    unsigned new_key_size, unsigned init)
 {
 	uint8_t nonce[CHACHA_NONCE_SIZE];
 
@@ -115,6 +119,7 @@ static int single_prng_init(struct prng_ctx_st *ctx,
 	chacha_set_nonce(&ctx->ctx, nonce);
 
 	zeroize_key(new_key, new_key_size);
+	zeroize_key(nonce, sizeof(nonce));
 
 	ctx->counter = 0;
 
@@ -125,11 +130,11 @@ static int single_prng_init(struct prng_ctx_st *ctx,
 
 static int wrap_nettle_rnd_init(void **_ctx)
 {
-	int ret;
-	uint8_t new_key[PRNG_KEY_SIZE*2];
+	int ret = 0;
+	uint8_t new_key[PRNG_KEY_SIZE * 2];
 	struct generators_ctx_st *ctx;
 
-	ctx = calloc(1, sizeof(*ctx));
+	ctx = gnutls_calloc(1, sizeof(*ctx));
 	if (ctx == NULL)
 		return gnutls_assert_val(GNUTLS_E_MEMORY_ERROR);
 
@@ -137,32 +142,32 @@ static int wrap_nettle_rnd_init(void **_ctx)
 	ret = _rnd_get_system_entropy(new_key, sizeof(new_key));
 	if (ret < 0) {
 		gnutls_assert();
-		goto fail;
+		goto cleanup;
 	}
 
 	ret = single_prng_init(&ctx->nonce, new_key, PRNG_KEY_SIZE, 1);
 	if (ret < 0) {
 		gnutls_assert();
-		goto fail;
+		goto cleanup;
 	}
 
 	/* initialize the random/key RNG */
-	ret = single_prng_init(&ctx->normal, new_key+PRNG_KEY_SIZE, PRNG_KEY_SIZE, 1);
+	ret = single_prng_init(&ctx->normal, new_key + PRNG_KEY_SIZE,
+			       PRNG_KEY_SIZE, 1);
 	if (ret < 0) {
 		gnutls_assert();
-		goto fail;
+		goto cleanup;
 	}
 
-	*_ctx = ctx;
+	*_ctx = _gnutls_take_pointer((void **)&ctx);
 
-	return 0;
- fail:
+cleanup:
+	zeroize_key(new_key, sizeof(new_key));
 	gnutls_free(ctx);
 	return ret;
 }
 
-static int
-wrap_nettle_rnd(void *_ctx, int level, void *data, size_t datasize)
+static int wrap_nettle_rnd(void *_ctx, int level, void *data, size_t datasize)
 {
 	struct generators_ctx_st *ctx = _ctx;
 	struct prng_ctx_st *prng_ctx;
@@ -185,7 +190,7 @@ wrap_nettle_rnd(void *_ctx, int level, void *data, size_t datasize)
 	 */
 	memset(data, 0, datasize);
 
-	now = gnutls_time(0);
+	now = gnutls_time(NULL);
 
 	/* We re-seed based on time in addition to output data. That is,
 	 * to prevent a temporal state compromise to become permanent for low
@@ -199,9 +204,9 @@ wrap_nettle_rnd(void *_ctx, int level, void *data, size_t datasize)
 
 	if (reseed != 0 || prng_ctx->counter > prng_reseed_limits[level]) {
 		if (level == GNUTLS_RND_NONCE) {
-			ret = wrap_nettle_rnd(_ctx, GNUTLS_RND_RANDOM, new_key, sizeof(new_key));
+			ret = wrap_nettle_rnd(_ctx, GNUTLS_RND_RANDOM, new_key,
+					      sizeof(new_key));
 		} else {
-
 			/* we also use the system entropy to reduce the impact
 			 * of a temporal state compromise for these two levels. */
 			ret = _rnd_get_system_entropy(new_key, sizeof(new_key));
@@ -228,7 +233,8 @@ wrap_nettle_rnd(void *_ctx, int level, void *data, size_t datasize)
 	prng_ctx->counter += datasize;
 
 	if (level == GNUTLS_RND_KEY) { /* prevent backtracking */
-		ret = wrap_nettle_rnd(_ctx, GNUTLS_RND_RANDOM, new_key, sizeof(new_key));
+		ret = wrap_nettle_rnd(_ctx, GNUTLS_RND_RANDOM, new_key,
+				      sizeof(new_key));
 		if (ret < 0) {
 			gnutls_assert();
 			_gnutls_switch_fips_state(GNUTLS_FIPS140_OP_ERROR);
@@ -247,6 +253,7 @@ wrap_nettle_rnd(void *_ctx, int level, void *data, size_t datasize)
 	_gnutls_switch_fips_state(GNUTLS_FIPS140_OP_NOT_APPROVED);
 
 cleanup:
+	zeroize_key(new_key, sizeof(new_key));
 	return ret;
 }
 
@@ -256,8 +263,8 @@ static void wrap_nettle_rnd_refresh(void *_ctx)
 	char tmp;
 
 	/* force reseed */
-	ctx->nonce.counter = prng_reseed_limits[GNUTLS_RND_NONCE]+1;
-	ctx->normal.counter = prng_reseed_limits[GNUTLS_RND_RANDOM]+1;
+	ctx->nonce.counter = prng_reseed_limits[GNUTLS_RND_NONCE] + 1;
+	ctx->normal.counter = prng_reseed_limits[GNUTLS_RND_RANDOM] + 1;
 
 	wrap_nettle_rnd(_ctx, GNUTLS_RND_NONCE, &tmp, 1);
 	wrap_nettle_rnd(_ctx, GNUTLS_RND_RANDOM, &tmp, 1);

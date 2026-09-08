@@ -15,8 +15,7 @@
 # General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with GnuTLS; if not, write to the Free Software Foundation,
-# Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+# along with GnuTLS.  If not, see <https://www.gnu.org/licenses/>.
 
 : ${srcdir=.}
 : ${P11TOOL=../src/p11tool${EXEEXT}}
@@ -67,7 +66,7 @@ have_ed25519=0
 P11TOOL="${VALGRIND} ${P11TOOL} --batch"
 SERV="${SERV} -q"
 
-TESTDATE=2020-12-01
+TESTDATE="2020-12-01 00:00:00"
 
 . ${srcdir}/scripts/common.sh
 
@@ -80,8 +79,6 @@ exit_error () {
 	tail "${LOGFILE}"
 	exit 1
 }
-
-skip_if_no_datefudge
 
 # $1: token
 # $2: PIN
@@ -562,8 +559,7 @@ write_certificate_test () {
 	pubkey="$5"
 
 	echo -n "* Generating client certificate... "
-	datefudge -s "$TESTDATE" \
-	"${CERTTOOL}" ${CERTTOOL_PARAM} ${ADDITIONAL_PARAM}  --generate-certificate --load-ca-privkey "${cakey}"  --load-ca-certificate "${cacert}"  \
+	"${CERTTOOL}" ${CERTTOOL_PARAM} ${ADDITIONAL_PARAM}  --attime "$TESTDATE" --generate-certificate --load-ca-privkey "${cakey}"  --load-ca-certificate "${cacert}"  \
 	--template ${srcdir}/testpkcs11-certs/client-tmpl --load-privkey "${token};object=gnutls-client;object-type=private" \
 	--load-pubkey "$pubkey" --outfile tmp-client.crt >>"${LOGFILE}" 2>&1
 
@@ -927,6 +923,9 @@ test_sign_set_pin () {
 # $3: certfile
 # $4: keyfile
 # $5: cafile
+# $6: client certfile
+# $7: client keyfile
+# $8: test name
 #
 # Tests using a certificate and key pair using gnutls-serv and gnutls-cli.
 use_certificate_test () {
@@ -935,13 +934,14 @@ use_certificate_test () {
 	certfile="$3"
 	keyfile="$4"
 	cafile="$5"
-	txt="$6"
+	cli_certfile="$6"
+	cli_keyfile="$7"
+	txt="$8"
 
 	echo -n "* Using PKCS #11 with gnutls-cli (${txt})... "
 	# start server
 	eval "${GETPORT}"
-	launch_bare_server datefudge -s "$TESTDATE" \
-	        $VALGRIND $SERV $DEBUG -p "$PORT" \
+	launch_bare_server $VALGRIND $SERV $DEBUG --attime "$TESTDATE" -p "$PORT" \
 		${ADDITIONAL_PARAM} --debug 10 --echo --priority NORMAL --x509certfile="${certfile}" \
 		--x509keyfile="$keyfile" --x509cafile="${cafile}" \
 		--verify-client-cert --require-client-cert >>"${LOGFILE}" 2>&1
@@ -950,17 +950,14 @@ use_certificate_test () {
 	wait_server ${PID}
 
 	# connect to server using SC
-	datefudge -s "$TESTDATE" \
-	${VALGRIND} "${CLI}" ${ADDITIONAL_PARAM} -p "${PORT}" localhost --priority NORMAL --x509cafile="${cafile}" </dev/null >>"${LOGFILE}" 2>&1 && \
+	${VALGRIND} "${CLI}" --attime "$TESTDATE" ${ADDITIONAL_PARAM} -p "${PORT}" localhost --priority NORMAL --x509cafile="${cafile}" </dev/null >>"${LOGFILE}" 2>&1 && \
 		fail ${PID} "Connection should have failed!"
 
-	datefudge -s "$TESTDATE" \
-	${VALGRIND} "${CLI}" ${ADDITIONAL_PARAM} -p "${PORT}" localhost --priority NORMAL --x509certfile="${certfile}" \
-	--x509keyfile="$keyfile" --x509cafile="${cafile}" </dev/null >>"${LOGFILE}" 2>&1 || \
+	${VALGRIND} "${CLI}" --attime "$TESTDATE" ${ADDITIONAL_PARAM} -p "${PORT}" localhost --priority NORMAL --x509certfile="${cli_certfile}" \
+	--x509keyfile="$cli_keyfile" --x509cafile="${cafile}" </dev/null >>"${LOGFILE}" 2>&1 || \
 		fail ${PID} "Connection (with files) should have succeeded!"
 
-	datefudge -s "$TESTDATE" \
-	${VALGRIND} "${CLI}" ${ADDITIONAL_PARAM} -p "${PORT}" localhost --priority NORMAL --x509certfile="${token};object=gnutls-client;object-type=cert" \
+	${VALGRIND} "${CLI}" --attime "$TESTDATE" ${ADDITIONAL_PARAM} -p "${PORT}" localhost --priority NORMAL --x509certfile="${token};object=gnutls-client;object-type=cert" \
 		--x509keyfile="${token};object=gnutls-client;object-type=private" \
 		--x509cafile="${cafile}" </dev/null >>"${LOGFILE}" 2>&1 || \
 		fail ${PID} "Connection (with SC) should have succeeded!"
@@ -1185,15 +1182,20 @@ fi
 generate_temp_rsa_privkey "${TOKEN}" "${TEST_PIN}" 2048
 delete_temp_privkey "${TOKEN}" "${TEST_PIN}" rsa-2048
 
-generate_temp_dsa_privkey "${TOKEN}" "${TEST_PIN}" 3072
-delete_temp_privkey "${TOKEN}" "${TEST_PIN}" dsa-3072
+if test "x$ENABLE_DSA" = "x1"; then
+	generate_temp_dsa_privkey "${TOKEN}" "${TEST_PIN}" 3072
+	delete_temp_privkey "${TOKEN}" "${TEST_PIN}" dsa-3072
+fi
 
 import_temp_rsa_privkey "${TOKEN}" "${TEST_PIN}" 1024
 delete_temp_privkey "${TOKEN}" "${TEST_PIN}" rsa-1024
 import_temp_ecc_privkey "${TOKEN}" "${TEST_PIN}" 256
 delete_temp_privkey "${TOKEN}" "${TEST_PIN}" ecc-256
-import_temp_dsa_privkey "${TOKEN}" "${TEST_PIN}" 2048
-delete_temp_privkey "${TOKEN}" "${TEST_PIN}" dsa-2048
+
+if test "x$ENABLE_DSA" = "x1"; then
+	import_temp_dsa_privkey "${TOKEN}" "${TEST_PIN}" 2048
+	delete_temp_privkey "${TOKEN}" "${TEST_PIN}" dsa-2048
+fi
 
 if test $have_ed25519 != 0;then
 	import_temp_ed25519_privkey "${TOKEN}" "${TEST_PIN}" ed25519
@@ -1214,9 +1216,9 @@ write_serv_cert "${TOKEN}" "${TEST_PIN}" "${srcdir}/testpkcs11-certs/server.crt"
 write_serv_pubkey "${TOKEN}" "${TEST_PIN}" "${srcdir}/testpkcs11-certs/server.crt"
 test_sign "${TOKEN}" "${TEST_PIN}"
 
-use_certificate_test "${TOKEN}" "${TEST_PIN}" "${TOKEN};object=serv-cert;object-type=cert" "${TOKEN};object=serv-key;object-type=private" "${srcdir}/testpkcs11-certs/ca.crt" "full URLs"
+use_certificate_test "${TOKEN}" "${TEST_PIN}" "${TOKEN};object=serv-cert;object-type=cert" "${TOKEN};object=serv-key;object-type=private" "${srcdir}/testpkcs11-certs/ca.crt" "${srcdir}/testpkcs11-certs/client.crt" "${srcdir}/testpkcs11-certs/client.key" "full URLs"
 
-use_certificate_test "${TOKEN}" "${TEST_PIN}" "${TOKEN};object=serv-cert" "${TOKEN};object=serv-key" "${srcdir}/testpkcs11-certs/ca.crt" "abbrv URLs"
+use_certificate_test "${TOKEN}" "${TEST_PIN}" "${TOKEN};object=serv-cert" "${TOKEN};object=serv-key" "${srcdir}/testpkcs11-certs/ca.crt" "${srcdir}/testpkcs11-certs/client.crt" "${srcdir}/testpkcs11-certs/client.key" "abbrv URLs"
 
 write_certificate_id_test_rsa "${TOKEN}" "${TEST_PIN}" "${srcdir}/testpkcs11-certs/ca.key" "${srcdir}/testpkcs11-certs/ca.crt"
 write_certificate_id_test_rsa2 "${TOKEN}" "${TEST_PIN}" "${srcdir}/testpkcs11-certs/ca.key" "${srcdir}/testpkcs11-certs/ca.crt"

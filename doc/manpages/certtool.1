@@ -10,7 +10,7 @@
 .ds B-Font B
 .ds I-Font I
 .ds R-Font R
-.TH certtool 1 "09 Feb 2023" "3.7.9" "User Commands"
+.TH certtool 1 "29 Apr 2026" "3.8.13" "User Commands"
 .SH NAME
 \f\*[B-Font]certtool\fP
 \- GnuTLS certificate tool
@@ -63,6 +63,15 @@ Input file.
 .NOP \f\*[B-Font]\-\-outfile\f[]=\f\*[I-Font]str\f[]
 Output file.
 .sp
+.TP
+.NOP \f\*[B-Font]\-\-attime\f[]=\f\*[I-Font]timestamp\f[]
+Perform validation at the timestamp instead of the system time.
+.sp
+timestamp is an instance in time encoded as Unix time or in a human
+ readable timestring such as "29 Feb 2004", "2004\-02\-29".
+Full documentation available at 
+<https://www.gnu.org/software/coreutils/manual/html_node/Date\-input\-formats.html>
+or locally via info '(coreutils) date invocation'.
 .SS "Certificate related options"
 .TP
 .NOP \f\*[B-Font]\-i\f[], \f\*[B-Font]\-\-certificate\-info\f[]
@@ -150,6 +159,10 @@ The name to be used for the primary certificate and private key in a PKCS #12 fi
 Generate a PKCS #12 structure.
 .sp
 It requires a certificate, a private key and possibly a CA certificate to be specified.
+.TP
+.NOP \f\*[B-Font]\-\-pbmac1\f[]
+Use PBMAC1 in a PKCS #12 structure.
+.sp
 .SS "Private key related options"
 .TP
 .NOP \f\*[B-Font]\-k\f[], \f\*[B-Font]\-\-key\-info\f[]
@@ -171,17 +184,23 @@ cannot read RSA\-PSS keys.
 .NOP \f\*[B-Font]\-p\f[], \f\*[B-Font]\-\-generate\-privkey\f[]
 Generate a private key.
 .sp
-When generating RSA\-PSS private keys, the \-\-hash option will
-restrict the allowed hash for the key; in the same keys the \-\-salt\-size
+When generating RSA\-PSS or RSA\-OAEP private keys, the \-\-hash option will
+restrict the allowed hash for the key; For RSA\-PSS keys the \-\-salt\-size
 option is also acceptable.
 .TP
 .NOP \f\*[B-Font]\-\-key\-type\f[]=\f\*[I-Font]str\f[]
 Specify the key type to use on key generation.
 .sp
 This option can be combined with \-\-generate\-privkey, to specify
-the key type to be generated. Valid options are, 'rsa', 'rsa\-pss', 'dsa', 'ecdsa', 'ed25519, 'ed448', 'x25519', and 'x448'.'.
+the key type to be generated. Valid options are, 'rsa', 'rsa\-pss', 'rsa\-oaep', 'dsa', 'ecdsa', 'ed25519, 'ed448', 'x25519', and 'x448'.'.
 When combined with certificate generation it can be used to specify an
 RSA\-PSS certificate when an RSA key is given.
+.TP
+.NOP \f\*[B-Font]\-\-key\-format\f[]=\f\*[I-Font]str\f[]
+Specify the key format to use on key generation.
+.sp
+This option can be combined with \-\-generate\-privkey, to specify
+the key format to be generated, when the key type is ML\-DSA. Valid options are, 'seed', 'expanded', and 'both'.
 .TP
 .NOP \f\*[B-Font]\-\-bits\f[]=\f\*[I-Font]num\f[]
 Specify the number of bits for key generation.
@@ -472,6 +491,11 @@ Available hash functions are SHA1, RMD160, SHA256, SHA384, SHA512, SHA3\-224, SH
 .NOP \f\*[B-Font]\-\-salt\-size\f[]=\f\*[I-Font]num\f[]
 Specify the RSA-PSS key default salt size.
 This option takes an integer number as its argument.
+.sp
+Typical keys shouldn't set or restrict this option.
+.TP
+.NOP \f\*[B-Font]\-\-label\f[]=\f\*[I-Font]str\f[]
+Specify the RSA-OAEP label, encoded in hexadecimal.
 .sp
 Typical keys shouldn't set or restrict this option.
 .TP
@@ -1097,7 +1121,7 @@ p11tool (1), psktool (1), srptool (1)
 .SH "AUTHORS"
 
 .SH "COPYRIGHT"
-Copyright (C) 2020-2021 Free Software Foundation, and others all rights reserved.
+Copyright (C) 2020-2023 Free Software Foundation, and others all rights reserved.
 This program is released under the terms of
 the GNU General Public License, version 3 or later
 .

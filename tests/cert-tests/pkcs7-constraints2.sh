@@ -15,8 +15,7 @@
 # General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with GnuTLS; if not, write to the Free Software Foundation,
-# Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+# along with GnuTLS.  If not, see <https://www.gnu.org/licenses/>.
 
 #set -e
 
@@ -36,7 +35,6 @@ OUTFILE=out-pkcs7.$$.tmp
 
 . ${srcdir}/../scripts/common.sh
 
-skip_if_no_datefudge
 
 
 FILE="signing"
@@ -52,8 +50,7 @@ fi
 FILE="signing-verify-no-purpose"
 echo ""
 echo "test: $FILE"
-datefudge -s "2015-1-10" \
-${VALGRIND} "${CERTTOOL}" --p7-verify --load-certificate "${srcdir}/data/code-signing-cert.pem" <"${OUTFILE}"
+${VALGRIND} "${CERTTOOL}" --attime "2015-01-10" --p7-verify --load-certificate "${srcdir}/data/code-signing-cert.pem" <"${OUTFILE}"
 rc=$?
 
 if test "${rc}" != "0"; then
@@ -64,8 +61,7 @@ fi
 FILE="signing-verify-valid-purpose"
 echo ""
 echo "test: $FILE"
-datefudge -s "2015-1-10" \
-${VALGRIND} "${CERTTOOL}" --verify-purpose 1.3.6.1.5.5.7.3.3 --p7-verify --load-certificate "${srcdir}/data/code-signing-cert.pem" <"${OUTFILE}"
+${VALGRIND} "${CERTTOOL}" --attime "2015-01-10" --verify-purpose 1.3.6.1.5.5.7.3.3 --p7-verify --load-certificate "${srcdir}/data/code-signing-cert.pem" <"${OUTFILE}"
 rc=$?
 
 if test "${rc}" != "0"; then
@@ -76,8 +72,7 @@ fi
 FILE="signing-verify-invalid-purpose"
 echo ""
 echo "test: $FILE"
-datefudge -s "2015-1-10" \
-${VALGRIND} "${CERTTOOL}" --verify-purpose 1.3.6.1.5.5.7.3.1 --p7-verify --load-certificate "${srcdir}/data/code-signing-cert.pem" <"${OUTFILE}"
+${VALGRIND} "${CERTTOOL}" --attime "2015-01-10" --verify-purpose 1.3.6.1.5.5.7.3.1 --p7-verify --load-certificate "${srcdir}/data/code-signing-cert.pem" <"${OUTFILE}"
 rc=$?
 
 if test "${rc}" = "0"; then
@@ -88,8 +83,7 @@ fi
 FILE="signing-verify-invalid-date-1"
 echo ""
 echo "test: $FILE"
-datefudge -s "2011-1-10" \
-${VALGRIND} "${CERTTOOL}" --verify-purpose 1.3.6.1.5.5.7.3.3 --p7-verify --load-certificate "${srcdir}/data/code-signing-cert.pem" <"${OUTFILE}"
+${VALGRIND} "${CERTTOOL}" --attime "2011-01-10" --verify-purpose 1.3.6.1.5.5.7.3.3 --p7-verify --load-certificate "${srcdir}/data/code-signing-cert.pem" <"${OUTFILE}"
 rc=$?
 
 if test "${rc}" = "0"; then
@@ -100,8 +94,7 @@ fi
 FILE="signing-verify-invalid-date-2"
 echo ""
 echo "test: $FILE"
-datefudge -s "2018-1-10" \
-${VALGRIND} "${CERTTOOL}" --verify-purpose 1.3.6.1.5.5.7.3.3 --p7-verify --load-certificate "${srcdir}/data/code-signing-cert.pem" <"${OUTFILE}"
+${VALGRIND} "${CERTTOOL}" --attime "2018-01-10" --verify-purpose 1.3.6.1.5.5.7.3.3 --p7-verify --load-certificate "${srcdir}/data/code-signing-cert.pem" <"${OUTFILE}"
 rc=$?
 
 if test "${rc}" = "0"; then

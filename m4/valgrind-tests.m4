@@ -1,8 +1,10 @@
-# valgrind-tests.m4 serial 8
-dnl Copyright (C) 2008-2021 Free Software Foundation, Inc.
+# valgrind-tests.m4
+# serial 9
+dnl Copyright (C) 2008-2026 Free Software Foundation, Inc.
 dnl This file is free software; the Free Software Foundation
 dnl gives unlimited permission to copy and/or distribute it,
 dnl with or without modifications, as long as this notice is preserved.
+dnl This file is offered as-is, without any warranty.
 
 dnl From Simon Josefsson
 
@@ -37,7 +39,7 @@ AC_DEFUN([gl_VALGRIND_TESTS_DEFAULT_NO],
 AC_DEFUN_ONCE([gl_VALGRIND_TESTS],
 [
   AC_ARG_ENABLE([valgrind-tests],
-    AS_HELP_STRING([--disable-valgrind-tests],
+    AS_HELP_STRING([[--disable-valgrind-tests]],
                    [don't try to run self tests under valgrind]),
     [opt_valgrind_tests=$enableval], [opt_valgrind_tests=${gl_valgrind_tests_default:-yes}])
 

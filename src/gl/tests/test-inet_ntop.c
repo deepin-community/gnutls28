@@ -1,9 +1,9 @@
 /* Test of inet_ntop function.
-   Copyright (C) 2009-2021 Free Software Foundation, Inc.
+   Copyright (C) 2009-2026 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 3 of the License, or
+   the Free Software Foundation, either version 3 of the License, or
    (at your option) any later version.
 
    This program is distributed in the hope that it will be useful,
@@ -48,9 +48,9 @@ main (void)
 # endif
     result = inet_ntop (AF_INET, &internal, printable, sizeof (printable));
     ASSERT (result != NULL);
-    ASSERT (strcmp (result, "129.13.115.2") == 0);
+    ASSERT (streq (result, "129.13.115.2"));
   }
 #endif
 
-  return 0;
+  return test_exit_status;
 }
