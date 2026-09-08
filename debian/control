@@ -44,8 +44,8 @@ Provides:
  gnutls-dev,
 Depends:
  libc6-dev | libc-dev,
- libgnutls-dane0t64 (= ${binary:Version}),
- libgnutls30t64 (= ${binary:Version}),
+ libgnutls-dane0 (= ${binary:Version}),
+ libgnutls30 (= ${binary:Version}),
  libidn2-dev,
  libp11-kit-dev,
  libtasn1-6-dev,
@@ -75,10 +75,7 @@ Description: GNU TLS library - development files
  .
  This package contains the GnuTLS development files.
 
-Package: libgnutls30t64
-Provides: ${t64:Provides}
-Replaces: libgnutls30
-Breaks: libgnutls30 (<< ${source:Version})
+Package: libgnutls30
 Architecture: any
 Depends:
  ${misc:Depends},
@@ -156,13 +153,10 @@ Description: GNU TLS library - documentation and examples
  .
  This package contains all the GnuTLS documentation.
 
-Package: libgnutls-dane0t64
-Provides: ${t64:Provides}
-Replaces: libgnutls-dane0
-Breaks: libgnutls-dane0 (<< ${source:Version})
+Package: libgnutls-dane0
 Architecture: any
 Depends:
- libgnutls30t64 (= ${binary:Version}),
+ libgnutls30 (= ${binary:Version}),
  ${misc:Depends},
  ${shlibs:Depends},
 Pre-Depends:

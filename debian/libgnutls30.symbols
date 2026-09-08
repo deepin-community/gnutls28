@@ -1,4 +1,4 @@
-libgnutls.so.30 libgnutls30t64 #MINVER#
+libgnutls.so.30 libgnutls30 #MINVER#
 * Build-Depends-Package: libgnutls28-dev
  GNUTLS_3_4@GNUTLS_3_4 3.7.0
  GNUTLS_3_6_0@GNUTLS_3_6_0 3.7.0

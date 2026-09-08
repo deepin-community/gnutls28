@@ -42,10 +42,10 @@ override_dh_autoreconf:
 	cp -v debian/texinfo.tex build-aux/
 
 override_dh_makeshlibs:
-	dh_makeshlibs $(BDIR) -p libgnutls30t64  \
-		-V 'libgnutls30t64 (>= 3.7.0-0)' -- -c4
-	dh_makeshlibs $(BDIR) -p libgnutls-dane0t64  \
-		-V 'libgnutls-dane0t64 (>= 3.7.0-0)' \
+	dh_makeshlibs $(BDIR) -p libgnutls30  \
+		-V 'libgnutls30 (>= 3.7.0-0)' -- -c4
+	dh_makeshlibs $(BDIR) -p libgnutls-dane0  \
+		-V 'libgnutls-dane0 (>= 3.7.0-0)' \
 		-- -c4
 	dh_makeshlibs $(BDIR) --remaining-packages
 
