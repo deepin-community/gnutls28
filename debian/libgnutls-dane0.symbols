@@ -1,4 +1,4 @@
-libgnutls-dane.so.0 libgnutls-dane0t64 #MINVER#
+libgnutls-dane.so.0 libgnutls-dane0 #MINVER#
 * Build-Depends-Package: libgnutls28-dev
  DANE_0_0@DANE_0_0 3.7.0
  dane_cert_type_name@DANE_0_0 3.7.0
