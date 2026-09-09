@@ -1,0 +1,48 @@
+Description: Skip blksize_t/blkcnt_t signedness assertions on sw64
+ sw64's glibc defines blksize_t/blkcnt_t as unsigned (like alpha),
+ so the gnulib static_asserts in test-sys_stat-h.c fail during the
+ build on sw64. Exempt __sw_64__ the same way __alpha is exempted.
+Author: lichenggang <lichenggang@uniontech.com>
+Origin: vendor
+Forwarded: not-needed
+Last-Update: 2026-09-09
+
+--- a/src/gl/tests/test-sys_stat-h.c
++++ b/src/gl/tests/test-sys_stat-h.c
+@@ -341,13 +341,15 @@ static_assert (TYPE_SIGNED (off_t));
+ /* POSIX requires that blksize_t is a signed integer type.  */
+ #if !(defined __ANDROID__ || defined __QNX__                  \
+       || (defined __FreeBSD_kernel__ && !defined __FreeBSD__) \
+-      || (defined __GLIBC__ && defined __alpha))
++      || (defined __GLIBC__ && defined __alpha)       \
++      || (defined __GLIBC__ && defined __sw_64__))
+ static_assert (TYPE_SIGNED (blksize_t));
+ #endif
+ 
+ /* POSIX requires that blkcnt_t is a signed integer type.  */
+ #if !(defined __ANDROID__ || defined __QNX__            \
+-      || (defined __GLIBC__ && defined __alpha))
++      || (defined __GLIBC__ && defined __alpha)       \
++      || (defined __GLIBC__ && defined __sw_64__))
+ static_assert (TYPE_SIGNED (blkcnt_t));
+ #endif
+
+--- a/src/gl/tests/test-sys_types-h.c
++++ b/src/gl/tests/test-sys_types-h.c
+@@ -48,13 +48,15 @@ static_assert (TYPE_SIGNED (off64_t));
+ /* POSIX requires that blksize_t is a signed integer type.  */
+ #if !(defined __ANDROID__ || defined __QNX__                  \
+       || (defined __FreeBSD_kernel__ && !defined __FreeBSD__) \
+-      || (defined __GLIBC__ && defined __alpha))
++      || (defined __GLIBC__ && defined __alpha)       \
++      || (defined __GLIBC__ && defined __sw_64__))
+ static_assert (TYPE_SIGNED (blksize_t));
+ #endif
+ 
+ /* POSIX requires that blkcnt_t is a signed integer type.  */
+ #if !(defined __ANDROID__ || defined __QNX__            \
+-      || (defined __GLIBC__ && defined __alpha))
++      || (defined __GLIBC__ && defined __alpha)       \
++      || (defined __GLIBC__ && defined __sw_64__))
+ static_assert (TYPE_SIGNED (blkcnt_t));
+ #endif
