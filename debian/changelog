@@ -2,6 +2,8 @@ gnutls28 (3.8.13-1deepin1) unstable; urgency=medium
 
   * Revert 64-bit time_t transition (restore libgnutls30 and libgnutls-dane0 package names).
   * Fix dh_makeshlibs -p package names in debian/rules (libgnutls30t64 -> libgnutls30, libgnutls-dane0t64 -> libgnutls-dane0).
+  * Add 74_sw64-skip-blksize-blkcnt-signedness.diff: exempt __sw_64__ from gnulib blksize_t/blkcnt_t signedness asserts to fix sw64 build.
+  * Also exempt test-sys_types-h.c from the blksize_t/blkcnt_t signedness asserts (same sw64 issue as test-sys_stat-h.c).
 
  -- lichenggang <lichenggang@uniontech.com>  Tue, 08 Sep 2026 15:24:07 +0800
 
