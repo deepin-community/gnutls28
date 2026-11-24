@@ -1,5 +1,9 @@
 gnutls28 (3.8.13-1deepin2) unstable; urgency=medium
 
+  * Backport CVE-2026-127039 (GNUTLS-SA-2026-11-18-1, low): always clear
+    raw_certificate_list and reset ncerts in _gnutls_pcert_to_auth_info()
+    after freeing the old list, preventing a dangling pointer and double
+    free on later use or cleanup.
   * Backport CVE-2026-127040 (GNUTLS-SA-2026-11-18-2, low): return the error
     from _gnutls_copy_psk_username() in _gnutls_proc_rsa_psk_client_kx()
     instead of continuing with an invalid PSK username.
