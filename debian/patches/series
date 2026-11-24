@@ -2,3 +2,4 @@
 40_srptest_doubletimeout.diff
 41_run_cligen_on_debian.diff
 74_sw64-skip-blksize-blkcnt-signedness.diff
+CVE-2026-127040.patch
